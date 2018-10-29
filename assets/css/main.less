@@ -19,10 +19,10 @@ footer
   text-align: center;
 }
 
-a, a:hover, a:focus, a:visited
-{
-  color: #000;
-}
+// a, a:hover, a:focus, a:visited
+// {
+//   color: #000;
+// }
 
 img[lazy=loaded] {
   animation-duration: .6s;
@@ -120,3 +120,66 @@ input[type="text"] {
   fill: currentColor;
   overflow: hidden;
 }
+
+// 按钮
+.u-button {
+  text-align: center;
+  font-size: 14px;
+  height: 45px;
+  line-height: 45px;
+  border-radius: 23px;
+  background-color: #03A1CD;
+  color: white;
+  &.small {
+    height: 30px;
+    line-height: 30px;
+    border-radius: 15px;
+    font-size: 12px;
+  }
+  &:active {
+    opacity: 0.7;
+  }
+  &.disabled {
+    background: #F2F2F2;
+    color: #999999;
+    &:active {
+      opacity: 1;
+    }
+  }
+}
+
+// 登录页 input 
+.u-login-input {
+  border-bottom: 1px solid #E2E2E2;
+  padding: 13px 0;
+  font-size: 0;
+  &.noborder {
+    border: none;
+  }
+  input {
+    width: 100%;
+    height: 26px;
+    line-height: 26px;
+    font-size: 16px;
+    &::-webkit-input-placeholder {
+      font-size: 16px;
+      color: #D0D0D0;
+    }
+    &::-ms-input-placeholder {
+      color: #D0D0D0;
+    }
+  }
+}
+
+// a
+.u-link {
+  font-size: 14px;
+  color: #03A1CD;
+}
+
+.active-status {
+  &:active {
+    opacity: 0.8;
+  }
+}
+

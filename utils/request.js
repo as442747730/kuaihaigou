@@ -77,7 +77,7 @@ export default {
       withCredentials: false,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
       }
     }
     if (req && req.req.headers.cookie) {
@@ -114,6 +114,19 @@ export default {
       method: 'post',
       url: url,
       data: qs.stringify(data),
+      timeout: 30000,
+      withCredentials: false,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+      }
+    }).then(checkStatus).then(checkCode)
+  },
+  clientPostJson (url, data) {
+    return axios({
+      method: 'post',
+      url: url,
+      data: data,
       timeout: 30000,
       withCredentials: false,
       headers: {

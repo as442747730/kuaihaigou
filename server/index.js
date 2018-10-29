@@ -16,7 +16,7 @@ app.set('port', port)
 // Import API Routes
 // app.use('/api', api)
 
-app.use('/pf-api/*', require('../utils/middleware'))
+app.use('/api/*', require('../utils/middleware'))
 
 // Import and Set Nuxt.js options
 let config = require('../nuxt.config.js')
