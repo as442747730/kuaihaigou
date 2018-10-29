@@ -1,0 +1,67 @@
+
+// 颜色
+@nice-blue: #03A1CD;
+@cor_999: #999999;
+@cor_333: #333333;
+@cor_666: #666666;
+
+// flex
+.flex_allCenter {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.flex_between {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+// background
+.bg_cover {
+	background-position: 50% 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.bg_contain {
+	background-position: 50% 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+// 进度条
+.u-bars {
+	margin: 15px 0;
+	.bars {
+		.flex_between;
+		&-left {
+			width:75px;
+			height:12px;
+			font-size:12px;
+			font-family:PingFang-SC-Regular;
+			font-weight:400;
+			color: @cor_666;
+		}
+		&-right {
+			width: 117px;
+			height: 10px;
+			background: #D7F2E6;
+			border-radius:6px;
+			position: relative;
+			overflow: hidden;
+			&_top {
+				position: absolute;
+				width: 0;
+				height: 100%;
+				background: #00E67F;
+				border-radius:6px;
+				transition: .3s;
+			}	
+			.w30 {
+				width: 30%;
+			}
+		}
+	}
+}
+
+
