@@ -1,0 +1,58 @@
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .3s ease;
+}
+  
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translateX(100px);
+  opacity: 0;
+}
+
+.home-slide-fade-enter-active {
+  transition: all .4s ease;
+}
+.home-slide-fade-leave-active {
+  transition: all .4s ease;
+}
+.home-slide-fade-enter, .home-slide-fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  transform: translateX(-330px);
+  opacity: 0;
+}
+
+
+.nav-slide-fade-enter-active {
+  transition: all .4s ease;
+}
+.nav-slide-fade-leave-active {
+  transition: all .4s ease;
+}
+.nav-slide-fade-enter, .nav-slide-fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  transform: translateY(-50px);
+  opacity: 0;
+}
+
+.nav-fade-enter-active {
+  transition: all .4s ease;
+}
+.nav-fade-leave-active {
+  transition: all .4s ease;
+}
+.nav-fade-enter, .nav-fade-leave-to
+/* .fade-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.home-fade-enter-active {
+  transition: all .4s ease;
+}
+.home-fade-leave-active {
+  transition: all .4s ease;
+}
+.home-fade-enter, .home-fade-leave-to
+/* .fade-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+}

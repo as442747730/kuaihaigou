@@ -1,0 +1,122 @@
+html, body
+{
+  background-color: #F5F5F5;
+  color: #000;
+  /* letter-spacing: 0.5px; */
+  font-family: PingFang SC,Lantinghei SC,Helvetica Neue,Helvetica,Arial,Microsoft YaHei,\\5FAE\8F6F\96C5\9ED1,STHeitiSC-Light,simsun,\\5B8B\4F53,WenQuanYi Zen Hei,WenQuanYi Micro Hei,"sans-serif";
+  /* font-family: PingFang SC, Arial, -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif; */
+  height: 100vh;
+  margin: 0;
+}
+
+#__nuxt {
+  height: 100%;
+  width: 100%;
+}
+
+footer
+{
+  text-align: center;
+}
+
+a, a:hover, a:focus, a:visited
+{
+  color: #000;
+}
+
+img[lazy=loaded] {
+  animation-duration: .6s;
+  animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-timing-function: cubic-bezier(0,.02,.02,1.4);
+}
+
+.bg-box[lazy=loading] {
+  background-size: 10%;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+.bg-box[lazy=loaded] {
+  background-size: cover;
+  -webkit-animation-duration: .6s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+  animation-timing-function: cubic-bezier(0,.02,.02,1.4);
+}
+
+.bg-box[lazy=error] {
+  background-size: 10%;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+.bg-box[lazy=error] {
+  background-size: cover;
+  -webkit-animation-duration: .6s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+  animation-timing-function: cubic-bezier(0,.02,.02,1.4);
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+  max-height: 289px;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+input[type="text"] {
+  -webkit-appearance: none;
+}
+/* 去除点击时候出现的阴影 */
+* {
+  -webkit-tap-highlight-color:rgba(255,255,255,0);
+}
+/* toast 样式修改 */
+
+.lx-load-box {
+  min-height: 100px!important;
+  width: 100px!important;
+  height: 100px!important;
+  top: 50%!important;
+  left: 50%!important;
+  transform: translateX(-50%) translateY(-50%)!important;
+  margin-left: 0px!important;
+}
+
+.bg {
+  background-position: 50% 50%;
+  background-size: cover;
+}
+.icon {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+  overflow: hidden;
+}
