@@ -18,3 +18,4 @@ private.config.js
 .DS_Store
 .idea/
 .editorconfig
+package-lock.json
