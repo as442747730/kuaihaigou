@@ -6,7 +6,7 @@ import basicConfig from '../private.config'
 // const request = require('request')
 
 const app = express()
-const host = process.env.HOST || '127.0.0.1'
+const host = process.env.HOST || '0.0.0.0'
 // const port = process.env.PORT || basicConfig.port
 const port = basicConfig.port || process.env.PORT
 // const port = basicConfig.port
