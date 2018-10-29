@@ -1,11 +1,13 @@
 <template>
   <div class="m-home">
+    <van-button type="default">按钮</van-button>
   </div>
 </template>
 <script>
 import api from '../utils/request'
 
 export default {
+  name: 'home',
   layout: 'default',
 
   async asyncData (req) {
@@ -15,9 +17,9 @@ export default {
     ])
       .then(api.spread(function (data1, data2) {
         console.log(data1, data2)
-      }).catch(error => {
+      })).catch(error => {
         req.redirect('/error')
-      }))
+      })
   },
 
   // async asyncData (req) {
