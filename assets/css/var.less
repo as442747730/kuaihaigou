@@ -4,6 +4,22 @@
 @cor_333: #333333;
 @cor_666: #666666;
 
+// padding
+.padlr20 {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.padtb20 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+// 弹窗之上
+.cpmzIndex {
+  position: relative;
+  z-index: 101;
+  background: #fff;
+}
 // flex
 .flex_allCenter {
   display: flex;
@@ -61,4 +77,52 @@
       }
     }
   }
+}
+
+// 重置， 取消按钮
+.u-footbtns {
+  position: absolute;
+	
+  bottom: 0;
+
+  left: 0;
+
+  background: #fff;
+
+  width: 100%;
+
+  height: 50px;
+
+  z-index: 100;
+
+  box-shadow: 3px 3px 5px #636262;
+
+  .flex_between;
+
+  .btn {
+
+    width: 50%;
+
+    height: 100%;
+
+    font-size: 15px;
+
+    font-family: PingFangSC-Medium;
+
+    font-weight: 500;
+
+    .flex_allCenter;
+
+    color: #03A1CD;
+
+  }
+
+  .active {
+
+    background: #03A1CD;
+
+    color: #fff;
+
+  }
+
 }
