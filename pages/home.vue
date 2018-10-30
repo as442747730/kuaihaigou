@@ -1,5 +1,6 @@
 <template>
   <div class="m-home">
+  111
   </div>
 </template>
 <script>
@@ -8,17 +9,18 @@ import api from '../utils/request'
 export default {
   layout: 'default',
 
-  async asyncData (req) {
-    return api.all([
-      api.serverGet('/api-1', {}, req),
-      api.serverGet('/api-2', {}, req)
-    ])
-      .then(api.spread(function (data1, data2) {
-        console.log(data1, data2)
-      }).catch(error => {
-        req.redirect('/error')
-      }))
-  },
+  // async asyncData (req) {
+  //   return api.all([
+  //     api.serverGet('/api-1', {}, req),
+  //     api.serverGet('/api-2', {}, req)
+  //   ])
+  //     .then(api.spread(function (data1, data2) {
+  //       console.log(data1, data2)
+  //       return { text: data2.text }
+  //     })).catch(error => {
+  //       req.redirect('/error')
+  //     })
+  // },
 
   // async asyncData (req) {
   //   return api.serverGet('/api').then((res) => {
