@@ -16,7 +16,7 @@
 
       <div class="m-login-handler">
         <!-- <a class="u-link active-status" href="">创建账号</a> -->
-        <nuxt-link class="u-link active-status" to="">创建账号</nuxt-link>
+        <nuxt-link class="u-link active-status" to="/account/register">注册账号</nuxt-link>
         <nuxt-link class="u-link active-status" to="">忘记密码？</nuxt-link>
       </div>
     </section>
@@ -55,6 +55,7 @@ import captchaInput from '~/components/Login-captcha.vue'
 
 export default {
   name: 'login',
+  layout: 'default',
 
   data() {
     return {
