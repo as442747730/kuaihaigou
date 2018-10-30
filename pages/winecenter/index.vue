@@ -42,7 +42,7 @@
         :key="index">
   		  <div class="com-item">
           <div class="item_l">
-            <div class="item_l_bk" :style="'background: url(' + bkImg1   ) no-repeat center/cover'"></div>
+            <div class="item_l_bk" :style="'background: url(' + bkImg1 + ') no-repeat center/cover'"></div>
           </div>
           <div class="item_r">
             <h3>法国1982拉菲法国1982拉菲传奇Lafite</h3>
@@ -276,96 +276,96 @@
         .bg_cover;
       }
     }
-		.item_r {
-			width: 195px;
-			min-height: 213px;
-			&>h3 {
-				font-size:15px;
-				font-family:PingFangSC-Medium;
-				font-weight:500;
-				color:rgba(51,51,51,1);
-				line-height:21px;
-			}
-			&>p {
-				padding: 10px 0;
-				font-size:12px;
-				font-family:PingFang-SC-Regular;
-				font-weight:400;
-				color:rgba(153,153,153,1);
-				line-height:12px;
-			}
-			.itemr-price {
-				.t_price {
-					display: inline-block;
-					font-size:17px;
-					font-family:Impact;
-					color: #F99C00;
-				}
-				.m_price {
-					display: inline-block;
-					padding-left: 10px;
-					font-size:12px;
-					font-family:PingFang-SC-Medium;
-					font-weight:500;
-					color: @cor_999;
-				}
-			}
-		}
-	}
-	// 新手选酒
-	.novice {
-		padding-bottom: 5px;
-		.itemr-info {
-			margin-left: -7px;
-			padding-bottom: 10px;
-			&>span {
-				display: inline-block;
-				height:24px;
-				line-height: 24px;
-				background:#DEF3F9;
-				border-radius:12px;
-				padding-left: 25px;
-				padding-right: 5px;
-				vertical-align: middle;
-				margin-top: 10px;
-				position: relative;
-				font-size:12px;
-				font-family:PingFangSC-Semibold;
-				font-weight:600;
-				color: #03A1CD;
-				margin-left: 7px;
-				&:before {
-					content: '';
-					width: 24px;
-					height: 24px;
-					position: absolute;
-					top: 50%;
-					left: 0;
-					margin-top: -12px;
-					.bg_cover;
-				}
-			}
-			.icon_time {
-				&:before {
-				  background-image: url('../../assets/img/Icons/ic_time_24x24.png');
-				}
-			}
-			.icon_address {
-				&:before {
-				  background-image: url('../../assets/img/Icons/ic_position_24x24.png');
-				}
-			}
-			.icon_variety {
-				&:before {
-				  background-image: url('../../assets/img/Icons/ic_grape_24x24.png');
-				}
-			}
-		}
-		.itemr-price {
-			padding-top: 4px;
-		}
-	}
-	.killer {
-		padding-bottom: 5px;
-	}
+    .item_r {
+      width: 195px;
+      min-height: 213px;
+      &>h3 {
+        font-size:15px;
+        font-family:PingFangSC-Medium;
+        font-weight:500;
+        color:rgba(51,51,51,1);
+        line-height:21px;
+      }
+      &>p {
+        padding: 10px 0;
+        font-size:12px;
+        font-family:PingFang-SC-Regular;
+        font-weight:400;
+        color:rgba(153,153,153,1);
+        line-height:12px;
+      }
+      .itemr-price {
+        .t_price {
+          display: inline-block;
+          font-size:17px;
+          font-family:Impact;
+          color: #F99C00;
+        }
+        .m_price {
+          display: inline-block;
+          padding-left: 10px;
+          font-size:12px;
+          font-family:PingFang-SC-Medium;
+          font-weight:500;
+          color: @cor_999;
+        }
+      }
+    }
+  }
+  // 新手选酒
+  .novice {
+    padding-bottom: 5px;
+    .itemr-info {
+      margin-left: -7px;
+      padding-bottom: 10px;
+      &>span {
+        display: inline-block;
+        height:24px;
+        line-height: 24px;
+        background:#DEF3F9;
+        border-radius:12px;
+        padding-left: 25px;
+        padding-right: 5px;
+        vertical-align: middle;
+        margin-top: 10px;
+        position: relative;
+        font-size:12px;
+        font-family:PingFangSC-Semibold;
+        font-weight:600;
+        color: #03A1CD;
+        margin-left: 7px;
+        &:before {
+          content: '';
+          width: 24px;
+          height: 24px;
+          position: absolute;
+          top: 50%;
+          left: 0;
+          margin-top: -12px;
+          .bg_cover;
+        }
+      }
+      .icon_time {
+        &:before {
+          background-image: url('../../assets/img/Icons/ic_time_24x24.png');
+        }
+      }
+     .icon_address {
+        &:before {
+          background-image: url('../../assets/img/Icons/ic_position_24x24.png');
+        }
+      }
+      .icon_variety {
+        &:before {
+          background-image: url('../../assets/img/Icons/ic_grape_24x24.png');
+        }
+      }
+    }
+    .itemr-price {
+      padding-top: 4px;
+    }
+  }
+  .killer {
+    padding-bottom: 5px;
+  }
 </style>
