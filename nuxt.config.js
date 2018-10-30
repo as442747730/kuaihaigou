@@ -28,7 +28,7 @@ module.exports = {
     '@nuxtjs/proxy'
   ],
   proxy: {
-    '/pf-api': config.target
+    '/api': config.target
   },
   plugins: [
     { src: './plugins/swiper.js' },
@@ -39,7 +39,7 @@ module.exports = {
   ],
   css: [
     { src: './assets/css/normalize.css', lang: 'css' },
-    { src: './assets/css/main.css', lang: 'css' },
+    { src: './assets/css/main.less', lang: 'less' },
     { src: './assets/css/transition.css', lang: 'css' }
   ],
   router: {

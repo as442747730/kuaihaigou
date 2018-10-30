@@ -1,12 +1,22 @@
 <template>
   <div class="m-home">
-  111
+    <header>
+      <h1>首页</h1>
+      <input class="search" type="text">
+    </header>
+    <van-button type="default" round>按钮</van-button>
+    <div class="u-button" @click="gotoLogin">按钮</div>
+
+    <div class="u-login-input">
+      <input placeholder="请输入密码"></input>
+    </div>
   </div>
 </template>
 <script>
 import api from '../utils/request'
 
 export default {
+  name: 'home',
   layout: 'default',
 
   // async asyncData (req) {
@@ -16,7 +26,6 @@ export default {
   //   ])
   //     .then(api.spread(function (data1, data2) {
   //       console.log(data1, data2)
-  //       return { text: data2.text }
   //     })).catch(error => {
   //       req.redirect('/error')
   //     })
@@ -38,6 +47,9 @@ export default {
   },
 
   methods: {
+    gotoLogin () {
+      window.location.href = '/account/login'
+    }
   }
 
 }
@@ -45,5 +57,23 @@ export default {
 <style lang="less">
 .m-home {
   display: block;
+  header {
+    padding: 0 20px;
+    margin: 49px 0 24px;
+    border-bottom: 1px solid #f5f5f5;
+    h1 {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 26px;
+      color: #333;
+    }
+    .search {
+      display: inline-block;
+      width: 243px;
+      height: 35px;
+      background: #fafafa;
+      margin-left: 30px;
+    }
+  }
 }
 </style>
