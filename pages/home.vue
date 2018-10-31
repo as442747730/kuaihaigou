@@ -328,12 +328,6 @@
     <!-- 页脚 -->
     <uFooter />
 
-    <!-- <van-button type="default" round>按钮</van-button> -->
-    <!-- <div class="u-button" >按钮</div> -->
-
-    <!-- <div class="u-login-input">
-      <input placeholder="请输入密码"></input>
-    </div> -->
   </div>
 </template>
 <script>
@@ -389,7 +383,7 @@ export default {
   },
 
   created () {
-    console.log(this.swiperOption)
+    // console.log(this.swiperOption)
   },
 
   methods: {
