@@ -20,6 +20,38 @@
   z-index: 101;
   background: #fff;
 }
+// 弹窗通用
+.u-cpms {
+  position: fixed;
+  top: 0;
+  width: 100vW;
+  height: 100%;
+  overflow: hidden;
+  background: rgba(0, 0, 0, .8);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity ease .5s;
+  &-in {
+    background: #fff;
+    position: relative;
+    transition: transform ease 1s;
+    transform: translateY(-100%);
+    overflow: hidden;
+  }
+}
+.u-cpms_trans {
+  transform: translateY(0);
+}
+.u-cpms_opa {
+  opacity: 1;
+}
+.u-cpms.u_zIndex100 {
+  z-index: 80;
+}
+.u-cpms.u_zIndex50 {
+  z-index: 50;
+}
+
 // flex
 .flex_allCenter {
   display: flex;
@@ -77,6 +109,47 @@
       }
     }
   }
+}
+
+// 列表base
+.listbase(@w, @h) {
+  margin-right: -10px;
+  flex-wrap: wrap;
+  .flex_between;
+  &_item {
+    width: @w;
+    height: @h;
+    border-radius:4px;
+    border: 1px solid;
+    border-color: #EEEEEE;
+    color: @cor_666;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    .flex_allCenter;
+  }
+  .empty {
+    border-color: transparent;
+  }
+  .active {
+    border-color: @cor_333;
+    color: @cor_333;
+  }
+}
+
+// 一行四列列表
+.u-list4 {
+  .listbase(70px, 30px);
+}
+
+// 一行三列列表
+.u-list3 {
+  .listbase(100px, 30px);
+}
+
+// 一行两列列表
+.u-list2 {
+  .listbase(160px, 30px);
 }
 
 // 重置， 取消按钮
