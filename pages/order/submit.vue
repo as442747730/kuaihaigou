@@ -5,6 +5,47 @@
       <span>添加收货地址</span>
     </div>
 
+    <div class="m-section-product">
+
+      <div class="m-section-product-li">
+        <div class="m-section-product-item">
+          <img class="m-section-product-item-img" src="../../assets/img/img2.png" alt="">
+          <div class="m-section-product-item-content">
+            <p class="title">法国1982拉菲法国1982拉菲传奇Lafite</p>
+            <p class="desc">单瓶/普通装<span class="price">￥260</span></p>
+            <p class="desc">x1</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-section-product-li">
+        <div class="m-section-product-item">
+          <img class="m-section-product-item-img" src="../../assets/img/img2.png" alt="">
+          <div class="m-section-product-item-content">
+            <p class="title">法国1982拉菲法国1982拉菲传奇Lafite</p>
+            <p class="desc">单瓶/普通装<span class="price">￥260</span></p>
+            <p class="desc">x1</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-section-product-li">
+        <div class="pack-title">
+          <div class="pack-title-left">法国1982拉菲-套餐A</div>
+          <div class="pack-title-right">¥260.0</div>
+        </div>
+        <div class="m-section-product-item bor-top">
+          <img class="m-section-product-item-img" src="../../assets/img/img2.png" alt="">
+          <div class="m-section-product-item-content">
+            <p class="title">法国1982拉菲法国1982拉菲传奇Lafite</p>
+            <p class="desc">单瓶/普通装</p>
+            <p class="desc">x1</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
     <div class="m-section-cell">
       <div class="m-section-cell-item more-link small">
         <div class="label">优惠券</div>
@@ -78,6 +119,7 @@ export default {
 @import url('../../assets/css/var.less');
 .m-order-submit {
   min-height: 100vh;
+  background: #F1F1F1;
   font-size: 0;
   .m-section-position {
     height: 65px;
@@ -144,6 +186,66 @@ export default {
         padding-right: 10px;
       }
     }
+  }
+
+  .m-section-product {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: #FFFFFF;
+    margin-bottom: 10px;
+
+    &-li {
+      .pack-title {
+        border-top: 1px solid #F1F1F1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        &-left {
+          font-size: 15px;
+          color: @cor_333;
+        }
+        &-right {
+          font-size: 17px;
+          color: #F99C00;
+        }
+      }
+    }
+
+    &-item {
+      padding: 20px 0;
+      margin: 0 20px;
+      // border-bottom: 1px solid #F1F1F1;
+      &-img {
+        border: 1px solid #E6E6E6;
+        border-radius: 4px;
+        width: 88px;
+        height: 98px;
+      }
+      &-content {
+        width: 230px;
+        display: inline-block;
+        vertical-align: top;
+        padding-left: 15px;
+        .title {
+          font-size: 15px;
+          color: @cor_333;
+          line-height: 25px;
+        }
+        .desc {
+          margin-top: 10px;
+          font-size: 13px;
+          color: @cor_666;
+          .price {
+            font-size: 17px;
+            color: #F99C00;
+            font-family: Impact;
+            float: right;
+          }
+        }
+      }
+    }
+
   }
 
   .m-section-bottom {
