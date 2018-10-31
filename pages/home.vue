@@ -337,7 +337,7 @@
   </div>
 </template>
 <script>
-import api from '~/utils/request'
+// import api from '~/utils/request'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 import uFooter from '~/components/footer'
 export default {
@@ -388,7 +388,7 @@ export default {
     }
   },
 
-  created() {
+  created () {
     console.log(this.swiperOption)
   },
 
