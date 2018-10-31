@@ -13,9 +13,8 @@
 <script>
   export default {
     props: ['error'],
-    data() {
+    data () {
       return {
-        
       }
     },
     methods: {
@@ -25,7 +24,6 @@
     }
   }
 </script>
-
 <style lang="less" scoped>
 .m-error {
   text-align: center;

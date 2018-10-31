@@ -48,7 +48,7 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       pageTitle: '注册账号',
 
