@@ -57,7 +57,7 @@ export default {
   name: 'login',
   layout: 'default',
 
-  data() {
+  data () {
     return {
       loginType: 1, // 登录方式 1：手机号码登录， 2：验证码登录
 
@@ -75,14 +75,14 @@ export default {
   components: { captchaInput },
 
   watch: {
-    captcha(val) {
+    captcha (val) {
       if (val.length > 6) {
         this.captcha = val.substring(0, 6)
       }
     }
   },
   computed: {
-    loginTypeText() {
+    loginTypeText () {
       return this.loginType === 1 ? '手机登录' : '验证码登录'
     },
     loginDisabled () {

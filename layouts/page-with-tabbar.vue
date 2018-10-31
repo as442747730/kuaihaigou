@@ -9,7 +9,7 @@
 <script>
 // import tabbar from ''
 export default {
-  data() {
+  data () {
     return {
     }
   },

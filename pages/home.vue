@@ -22,9 +22,7 @@ export default {
     ])
       .then(api.spread(function (data1, data2) {
         console.log(data1, data2)
-      })).catch(error => {
-        req.redirect('/error')
-      })
+      }))
   },
 
   // async asyncData (req) {
@@ -36,7 +34,7 @@ export default {
   //   })
   // },
 
-  data() {
+  data () {
     return {
       text: ''
     }
