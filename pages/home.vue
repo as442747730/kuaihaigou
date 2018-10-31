@@ -173,18 +173,163 @@
           </div>
         </div>
 
-        <div v-swiper:mySwiper="swiperOption">
+        <div v-swiper:mySwiper2="shareSwiper">
           <div class="swiper-wrapper">
             <div class="swiper-slide share-list">
-            
+              <div class="share-list-box">
+                <div class="share_home-user">
+                  <u class="ib-middle"></u>
+                  <div class="ib-middle">
+                    <span>一朵小粒欣</span>
+                    <p>2018-08-23</p>
+                  </div>
+                </div>
+                <div class="share_home-content">
+                  <h3>2017雄狮，Decanter 97分好评，帕克眼中实力一级庄</h3>
+                  <div class="tips">
+                    <span>频道：经验 | 心得 | 美食</span>
+                    <span>话题：红酒</span>
+                  </div>
+                  <p>红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…</p>
+                  <div class="pro">
+                    <img src="../assets/img/home/img_home_335x180@2x.png">
+                  </div>
+                  <div class="u-other">
+                    <span class="zan"><i></i>100</span>
+                    <span class="chat"><i></i>98</span>
+                    <span class="watch"><i></i>27456</span>
+                    <div class="more_share">
+                      <i class="point"></i>
+                    </div> 
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide share-list">
+              <div class="share-list-box">
+                <div class="share_home-user">
+                  <u class="ib-middle"></u>
+                  <div class="ib-middle">
+                    <span>一朵小粒欣</span>
+                    <p>2018-08-23</p>
+                  </div>
+                </div>
+                <div class="share_home-content">
+                  <h3>2017雄狮，Decanter 97分好评，帕克眼中实力一级庄</h3>
+                  <div class="tips">
+                    <span>频道：经验 | 心得 | 美食</span>
+                    <span>话题：红酒</span>
+                  </div>
+                  <p>红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…</p>
+                  <div class="pro">
+                    <img src="../assets/img/home/img_home_335x180@2x.png">
+                  </div>
+                  <div class="u-other">
+                    <span class="zan"><i></i>100</span>
+                    <span class="chat"><i></i>98</span>
+                    <span class="watch"><i></i>27456</span>
+                    <div class="more_share">
+                      <i class="point"></i>
+                    </div> 
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="community_home margin-20">
+        <div class="title_home">
+          <h2>
+            社区活动
+          </h2>
+          <a class="to-channel">
+            进入频道
+            <i class="van-icon van-icon-arrow"></i>  
+          </a>
+        </div>
+        <ul class="community_home-item">
+          <li class="community_home-list type_1 noing">
+            <div class="pro">
+              <div class="full bg" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
+            </div>
+            <div class="desc">
+              <h3>第38期 | 红酒之夜 <span>2018快海购红酒沙龙</span></h3>
+              <p>活动时间：2018年7月8日-2018年7月9日</p>
+              <p>活动地点：广州市天河区珠江新城四季酒店68层2号展厅</p>
+            </div>
+          </li>
+          <li class="community_home-list type_2 ing">
+            <div class="pro">
+              <div class="full bg" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
+            </div>
+            <div class="desc">
+              <h3>第38期 | 红酒之夜 <span>2018快海购红酒沙龙</span></h3>
+              <p>活动时间：2018年7月8日-2018年7月9日</p>
+              <p>活动地点：广州市天河区珠江新城四季酒店68层2号展厅</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="news_home">
+        <div class="margin-20">
+          <div class="title_home">
+            <h2>
+              新闻资讯
+            </h2>
+            <a class="to-channel">
+              进入频道
+              <i class="van-icon van-icon-arrow"></i>  
+            </a>
+          </div>
+        </div>
+        <div v-swiper:mySwiper3="swiperNews">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide news-list">
+              <div class="news-list-box">
+                <h3>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</h3>
+                <div class="tips">
+                  <span>国际资讯</span>
+                  <span>作者：拉菲尼斯</span>
+                  <span>来源：红酒网</span>
+                </div>
+                <div class="pro">
+                  <div class="bg full" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
+                </div>
+                <div class="desc">
+                  红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide news-list">
+              <div class="news-list-box">
+                <h3>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</h3>
+                <div class="tips">
+                  <span>国际资讯</span>
+                  <span>作者：拉菲尼斯</span>
+                  <span>来源：红酒网</span>
+                </div>
+                <div class="pro">
+                  <div class="bg full" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
+                </div>
+                <div class="desc">
+                  红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
     
     </article>
+
+    <!-- 页脚 -->
+    <uFooter />
+
     <!-- <van-button type="default" round>按钮</van-button> -->
-    <!-- <div class="u-button" @click="gotoLogin">按钮</div> -->
+    <!-- <div class="u-button" >按钮</div> -->
 
     <!-- <div class="u-login-input">
       <input placeholder="请输入密码"></input>
@@ -192,12 +337,15 @@
   </div>
 </template>
 <script>
-import api from '../utils/request'
-import bannerImg from '../assets/img/home/img_home_335x180@2x.png'
+import api from '~/utils/request'
+import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
+import uFooter from '~/components/footer'
 export default {
   name: 'home',
   layout: 'default',
-
+  components: {
+    uFooter
+  },
   // async asyncData (req) {
   //   return api.all([
   //     api.serverGet('/api-1', {}, req),
@@ -224,21 +372,27 @@ export default {
       bannerImg: bannerImg,
 
       swiperOption: {
-        // width: 320 * window.innerWidth / 375,
         speed: 800,
-        // spaceBetween : '4%',
+        slidesPerView: 'auto'
+      },
+
+      shareSwiper: {
+        speed: 800,
+        slidesPerView: 'auto'
+      },
+
+      swiperNews: {
+        speed: 800,
         slidesPerView: 'auto'
       }
     }
   },
 
   created() {
+    console.log(this.swiperOption)
   },
 
   methods: {
-    gotoLogin () {
-      window.location.href = '/account/login'
-    }
   }
 
 }
@@ -459,6 +613,174 @@ export default {
         line-height: 24px;
         text-align: justify;
       } 
+    }
+  }
+}
+
+.share_home {
+  .share-list {
+    font-size: 0;
+    width: 320px;
+    margin-left: 15px;
+    &:last-child {
+      width: 340px;
+    }
+    &-box {
+      border-radius: 8px;
+      border: 1px solid #eaeaea;
+      box-sizing: border-box;
+      width: 320px;
+      height: 514px;
+    }
+  }
+  &-user {
+    border-bottom: 1px solid #f5f5f5;
+    padding: 20px;
+    u {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 17px;
+      background: #ff6c6c; 
+    }
+    span {
+      display: block;
+      font-size: 16px;
+      color: #333;
+    }
+    p {
+      margin-top: 9px;
+      color: #999;
+      font-size: 12px;
+      display: inline-block;
+      vertical-align: middle;
+      &:before {
+        content: '';
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 4px;
+        width: 14px;
+        height: 14px;
+        background: url('../assets/img/home/ic_time_g_14x14@2x.png') no-repeat center/contain
+      }
+    }
+  }
+  &-content {
+    padding: 15px 20px;
+    h3 {
+      font-size: 16px;
+      color: #333;
+      font-family: PingFangSC-Semibold;
+      font-weight: bold;
+      line-height: 22px;
+    }
+    .tips{
+      color: #999;
+      font-size: 12px;
+      margin: 10px 0 15px;
+      span:first-child {
+        margin-right: 20px;
+      }
+    }
+    p {
+      max-height: 120px;
+      overflow: hidden;
+      text-align: justify;
+      font-size: 14px;
+      color: #999;
+      line-height: 24px;
+    }
+    .pro {
+      margin: 10px 0 20px;
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+  }
+}
+
+.community_home {
+  &-list {
+    margin-bottom: 15px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    .pro {
+      height: 180px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .desc {
+      h3 {
+        margin: 13px 0 10px;
+        display: inline-block;
+        color: #333;
+        font-size:16px;
+        font-weight: bold;
+        font-family: 'PingFangSC-Semibold';
+        span {
+          font-weight: normal;
+          font-family: 'PingFang-SC'
+        }
+      }
+      p {
+        font-size: 12px;
+        color: #999;
+        line-height: 20px;
+      }
+    }
+  }
+}
+
+.news_home {
+  margin-bottom: 64px;
+  .news-list {
+    width: 320px;
+    margin-left: 15px;
+    &:last-child {
+      width: 340px;
+    }
+    &-box {
+      border-radius: 8px;
+      border: 1px solid #eaeaea;
+      box-sizing: border-box;
+      padding: 20px; 
+      width: 320px;
+      height: 408px;
+    }
+    h3 {
+      line-height: 22px;
+      color: #333;
+      font-size: 16px;
+      font-weight: bold;
+      font-family: 'PingFangSC-Semibold';
+    }
+    .tips {
+      margin: 6px 0 16px;
+      span {
+        font-size: 12px;
+        color: #999;
+        display: inline-block;
+        margin-right: 20px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+    .pro {
+      height: 150px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .desc {
+      margin-top: 10px;
+      line-height: 24px;
+      color: #999;
+      font-size: 14px;
+      max-height: 122px;
+      overflow: hidden;
     }
   }
 }
