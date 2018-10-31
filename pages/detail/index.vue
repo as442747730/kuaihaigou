@@ -1,5 +1,5 @@
 <template>
-  <article class="u-detail">
+  <main class="u-detail">
 
     <section class="u-detail_header">
       <van-nav-bar title="商品详情" left-arrow>
@@ -65,7 +65,7 @@
           <i class="van-icon ib-middle van-icon-arrow"></i>
         </div>
       </div>
-      <div class="u-detail_choose-item">
+      <div class="u-detail_choose-item" @click="packShow = true">
         <span>套餐购买</span>
         <div class="choose-txt">
           <p class="ib-middle">查看</p>
@@ -76,13 +76,40 @@
 
     <div class="u-detail_line"></div>
 
+    <section class="u-detail_tab">
+      <ul class="tab-item">
+        <li class="tab-list cur">
+          <span>图文详情</span>
+        </li>
+        <li class="tab-list">
+          <span>酒评参数</span>
+        </li>
+        <li class="tab-list">
+          <span>评价提问</span>
+        </li>
+        <li class="tab-list">
+          <span>售后服务</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 内容模块 -->
+    <article class="u-goods-content">
+      <div class="goods-details">
+        <div class="title">
+          <p>Goods details</p>
+          <h3>商品详情</h3>
+        </div>
+      </div>
+    </article>
+    <!-- 底栏 -->
     <van-goods-action>
       <van-goods-action-mini-btn icon="kefu" text=" " @click="onClickefu" />
       <van-goods-action-mini-btn icon="cart2" text=" " @click="onClickMiniBtn" />
       <van-goods-action-big-btn text="加入购物车" @click="onClickBigBtn" />
       <van-goods-action-big-btn text="立即购买" @click="onClickBigBtn" primary />
     </van-goods-action>
-
+    <!-- 规格弹窗 -->
     <van-actionsheet v-model="skuShow" title="选择规格">
       <div class="sku-wrap">
         <div class="goods-info">
@@ -100,44 +127,95 @@
         </div>
         <div class="sku-item">
           <h4 class="sku-title">包装</h4>
-          <div class="sku-list cur">
-            <span class="sku-name">普通装</span>
-          </div>
-          <div class="sku-list">
-            <span class="sku-name">礼盒装</span>
+          <div class="sku-item-ul">
+            <div class="sku-list cur">
+              <span class="sku-name">普通装</span>
+            </div>
+            <div class="sku-list">
+              <span class="sku-name">礼盒装</span>
+            </div>
           </div>
         </div>
         <div class="sku-item">
-          <h4 class="sku-title">包装2</h4>
-          <div class="sku-list cur">
-            <span class="sku-name">普通装</span>
-          </div>
-          <div class="sku-list">
-            <span class="sku-name">礼盒装</span>
+          <h4 class="sku-title">包装</h4>
+          <div class="sku-item-ul">
+            <div class="sku-list cur">
+              <span class="sku-name">普通装</span>
+            </div>
+            <div class="sku-list">
+              <span class="sku-name">礼盒装</span>
+            </div>
           </div>
         </div>
         <div class="sku-num">
           <h4>数量</h4>
-          
+          <van-stepper :min="1" v-model="num" :integer="true" />
+        </div>
+      </div>
+    </van-actionsheet>
+    <!-- 套餐弹窗 -->
+    <van-actionsheet v-model="packShow" title="选择套餐">
+      <div class="sku-wrap pack-wrap">
+        <div class="goods-info">
+          <div class="pro ib-middle">
+            <img src="~/assets/img/img.png">
+          </div>
+          <div class="desc ib-bottom">
+            <div class="price">
+              ¥399
+            </div>
+            <div class="selected">
+              已选：【套餐一】
+            </div>
+          </div>
+        </div>
+        <div class="sku-item">
+          <h4 class="sku-title">包装</h4>
+          <div class="sku-item-ul">
+            <div class="sku-list cur">
+              <span class="sku-name">普通装</span>
+            </div>
+            <div class="sku-list">
+              <span class="sku-name">礼盒装</span>
+            </div>
+            <div class="sku-list">
+              <span class="sku-name">礼盒装</span>
+            </div>
+            <div class="sku-list">
+              <span class="sku-name">礼盒装</span>
+            </div>   
+          </div>
+        </div>
+        <div class="pack-goods-bill">
+          <span>商品清单：</span>
+          <p>法国1982拉菲法国1982拉菲传奇Lafite + 开瓶器 + 红酒玻璃九件套 + 套餐商品A +套餐商品B + 套餐商品C</p>
+        </div>
+        <div class="sku-num">
+          <h4>数量</h4>
+          <van-stepper :min="1" v-model="num" :integer="true" />
         </div>
       </div>
     </van-actionsheet>
 
-  </article>
+  </main>
 </template>
 <script>
-import api from '~/utils/request'
+// import api from '~/utils/request'
 
 export default {
-  data() {
+  data () {
     return {
       skuShow: false,
+      packShow: false,
+
+      num: 10,
+      active: 1,
 
       swiperBanner: {
         speed: 600,
         slidesPerView: 'auto',
         on: {
-          slideChangeTransitionStart: function(swiper) {
+          slideChangeTransitionStart: function (swiper) {
             document.querySelectorAll('.point').forEach(el => {
               el.classList.remove('active')
             })
@@ -162,13 +240,13 @@ export default {
   },
 
   methods: {
-    onClickMiniBtn() {
+    onClickMiniBtn () {
       console.log(1)
     },
-    onClickBigBtn() {
+    onClickBigBtn () {
       console.log(2)
     },
-    onClickefu() {
+    onClickefu () {
       console.log(3)
     }
   }
@@ -277,7 +355,7 @@ export default {
         right: 0;
         bottom: 0;
         width: 78px;
-        height: 33px;
+        height: 31px;
         line-height: 33px;
         border: 1px solid #c7c7c7;
         border-radius: 18px;
@@ -319,9 +397,10 @@ export default {
     }
   }
   .sku-wrap {
-    padding: 0 20px; 
+    padding: 0 20px 86px; 
     .goods-info {
       padding: 20px 0 0;
+      margin-bottom: 30px;
       .pro {
         width: 100px;
         height: 100px;
@@ -353,7 +432,7 @@ export default {
     // sku信息
     .sku-item {
       h4 {
-        margin: 30px 0;
+        margin: 10px 0 20px;
         font-size: 15px;
         color: #333;
         font-family: 'PingFang-SC-Medium';
@@ -370,7 +449,8 @@ export default {
         font-size: 13px;
         color: #333;
         font-weight: bold;
-        &:last-child {
+        margin-bottom: 20px;
+        &:nth-child(2n) {
           margin-right: 0
         }
         &.cur {
@@ -379,6 +459,108 @@ export default {
           border-color: transparent;
         }
       }
+    }
+    .sku-num {
+      margin-top: 10px;
+      h4 {
+        font-size: 15px;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 6px;
+      }
+      .van-stepper {
+        float: right;
+      }
+    }
+  }
+  .pack-wrap {
+    .pack-goods-bill {
+      font-size: 0;
+      span {
+        color: #333;
+        font-weight: bold;
+        font-size: 13px;
+      }
+      p {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #666;
+        line-height: 22px;
+      }
+    }
+    .sku-num {
+      margin-top: 30px;
+    }
+  }
+  .van-goods-action {
+    z-index: 9999;
+  }
+
+  &_tab {
+    .tab-item {
+      padding: 0 30px; 
+      height: 45px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      border-bottom: 1px solid #f1f1f1;
+    }
+    .tab-list {
+      font-size: 13px;
+      color: #ccc;
+      font-weight: bold;
+      font-family: 'PingFang-SC-Medium';
+      position: relative;
+      &.cur {
+        color: #333;
+        &:after {
+          content: '';
+          position: absolute;
+          left: 50%;
+          bottom: -16px;
+          margin-left: -10px;
+          width: 20px;
+          height: 2px;
+          background: #333;
+        }
+      }
+    }
+  }
+}
+.u-goods-content {
+  overflow: hidden;
+  font-size: 0;
+  .title {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+    &:after {
+      content: '';
+      width: 100%;
+      position: absolute;
+      left: 0;
+      bottom: 7px;
+      height: 1px;
+      background: #ddd;
+      z-index: -1;
+    }
+    h3 {
+      font-size: 15px;
+      color: #333;
+      font-family: 'PingFangSC-Semibold';
+      font-weight: bold;
+      width: 96px;
+      background: #fff;
+      display: inline-block;
+    }
+    p {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      font-size: 12px;
+      color: #ddd;
+      font-family: 'PingFangSC-Semibold';
     }
   }
 }

@@ -33,7 +33,7 @@
   export default {
     name: 'u-footer',
 
-    data() {
+    data () {
       return {
       }
     },
