@@ -343,20 +343,8 @@ import uFooter from '~/components/footer'
 export default {
   name: 'home',
   layout: 'default',
-<<<<<<< HEAD
-
-  async asyncData (req) {
-    return api.all([
-      api.serverGet('/api-1', {}, req),
-      api.serverGet('/api-2', {}, req)
-    ])
-      .then(api.spread(function (data1, data2) {
-        console.log(data1, data2)
-      }))
-=======
   components: {
     uFooter
->>>>>>> c262801dd18c13e32826162a9c4ef8a46561b146
   },
   // async asyncData (req) {
   //   return api.all([
