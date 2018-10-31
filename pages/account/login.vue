@@ -1,7 +1,7 @@
 <template>
   <div class="m-login">
 
-    <h2 class="m-login-title">{{ loginTypeText }}<div class="icon-close "></div></h2>
+    <h2 class="m-login-title">{{ loginTypeText }}<div class="icon-close" @click='gotoIndex'></div></h2>
 
     <div class="u-login-input mb-30">
       <input v-model="phone" placeholder="请输入手机号码" type="phone"></input>
@@ -154,6 +154,10 @@ export default {
           this.$toast(data)
         }
       }
+    },
+
+    gotoIndex () {
+      window.location.href = '/'
     }
   }
 
