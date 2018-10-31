@@ -1,6 +1,6 @@
 html, body
 {
-  background-color: #F5F5F5;
+  // background-color: #F5F5F5;
   color: #000;
   /* letter-spacing: 0.5px; */
   font-family: PingFang SC,Lantinghei SC,Helvetica Neue,Helvetica,Arial,Microsoft YaHei,\\5FAE\8F6F\96C5\9ED1,STHeitiSC-Light,simsun,\\5B8B\4F53,WenQuanYi Zen Hei,WenQuanYi Micro Hei,"sans-serif";
@@ -12,11 +12,6 @@ html, body
 #__nuxt {
   height: 100%;
   width: 100%;
-}
-
-footer
-{
-  text-align: center;
 }
 
 // a, a:hover, a:focus, a:visited
@@ -110,15 +105,41 @@ input[type="text"] {
   margin-left: 0px!important;
 }
 
+// 通用类
 .bg {
   background-position: 50% 50%;
   background-size: cover;
 }
+
+.full {
+  width: 100%;
+  height: 100%;
+}
+
 .icon {
   width: 12px;
   height: 12px;
   fill: currentColor;
   overflow: hidden;
+}
+
+.ib-middle {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.ib-top {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.ib-bottom {
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+.margin-20 {
+  margin: 0px 20px;
 }
 
 // 按钮
@@ -144,6 +165,34 @@ input[type="text"] {
     color: #999999;
     &:active {
       opacity: 1;
+    }
+  }
+}
+
+// 列表页下的icon
+.u-other {
+  span {
+    font-size: 12px;
+    color: #999;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 23px;
+    i {
+      width: 18px;
+      height: 18px;
+      margin-right: 5px;
+      display: inline-block;
+      margin-bottom: 4px;
+      vertical-align: middle;
+    }
+    &.zan i{
+      background: url('~/assets/img/home/ic_dianzan_g_18x18@2x.png') no-repeat center/contain
+    }
+    &.chat i{
+      background: url('~/assets/img/home/ic_pinglun_g_18x18@2x.png') no-repeat center/contain
+    }
+    &.watch i{
+      background: url('~/assets/img/home/ic_liulang_g_18x18@2x.png') no-repeat center/contain
     }
   }
 }

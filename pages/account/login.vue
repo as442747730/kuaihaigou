@@ -1,7 +1,7 @@
 <template>
   <div class="m-login">
 
-    <h2 class="m-login-title">{{ loginTypeText }}<div class="icon-close "></div></h2>
+    <h2 class="m-login-title">{{ loginTypeText }}<div class="icon-close" @click='gotoIndex'></div></h2>
 
     <div class="u-login-input mb-30">
       <input v-model="phone" placeholder="请输入手机号码" type="phone"></input>
@@ -16,7 +16,7 @@
 
       <div class="m-login-handler">
         <!-- <a class="u-link active-status" href="">创建账号</a> -->
-        <nuxt-link class="u-link active-status" to="">创建账号</nuxt-link>
+        <nuxt-link class="u-link active-status" to="/account/register">注册账号</nuxt-link>
         <nuxt-link class="u-link active-status" to="">忘记密码？</nuxt-link>
       </div>
     </section>
@@ -55,6 +55,7 @@ import captchaInput from '~/components/Login-captcha.vue'
 
 export default {
   name: 'login',
+  layout: 'default',
 
   data() {
     return {
@@ -153,6 +154,10 @@ export default {
           this.$toast(data)
         }
       }
+    },
+
+    gotoIndex () {
+      window.location.href = '/'
     }
   }
 

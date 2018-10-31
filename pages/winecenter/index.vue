@@ -1272,11 +1272,18 @@ export default {
 
         .bg_cover;
       }
+<<<<<<< HEAD
     }
 
     .icon_time {
       &:before {
         background-image: url("../../assets/img/Icons/ic_time_24x24.png");
+=======
+      .icon_address {
+        &:before {
+          background-image: url('../../assets/img/Icons/ic_position_24x24.png');
+        }
+>>>>>>> c262801dd18c13e32826162a9c4ef8a46561b146
       }
     }
 
