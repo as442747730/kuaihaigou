@@ -361,7 +361,7 @@ export default {
   //   })
   // },
 
-  data() {
+  data () {
     return {
       bannerImg: bannerImg,
 

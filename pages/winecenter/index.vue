@@ -123,15 +123,15 @@
   import testImg1 from '../../assets/img/img.png'
   import testImg2 from '../../assets/img/img2.png'
   export default {
-    data() {
+    data () {
       return {
         bkImg1: testImg1,
         bkImg2: testImg2,
-        isNovice: true   // 是否为新手
+        isNovice: true // 是否为新手
       }
     },
     methods: {
-      swtichNovice() {
+      swtichNovice () {
         this.isNovice = !this.isNovice
       }
     }
