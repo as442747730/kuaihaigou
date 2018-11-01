@@ -326,7 +326,7 @@
     </article>
 
     <!-- 页脚 -->
-    <uFooter />
+    <u-footer :postIndex="0"></u-footer>
 
   </div>
 </template>
