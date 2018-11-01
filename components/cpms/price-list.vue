@@ -185,69 +185,36 @@
 </style>
 <script>
 export default {
-
   name: 'priceList',
-
   props: ['postPrice'],
-
-  data() {
-
+  data () {
     return {
-
       boolPrice: this.postPrice,
-
       stepvalue: 0,
-
       liLength: 40,
-
       recommendList: ['全部', '最新', '最便宜', '最贵', '仅看往期']
-
     }
-
   },
-
   methods: {
-
-    changeValue(value) {
-
+    changeValue (value) {
       console.log(this.boolPrice)
-
     },
-
-    addClass() {
-
+    addClass () {
       this.$refs.prices.classList.add('u_zIndex100')
-
       this.$refs.prices.classList.add('u-cpms_opa')
-
       this.$refs.pricesIn.classList.add('u-cpms_trans')
-
     },
-
-    addEmpty(len) {
-
+    addEmpty (len) {
       return len < 4 ? (4 - len % 4) : len % 4
-
     },
-
-    resetFn() {
-
-
+    resetFn () {
       this.$refs.prices.classList.remove('u-cpms_opa')
-
       this.$refs.pricesIn.classList.remove('u-cpms_trans')
-
-      this.$emit('shut')
-
       setTimeout(() => {
-
         this.$refs.prices.classList.remove('u_zIndex100')
-
+        this.$emit('shut')
       }, 600)
-
     }
-
   }
-
 }
 </script>

@@ -16,13 +16,8 @@
 <script>
   export default {
     name: 'u-footer',
-<<<<<<< HEAD
     props: ['postIndex'],
-    data() {
-=======
-
     data () {
->>>>>>> f9f9cdb2193d5ed4c01d7f5888c5ef0365453f22
       return {
         clsList: ['footer-icon-index', 'footer-icon-xjzx', 'footer-icon-add', 'footer-icon-zsfx', 'footer-icon-my'],
         footList: ['首页', '选酒中心', 'add', '知识分享', '我的']
@@ -33,17 +28,17 @@
         let path = ''
         switch (index) {
           case 0:
-            path = '/home';
-            break;
+            path = '/home'
+            break
           case 1:
-            path = '/winecenter';
-            break;
+            path = '/winecenter'
+            break
           case 4:
-            path = '/account/login';
-            break;
+            path = '/account/login'
+            break
           default:
-            path = '/home';
-            break;
+            path = '/home'
+            break
         }
         window.location.href = path
       }
@@ -66,7 +61,7 @@ footer {
   left: 0;
   bottom: 0;
   background: #fff; 
-  z-index: 9999;
+  z-index: 20;
   .footer-icon {
     display: block;
     text-align: center;

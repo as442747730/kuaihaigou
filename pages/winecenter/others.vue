@@ -44,7 +44,7 @@ import uFooter from '~/components/footer'
 import listCpm from '~/components/cpms/others-list'
 import Imgs from '~/assets/img/green_wine.jpg'
 export default {
-  data() {
+  data () {
     return {
       isRoll: false,
       classify: {
@@ -62,12 +62,12 @@ export default {
     listCpm
   },
   methods: {
-    toWinecenter() {
+    toWinecenter () {
       window.location.href = '/winecenter'
     },
-    elClassify(index) {
+    elClassify (index) {
       this.classify.elIndex = index
-      if(index === 0) {
+      if (index === 0) {
         this.classify.nowList = this.lists
       } else {
         this.classify.nowList = this.lists2
@@ -78,7 +78,7 @@ export default {
         this.$refs.listCpm.addClass()
       })
     },
-    closeClassify() {
+    closeClassify () {
       this.classify.elIndex = null
       this.classify.nowList = []
       this.isRoll = false

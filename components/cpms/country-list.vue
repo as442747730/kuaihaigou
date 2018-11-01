@@ -28,30 +28,23 @@
 </template>
 <script>
 export default {
-
-  data() {
-
+  data () {
     return {
-
       countries: ['所有国家', '法国', '德国', '西班牙', '葡萄牙', '澳大利亚', '阿根廷', '新西兰', '保加利亚', '意大利'],
-
       produceAreas: ['阿尔萨斯（Alsace）', '卢瓦尔河谷（Loire Valley）', '波尔多（Bordeaux）', '普罗旺斯（Provence）', '阿尔萨斯（Alsace）']
-
     }
-
   },
   methods: {
-    addClass() {
+    addClass () {
       let country = this.$refs.refcountry
       country.classList.add('transx')
     },
-    delCountry() {
+    delCountry () {
       let country = this.$refs.refcountry
       country.classList.remove('transx')
       this.$emit('delCountry')
     }
   }
-
 }
 </script>
 <style lang="less" scoped>
@@ -255,6 +248,7 @@ export default {
   }
 
 }
+
 .transx {
   transform: translateX(0);
 }

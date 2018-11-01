@@ -92,7 +92,7 @@
 import bkImg from '~/assets/img/green_wine.jpg'
 import bkImg2 from '~/assets/img/bk1.png'
 export default {
-  data() {
+  data () {
     return {
       keywords: '',
       bkImg: bkImg,
@@ -104,7 +104,7 @@ export default {
     }
   },
   methods: {
-    elNavlist(index) {
+    elNavlist (index) {
       this.navData.elIndex = index
     }
   }

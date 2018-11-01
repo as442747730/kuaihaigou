@@ -53,39 +53,23 @@
 </template>
 <script>
 export default {
-
   name: 'levelCpms',
-
   props: ['postLevel'],
-
   methods: {
-
-    addClass() {
-
+    addClass () {
       this.$refs.levels.classList.add('u_zIndex50')
-
       this.$refs.levels.classList.add('u-cpms_opa')
-
       this.$refs.levelsIn.classList.add('u-cpms_trans')
-
     },
-
-    resetFn() {
-
+    resetFn () {
       this.$refs.levels.classList.remove('u-cpms_opa')
-
       this.$refs.levelsIn.classList.remove('u-cpms_trans')
-
-
       setTimeout(() => {
         this.$refs.levels.classList.remove('u_zIndex50')
         this.$emit('shut')
       }, 600)
-
     }
-
   }
-
 }
 </script>
 <style lang="less" scoped>
@@ -146,19 +130,22 @@ export default {
   .novice {
     width: 100%;
     height: 100%;
+
     &>ul {
       width: 100%;
       height: 100%;
+
       &>li {
         width: 100%;
         height: 50%;
-        font-family:PingFang-SC-Medium;
-        font-weight:500;
+        font-family: PingFang-SC-Medium;
+        font-weight: 500;
         color: @cor_999;
         .flex_allCenter;
       }
+
       .active {
-        font-family:PingFangSC-Medium;
+        font-family: PingFangSC-Medium;
         color: @cor_333;
       }
     }

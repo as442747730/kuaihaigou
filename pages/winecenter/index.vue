@@ -89,7 +89,7 @@
               <div class="bars">
                 <div class="bars-left">酸度：{{good.acidity}}<span>分</span></div>
                 <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar="good.acidity"></span>
+                  <span class="bars-right_top" ref="ubars" :data-bar='good.acidity'></span>
                 </div>
               </div>
             </div>
@@ -97,7 +97,7 @@
               <div class="bars">
                 <div class="bars-left">复杂：{{good.complexity}} <span>分</span></div>
                 <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar="good.complexity"></span>
+                  <span class="bars-right_top" ref="ubars" :data-bar='good.complexity'></span>
                 </div>
               </div>
             </div>
@@ -113,87 +113,59 @@
   </div>
 </template>
 <script>
-<<<<<<< HEAD
-import testImg1 from "../../assets/img/img.png";
+import testImg1 from '../../assets/img/img.png'
 
-import testImg2 from "../../assets/img/img2.png";
+import testImg2 from '../../assets/img/img2.png'
 
 import uFooter from '~/components/footer'
 
-import countryCpm from "~/components/cpms/country-list.vue";
+import countryCpm from '~/components/cpms/country-list.vue'
 
-import priceCpm from "~/components/cpms/price-list.vue";
+import priceCpm from '~/components/cpms/price-list.vue'
 
-import levelCpms from "~/components/cpms/level-cpms.vue";
+import levelCpms from '~/components/cpms/level-cpms.vue'
 
 import api from '~/utils/request'
 
 export default {
 
-  data() {
-
+  data () {
     return {
-
       footIndex: 1,
-
       bkImg1: testImg1,
-
       bkImg2: testImg2,
-
       isRoll: false,
-
       isNovice: true, // 是否为新手
-
       screens: {
-
-        list: ["价格类型", "场景特色", "推荐排序"],
-
+        list: ['价格类型', '场景特色', '推荐排序'],
         elIndex: null
-
       },
-
       ranks: {
-
-        list: ["等级", "葡萄品种", "其他筛选", '新手选酒'],
-
+        list: ['等级', '葡萄品种', '其他筛选', '新手选酒'],
         elIndex: null
-
       },
-
       isCountry: false, // 是否国家产区
-
       isPrice: false, // 是否为价格类型
-
       goodsList: [], // 商品列表
-
       countryList: [], // 国家列表
-
-      areaList: [], // 产区列表
-
-    };
-
+      areaList: [] // 产区列表
+    }
   },
-
   components: {
-
     uFooter,
-
     countryCpm,
-
     priceCpm,
-
     levelCpms
-
   },
-  mounted() {
+  mounted () {
     this.getPageData()
   },
 
   methods: {
-    toOthers() {
+    toOthers () {
       window.location.href = '/winecenter/others'
     },
-    async getPageData() {
+    async getPageData () {
       const { code, data } = await api.clientGet('/api/esGoods/paginate', { ifWine: true })
       if (code === 200) {
         this.goodsList = data.array
@@ -205,7 +177,7 @@ export default {
       }
     },
 
-    addBarwid() {
+    addBarwid () {
       this.$nextTick(() => {
         let ubars = this.$refs.ubars
         ubars.map(v => {
@@ -214,123 +186,68 @@ export default {
       })
     },
 
-    openCollapse(n) {
-
-      console.log("n", n);
-
+    openCollapse (n) {
       if (n === 1) {
-
-        this.isPrice = true;
-
-        this.isRoll = this.isPrice;
-
+        this.isPrice = true
+        this.isRoll = this.isPrice
       }
-
     },
 
-    swtichNovice() {
-      this.isNovice = !this.isNovice;
+    swtichNovice () {
+      this.isNovice = !this.isNovice
       this.addBarwid()
     },
 
-    elCountry() {
-
+    elCountry () {
       if (this.ranks.elIndex !== null) {
         this.$refs.refRank.resetFn()
         return false
-=======
-  import testImg1 from '../../assets/img/img.png'
-  import testImg2 from '../../assets/img/img2.png'
-  export default {
-    data () {
-      return {
-        bkImg1: testImg1,
-        bkImg2: testImg2,
-        isNovice: true // 是否为新手
->>>>>>> f9f9cdb2193d5ed4c01d7f5888c5ef0365453f22
       }
-
       if (this.screens.elIndex !== null) {
         this.$refs.refPrice.resetFn()
         return false
       }
-
-      this.isCountry = !this.isCountry;
-
+      this.isCountry = !this.isCountry
       this.isRoll = this.isCountry
       if (this.isCountry) {
         setTimeout(() => {
           this.$refs.refcountryCpm.addClass()
         })
       }
-
     },
-<<<<<<< HEAD
-
-    elScreens(index) {
-
+    elScreens (index) {
       if (this.ranks.elIndex !== null) {
         this.$refs.refRank.resetFn()
-
         return false
-=======
-    methods: {
-      swtichNovice () {
-        this.isNovice = !this.isNovice
->>>>>>> f9f9cdb2193d5ed4c01d7f5888c5ef0365453f22
       }
-
-      this.$set(this.screens, "elIndex", index)
-
-      this.isRoll = true;
-
+      this.$set(this.screens, 'elIndex', index)
+      this.isRoll = true
       setTimeout(() => {
-
         this.$refs.refPrice.addClass()
-
-      }, 10);
-
+      }, 10)
     },
-
-    closeScreens() {
-
+    closeScreens () {
       this.screens.elIndex = null
-
       this.isRoll = false
-
     },
 
-    elRanks(index) {
-
-      this.ranks.elIndex = index;
-
-      this.isRoll = true;
-
+    elRanks (index) {
+      this.ranks.elIndex = index
+      this.isRoll = true
       setTimeout(() => {
-
         this.$refs.refRank.addClass()
-
-      }, 10);
-
+      }, 10)
     },
-
-    closeRanks() {
-
-      this.ranks.elIndex = null;
-
-      this.isRoll = false;
-
+    closeRanks () {
+      this.ranks.elIndex = null
+      this.isRoll = false
       console.log(this.ranks.elIndex)
-
     },
-
-    customArray(arr) {
+    customArray (arr) {
       return JSON.parse(arr)
     }
-
   }
-
-};
+}
 </script>
 <style lang="less" scoped>
 @import "../../assets/css/var.less";
