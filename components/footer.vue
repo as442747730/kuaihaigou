@@ -16,8 +16,13 @@
 <script>
   export default {
     name: 'u-footer',
+<<<<<<< HEAD
     props: ['postIndex'],
     data() {
+=======
+
+    data () {
+>>>>>>> f9f9cdb2193d5ed4c01d7f5888c5ef0365453f22
       return {
         clsList: ['footer-icon-index', 'footer-icon-xjzx', 'footer-icon-add', 'footer-icon-zsfx', 'footer-icon-my'],
         footList: ['首页', '选酒中心', 'add', '知识分享', '我的']

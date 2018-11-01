@@ -142,6 +142,18 @@ input[type="text"] {
   margin: 0px 20px;
 }
 
+.margin-30 {
+  margin: 0px 30px;
+}
+
+.limit_one{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+
 // 按钮
 .u-button {
   text-align: center;
@@ -197,6 +209,68 @@ input[type="text"] {
   }
 }
 
+// nar-bar样式
+.van-nav-bar__title {
+  font-size: 17px!important;
+  font-weight: bold!important;
+  font-family: 'PingFangSC-Medium'
+}
+.van-nav-bar__arrow {
+  font-weight: bold!important;
+  color: #333!important;
+}
+.van-nav-bar__right {
+  top: 0;
+}
+.van-icon {
+  &-fenxiang {
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+    background: url('~/assets/img/detail/ic_search_b_30x30@2x.png') no-repeat center/contain
+  }
+  &-collect {
+    width: 30px;
+    height: 30px;
+    background: url('~/assets/img/detail/ic_shop_b_30x30@2x.png') no-repeat center/contain
+  }
+}
+
+// 商品详情页下的购物车icon
+.u-detail {
+  .van-icon {
+    &-kefu {
+      margin-bottom: 0;
+      width: 25px;
+      height: 25px;
+      background: url('~/assets/img/detail/ic_news_25x25@2x.png') no-repeat center/contain
+    }
+    &-cart2 {
+      margin-bottom: 0;
+      width: 25px;
+      height: 25px;
+      background: url('~/assets/img/detail/ic_shopping_cart_25x25@2x.png') no-repeat center/contain
+    }
+  }
+  .van-goods-action-mini-btn {
+    background: #f6f6f6;
+    border-right: 1px solid #eee;
+  }
+  .van-goods-action-big-btn {
+    font-size: 15px;
+    font-weight: bold;
+    font-family: 'PingFangSC-Semibold'
+  }
+  .van-button--bottom-action {   
+    color: #333;
+    background: #f6f6f6
+  }
+  .van-button--bottom-action.van-button--primary {
+    color: #fff;
+    background: #03A1CD
+  }
+}
+
 // 登录页 input 
 .u-login-input {
   border-bottom: 1px solid #E2E2E2;
@@ -229,6 +303,27 @@ input[type="text"] {
 .active-status {
   &:active {
     opacity: 0.8;
+  }
+}
+
+// 重置 van step 组件样式
+.van-stepper {
+  .van-stepper__minus {
+    width: 26px;
+    height: 24px;
+    border-right: none;
+    background: #FFFFFF;
+  }
+  .van-stepper__input {
+    width: 26px;
+    padding: 0;
+    height: 22px;
+    font-size: 13px
+  }
+  .van-stepper__plus {
+    width: 26px;
+    height: 24px;
+    border-left: none;
   }
 }
 

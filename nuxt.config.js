@@ -88,7 +88,7 @@ module.exports = {
       if (ctx.isClient) {
         config.resolve.alias['vue'] = 'vue/dist/vue.js'
       }
-      if (ctx.idDev && ctx.isClient) {
+      if (ctx.isDev && ctx.isClient) {
         config.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
@@ -96,7 +96,7 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-      if (!ctx.idDev && !ctx.isClient) {
+      if (!ctx.isDev && !ctx.isClient) {
         config.plugins.push(
           new webpack.optimize.UglifyJsPlugin({
             compress: {

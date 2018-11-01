@@ -328,16 +328,10 @@
     <!-- 页脚 -->
     <u-footer :postIndex="0"></u-footer>
 
-    <!-- <van-button type="default" round>按钮</van-button> -->
-    <!-- <div class="u-button" >按钮</div> -->
-
-    <!-- <div class="u-login-input">
-      <input placeholder="请输入密码"></input>
-    </div> -->
   </div>
 </template>
 <script>
-import api from '~/utils/request'
+// import api from '~/utils/request'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 import uFooter from '~/components/footer'
 export default {
@@ -367,7 +361,7 @@ export default {
   //   })
   // },
 
-  data() {
+  data () {
     return {
       bannerImg: bannerImg,
 
@@ -388,8 +382,8 @@ export default {
     }
   },
 
-  created() {
-    console.log(this.swiperOption)
+  created () {
+    // console.log(this.swiperOption)
   },
 
   methods: {

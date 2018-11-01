@@ -113,6 +113,7 @@
   </div>
 </template>
 <script>
+<<<<<<< HEAD
 import testImg1 from "../../assets/img/img.png";
 
 import testImg2 from "../../assets/img/img2.png";
@@ -237,6 +238,16 @@ export default {
       if (this.ranks.elIndex !== null) {
         this.$refs.refRank.resetFn()
         return false
+=======
+  import testImg1 from '../../assets/img/img.png'
+  import testImg2 from '../../assets/img/img2.png'
+  export default {
+    data () {
+      return {
+        bkImg1: testImg1,
+        bkImg2: testImg2,
+        isNovice: true // 是否为新手
+>>>>>>> f9f9cdb2193d5ed4c01d7f5888c5ef0365453f22
       }
 
       if (this.screens.elIndex !== null) {
@@ -254,6 +265,7 @@ export default {
       }
 
     },
+<<<<<<< HEAD
 
     elScreens(index) {
 
@@ -261,6 +273,11 @@ export default {
         this.$refs.refRank.resetFn()
 
         return false
+=======
+    methods: {
+      swtichNovice () {
+        this.isNovice = !this.isNovice
+>>>>>>> f9f9cdb2193d5ed4c01d7f5888c5ef0365453f22
       }
 
       this.$set(this.screens, "elIndex", index)

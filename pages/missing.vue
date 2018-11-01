@@ -11,9 +11,8 @@
 <script>
   export default {
     name: '',
-    data() {
+    data () {
       return {
-        
       }
     },
     methods: {
@@ -23,7 +22,5 @@
     }
   }
 </script>
-
 <style lang="" scoped>
-  
 </style>
