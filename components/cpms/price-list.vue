@@ -50,7 +50,7 @@
  </div>
 </template>
 <style lang="scoped" lang="less">
-@import '../assets/css/var.less';
+@import '../../assets/css/var.less';
 
 .prices {
   &-in {

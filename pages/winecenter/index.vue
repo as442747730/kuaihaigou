@@ -3,10 +3,11 @@
     <div class="winecenter-head">
       <div class="upper">
         <div class="top">
-          <div class="top_l">
+          <div class="top_l" @click="toOthers">
             <span class="icon_switch"></span>
-            <span class="world" v-if="isNovice" @click="swtichNovice">切换新手界面</span>
-            <span class="world" v-else @click="swtichNovice">切换高手界面</span>
+            <span class="world">其它商品</span>
+            <!-- <span class="world" v-if="isNovice" @click="swtichNovice">切换新手界面</span>
+            <span class="world" v-else @click="swtichNovice">切换高手界面</span> -->
           </div>
           <div class="top_r">
             <i class="icon_search"></i>
@@ -18,13 +19,7 @@
           <div class="screen-item" :class="{active: screens.elIndex == index}" @click="elScreens(index)" v-for="(item, index) in screens.list" :key="index">{{item}}</div>
         </div>
       </div>
-
-      <country-cpm
-        ref="refcountryCpm"
-        :postCountry="countryList"
-        :postArea="areaList"
-        @delCountry="elCountry"></country-cpm>
-
+      <country-cpm ref="refcountryCpm" :postCountry="countryList" :postArea="areaList" @delCountry="elCountry"></country-cpm>
       <price-cpm ref="refPrice" :postPrice="this.screens.elIndex" @shut="closeScreens"></price-cpm>
       <div class="elmdl">
         <div class="elmdl-item" :class="{active: ranks.elIndex == index}" @click="elRanks(index)" v-for="(rank, index) in ranks.list" :key="index">
@@ -34,7 +29,7 @@
       <level-cpms ref="refRank" :postLevel="this.ranks.elIndex" @shut="closeRanks"></level-cpms>
     </div>
     <div class="winecenter-content">
-      <section class="novice" v-if="isNovice" >
+      <section class="novice" v-if="isNovice">
         <div class="com-item" v-for="(good, index) in goodsList" :key="index">
           <div class="item_l">
             <div class="item_l_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
@@ -114,6 +109,7 @@
         </div>
       </section>
     </div>
+    <u-footer :postIndex="footIndex"></u-footer>
   </div>
 </template>
 <script>
@@ -121,11 +117,13 @@ import testImg1 from "../../assets/img/img.png";
 
 import testImg2 from "../../assets/img/img2.png";
 
-import countryCpm from "~/components/country-list.vue";
+import uFooter from '~/components/footer'
 
-import priceCpm from "~/components/price-list.vue";
+import countryCpm from "~/components/cpms/country-list.vue";
 
-import levelCpms from "~/components/level-cpms.vue";
+import priceCpm from "~/components/cpms/price-list.vue";
+
+import levelCpms from "~/components/cpms/level-cpms.vue";
 
 import api from '~/utils/request'
 
@@ -134,6 +132,8 @@ export default {
   data() {
 
     return {
+
+      footIndex: 1,
 
       bkImg1: testImg1,
 
@@ -153,7 +153,7 @@ export default {
 
       ranks: {
 
-        list: ["等级", "葡萄品种", "其他筛选"],
+        list: ["等级", "葡萄品种", "其他筛选", '新手选酒'],
 
         elIndex: null
 
@@ -163,17 +163,19 @@ export default {
 
       isPrice: false, // 是否为价格类型
 
-      goodsList: [],   // 商品列表
+      goodsList: [], // 商品列表
 
-      countryList: [],  // 国家列表
+      countryList: [], // 国家列表
 
-      areaList: [],   // 产区列表
+      areaList: [], // 产区列表
 
     };
 
   },
 
   components: {
+
+    uFooter,
 
     countryCpm,
 
@@ -187,8 +189,11 @@ export default {
   },
 
   methods: {
+    toOthers() {
+      window.location.href = '/winecenter/others'
+    },
     async getPageData() {
-      const { code, data } = await api.clientGet('/api/esGoods/paginate', {ifWine: true})
+      const { code, data } = await api.clientGet('/api/esGoods/paginate', { ifWine: true })
       if (code === 200) {
         this.goodsList = data.array
         await this.addBarwid()
@@ -240,7 +245,7 @@ export default {
       }
 
       this.isCountry = !this.isCountry;
-      
+
       this.isRoll = this.isCountry
       if (this.isCountry) {
         setTimeout(() => {
@@ -264,7 +269,7 @@ export default {
 
       setTimeout(() => {
 
-        this.$refs.refPrice.addClass();
+        this.$refs.refPrice.addClass()
 
       }, 10);
 
@@ -272,9 +277,9 @@ export default {
 
     closeScreens() {
 
-      this.screens.elIndex = null;
+      this.screens.elIndex = null
 
-      this.isRoll = false;
+      this.isRoll = false
 
     },
 
@@ -303,7 +308,7 @@ export default {
     },
 
     customArray(arr) {
-      return  JSON.parse(arr)
+      return JSON.parse(arr)
     }
 
   }
@@ -314,11 +319,8 @@ export default {
 @import "../../assets/css/var.less";
 
 .stopwineScroll {
-
   height: 100vh;
-
   overflow: hidden;
-
 }
 
 .winecenter {
@@ -514,13 +516,16 @@ export default {
 
     .flex_allCenter;
 
-    width: 100px;
+    // width: 100px;
 
     height: 30px;
 
     background: #f8f8f8;
 
     border-radius: 15px;
+
+    padding-left: 10px;
+    padding-right: 8px;
 
     &>span {
 
@@ -534,7 +539,7 @@ export default {
 
       position: relative;
 
-      padding-right: 20px;
+      padding-right: 17px;
 
       &:after {
 
@@ -637,36 +642,7 @@ export default {
     }
 
     &>p {
-
-      padding: 10px 0;
-
-      font-size: 12px;
-
-      font-family: PingFang-SC-Regular;
-
-      font-weight: 400;
-
-      color: rgba(153, 153, 153, 1);
-
-      line-height: 12px;
-      &>span {
-        position: relative;
-        margin-right: 14px;
-        &:after {
-          content: '|';
-          position: absolute;
-          top: 0;
-          right: -8px;
-          height: 12px;
-        }
-      }
-      span:last-child {
-        margin-right: 0;
-        &:after {
-          content: '';
-        }
-      }
-
+      .u-mltip;
     }
 
     .itemr-price {

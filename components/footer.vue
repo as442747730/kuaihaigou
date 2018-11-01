@@ -1,30 +1,14 @@
 <template>
   <footer>
-    <span class="footer-icon cur">
-      <i class="footer-icon-index"></i>
-      <span class="footer-txt">
-        首页
-      </span>
-    </span>
-    <span class="footer-icon">
-      <i class="footer-icon-xjzx" @click="gotoWine"></i>
-      <span class="footer-txt">
-        选酒中心
-      </span>
-    </span>
-    <span class="footer-icon">
-      <i class="footer-icon-add"></i>
-    </span>
-    <span class="footer-icon">
-      <i class="footer-icon-zsfx"></i>
-      <span class="footer-txt">
-        知识分享
-      </span>
-    </span>
-    <span class="footer-icon">
-      <i class="footer-icon-my" @click="gotoLogin"></i>
-      <span class="footer-txt">
-        我的
+    <span
+      class="footer-icon"
+      :class="{cur: postIndex === index}"
+      @click="toPage(index)"
+      v-for="(foot, index) in footList"
+      :key="index">
+      <i :class="clsList[index]"></i>
+      <span class="footer-txt" v-if="index !== 2">
+        {{foot}}
       </span>
     </span>
   </footer>
@@ -32,18 +16,31 @@
 <script>
   export default {
     name: 'u-footer',
-
+    props: ['postIndex'],
     data() {
       return {
+        clsList: ['footer-icon-index', 'footer-icon-xjzx', 'footer-icon-add', 'footer-icon-zsfx', 'footer-icon-my'],
+        footList: ['首页', '选酒中心', 'add', '知识分享', '我的']
       }
     },
-
     methods: {
-      gotoLogin () {
-        window.location.href = '/account/login'
-      },
-      gotoWine () {
-        window.location.href = '/winecenter'
+      toPage (index) {
+        let path = ''
+        switch (index) {
+          case 0:
+            path = '/home';
+            break;
+          case 1:
+            path = '/winecenter';
+            break;
+          case 4:
+            path = '/account/login';
+            break;
+          default:
+            path = '/home';
+            break;
+        }
+        window.location.href = path
       }
     }
 
@@ -83,21 +80,37 @@ footer {
       background-repeat: no-repeat;
     }
     &-index {
-      background-image: url('~/assets/img/home/ic_home_ele@2x.png');
+      background-image: url('~/assets/img/foot/ic_home_nor@2x.png');
     }
     &-xjzx {
-      background-image: url('~/assets/img/home/ic_mall_nor@2x.png');
+      background-image: url('~/assets/img/foot/ic_mall_nor@2x.png');
     }
     &-add {
       width: 43px!important;
       height: 33px!important;
-      background-image: url('~/assets/img/home/icon_ic_fabu_43x33@2x.png');
+      background-image: url('~/assets/img/foot/icon_ic_fabu_43x33@2x.png');
     }
     &-zsfx {
-      background-image: url('~/assets/img/home/ic_applets_nor@2x.png');
+      background-image: url('~/assets/img/foot/ic_applets_nor@2x.png');
     }
     &-my {
-      background-image: url('~/assets/img/home/ic_us_nor@2x.png');
+      background-image: url('~/assets/img/foot/ic_us_nor@2x.png');
+    }
+  }
+  .footer-icon.cur {
+    .footer-icon {
+      &-index {
+        background-image: url('~/assets/img/foot/ic_home_ele@2x.png');
+      }
+      &-xjzx {
+        background-image: url('~/assets/img/foot/ic_mall_ele@2x.png');
+      }
+      &-zsfx {
+        background-image: url('~/assets/img/foot/ic_applets_nor@2x.png');
+      }
+      &-my {
+        background-image: url('~/assets/img/foot/ic_us_nor@2x.png');
+      }
     }
   }
   .footer-txt {

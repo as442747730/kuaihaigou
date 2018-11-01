@@ -46,16 +46,16 @@ export default {
       country.classList.add('transx')
     },
     delCountry() {
-      this.$emit('delCountry')
       let country = this.$refs.refcountry
       country.classList.remove('transx')
+      this.$emit('delCountry')
     }
   }
 
 }
 </script>
 <style lang="less" scoped>
-@import '../assets/css/var.less';
+@import '../../assets/css/var.less';
 
 .countrys {
 
@@ -106,7 +106,7 @@ export default {
 
         height: 30px;
 
-        background-image: url('../assets/img/Icons/ic_off_g_30x30.png');
+        background-image: url('~/assets/img/Icons/ic_off_g_30x30.png');
 
         .bg_cover;
 

@@ -326,7 +326,7 @@
     </article>
 
     <!-- 页脚 -->
-    <uFooter />
+    <u-footer :postIndex="0"></u-footer>
 
     <!-- <van-button type="default" round>按钮</van-button> -->
     <!-- <div class="u-button" >按钮</div> -->

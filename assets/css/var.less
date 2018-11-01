@@ -3,25 +3,43 @@
 @cor_999: #999999;
 @cor_333: #333333;
 @cor_666: #666666;
+
 // padding
 .padlr20 {
   padding-left: 20px;
   padding-right: 20px;
 }
+
 .padtb20 {
   padding-top: 20px;
   padding-bottom: 20px;
 }
+
+// 禁止页面滚动条
+.stopwineScroll {
+  height: 100vh;
+  overflow: hidden;
+}
+
+// 重置 
+.u-restout {
+  background: #fff;
+  line-height: 1;
+  font-size: 12px;
+}
+
 // 弹窗之上
 .cpmzIndex {
   position: relative;
   z-index: 101;
   background: #fff;
 }
+
 // 弹窗通用
 .u-cpms {
   position: fixed;
   top: 0;
+  left: 0;
   width: 100vW;
   height: 100%;
   overflow: hidden;
@@ -29,6 +47,7 @@
   z-index: 0;
   opacity: 0;
   transition: opacity ease .5s;
+
   &-in {
     background: #fff;
     position: relative;
@@ -37,45 +56,73 @@
     overflow: hidden;
   }
 }
+
 .u-cpms_trans {
   transform: translateY(0);
 }
+
 .u-cpms_opa {
   opacity: 1;
 }
+
 .u-cpms.u_zIndex100 {
   z-index: 80;
 }
+
 .u-cpms.u_zIndex50 {
   z-index: 50;
 }
+
 // flex
 .flex_allCenter {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .flex_between {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
+.flex_column {
+  display: flex;
+  justify-content: column;
+  align-items: center;
+}
+
+.flex_tlCenter {
+  display: flex;
+  align-items: center;
+}
+
+.flex_tlMiddle {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
 // background
 .bg_cover {
   background-position: 50% 50%;
   background-size: cover;
   background-repeat: no-repeat;
 }
+
 .bg_contain {
   background-position: 50% 50%;
   background-size: contain;
   background-repeat: no-repeat;
 }
+
 // 进度条
 .u-bars {
   margin: 15px 0;
+
   .bars {
     .flex_between;
+
     &-left {
       width: 75px;
       height: 12px;
@@ -84,12 +131,14 @@
       font-weight: 400;
       color: @cor_666;
     }
+
     &-right {
       width: 117px;
       height: 10px;
       background: #D7F2E6;
       border-radius: 6px;
       position: relative;
+
       &_top {
         position: absolute;
         width: 0;
@@ -98,17 +147,52 @@
         border-radius: 6px;
         transition: .3s;
       }
+
       .w30 {
         width: 30%;
       }
     }
   }
 }
+
+// 750ml | 日常餐酒 | 紧致单宁
+.u-mltip {
+  padding: 10px 0;
+  font-size: 12px;
+  font-family: PingFang-SC-Regular;
+  font-weight: 400;
+  color: rgba(153, 153, 153, 1);
+  line-height: 12px;
+
+  &>span {
+    position: relative;
+    margin-right: 14px;
+
+    &:after {
+      content: '|';
+      position: absolute;
+      top: 0;
+      right: -8px;
+      height: 12px;
+    }
+  }
+
+  &>span:last-child {
+    margin-right: 0;
+
+    &:after {
+      content: '';
+    }
+  }
+
+}
+
 // 列表base
 .listbase(@w, @h) {
   margin-right: -10px;
   flex-wrap: wrap;
   .flex_between;
+
   &_item {
     width: @w;
     height: @h;
@@ -121,26 +205,32 @@
     margin-bottom: 10px;
     .flex_allCenter;
   }
+
   .empty {
     border-color: transparent;
   }
+
   .active {
     border-color: @cor_333;
     color: @cor_333;
   }
 }
+
 // 一行四列列表
 .u-list4 {
   .listbase(70px, 30px);
 }
+
 // 一行三列列表
 .u-list3 {
   .listbase(100px, 30px);
 }
+
 // 一行两列列表
 .u-list2 {
   .listbase(160px, 30px);
 }
+
 // 重置， 取消按钮
 .u-footbtns {
   position: absolute;
@@ -152,6 +242,7 @@
   z-index: 100;
   box-shadow: 3px 3px 5px #636262;
   .flex_between;
+
   .btn {
     width: 50%;
     height: 100%;
@@ -161,6 +252,7 @@
     .flex_allCenter;
     color: #03A1CD;
   }
+
   .active {
     background: #03A1CD;
     color: #fff;

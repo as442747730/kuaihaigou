@@ -1,6 +1,6 @@
 <template>
   <div class="u-cpms levelcpm" ref="levels" @click.self.stop="resetFn">
-    <div class="u-cpms-in levelcpm-in" ref="levelsIn">
+    <div class="u-cpms-in levelcpm-in" :class="{noviceH: postLevel === 3}" ref="levelsIn">
       <section class="rank" v-if="postLevel === 0">
         <div class="type">
           <div class="type-head">站内等级</div>
@@ -20,7 +20,7 @@
           <li class="u-list4_item" v-for="(vary, index) in 20" :key="index">混酿型</li>
         </ul>
       </section>
-      <section class="spirit">
+      <section class="spirit" v-if="postLevel === 2">
         <div class="type">
           <div class="type-head">酒精度</div>
           <ul class="u-list3">
@@ -34,7 +34,17 @@
           </ul>
         </div>
       </section>
-      <footer class="footbtns">
+      <section class="novice">
+        <ul>
+          <li class="active">
+            <span>新手选酒</span>
+          </li>
+          <li>
+            <span>高手选酒</span>
+          </li>
+        </ul>
+      </section>
+      <footer class="footbtns" v-if="postLevel !== 3">
         <div class="btn">重置</div>
         <div class="btn">确认</div>
       </footer>
@@ -62,18 +72,14 @@ export default {
 
     resetFn() {
 
-      console.log('This is levelCPm')
-
       this.$refs.levels.classList.remove('u-cpms_opa')
 
       this.$refs.levelsIn.classList.remove('u-cpms_trans')
 
-      this.$emit('shut')
 
       setTimeout(() => {
-
         this.$refs.levels.classList.remove('u_zIndex50')
-
+        this.$emit('shut')
       }, 600)
 
     }
@@ -83,7 +89,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import '../assets/css/var.less';
+@import '../../assets/css/var.less';
 
 .levelcpm {
 
@@ -131,6 +137,31 @@ export default {
 
     }
 
+  }
+
+  .noviceH {
+    height: 110px;
+  }
+
+  .novice {
+    width: 100%;
+    height: 100%;
+    &>ul {
+      width: 100%;
+      height: 100%;
+      &>li {
+        width: 100%;
+        height: 50%;
+        font-family:PingFang-SC-Medium;
+        font-weight:500;
+        color: @cor_999;
+        .flex_allCenter;
+      }
+      .active {
+        font-family:PingFangSC-Medium;
+        color: @cor_333;
+      }
+    }
   }
 
 }
