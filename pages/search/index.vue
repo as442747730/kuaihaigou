@@ -7,13 +7,15 @@
           <i class="icon_close" v-if="keywords"></i>
           <input v-model="keywords" type="text" placeholder="输入商品关键词或用户名" />
         </div>
-        <div class="inputmdl-world">取消</div>
+        <div class="inputmdl-world" @click="toWinecenter">取消</div>
       </div>
       <nav class="navmdl">
         <div class="navmdl-item" :class="{active: navData.elIndex === index}" @click="elNavlist(index)" v-for="(navitem, index) in navData.list" :key="index">{{navitem}}</div>
-        <div class="navmdl-logo" @click="elNavlist(4)"></div>
+        <div class="navmdl-logo" :class="{active: ctrlLogo}" ref="navmdlLogo" @click="navLogo"></div>
       </nav>
     </div>
+    <search-list ref="refSearch" @shut="navLogo"></search-list>
+
     <div class="search-result">
       <section class="goods" v-if="navData.elIndex === 0">
         <div v-if="!keywords">
@@ -86,12 +88,23 @@
         </div>
       </section>
     </div>
+   
+
   </div>
 </template>
 <script>
 import bkImg from '~/assets/img/green_wine.jpg'
 import bkImg2 from '~/assets/img/bk1.png'
+import searchList from '~/components/cpms/search-list.vue'
 export default {
+  head () {
+    return {
+      title: '我的购物车',
+      meta: [
+        { hid: 'title', name: 'title', content: '我的购物车' }
+      ]
+    }
+  },
   data () {
     return {
       keywords: '',
@@ -100,12 +113,33 @@ export default {
       navData: {
         list: ['商品', '名词解释', '知识分享', '新闻资讯'],
         elIndex: 0
-      }
+      },
+      ctrlLogo: false
     }
   },
+  components: {
+    searchList
+  },
   methods: {
+    toWinecenter () {
+      let chUrl = window.location.search
+      let charr = chUrl.split('=')
+      let id = charr[1]
+      if (id === 'others') {
+        window.location.href = '/winecenter/others'
+      } else if (id === 'winecenter') {
+        window.location.href = '/winecenter'
+      }
+    },
     elNavlist (index) {
       this.navData.elIndex = index
+    },
+    navLogo () {
+      this.ctrlLogo = !this.ctrlLogo
+      setTimeout(() => {
+        let ele = this.$refs.refSearch
+        this.ctrlLogo ? ele.addClass() : ele.resetFn()
+      }, 50)
     }
   }
 }
@@ -119,6 +153,7 @@ export default {
   &-head {
     border: 1px solid #F5F5F5;
     .padlr20;
+    .cpmzIndex;
 
     .inputmdl {
       height: 48px;
@@ -216,7 +251,11 @@ export default {
         width: 16px;
         height: 16px;
         background-image: url('~/assets/img/Icons/ic_caidan_g_16x16@2x.png');
+        transition: transform .2s;
         .bg_contain;
+      }
+      .navmdl-logo.active {
+        transform: rotate(90deg);
       }
     }
   }

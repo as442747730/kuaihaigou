@@ -2,9 +2,7 @@
   <div class="countrys" ref="refcountry">
     <header>
       <h1>
-
         <span class="icon_del" @click="delCountry"></span> 国家产区
-  
       </h1>
     </header>
     <section>
