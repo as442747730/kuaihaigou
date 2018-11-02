@@ -225,6 +225,15 @@ export default {
     uComment
   },
 
+  head () {
+    return {
+      title: '商品详情',
+      meta: [
+        { hid: 'title', name: 'title', content: '商品详情' }
+      ]
+    }
+  },
+
   data () {
     return {
       bannerImg: bannerImg,
@@ -257,7 +266,18 @@ export default {
     this.windowHeight = document.documentElement.clientHeight || document.body.clientHeight
     this.scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
     this.scrollTimer = null
-    window.addEventListener('scroll', this.handleScroll)
+    let that = this
+    window.addEventListener('scroll', this.handleScroll(function () {
+      let scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
+      let tabOffsetTop = document.querySelector('.u-detail_tab').offsetTop
+      // 距离底部大约200像素
+      // let nowPosition = scrollTop + this.windowHeight
+      if (scrollTop >= tabOffsetTop) {
+        that.tabFixed = true
+      } else {
+        that.tabFixed = false
+      }
+    }))
   },
 
   methods: {
@@ -270,21 +290,16 @@ export default {
     onClickefu () {
       console.log(3)
     },
-    handleScroll () {
-      if (this.scrollTimer) {
-        clearTimeout(this.scrollTimer)
+    handleScroll (fn) {
+      let Switch = true
+      return function () {
+        if (!Switch) return
+        Switch = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          Switch = true
+        }, 300)
       }
-      this.scrollTimer = setTimeout(() => {
-        let scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
-        let tabOffsetTop = document.querySelector('.u-detail_tab').offsetTop
-        // 距离底部大约200像素
-        // let nowPosition = scrollTop + this.windowHeight
-        if (scrollTop >= tabOffsetTop) {
-          this.tabFixed = true
-        } else {
-          this.tabFixed = false
-        }
-      }, 50)
     },
     chooseType (val) {
       this.tabIndex = val
