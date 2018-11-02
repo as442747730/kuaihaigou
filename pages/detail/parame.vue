@@ -93,8 +93,33 @@
         <div class="bar">
           <i class="bar-long" style="width: 50%"></i>
         </div>
-      </div>  
+      </div>
+
+      <div class="refer">
+        <p>参考酒评</p>
+        <span>开瓶初饮，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</span>
+      </div>
+
+      <div class="tips-item">
+        <h3 class="title">酒评家评价</h3>
+        <p>初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</p>
+      </div>
+      <div class="tips-item">
+        <h3 class="title">酿酒师笔记</h3>
+        <p>初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</p>
+      </div>
+      <div class="tips-item">
+        <h3 class="title">酒款特点</h3>
+        <p>初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</p>
+      </div>
+      <div class="tips-item">
+        <h3 class="title">酒庄特点</h3>
+        <p>初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</p>
+      </div>
+
     </div>
+    
+    <div class="u-detail_line"></div>
 
     <!-- 推荐 -->
     <u-evaluation /> 
@@ -254,6 +279,36 @@ export default {
               background: #59C3E1;
               border-radius: 11px;
             }
+          }
+        }
+        .refer {
+          padding: 10px 15px;
+          background: rgba(249,249,249,1);
+          border-radius: 6px;
+          border: 1px solid #e4e4e4;
+          p {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 6px;
+          }
+          span {
+            font-size: 12px;
+            font-family: 'PingFang-SC';
+            line-height: 22px;
+            text-align: justify;
+          }
+        }
+        .tips-item {
+          &:last-child {
+            margin-bottom: 25px;
+          }
+          .title {
+            margin-bottom: 10px;
+          }
+          p {
+            color: #666;
+            font-size: 12px;
+            line-height: 22px;
           }
         }
       }
