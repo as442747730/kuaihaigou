@@ -1,6 +1,5 @@
 <template>
   <main class="u-detail">
-
     <section class="u-detail_header">
       <van-nav-bar title="商品详情" left-arrow>
         <van-icon name="fenxiang" slot="right" />
@@ -74,34 +73,47 @@
       </div>
     </section>
 
-    <div class="u-detail_line"></div>
+    <div class="u-detail_line" id="local"></div>
 
     <section class="u-detail_tab">
       <ul class="tab-item">
-        <li class="tab-list cur">
+        <li class="tab-list" :class="{'cur': tabIndex === 1}" @click="chooseType(1)">
           <span>图文详情</span>
         </li>
-        <li class="tab-list">
+        <li class="tab-list" :class="{'cur': tabIndex === 2}" @click="chooseType(2)">
           <span>酒评参数</span>
         </li>
-        <li class="tab-list">
+        <li class="tab-list" :class="{'cur': tabIndex === 3}" @click="chooseType(3)">
           <span>评价提问</span>
         </li>
-        <li class="tab-list">
+        <li class="tab-list" :class="{'cur': tabIndex === 4}" @click="chooseType(4)">
+          <span>售后服务</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="u-detail_tab hidden" :class="{'show': tabFixed}">
+      <ul class="tab-item">
+        <li class="tab-list" :class="{'cur': tabIndex === 1}" @click="chooseType(1)">
+          <span>图文详情</span>
+        </li>
+        <li class="tab-list" :class="{'cur': tabIndex === 2}" @click="chooseType(2)">
+          <span>酒评参数</span>
+        </li>
+        <li class="tab-list" :class="{'cur': tabIndex === 3}" @click="chooseType(3)">
+          <span>评价提问</span>
+        </li>
+        <li class="tab-list" :class="{'cur': tabIndex === 4}" @click="chooseType(4)">
           <span>售后服务</span>
         </li>
       </ul>
     </section>
 
     <!-- 内容模块 -->
-    <article class="u-goods-content">
-      <div class="goods-details">
-        <div class="title">
-          <p>Goods details</p>
-          <h3>商品详情</h3>
-        </div>
-      </div>
-    </article>
+    <transition name='slide-fade2' mode="out-in">
+      <component v-bind:is="view"></component>
+    </transition>
+
     <!-- 底栏 -->
     <van-goods-action>
       <van-goods-action-mini-btn icon="kefu" text=" " @click="onClickefu" />
@@ -201,16 +213,31 @@
 </template>
 <script>
 // import api from '~/utils/request'
+import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
+import uGraphic from '~/pages/detail/graphic'
+import uParame from '~/pages/detail/parame'
+import uComment from '~/pages/detail/comment'
 
 export default {
+  components: {
+    uGraphic,
+    uParame,
+    uComment
+  },
+
+  head () {
+    return {
+      title: '商品详情',
+      meta: [
+        { hid: 'title', name: 'title', content: '商品详情' }
+      ]
+    }
+  },
+
   data () {
     return {
-      skuShow: false,
-      packShow: false,
-
-      num: 10,
-      active: 1,
-
+      bannerImg: bannerImg,
+      // 初始化数据
       swiperBanner: {
         speed: 600,
         slidesPerView: 'auto',
@@ -222,21 +249,35 @@ export default {
             document.getElementsByClassName('swiper-page')[0].querySelectorAll('.point')[this.activeIndex].classList.add('active')
           }
         }
-        // watchSlidesProgress: true,
-        // on: {
-        //   setTransition: function() {
-        //   },
-        //   progress: function(progress) {
-        //     var swiper = this
-        //     for (var i = 0; i < swiper.slides.length; i++) {
-        //       var slideProgress = swiper.slides[i].progress
-        //       console.log(slideProgress)
-        //       swiper.slides[i].querySelector(".banner-list-box").style.opacity = slideProgress + 1
-        //     }
-        //   }
-        // }
-      }
+      },
+
+      active: 1,
+      view: uGraphic,
+      tabIndex: 1,
+      tabFixed: false,
+      // 功能数据
+      skuShow: false,
+      packShow: false,
+      num: 10
     }
+  },
+
+  mounted () {
+    this.windowHeight = document.documentElement.clientHeight || document.body.clientHeight
+    this.scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
+    this.scrollTimer = null
+    let that = this
+    window.addEventListener('scroll', this.handleScroll(function () {
+      let scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
+      let tabOffsetTop = document.querySelector('.u-detail_tab').offsetTop
+      // 距离底部大约200像素
+      // let nowPosition = scrollTop + this.windowHeight
+      if (scrollTop >= tabOffsetTop) {
+        that.tabFixed = true
+      } else {
+        that.tabFixed = false
+      }
+    }))
   },
 
   methods: {
@@ -248,12 +289,43 @@ export default {
     },
     onClickefu () {
       console.log(3)
+    },
+    handleScroll (fn) {
+      let Switch = true
+      return function () {
+        if (!Switch) return
+        Switch = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          Switch = true
+        }, 300)
+      }
+    },
+    chooseType (val) {
+      this.tabIndex = val
+      this.goAnchor('#local')
+      switch (val) {
+        case 1:
+          this.view = 'uGraphic'
+          break
+        case 2:
+          this.view = 'uParame'
+          break
+        case 3:
+          this.view = 'uComment'
+          break
+      }
+    },
+    // 锚点跳转
+    goAnchor (selector) {
+      let anchor = this.$el.querySelector(selector)
+      document.body.scrollTop = anchor.offsetTop
     }
   }
 
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .u-detail {
   margin-bottom: 50px;
   &_banner {
@@ -495,8 +567,23 @@ export default {
   .van-goods-action {
     z-index: 9999;
   }
-
   &_tab {
+    &.hidden {
+      visibility: hidden;
+      position: fixed;
+      z-index: 99;
+      left: 0;
+      top: 0;
+      width: 100%;
+      background: #fff;
+      transform: translateY(-140%);
+      transition: ease .6s;
+    }
+    &.show {
+      visibility: visible;
+      transform: none;
+      box-shadow: -1px -12px 11px 9px #131313;
+    }
     .tab-item {
       padding: 0 30px; 
       height: 45px;
@@ -531,37 +618,147 @@ export default {
 .u-goods-content {
   overflow: hidden;
   font-size: 0;
-  .title {
-    text-align: center;
-    margin: 20px 0;
-    position: relative;
-    &:after {
-      content: '';
+  .content {
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+  .customs {
+    .u-detail-title h3 {
+      width: 130px!important;
+    }
+    &-wrap {
+      p {
+        margin: 10px 0 20px;
+        text-align: center;
+        color: #4285F4;
+        font-size: 13px;
+        font-family: 'PingFang-SC-Medium';
+        font-weight: bold;
+      }
+      .swiperCustoms {
+        padding-left: 25px;
+        margin-bottom: 14px;
+      }
+      .swiperThumbs {
+        left: -260px;
+        width: 629px;
+      }
+    }
+  }
+  .customs-list {
+    width: 315px;
+    margin-left: 5px;
+    &.swiper-slide-active {
+      .customs-list-box {
+        transform: scale(1);
+      }     
+    }
+    &:last-child {
+      width: 350px;
+    }
+    &-box {
+      border-radius: 8px;
+      border: 1px solid #e6e6e6;
+      box-sizing: border-box;
+      width: 315px;
+      height: 400px;
+      transform: scale(.94);
+      transition: transform ease .6s;
+    }
+    .pro {
       width: 100%;
-      position: absolute;
-      left: 0;
-      bottom: 7px;
-      height: 1px;
-      background: #ddd;
-      z-index: -1;
+      height: 400px;
+      text-align: center;
+      line-height: 400px;
+      img {
+        width: auto;
+        height: 100;
+        vertical-align: middle;
+      }
     }
-    h3 {
-      font-size: 15px;
-      color: #333;
-      font-family: 'PingFangSC-Semibold';
-      font-weight: bold;
-      width: 96px;
-      background: #fff;
-      display: inline-block;
+  }
+  .customs-thumbs-list {
+    width: 60px;
+    height: 72px;
+    .full {
+      transition: transform ease .6s;
+      transform: scale(.9);
+      position: relative;
+      &:after {
+        content: '';
+        opacity: .4;
+        transition: opacity .6s;
+        background: #000;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+      }
     }
-    p {
-      font-weight: bold;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-      font-size: 12px;
-      color: #ddd;
-      font-family: 'PingFangSC-Semibold';
+    &.swiper-slide-active {
+      margin-right: 5px;
+      margin-left: 5px;
+      .full {
+        transform: scale(1);
+        &:after {
+          opacity: 0;
+        }
+      }
     }
+  }
+}
+
+.u-detail-title {
+  text-align: center;
+  margin: 26px 0 23px;
+  position: relative;
+  &:after {
+    content: '';
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 7px;
+    height: 1px;
+    background: #ddd;
+    z-index: -1;
+  }
+  h3 {
+    font-size: 15px;
+    color: #333;
+    font-family: 'PingFangSC-Semibold';
+    font-weight: bold;
+    width: 96px;
+    background: #fff;
+    display: inline-block;
+  }
+  p {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #ddd;
+    font-family: 'PingFangSC-Semibold';
+  }
+}
+
+.u-detail-loading {
+  text-align: center;
+  background: #f5f5f5;
+  color: rgba(0, 0, 0, .5);
+  margin: 30px 0 0;
+  .van-loading {
+    padding: 15px 0; 
+    display: inline-block;
+    vertical-align: middle;
+  }
+  p {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 14px;
+    margin-left: 10px;
   }
 }
 </style>
