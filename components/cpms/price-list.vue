@@ -1,6 +1,6 @@
 <template>
   <div class="u-cpms prices" ref="prices" @click.self.prevent="resetFn">
-    <div class="u-cpms-in prices-in" :class="{h50: postPrice === 2}" ref="pricesIn">
+    <div class="u-cpms-in prices-in" ref="pricesIn">
       <section class="pricemdl" v-if="postPrice === 0">
         <h2>¥700</h2>
         <div class="slider">
@@ -51,136 +51,64 @@
 </template>
 <style lang="scoped" lang="less">
 @import '../../assets/css/var.less';
-
 .prices {
   &-in {
     margin-top: 90px;
-    height: 60vh;
+    .type {
+      &-head {
+        font-size: 15px;
+        font-family: PingFangSC-Semibold;
+        font-weight: 600;
+        padding-top: 10px;
+      }
+    }
     
     &>section {
-      
-      height: calc(60vh - 50px);
-
+      max-height: 60vh;
       -webkit-overflow-scrolling: touch;
-
       overflow: auto;
-
-      .padlr20;
-
-      .type {
-
-        &-head {
-
-          font-size: 15px;
-
-          font-family: PingFangSC-Semibold;
-
-          font-weight: 600;
-
-          padding-top: 10px;
-
-        }
-
-      }
-
     }
-
+    .pricemdl,
+    .scenemdl {
+      padding-bottom: 50px;
+      .padlr20;
+    }
+    
     .pricemdl {
 
       &>h2 {
-
         font-size: 19px;
-
         font-family: PingFangSC-Semibold;
-
         font-weight: 600;
-
         text-align: center;
-
         .padtb20;
-
       }
 
       .slider {
-
         &-items {
-
           .padtb20;
-
           .flex_between;
-
           &>span {
-
             font-size: 12px;
-
             font-family: PingFang-SC-Medium;
-
             font-weight: 500;
-
             color: @cor_666;
-
           }
-
         }
-
       }
-
     }
 
     .recommendmdl {
-
-      padding: 30px 0;
-
-      height: calc(50vh - 60px);
-
       .list {
-
-        height: 260px;
-
-        flex-direction: column;
-
-        .flex_between;
-
-        &>li {
-
-          font-size: 13px;
-
-          font-family: PingFang-SC-Medium;
-
-          font-weight: 500;
-
-          color: @cor_999;
-
-        }
-
-        .active {
-
-          font-family: PingFangSC-Medium;
-
-          font-weight: 500;
-
-          color: @cor_333;
-
-        }
-
+        padding: 10px 0;
+        .ucpms-listone;
       }
-
     }
 
     .footbtns {
-
       .u-footbtns;
-
     }
-
   }
-
-  .prices-in.h50 {
-
-    height: 50vh;
-
-  }
-
 }
 </style>
 <script>
