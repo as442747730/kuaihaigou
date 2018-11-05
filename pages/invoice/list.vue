@@ -98,10 +98,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import url('../../assets/css/var.less');
 .m-invoice {
   min-height: 100vh;
-  background: #F5F5F5;
+  background: @cor_border;
   position: relative;
   box-sizing: border-box;
   padding-bottom: 50px;
@@ -116,7 +115,7 @@ export default {
     background: white;
     .top {
       padding-bottom: 20px;
-      border-bottom: 1px solid #F5F5F5;
+      border-bottom: 1PX solid @cor_border;
       &-title {
         font-size: 17px;
         color: @cor_333;

@@ -82,9 +82,8 @@
   }
 </script>
 <style lang="less" scoped>
-@import url('../assets/css/var.less');
 .u-coupon {
-  background: #F5F5F5;
+  background: @cor_border;
   height: 100vh;
   padding: 10px 20px;
   font-size: 0;
@@ -142,7 +141,7 @@
         &::after {
           content: '';
           display: inline-block;
-          width: 1px;
+          width: 1PX;
           position: absolute;
           right: 0;
           top: 50%;
@@ -179,7 +178,7 @@
     &::before {
       content: '';
       display: inline-block;
-      border-top: 1px solid #CCCCCC;
+      border-top: 1PX solid #CCCCCC;
       width: 120px;
       position: absolute;
       left: 0;
@@ -189,7 +188,7 @@
     &::after {
       content: '';
       display: inline-block;
-      border-top: 1px solid #CCCCCC;
+      border-top: 1PX solid #CCCCCC;
       width: 120px;
       position: absolute;
       right: 0;

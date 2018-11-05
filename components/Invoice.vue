@@ -39,9 +39,8 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import url('../assets/css/var.less');
 .m-invoice {
-  background: #F5F5F5;
+  background: @cor_border;
   position: fixed;
   top: 0;
   left: 0;
@@ -57,7 +56,7 @@ export default {
   &-li {
     padding: 20px;
     &:not(:last-child) {
-      border-bottom: 1px solid #F5F5F5;
+      border-bottom: 1PX solid @cor_border;
     }
     .head {
       font-size: 17px;
@@ -71,7 +70,7 @@ export default {
         vertical-align: top;
         color: #FF5B1F;
         font-size: 9px;
-        border: 1px solid #FF5B1F;
+        border: 1PX solid #FF5B1F;
         border-radius: 2px;
       }
     }
