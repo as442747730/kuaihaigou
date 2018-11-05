@@ -7,7 +7,7 @@
             <span class="top_l-span icon_switch"></span>
             <span class="top_l-span world">红酒商品</span>
           </div>
-          <div class="top_r">
+          <div class="top_r" @click="toSearch">
             <i class="icon_search"></i>
             <i class="icon_buy"></i>
           </div>
@@ -44,6 +44,14 @@ import uFooter from '~/components/footer'
 import listCpm from '~/components/cpms/others-list'
 import Imgs from '~/assets/img/green_wine.jpg'
 export default {
+  head () {
+    return {
+      title: '我的购物车',
+      meta: [
+        { hid: 'title', name: 'title', content: '我的购物车' }
+      ]
+    }
+  },
   data () {
     return {
       isRoll: false,
@@ -64,6 +72,9 @@ export default {
   methods: {
     toWinecenter () {
       window.location.href = '/winecenter'
+    },
+    toSearch () {
+      window.location.href = '/search?id=others'
     },
     elClassify (index) {
       this.classify.elIndex = index
@@ -263,7 +274,7 @@ export default {
         margin-top: -2px;
         width: 8px;
         height: 5px;
-        background-image: url("../../assets/img/Icons/ic_triangle_gu_12x121.png");
+        background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
         .bg_cover;
       }
     }
@@ -274,7 +285,7 @@ export default {
       font-weight: 500;
 
       &:after {
-        background-image: url("../../assets/img/Icons/ic_triangle_bt_12x12.png");
+        background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
       }
     }
   }

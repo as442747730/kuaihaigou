@@ -6,10 +6,8 @@
           <div class="top_l" @click="toOthers">
             <span class="icon_switch"></span>
             <span class="world">其它商品</span>
-            <!-- <span class="world" v-if="isNovice" @click="swtichNovice">切换新手界面</span>
-            <span class="world" v-else @click="swtichNovice">切换高手界面</span> -->
           </div>
-          <div class="top_r">
+          <div class="top_r" @click="toSearch">
             <i class="icon_search"></i>
             <i class="icon_buy"></i>
           </div>
@@ -25,16 +23,19 @@
         <div class="elmdl-item" :class="{active: ranks.elIndex == index}" @click="elRanks(index)" v-for="(rank, index) in ranks.list" :key="index">
           <span>{{rank}}</span>
         </div>
+        <div class="elmdl-item" :class="{active: ranks.elIndex == 3}" @click="elRanks(3)">
+          <span>{{noviceMaster}}</span>
+        </div>
       </div>
-      <level-cpms ref="refRank" :postLevel="this.ranks.elIndex" @shut="closeRanks"></level-cpms>
+      <level-cpms ref="refRank" :postLevel="this.ranks.elIndex" @shut="closeRanks" @shutNovice="ctrlNoviceMaster"></level-cpms>
     </div>
     <div class="winecenter-content">
-      <section class="novice" v-if="isNovice">
+      <section class="novice">
         <div class="com-item" v-for="(good, index) in goodsList" :key="index">
           <div class="item_l">
             <div class="item_l_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
           </div>
-          <div class="item_r">
+          <div class="item_r" v-if="!isNovice">
             <h3>{{good.goodsName}}</h3>
             <p>
               <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
@@ -57,14 +58,7 @@
               <del class="m_price">市场价：¥ 499</del>
             </div>
           </div>
-        </div>
-      </section>
-      <section class="killer" v-else>
-        <div class="com-item" v-for="(good, index) in goodsList">
-          <div class="item_l">
-            <div class="item_l_bk" :style="'background: url(' +  good.imgUrl  + ') no-repeat center/contain'"></div>
-          </div>
-          <div class="item_r">
+          <div class="item_r" v-else>
             <h3>{{good.goodsName}}</h3>
             <p>
               <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
@@ -114,21 +108,22 @@
 </template>
 <script>
 import testImg1 from '../../assets/img/img.png'
-
 import testImg2 from '../../assets/img/img2.png'
-
 import uFooter from '~/components/footer'
-
 import countryCpm from '~/components/cpms/country-list.vue'
-
 import priceCpm from '~/components/cpms/price-list.vue'
-
 import levelCpms from '~/components/cpms/level-cpms.vue'
-
 import api from '~/utils/request'
 
 export default {
-
+  head () {
+    return {
+      title: '我的购物车',
+      meta: [
+        { hid: 'title', name: 'title', content: '我的购物车' }
+      ]
+    }
+  },
   data () {
     return {
       footIndex: 1,
@@ -141,9 +136,10 @@ export default {
         elIndex: null
       },
       ranks: {
-        list: ['等级', '葡萄品种', '其他筛选', '新手选酒'],
+        list: ['等级', '葡萄品种', '其他筛选'],
         elIndex: null
       },
+      noviceMaster: '新手选酒',
       isCountry: false, // 是否国家产区
       isPrice: false, // 是否为价格类型
       goodsList: [], // 商品列表
@@ -164,6 +160,9 @@ export default {
   methods: {
     toOthers () {
       window.location.href = '/winecenter/others'
+    },
+    toSearch () {
+      window.location.href = '/search?id=winecenter'
     },
     async getPageData () {
       const { code, data } = await api.clientGet('/api/esGoods/paginate', { ifWine: true })
@@ -195,6 +194,12 @@ export default {
 
     swtichNovice () {
       this.isNovice = !this.isNovice
+      this.addBarwid()
+    },
+    ctrlNoviceMaster (index) {
+      let list = ['新手选酒', '高手选酒']
+      this.noviceMaster = list[index]
+      this.isNovice = (index === 0)
       this.addBarwid()
     },
 
@@ -258,269 +263,159 @@ export default {
 }
 
 .winecenter {
-
   background: #fff;
-
   line-height: 1;
-
   font-size: 12px;
-
   &-content {
-
     .padlr20;
-
   }
-
 }
 
 .upper {
-
   padding-top: 10px;
-
   .padlr20;
   .cpmzIndex;
-
 }
 
 .top {
-
   .flex_between;
-
   &_l {
-
     height: 28px;
-
     background: rgba(222, 243, 249, 1);
-
     border-radius: 14px;
-
     display: flex;
-
     align-items: center;
-
     padding-left: 3px;
 
     &>span {
-
       font-size: 11px;
-
       font-family: PingFangSC-Semibold;
-
       font-weight: 600;
-
       color: rgba(3, 161, 205, 1);
-
     }
 
     .icon_switch {
-
       width: 22px;
-
       height: 22px;
-
+      background-image: url("~/assets/img/Icons/ic_qiehuan_blue_22x22.png");
       .bg_cover;
-
-      background-image: url("../../assets/img/Icons/ic_qiehuan_blue_22x22.png");
-
     }
 
     .world {
-
       padding: 0 10px 0 8px;
-
       color: @nice-blue;
-
     }
-
   }
 
   &_r {
-
     width: 70px;
-
     .flex_between;
 
     &>i {
-
       width: 30px;
-
       height: 30px;
-
     }
 
     .icon_search {
-
       .bg_cover;
-
-      background-image: url("../../assets/img/Icons/ic_search_b_30x30.png");
-
+      background-image: url("~/assets/img/Icons/ic_search_b_30x30.png");
     }
 
     .icon_buy {
-
       .bg_cover;
-
-      background-image: url("../../assets/img/Icons/ic_shop_b_30x30.png");
-
+      background-image: url("~/assets/img/Icons/ic_shop_b_30x30.png");
     }
-
   }
-
 }
 
 .screen {
-
   padding: 20px 0;
-
   .flex_between;
 
   &-item {
-
     font-size: 13px;
-
     font-family: PingFangSC-Regular;
-
     font-weight: 400;
-
     color: @cor_999;
-
     line-height: 13px;
-
+    padding-right: 13px;
     position: relative;
 
     &:after {
-
       content: "";
-
       position: absolute;
-
       top: 50%;
-
-      right: -13px;
-
-      margin-top: -2px;
-
+      right: 0;
+      margin-top: -2.5px;
       width: 8px;
-
       height: 5px;
-
+      background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
       .bg_cover;
-
-      background-image: url("../../assets/img/Icons/ic_triangle_gu_12x121.png");
-
     }
-
   }
 
   .active {
-
     color: @cor_333;
-
     font-family: PingFangSC-Medium;
-
     font-weight: 500;
 
     &:after {
-
-      background-image: url("../../assets/img/Icons/ic_triangle_bt_12x12.png");
-
+      background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
     }
-
   }
-
 }
 
 .elmdl {
-
   position: relative;
-
   z-index: 60;
-
   padding-bottom: 15px;
-
   background: #fff;
-
   border-bottom: 1px solid #f5f5f5;
-
   .padlr20;
-
   .flex_between;
 
   &-item {
-
     .flex_allCenter;
-
-    // width: 100px;
-
     height: 30px;
-
     background: #f8f8f8;
-
     border-radius: 15px;
-
     padding-left: 10px;
     padding-right: 8px;
 
     &>span {
-
       font-size: 13px;
-
       font-family: PingFang-SC-Medium;
-
       font-weight: 500;
-
       color: rgba(153, 153, 153, 1);
-
       position: relative;
-
       padding-right: 17px;
 
       &:after {
-
         content: "";
-
         width: 12px;
-
         height: 12px;
-
         position: absolute;
-
         top: 50%;
-
         right: 0;
-
         margin-top: -6px;
-
         .bg_cover;
-
-        background-image: url("../../assets/img/Icons/ic_xiala_g_line_12x12.png");
-
+        background-image: url("~/assets/img/Icons/ic_xiala_g_line_12x12.png");
       }
-
     }
-
   }
 
   .active {
 
     &>span {
-
       font-family: PingFangSC-Semibold;
-
       font-weight: 600;
-
       color: @cor_333;
 
       &:after {
-
         background-image: url("~/assets/img/Icons/ic_xiala_b_line_12x12.png");
-
       }
-
     }
-
   }
-
 }
 
 // 选酒公共

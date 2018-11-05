@@ -1,6 +1,6 @@
 <template>
   <div class="u-cpms levelcpm" ref="levels" @click.self.stop="resetFn">
-    <div class="u-cpms-in levelcpm-in" :class="{noviceH: postLevel === 3}" ref="levelsIn">
+    <div class="u-cpms-in levelcpm-in" ref="levelsIn">
       <section class="rank" v-if="postLevel === 0">
         <div class="type">
           <div class="type-head">站内等级</div>
@@ -34,13 +34,10 @@
           </ul>
         </div>
       </section>
-      <section class="novice">
+      <section class="novice" v-if="postLevel === 3">
         <ul>
-          <li class="active">
-            <span>新手选酒</span>
-          </li>
-          <li>
-            <span>高手选酒</span>
+          <li :class="{active: noviceMater.elIndex === index}" v-for="(novice, index) in noviceMater.list" :key="index" @click="ctralNovice(index)">
+            <span>{{novice}}</span>
           </li>
         </ul>
       </section>
@@ -55,6 +52,14 @@
 export default {
   name: 'levelCpms',
   props: ['postLevel'],
+  data () {
+    return {
+      noviceMater: {
+        list: ['新手选酒', '高手选酒'],
+        elIndex: 0
+      }
+    }
+  },
   methods: {
     addClass () {
       this.$refs.levels.classList.add('u_zIndex50')
@@ -68,6 +73,11 @@ export default {
         this.$refs.levels.classList.remove('u_zIndex50')
         this.$emit('shut')
       }, 600)
+    },
+    ctralNovice (index) {
+      this.noviceMater.elIndex = index
+      this.$emit('shutNovice', index)
+      this.resetFn()
     }
   }
 }
@@ -76,80 +86,40 @@ export default {
 @import '../../assets/css/var.less';
 
 .levelcpm {
-
   &-in {
-
-    height: 60vh;
-
     margin-top: 136px;
-
     .type {
-
       &-head {
-
         font-size: 15px;
-
         font-family: PingFangSC-Semibold;
-
         font-weight: 600;
-
         padding-top: 10px;
-
       }
+    }
 
+    &>section {
+      max-height: 60vh;
+      -webkit-overflow-scrolling: touch;
+      overflow: auto;
     }
 
     .rank,
-
     .variety,
-
     .spirit {
-
-      height: calc(60vh - 50px);
-
-      -webkit-overflow-scrolling: touch;
-
-      overflow: auto;
-
+      padding-bottom: 50px;
       .padlr20;
+    }
 
+    .novice {
+      &>ul {
+        padding: 10px 0;
+        .ucpms-listone;
+      }
     }
 
     .footbtns {
-
       .u-footbtns;
-
-    }
-
-  }
-
-  .noviceH {
-    height: 110px;
-  }
-
-  .novice {
-    width: 100%;
-    height: 100%;
-
-    &>ul {
-      width: 100%;
-      height: 100%;
-
-      &>li {
-        width: 100%;
-        height: 50%;
-        font-family: PingFang-SC-Medium;
-        font-weight: 500;
-        color: @cor_999;
-        .flex_allCenter;
-      }
-
-      .active {
-        font-family: PingFangSC-Medium;
-        color: @cor_333;
-      }
     }
   }
-
 }
 </style>

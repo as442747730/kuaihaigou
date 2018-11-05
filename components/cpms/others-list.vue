@@ -1,8 +1,8 @@
 <template>
   <div class="u-cpms othercpms" ref="refOhter" @click.self.prevent="resetFn">
     <div class="u-cpms-in othercpms-in" ref="refOhterIn">
-      <section class="list">
-        <ul>
+      <section>
+        <ul  class="list">
           <li :class="{active: index === 0}" v-for="(list, index) in lists">{{list}}</li>
         </ul>
       </section>
@@ -54,28 +54,14 @@ export default {
 .othercpms {
   &-in {
     margin-top: 90px;
-    max-height: 60vh;
-    height: 50vh;
-
-    .list {
-      height: 100%;
+    &>section {
+      max-height: 60vh;
       -webkit-overflow-scrolling: touch;
       overflow: auto;
-
-      &>ul {
-        &>li {
-          height: 45px;
-          text-align: center;
-          font-family: PingFang-SC-Medium;
-          font-weight: 500;
-          color: @cor_999;
-          .flex_allCenter;
-        }
-
-        .active {
-          color: @cor_333;
-        }
-      }
+    }
+    .list {
+      padding: 10px 0;
+      .ucpms-listone;
     }
   }
 }
