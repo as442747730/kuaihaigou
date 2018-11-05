@@ -74,8 +74,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import '../../assets/css/var.less';
-
 .message {
   line-height: 1;
   font-size: 12px;

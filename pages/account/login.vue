@@ -140,7 +140,7 @@ export default {
         console.log(code, data)
         if (code === 200) {
           this.$toast.success('登录成功')
-          // window.locationl.href = ''
+          window.location.href = '/home'
         } else {
           this.$toast(data)
         }
@@ -149,7 +149,7 @@ export default {
         const { code, data } = await api.clientPost('/api/loginWithcode', { phone: this.phone, code: this.captcha })
         if (code === 200) {
           this.$toast.success('登录成功')
-          // window.locationl.href = ''
+          window.location.href = '/home'
         } else {
           this.$toast(data)
         }

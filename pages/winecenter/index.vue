@@ -255,7 +255,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import "../../assets/css/var.less";
 
 .stopwineScroll {
   height: 100vh;

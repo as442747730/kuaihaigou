@@ -87,9 +87,9 @@ export default {
 
   async asyncData (req) {
     return api.serverGet('/api/cart/getCart', {}, req).then((res) => {
-      console.log(res.data[0].cartGoodsList)
+      console.log(res.data)
       if (res.code === 506) {
-        window.location.href = '/account/login'
+        req.redirect('/account/login')
       }
       res.data.forEach((item) => {
         item.chosen = false
@@ -118,39 +118,38 @@ export default {
 
     async settlement () {
       if (this.total === 0) return
-      const { code } = await api.clientGet('/api/coupon/listForUsable', { amount: this.total })
-      if (code === 200) {
-        let r = []
-        this.goodsList.forEach((item) => {
-          if (item.chosen) {
-            if (item.packid) {
-              r.push({ num: item.num, packid: item.packid })
-            } else {
-              r.push({ goodsid: item.goodsid, num: item.num, skuid: item.skuid })
-            }
-          }
-        })
-        const { c, d } = await api.clientPostJson('/api/order/readyToSettle', { orderDetailReqList: r })
-        if (c === 200) {
-          if (d.length !== 0) {
-            // 有库存不足的商品
-            // todo
-            this.$toast('购物车中有库存不足的商品')
+      const v = this
+      let r = []
+      v.goodsList.forEach((item) => {
+        if (item.chosen) {
+          if (item.packid) {
+            r.push({ num: item.num, packid: item.packid })
           } else {
-            // 可以提交订单
-            window.location.href = '/order/submit'
+            r.push({ goodsid: item.goodsid, num: item.num, skuid: item.skuid })
           }
+        }
+      })
+      const { code, data } = await api.clientPostJson('/api/order/readyToSettle', { orderDetailReqList: r })
+      if (code === 200) {
+        if (data.length !== 0) {
+          // 有库存不足的商品
+          // todo
+          this.$toast('购物车中有库存不足的商品')
+        } else {
+          // 可以提交订单
+          console.log('submit')
+          window.location.href = '/order/submit'
         }
       }
     }
   }
-
 }
 </script>
 <style lang="less" scoped>
 .m-cart {
   position: relative;
   min-height: 100vh;
+  background: @cor_border;
   &-ul {
     padding-bottom: 60px;
     .m-cart-li {
@@ -168,7 +167,7 @@ export default {
         }
         .top {
           padding-bottom: 15px;
-          border-bottom: 1px solid #EEEEEE;
+          border-bottom: 1PX solid #EEEEEE;
           padding: 30px 20px 15px 10px;
         }
         .product-wrapper {
@@ -203,7 +202,7 @@ export default {
           flex: 1;
           display: flex;
           img {
-            border: 1px solid #E6E6E6;
+            border: 1PX solid #E6E6E6;
             margin-left: 15px;
           }
           .info {

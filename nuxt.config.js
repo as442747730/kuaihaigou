@@ -84,6 +84,12 @@ module.exports = {
     /*
     ** Run ESLint on save
     */
+
+    // 引入全局 less 变量文件， 详细参见 https://github.com/nuxt/nuxt.js/tree/dev/examples/style-resources
+    styleResources: {
+      less: './assets/css/var.less'
+    },
+
     extend (config, ctx) {
       if (ctx.isClient) {
         config.resolve.alias['vue'] = 'vue/dist/vue.js'
