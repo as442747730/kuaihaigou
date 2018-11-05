@@ -151,7 +151,7 @@ export default {
   .u-restout;
 
   &-head {
-    border: 1px solid #F5F5F5;
+    border: 1PX solid #F5F5F5;
     .padlr20;
     .cpmzIndex;
 
@@ -167,6 +167,10 @@ export default {
         text-indent: 50px;
         position: relative;
         .flex_tlCenter;
+        &>input {
+          width: calc(100% - 90px);
+          background: rgba(250, 250, 250, 1);
+        }
 
         .icon_fdj {
           display: inline-block;
@@ -268,7 +272,7 @@ export default {
       &-hot {
         padding-top: 15px;
         padding-bottom: 15px;
-        border-bottom: 1px solid #F5F5F5;
+        border-bottom: 1PX solid #F5F5F5;
       }
 
       .hot {
@@ -380,7 +384,7 @@ export default {
               width: 120px;
               height: 120px;
               border-radius: 4px;
-              border: 1px solid #eaeaea;
+              border: 1PX solid #eaeaea;
 
               .flex_allCenter;
 
@@ -433,7 +437,7 @@ export default {
 .varity {
   background: #FBFBFB;
   border-radius: 8px;
-  border: 1px solid #EAEAEA;
+  border: 1PX solid #EAEAEA;
   .padlr20;
 
   &-head {
@@ -465,7 +469,7 @@ export default {
     color: rgba(153, 153, 153, 1);
     line-height: 24px;
     padding: 10px 0;
-    border-bottom: 1px solid #ECECEC;
+    border-bottom: 1PX solid #ECECEC;
   }
 
   &-foot {

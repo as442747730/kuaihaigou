@@ -122,7 +122,7 @@ export default {
       .top {
         height: 160px;
         border-radius: 4px;
-        border: 1px solid #EAEAEA;
+        border: 1PX solid #EAEAEA;
         .flex_allCenter;
 
         &_bk {
@@ -193,7 +193,7 @@ export default {
 
 .upper {
   padding-top: 10px;
-  border-bottom: 1px solid #F5F5F5;
+  border-bottom: 1PX solid #F5F5F5;
   .padlr20;
   .cpmzIndex;
 

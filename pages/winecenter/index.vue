@@ -370,7 +370,7 @@ export default {
   z-index: 60;
   padding-bottom: 15px;
   background: #fff;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1PX solid #f5f5f5;
   .padlr20;
   .flex_between;
 
@@ -434,7 +434,7 @@ export default {
 
     border-radius: 4px;
 
-    border: 1px solid #eaeaea;
+    border: 1PX solid #eaeaea;
 
     &_bk {
 
@@ -514,7 +514,7 @@ export default {
 
 .novice {
 
-  padding-bottom: 5px;
+  padding-bottom: 50px;
 
   .itemr-info {
 
@@ -616,9 +616,4 @@ export default {
 
 }
 
-.killer {
-
-  padding-bottom: 5px;
-
-}
 </style>
