@@ -51,8 +51,26 @@
         <div class="to-compare">
           去对比
         </div>
+        <br>
+        <div class="active">
+          全场满88元免邮
+        </div>
       </div>
     </section>
+
+    <div class="u-detail_line"></div>
+
+    <!-- 配送 -->
+    <div class="u-detail_send">
+      <div class="ib-middle">
+        <i></i>
+        <span>广东 广州</span>
+      </div>
+      <div class="choose-txt">
+        <p class="ib-middle">可配送</p>
+        <i class="van-icon ib-middle van-icon-arrow"></i>
+      </div>
+    </div>
 
     <div class="u-detail_line"></div>
 
@@ -217,12 +235,14 @@ import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 import uGraphic from '~/pages/detail/graphic'
 import uParame from '~/pages/detail/parame'
 import uComment from '~/pages/detail/comment'
+import uAfter from '~/pages/detail/after'
 
 export default {
   components: {
     uGraphic,
     uParame,
-    uComment
+    uComment,
+    uAfter
   },
 
   head () {
@@ -237,6 +257,7 @@ export default {
   data () {
     return {
       bannerImg: bannerImg,
+      isQuestion: false,
       // 初始化数据
       swiperBanner: {
         speed: 600,
@@ -302,6 +323,7 @@ export default {
       }
     },
     chooseType (val) {
+      this.isQuestion = false
       this.tabIndex = val
       this.goAnchor('#local')
       switch (val) {
@@ -313,6 +335,9 @@ export default {
           break
         case 3:
           this.view = 'uComment'
+          break
+        case 4:
+          this.view = 'uAfter'
           break
       }
     },
@@ -367,7 +392,7 @@ export default {
     }
     &-box {
       border-radius: 8px;
-      border: 1px solid #e6e6e6;
+      border: 1PX solid #e6e6e6;
       box-sizing: border-box;
       width: 315px;
       height: 350px;
@@ -425,21 +450,67 @@ export default {
       .to-compare {
         position: absolute;
         right: 0;
-        bottom: 0;
+        top: 35px;
         width: 78px;
         height: 31px;
         line-height: 33px;
-        border: 1px solid #c7c7c7;
+        border: 1PX solid #c7c7c7;
         border-radius: 18px;
         text-align: center;
         color: #333;
         font-size: 13px;
+      }
+      .active {
+        margin-top: 10px;
+        display: inline-block;
+        padding: 5px 6px;
+        color: #fff;
+        font-size: 11px;
+        font-weight: bold;
+        font-family: 'PingFangSC-Medium';
+        border-radius: 2px;
+        background:rgba(251,98,72,1)
       }
     }
   }
   &_line {
     height: 10px;
     background: #f5f5f5; 
+  }
+  &_send {
+    padding: 19px 30px;
+    font-size: 0;
+    .ib-middle {
+      i {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+        width: 14px;
+        height: 17px;
+        background: url('~/assets/img/icons/ic_position_b_18x18@2x.png') no-repeat center/contain
+      }
+      span {
+        vertical-align: middle;
+        display: inline-block;
+        font-weight: bold;
+        font-size: 15px;
+        font-family: 'PingFangSC-Semibold';
+        color: #333;
+      }
+    }
+    .choose-txt {
+      float: right;
+      p {
+       color: #666; 
+       margin-right: 10px;
+       font-size: 15px;
+      }
+      i {
+        color: #333;
+        font-weight: bold;
+        font-size: 10px;
+      }
+    }
   }
   &_choose {
     padding: 0px 30px; 
@@ -476,7 +547,7 @@ export default {
       .pro {
         width: 100px;
         height: 100px;
-        border: 1px solid #e6e6e6;
+        border: 1PX solid #e6e6e6;
         line-height: 100px;
         text-align: center;
         img {
@@ -517,7 +588,7 @@ export default {
         line-height: 40px;
         text-align: center;
         background: #FCFCFC;
-        border: 1px solid #f1f1f1;
+        border: 1PX solid #f1f1f1;
         font-size: 13px;
         color: #333;
         font-weight: bold;
@@ -582,7 +653,7 @@ export default {
     &.show {
       visibility: visible;
       transform: none;
-      box-shadow: -1px -12px 11px 9px #131313;
+      box-shadow: -1PX -12px 11px 9px #131313;
     }
     .tab-item {
       padding: 0 30px; 
@@ -591,7 +662,7 @@ export default {
       justify-content: space-between;
       align-items: center;
       box-sizing: border-box;
-      border-bottom: 1px solid #f1f1f1;
+      border-bottom: 1PX solid #f1f1f1;
     }
     .tab-list {
       font-size: 13px;
@@ -613,6 +684,9 @@ export default {
         }
       }
     }
+  }
+  .van-modal {
+    z-index: 2000!important
   }
 }
 .u-goods-content {
@@ -660,7 +734,7 @@ export default {
     }
     &-box {
       border-radius: 8px;
-      border: 1px solid #e6e6e6;
+      border: 1PX solid #e6e6e6;
       box-sizing: border-box;
       width: 315px;
       height: 400px;
@@ -721,7 +795,7 @@ export default {
     position: absolute;
     left: 0;
     bottom: 7px;
-    height: 1px;
+    height: 1PX;
     background: #ddd;
     z-index: -1;
   }
@@ -759,6 +833,25 @@ export default {
     vertical-align: middle;
     font-size: 14px;
     margin-left: 10px;
+  }
+}
+.van-dialog {
+  z-index: 10001!important
+}
+.van-modal {
+  z-index: 10000!important
+}
+.van-actionsheet__item {
+  height: 50px;
+  &:first-child {
+    border-bottom: 6px solid #e6e6e8;
+    span {
+      color: #D0352D
+    } 
+  }
+  span {
+    font-size: 17px;
+    color: #000;
   }
 }
 </style>

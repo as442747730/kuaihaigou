@@ -48,7 +48,7 @@ export default {
       margin-right: 0;
     }
     .pro {
-      border: 1px solid #eaeaea;
+      border: 1PX solid #eaeaea;
       height: 158px;
       text-align: center;
       line-height: 158px;

@@ -398,7 +398,7 @@ export default {
   header {
     padding: 0 20px 24px 20px;
     margin: 49px 0 24px;
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1PX solid #f5f5f5;
     h1 {
       font-size: 26px;
       color: #333;
@@ -521,7 +521,7 @@ export default {
     }
     &-box {
       border-radius: 8px;
-      border: 1px solid #eaeaea;
+      border: 1PX solid #eaeaea;
       box-sizing: border-box;
       padding: 20px 0 0; 
       width: 320px;
@@ -593,7 +593,7 @@ export default {
     }
     .infor {
       margin-top: 12px;
-      border-top: 1px solid #eaeaea;
+      border-top: 1PX solid #eaeaea;
       background: #FBFBFB;
       padding: 15px 20px 10px;
       h3 {
@@ -621,14 +621,14 @@ export default {
     }
     &-box {
       border-radius: 8px;
-      border: 1px solid #eaeaea;
+      border: 1PX solid #eaeaea;
       box-sizing: border-box;
       width: 320px;
       height: 514px;
     }
   }
   &-user {
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1PX solid #f5f5f5;
     padding: 20px;
     u {
       width: 40px;
@@ -738,7 +738,7 @@ export default {
     }
     &-box {
       border-radius: 8px;
-      border: 1px solid #eaeaea;
+      border: 1PX solid #eaeaea;
       box-sizing: border-box;
       padding: 20px; 
       width: 320px;
@@ -820,7 +820,7 @@ export default {
       font-weight: bold;
       transform: scale(.8);
       position: relative;
-      top: 1px;
+      top: 1PX;
     }
   }
 }

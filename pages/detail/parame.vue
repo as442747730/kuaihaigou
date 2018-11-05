@@ -172,7 +172,7 @@ export default {
       .wrap {
         background: rgba(249,249,249,1);
         border-radius: 6px;
-        border: 1px solid #E4E4E4;
+        border: 1PX solid #E4E4E4;
         padding: 20px;
       }
       &-item {
@@ -202,7 +202,7 @@ export default {
         padding: 20px 14px 0 20px;
         background: rgba(249,249,249,1);
         border-radius: 6px;
-        border: 1px solid #e4e4e4;
+        border: 1PX solid #e4e4e4;
       }
       &-item {
         margin-bottom: 25px;
@@ -285,7 +285,7 @@ export default {
           padding: 10px 15px;
           background: rgba(249,249,249,1);
           border-radius: 6px;
-          border: 1px solid #e4e4e4;
+          border: 1PX solid #e4e4e4;
           p {
             font-size: 12px;
             color: #333;
