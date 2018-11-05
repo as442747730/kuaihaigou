@@ -166,10 +166,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import url('../../assets/css/var.less');
 .m-invoice-add {
   min-height: 100vh;
-  background: #F5F5F5;
+  background: @cor_border;
   position: relative;
   padding-bottom: 50px;
   box-sizing: border-box;
@@ -194,7 +193,7 @@ export default {
       text-align: center;
       height: 40px;
       line-height: 40px;
-      border: 1px solid #F1F1F1;
+      border: 1PX solid @cor_border;
       font-weight: 500;
       transition: .3s;
       &.active {
@@ -219,7 +218,7 @@ export default {
       display: flex;
       align-items: center;
       &:not(:last-child) {
-        border-bottom: 1px solid #F1F1F1;
+        border-bottom: 1PX solid @cor_border;
       }
       &.small {
         height: 30px;

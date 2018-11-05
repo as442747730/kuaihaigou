@@ -35,13 +35,12 @@
   }
 </script>
 <style lang="less" scoped>
-@import url('../assets/css/var.less');
 .u-address {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: #F5F5F5;
+  background: @cor_border;
   min-height: 100vh;
   &-ul {
     background: white;
@@ -50,7 +49,7 @@
   &-li {
     padding: 25px 20px 15px 20px;
     &:not(:last-child) {
-      border-bottom: 1px solid #F5F5F5;
+      border-bottom: 1PX solid @cor_border;
     }
     .head {
       display: flex;
@@ -65,7 +64,7 @@
         color: #FF5B1F;
         font-size: 9px;
         padding: 2px;
-        border: 1px solid #FF5B1F;
+        border: 1PX solid #FF5B1F;
         border-radius: 2px;
       }
     }

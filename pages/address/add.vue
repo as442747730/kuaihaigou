@@ -166,7 +166,7 @@ export default {
 <style lang="less" scoped>
 .m-address-add {
   min-height: 100vh;
-  background: #F5F5F5;
+  background: @cor_border;
   position: relative;
   padding-bottom: 50px;
   box-sizing: border-box;
@@ -179,7 +179,7 @@ export default {
       display: flex;
       align-items: center;
       &:not(:last-child) {
-        border-bottom: 1px solid #F1F1F1;
+        border-bottom: 1PX solid #F1F1F1;
       }
       &.small {
         height: 30px;
@@ -202,7 +202,7 @@ export default {
           }
         }
         .icon-arrow {
-          content: "";
+          content: '';
           display: block;
           position: absolute;
           width: 6px;

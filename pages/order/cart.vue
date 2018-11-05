@@ -149,7 +149,7 @@ export default {
 .m-cart {
   position: relative;
   min-height: 100vh;
-  background: #F5F5F5;
+  background: @cor_border;
   &-ul {
     padding-bottom: 60px;
     .m-cart-li {
@@ -167,7 +167,7 @@ export default {
         }
         .top {
           padding-bottom: 15px;
-          border-bottom: 1px solid #EEEEEE;
+          border-bottom: 1PX solid #EEEEEE;
           padding: 30px 20px 15px 10px;
         }
         .product-wrapper {
@@ -202,7 +202,7 @@ export default {
           flex: 1;
           display: flex;
           img {
-            border: 1px solid #E6E6E6;
+            border: 1PX solid #E6E6E6;
             margin-left: 15px;
           }
           .info {

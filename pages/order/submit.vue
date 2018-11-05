@@ -264,11 +264,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import url('../../assets/css/var.less');
 .m-order-submit {
   position: relative;
   min-height: 100vh;
-  background: #F1F1F1;
+  background: @cor_border;
   font-size: 0;
   padding-bottom: 50px;
   .m-section-position {
@@ -308,7 +307,7 @@ export default {
           color: #FF5B1F;
           font-size: 9px;
           padding: 2px;
-          border: 1px solid #FF5B1F;
+          border: 1PX solid #FF5B1F;
           border-radius: 2px;
         }
       }
@@ -334,7 +333,7 @@ export default {
       display: flex;
       align-items: center;
       &:not(:last-child) {
-        border-bottom: 1px solid #EEEEEE;
+        border-bottom: 1PX solid @cor_border;
       }
       .label {
         flex: 1;
@@ -380,7 +379,7 @@ export default {
 
     &-li {
       .pack-title {
-        border-top: 1px solid #F1F1F1;
+        border-top: 1PX solid @cor_border;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -401,7 +400,7 @@ export default {
       margin: 0 20px;
       // border-bottom: 1px solid #F1F1F1;
       &-img {
-        border: 1px solid #E6E6E6;
+        border: 1PX solid @cor_border;
         border-radius: 4px;
         width: 88px;
         height: 98px;
