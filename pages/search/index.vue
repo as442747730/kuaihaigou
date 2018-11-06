@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="search" :class="{stopwineScroll: isRoll}">
     <div class="search-head">
       <div class="inputmdl">
         <div class="inputmdl-in">
@@ -14,7 +14,9 @@
         <div class="navmdl-logo" :class="{active: ctrlLogo}" ref="navmdlLogo" @click="navLogo"></div>
       </nav>
     </div>
-    <!-- <search-list ref="refSearch" @shut="navLogo"></search-list> -->
+    
+    <pureList ref="refSearch" :postObj="postSearch" postCls="mart86" @shut="closeLogo"></pureList>
+
     <div class="search-result">
       <section class="goods" v-if="navData.elIndex === 0">
         <div v-if="!keywords">
@@ -134,7 +136,7 @@ import bkImg from '~/assets/img/green_wine.jpg'
 import bkImg2 from '~/assets/img/bk1.png'
 import Imgs from '~/assets/img/foot/ic_home_ele@2x.png'
 import tools from '~/utils/tools.js'
-import searchList from '~/components/cpms/search-list.vue'
+import pureList from '~/components/cpms/pureList'
 export default {
   head () {
     return {
@@ -146,6 +148,7 @@ export default {
   },
   data () {
     return {
+      isRoll: false,
       keywords: '',
       bkImg: bkImg,
       bkImg2: bkImg2,
@@ -154,11 +157,16 @@ export default {
         list: ['商品', '名词解释', '知识分享', '新闻资讯'],
         elIndex: 0
       },
-      ctrlLogo: false
+      ctrlLogo: false,
+      postSearch: {
+        list: ['最新', '最热门', '评论最多', '点赞最多'],
+        elIndex: 3
+      },
+      listSearch: ['最新', '最热门', '评论最多', '点赞最多']
     }
   },
   components: {
-    searchList
+    pureList
   },
   methods: {
     toWinecenter () {
@@ -175,10 +183,13 @@ export default {
     },
     navLogo () {
       this.ctrlLogo = !this.ctrlLogo
-      setTimeout(() => {
-        let ele = this.$refs.refSearch
-        this.ctrlLogo ? ele.addClass() : ele.resetFn()
-      }, 50)
+      this.isRoll = this.ctrlLogo
+      let ele = this.$refs.refSearch
+      this.isRoll ? ele.addClass() : ele.resetFn()
+    },
+    closeLogo () {
+      this.isRoll = false
+      this.ctrlLogo = false
     }
   }
 }

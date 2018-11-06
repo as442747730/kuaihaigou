@@ -16,7 +16,9 @@
           <div class="screen-item" :class="{active: classify.elIndex == index}" @click="elClassify(index)" v-for="(cls, index) in classify.list" :key="index">{{cls}}</div>
         </div>
       </div>
-      <list-cpm ref="listCpm" :postClsIndex="classify.elIndex" @shut="closeClassify"></list-cpm>
+      
+      <pure-list ref="pureList" :postObj="postObj" @shut="closeClassify"></pure-list>
+
     </div>
     <section class="other-content">
       <ul class="othList">
@@ -41,7 +43,7 @@
 </template>
 <script>
 import uFooter from '~/components/footer'
-import listCpm from '~/components/cpms/others-list'
+import pureList from '~/components/cpms/pureList'
 import Imgs from '~/assets/img/green_wine.jpg'
 export default {
   head () {
@@ -60,6 +62,7 @@ export default {
         elIndex: null,
         nowList: []
       },
+      postObj: {},
       lists: ['酒具', '醒酒器', '餐具', '奶酪', '其他'],
       lists2: ['葡萄酒杯', '香槟酒杯', '威士忌杯', '鸡尾酒杯', '烈酒杯'],
       mybk: Imgs
@@ -67,7 +70,7 @@ export default {
   },
   components: {
     uFooter,
-    listCpm
+    pureList
   },
   methods: {
     toWinecenter () {
@@ -77,16 +80,14 @@ export default {
       window.location.href = '/search?id=others'
     },
     elClassify (index) {
-      this.classify.elIndex = index
       if (index === 0) {
-        this.classify.nowList = this.lists
+        this.$set(this.postObj, 'list', this.lists)
       } else {
-        this.classify.nowList = this.lists2
+        this.$set(this.postObj, 'list', this.lists2)
       }
-      console.log(this.classify, 'classify')
       this.isRoll = true
       setTimeout(() => {
-        this.$refs.listCpm.addClass()
+        this.$refs.pureList.addClass()
       })
     },
     closeClassify () {
