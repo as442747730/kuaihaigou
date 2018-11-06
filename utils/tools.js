@@ -91,5 +91,25 @@ export default {
     return array.sort((a, b) => {
       return a - b
     })
+  },
+  /**
+   * 获取地址栏参数
+   * @params 传入需要获取的参数
+   * @return 参数值
+  **/
+  getUrlQues (que) {
+    let webUrl = window.location.href
+    console.log(webUrl)
+    if (webUrl.includes('?')) {
+      let dealUrl = webUrl.split('?')[1]
+      let queArr = dealUrl.split('&')
+      let ewArr = queArr.map(v => {
+        v = v.split('=')
+        return v
+      })
+      return new Map(ewArr).get(que)
+    } else {
+      console.log('该地址没有参数')
+    }
   }
 }
