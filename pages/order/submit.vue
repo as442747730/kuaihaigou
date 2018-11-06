@@ -76,7 +76,7 @@
       </div>
       <div class="m-section-cell-item">
         <div class="label">活动优惠</div>
-        <!-- <div class="content"><div class="badge" v-if="promotion">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div> -->
+        <div class="content"><div class="badge" v-if="promotion">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div>
       </div>
     </div>
 
@@ -121,9 +121,8 @@ export default {
   computed: {
     payable () {
       let c = +this.couponSelected.faceValue || 0
-      // let p = +this.promotion.amount || 0
-      // return (this.totalPrice + this.totalFreight - this.reduceFreight - c - p)
-      return (this.totalPrice + this.totalFreight - this.reduceFreight - c)
+      let p = +this.promotion.amount || 0
+      return (this.totalPrice + this.totalFreight - this.reduceFreight - c - p)
     }
   },
 
