@@ -61,10 +61,10 @@
     <div class="u-detail_line"></div>
 
     <!-- 配送 -->
-    <div class="u-detail_send">
+    <div class="u-detail_send" @click="openAreaSelect">
       <div class="ib-middle">
         <i></i>
-        <span>广东 广州</span>
+        <span class="limit_one">{{ areaTxt }}</span>
       </div>
       <div class="choose-txt">
         <p class="ib-middle">可配送</p>
@@ -226,11 +226,15 @@
         </div>
       </div>
     </van-actionsheet>
+    <!-- 省市区联动 -->
+    <van-popup v-model="popupShow" position="bottom">
+      <van-picker ref="areaPicker" :columns="columns" show-toolbar @change="handleChange" @cancel="onCancel" @confirm="onConfirm" />
+    </van-popup>
 
   </main>
 </template>
 <script>
-// import api from '~/utils/request'
+import api from '~/utils/request'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 import uGraphic from '~/pages/detail/graphic'
 import uParame from '~/pages/detail/parame'
@@ -254,10 +258,20 @@ export default {
     }
   },
 
+  async asyncData () {
+    return api.serverGet('/api/area/86').then((res) => {
+      if (res.code === 200) {
+        return {
+          provinceList: res.data.map((n) => { return { text: n.areaName, id: n.id } }),
+          provinceId: res.data[0].id
+        }
+      }
+    })
+  },
+
   data () {
     return {
       bannerImg: bannerImg,
-      isQuestion: false,
       // 初始化数据
       swiperBanner: {
         speed: 600,
@@ -279,8 +293,37 @@ export default {
       // 功能数据
       skuShow: false,
       packShow: false,
-      num: 10
+      num: 10,
+
+      // 配送功能
+      areaTxt: '请选择',
+      // 省市区的id
+      provinceId: '',
+      cityId: '',
+      // districtId: '',
+      // 省市区的中文
+      provinceTxt: '',
+      cityTxt: '',
+      // districtTxt: '',
+      // 所选的省市区在选择组件中对应列表的索引，每次打开时使用 van-picker 的 setColumnIndex 方法设置选中的省市区
+      provinceIndex: 0,
+      cityIndex: 0,
+      // districtIndex: 0,
+      // 省市区
+      provinceList: [],
+      cityList: [],
+      // districtList: [],
+
+      popupShow: false,
+      columns: [{ values: [] }, { values: [] }]
     }
+  },
+
+  async created () {
+    await this.getArea(this.provinceList[0].id, 'city')
+    // await this.getArea(this.cityList[0].id, 'district')
+    this.cityId = this.cityList[0].id
+    // this.districtId = this.districtList[0].id
   },
 
   mounted () {
@@ -345,6 +388,51 @@ export default {
     goAnchor (selector) {
       let anchor = this.$el.querySelector(selector)
       document.body.scrollTop = anchor.offsetTop
+    },
+    openAreaSelect () {
+      this.getArea(this.provinceId, 'city')
+      // this.getArea(this.cityId, 'district')
+      if (this.$refs.areaPicker) {
+        this.$refs.areaPicker.setColumnValues(1, this.cityList)
+        // this.$refs.areaPicker.setColumnValues(2, this.districtList)
+        this.$refs.areaPicker.setColumnIndex(0, this.provinceIndex)
+        this.$refs.areaPicker.setColumnIndex(1, this.cityIndex)
+        // this.$refs.areaPicker.setColumnIndex(2, this.districtIndex)
+      } else {
+        this.columns[0].values = this.provinceList
+        this.columns[1].values = this.cityList
+        // this.columns[2].values = this.districtList
+      }
+      this.popupShow = true
+    },
+    async getArea (id, val) {
+      const { code, data } = await api.clientGet('/api/area/' + id)
+      if (code === 200) {
+        this[val + 'List'] = data.map((n) => { return { text: n.areaName, id: n.id } })
+      }
+    },
+    async handleChange (instance, val, column) {
+      if (column === 0) {
+        await this.getArea(val[column].id, 'city')
+        // await this.getArea(this.cityList[0].id, 'district')
+        instance.setColumnValues(1, this.cityList)
+      }
+    },
+    onCancel () {
+      this.popupShow = false
+    },
+    onConfirm (val, idx) {
+      this.provinceId = val[0].id
+      this.cityId = val[1].id
+      // this.districtId = val[2] ? val[2].id : ''
+      this.provinceTxt = val[0].text
+      this.cityTxt = val[1].text
+      // this.districtTxt = val[2] ? val[2].text : ''
+      this.provinceIndex = idx[0]
+      this.cityIndex = idx[1]
+      // this.districtIndex = idx[2] ? idx[2] : ''
+      this.areaTxt = this.provinceTxt + this.cityTxt
+      this.popupShow = false
     }
   }
 
@@ -490,12 +578,14 @@ export default {
         background: url('~/assets/img/icons/ic_position_b_18x18@2x.png') no-repeat center/contain
       }
       span {
+        width: 210px;
         vertical-align: middle;
         display: inline-block;
         font-weight: bold;
         font-size: 15px;
         font-family: 'PingFangSC-Semibold';
         color: #333;
+        line-height: 1.2;
       }
     }
     .choose-txt {
@@ -834,6 +924,9 @@ export default {
     font-size: 14px;
     margin-left: 10px;
   }
+}
+.van-popup {
+  z-index: 9999!important;
 }
 .van-dialog {
   z-index: 10001!important

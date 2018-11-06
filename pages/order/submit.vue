@@ -76,7 +76,7 @@
       </div>
       <div class="m-section-cell-item">
         <div class="label">活动优惠</div>
-        <div class="content"><div class="badge" v-if="promotion.ifEnable">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div>
+        <!-- <div class="content"><div class="badge" v-if="promotion">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div> -->
       </div>
     </div>
 
@@ -121,8 +121,9 @@ export default {
   computed: {
     payable () {
       let c = +this.couponSelected.faceValue || 0
-      let p = +this.promotion.amount || 0
-      return (this.totalPrice + this.totalFreight - this.reduceFreight - c - p)
+      // let p = +this.promotion.amount || 0
+      // return (this.totalPrice + this.totalFreight - this.reduceFreight - c - p)
+      return (this.totalPrice + this.totalFreight - this.reduceFreight - c)
     }
   },
 
@@ -133,7 +134,7 @@ export default {
       api.serverGet('/api/shippingAddress/listAll', {}, req), // 地址
       api.serverGet('/api/order/calcFreight?time=' + new Date().getTime(), {}, req), // 运费
       api.serverGet('/api/promotion/get', {}, req), // 活动
-      api.serverGet('/api/coupon/listForUsable', { amount: 99999 }, req), // 优惠券
+      api.serverGet('/api/coupon/listForUsable', { amount: 100 }, req), // 优惠券
       api.serverGet('/api/invoice/listAll', {}, req)
     ])
       .then(api.spread(function (res1, res2, res3, res4, res5) {
@@ -141,8 +142,8 @@ export default {
           return req.redirect('/account/login')
         }
         // console.log(res1.data)
-        console.log(res2.data)
-        // console.log(res3.data)
+        // console.log(res2.data)
+        console.log(res3.data)
         // console.log(res4.data)
 
         let a = []
@@ -153,7 +154,7 @@ export default {
           item.list.push(...res2.data.goodsList.filter(n => { return n.logistics === item.logisticsCompany }))
           item.list.push(...res2.data.packList.filter(n => { return n.logistics === item.logisticsCompany }))
         })
-        console.log(a)
+        // console.log(a)
 
         return {
           addressArray: res1.data, // 所有可选的收货地址
