@@ -18,16 +18,32 @@
         </div>
       </div>
       <country-cpm ref="refcountryCpm" :postCountry="countryList" :postArea="areaList" @delCountry="elCountry"></country-cpm>
-      <price-cpm ref="refPrice" :postPrice="this.screens.elIndex" @shut="closeScreens"></price-cpm>
+      
       <div class="elmdl">
-        <div class="elmdl-item" :class="{active: ranks.elIndex == index}" @click="elRanks(index)" v-for="(rank, index) in ranks.list" :key="index">
+        <div class="elmdl-item" :class="{active: ranks.elIndex == index + 3}" @click="elScreens(index + 3)" v-for="(rank, index) in ranks.list" :key="index">
           <span>{{rank}}</span>
         </div>
-        <div class="elmdl-item" :class="{active: ranks.elIndex == 3}" @click="elRanks(3)">
+        <div class="elmdl-item" :class="{active: ranks.elIndex == 3}" @click="elScreens(6)">
           <span>{{noviceMaster}}</span>
         </div>
       </div>
-      <level-cpms ref="refRank" :postLevel="this.ranks.elIndex" @shut="closeRanks" @shutNovice="ctrlNoviceMaster"></level-cpms>
+
+      <com-list ref="refComlist" :postType="postType" :postObj="postObj" :martop="martop" @shut="closeScreens">
+        <div slot="headSild" v-if="screens.elIndex === 0">
+          <h2 class="headprice">¥700</h2>
+          <div class="slider">
+            <van-slider v-model="stepvalue" :step="10" bar-height="4px" />
+            <div class="slider-items">
+              <span>¥0</span>
+              <span>¥300</span>
+              <span>¥900</span>
+              <span>不限</span>
+            </div>
+          </div>
+        </div>
+        <div slot="foot" v-if="screens.elIndex === 2 || screens.elIndex === 6"></div>
+      </com-list>
+
     </div>
     <div class="winecenter-content">
       <section class="novice">
@@ -111,8 +127,7 @@ import testImg1 from '../../assets/img/img.png'
 import testImg2 from '../../assets/img/img2.png'
 import uFooter from '~/components/footer'
 import countryCpm from '~/components/cpms/country-list.vue'
-import priceCpm from '~/components/cpms/price-list.vue'
-import levelCpms from '~/components/cpms/level-cpms.vue'
+import comList from '~/components/cpms/comList.vue'
 import api from '~/utils/request'
 
 export default {
@@ -131,6 +146,10 @@ export default {
       bkImg2: testImg2,
       isRoll: false,
       isNovice: true, // 是否为新手
+      stepvalue: 0,
+      postObj: {},
+      postType: true,
+      martop: false, // 控制comList 组件的属性
       screens: {
         list: ['价格类型', '场景特色', '推荐排序'],
         elIndex: null
@@ -150,8 +169,7 @@ export default {
   components: {
     uFooter,
     countryCpm,
-    priceCpm,
-    levelCpms
+    comList
   },
   mounted () {
     this.getPageData()
@@ -221,32 +239,105 @@ export default {
       }
     },
     elScreens (index) {
-      if (this.ranks.elIndex !== null) {
-        this.$refs.refRank.resetFn()
-        return false
+      index <= 2 ? this.martop = false : this.martop = true
+      if (index === 2 || index === 6) {
+        this.postType = false
+      } else {
+        this.postType = true
       }
       this.$set(this.screens, 'elIndex', index)
       this.isRoll = true
       setTimeout(() => {
-        this.$refs.refPrice.addClass()
+        if (index <= 2) {
+          this.$refs.refComlist.addClsType2()
+        } else {
+          this.$refs.refComlist.addClsType1()
+        }
       }, 10)
+
+      let getList = []
+      switch (index) {
+        case 0:
+          getList = [
+            {
+              title: '葡萄酒类型',
+              clsType: 'u-list4',
+              list: ['干红', '干红', '干红', '干红', '干红']
+            }
+          ]
+          break
+        case 1:
+          getList = [
+            {
+              title: '喝酒场景',
+              clsType: 'u-list4',
+              list: ['宴会', '会议', '会议定制', '喝酒场景', '喝酒场景', '喝酒场景']
+            },
+            {
+              title: '特色',
+              clsType: 'u-list4',
+              list: ['特色', '特色', '特色', '特色', '特色']
+            }
+          ]
+          break
+        case 2:
+          getList = [
+            {
+              clsType: 'listone',
+              list: ['全部', '最新', '最便宜', '最贵', '仅看往期']
+            }
+          ]
+          break
+        case 3:
+          getList = [
+            {
+              title: '站内等级',
+              clsType: 'u-list4',
+              list: ['入门级', '中级', '高级', '豪华级', '豪华级2']
+            },
+            {
+              title: '国际级别',
+              clsType: 'u-list4',
+              list: ['AOC/AOP', 'VDP/IGP', 'DOCG', 'VCE', 'AOC/AOP', 'VDP/IGP', 'DOCG', 'VCE', 'VCE', 'VCE']
+            }
+          ]
+          break
+        case 4:
+          getList = [
+            {
+              clsType: 'u-list4',
+              list: ['混酿型', '赤霞珠', '黑皮诺', '梅洛', '混酿型', '赤霞珠', '黑皮诺', '梅洛']
+            }
+          ]
+          break
+        case 5:
+          getList = [
+            {
+              title: '酒精度',
+              clsType: 'u-list3',
+              list: ['11%以下', '11%-11.9%', '12%-12.9%', '13%-13.9%', '14%以上']
+            },
+            {
+              title: '净含量',
+              clsType: 'u-list2',
+              list: ['300mL以下', '300mL-500mL', '501mL-999mL', '501mL-999mL']
+            }
+          ]
+          break
+        case 6:
+          getList = [
+            {
+              clsType: 'listone',
+              list: ['新手选酒', '高手选酒']
+            }
+          ]
+          break
+      }
+      this.$set(this.postObj, 'list', getList)
     },
     closeScreens () {
       this.screens.elIndex = null
       this.isRoll = false
-    },
-
-    elRanks (index) {
-      this.ranks.elIndex = index
-      this.isRoll = true
-      setTimeout(() => {
-        this.$refs.refRank.addClass()
-      }, 10)
-    },
-    closeRanks () {
-      this.ranks.elIndex = null
-      this.isRoll = false
-      console.log(this.ranks.elIndex)
     },
     customArray (arr) {
       return JSON.parse(arr)
@@ -255,7 +346,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import "../../assets/css/var.less";
 
 .stopwineScroll {
   height: 100vh;
@@ -370,7 +460,7 @@ export default {
   z-index: 60;
   padding-bottom: 15px;
   background: #fff;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1PX solid #f5f5f5;
   .padlr20;
   .flex_between;
 
@@ -434,7 +524,7 @@ export default {
 
     border-radius: 4px;
 
-    border: 1px solid #eaeaea;
+    border: 1PX solid #eaeaea;
 
     &_bk {
 
@@ -514,7 +604,7 @@ export default {
 
 .novice {
 
-  padding-bottom: 5px;
+  padding-bottom: 50px;
 
   .itemr-info {
 
@@ -616,9 +706,4 @@ export default {
 
 }
 
-.killer {
-
-  padding-bottom: 5px;
-
-}
 </style>
