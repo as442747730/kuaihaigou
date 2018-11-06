@@ -49,7 +49,7 @@
 <style lang="less" scoped>
 footer {
   font-size: 0;
-  border-top: 1px solid #eee;
+  border-top: 1PX solid #eee;
   box-sizing: border-box;
   display: flex;
   width: 100%;
