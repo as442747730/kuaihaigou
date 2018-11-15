@@ -2,6 +2,7 @@
   <header>
     <span class="icon_back"></span>
     <h3 class="title">{{titleConfig}}</h3>
+    <slot></slot>
   </header>
 </template>
 <script>
@@ -19,7 +20,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #F1F1F1;
+  border-bottom: 1PX solid #F1F1F1;
   position: relative;
   line-height: 1;
   font-size: 12px;
@@ -44,6 +45,9 @@ header {
       background-position: 50% 50%;
       background-size: cover;
       background-repeat: no-repeat;
+       background-image: -webkit-linear-gradient(bottom, rgb(201, 115, 255), rgb(20, 11, 255));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
     }
   }
 
