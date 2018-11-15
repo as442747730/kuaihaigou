@@ -45,9 +45,7 @@ header {
       background-position: 50% 50%;
       background-size: cover;
       background-repeat: no-repeat;
-       background-image: -webkit-linear-gradient(bottom, rgb(201, 115, 255), rgb(20, 11, 255));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+      
     }
   }
 

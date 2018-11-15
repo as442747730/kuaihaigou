@@ -37,8 +37,8 @@
 </template>
 <script>
 import comHead from '~/components/com-head'
-import shareStudy from '~/components/encycoms/share'
-import newsInfo from '~/components/encycoms/news'
+import shareStudy from './_share'
+import newsInfo from './_news'
 export default {
   components: {
     comHead,
