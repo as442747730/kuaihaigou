@@ -157,7 +157,7 @@
   </article>
 </template>
 <script>
-import uQuestion from '~/pages/detail/question'
+import uQuestion from './_question'
 
 import { ImagePreview } from 'vant'
 

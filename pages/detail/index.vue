@@ -12,41 +12,27 @@
       <div class="u-detail_banner">
         <div v-swiper:mySwiper="swiperBanner">
           <div class="swiper-wrapper">
-            <div class="swiper-slide banner-list">
+            <div class="swiper-slide banner-list" v-for="(banner, index) in topGoods.imgList" :key="index">
               <div class="banner-list-box">
                 <div class="pro">
-                  <img src="~/assets/img/img.png">
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide banner-list">
-              <div class="banner-list-box">
-                <div class="pro">
-                  <img src="~/assets/img/img.png">
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide banner-list">
-              <div class="banner-list-box">
-                <div class="pro">
-                  <img src="~/assets/img/img.png">
+                  <img :src="banner.imgUrl">
                 </div>
               </div>
             </div>
           </div>
           <div class="swiper-page">
-            <span class="point active"></span>
-            <span class="point"></span>
-            <span class="point"></span>
+            <span class="point" :class="{active: index === 0}" v-for="(point, index) in topGoods.imgList" :key="index"></span>
           </div>
         </div>
       </div>
 
       <div class="u-detail_info-desc margin-30">
-        <h2 class="limit_one">法国1982拉菲法国1982拉菲传奇Lafite</h2>
-        <p>750ml | 日常餐酒 | 紧致单宁</p>
+        <h2 class="limit_one">{{topGoods.goodsName}}</h2>
+        <p>
+          <span v-for="(tag, index) in topGoods.topList" :key="index">{{tag}}</span>
+        </p>
         <em class="price">
-          ¥ 399
+          ¥ {{topGoods.actualPrice}}
         </em>
         <div class="to-compare">
           去对比
@@ -67,7 +53,8 @@
         <span class="limit_one">{{ areaTxt }}</span>
       </div>
       <div class="choose-txt">
-        <p class="ib-middle">可配送</p>
+        <p class="ib-middle" v-if="ifsend">可配送</p>
+        <p class="ib-middle" v-else>不可配送</p>
         <i class="van-icon ib-middle van-icon-arrow"></i>
       </div>
     </div>
@@ -75,14 +62,14 @@
     <div class="u-detail_line"></div>
 
     <section class="u-detail_choose">
-      <div class="u-detail_choose-item" @click="skuShow = true">
+      <div class="u-detail_choose-item" @click="openSkuFn">
         <span>选择规格</span>
         <div class="choose-txt">
           <p class="ib-middle">礼盒装</p>
           <i class="van-icon ib-middle van-icon-arrow"></i>
         </div>
       </div>
-      <div class="u-detail_choose-item" @click="packShow = true">
+      <div class="u-detail_choose-item" @click="openPack">
         <span>套餐购买</span>
         <div class="choose-txt">
           <p class="ib-middle">查看</p>
@@ -129,7 +116,7 @@
 
     <!-- 内容模块 -->
     <transition name='slide-fade2' mode="out-in">
-      <component v-bind:is="view"></component>
+      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist"></component>
     </transition>
 
     <!-- 底栏 -->
@@ -155,25 +142,15 @@
             </div>
           </div>
         </div>
-        <div class="sku-item">
-          <h4 class="sku-title">包装</h4>
+        <div class="sku-item" v-for="(skuList, index) in newSkuAttrs" :key="index">
+          <h4 class="sku-title">{{skuList[0].specName}}</h4>
           <div class="sku-item-ul">
-            <div class="sku-list cur">
-              <span class="sku-name">普通装</span>
-            </div>
-            <div class="sku-list">
-              <span class="sku-name">礼盒装</span>
-            </div>
-          </div>
-        </div>
-        <div class="sku-item">
-          <h4 class="sku-title">包装</h4>
-          <div class="sku-item-ul">
-            <div class="sku-list cur">
-              <span class="sku-name">普通装</span>
-            </div>
-            <div class="sku-list">
-              <span class="sku-name">礼盒装</span>
+            <div class="sku-list"
+              :class="{cur: elSkuId === sku.skuid}"
+              @click="elSkuFn(sku)"
+              v-for="(sku, ind) in skuList"
+              :key="ind">
+              <span class="sku-name">{{sku.specValue}}</span>
             </div>
           </div>
         </div>
@@ -188,41 +165,32 @@
       <div class="sku-wrap pack-wrap">
         <div class="goods-info">
           <div class="pro ib-middle">
-            <img src="~/assets/img/img.png">
+            <img :src="nowpack.coverUrl">
           </div>
           <div class="desc ib-bottom">
             <div class="price">
-              ¥399
+              ¥ {{ nowpack.price }}
             </div>
             <div class="selected">
-              已选：【套餐一】
+              已选：{{ nowpack.name}}
             </div>
           </div>
         </div>
         <div class="sku-item">
           <h4 class="sku-title">包装</h4>
           <div class="sku-item-ul">
-            <div class="sku-list cur">
-              <span class="sku-name">普通装</span>
+            <div class="sku-list" :class="{cur: elpackIndex === index}" @click="elpackFn(index, pack)" v-for="(pack, index) in packList" :key="index">
+              <span class="sku-name">{{ pack.name }}</span>
             </div>
-            <div class="sku-list">
-              <span class="sku-name">礼盒装</span>
-            </div>
-            <div class="sku-list">
-              <span class="sku-name">礼盒装</span>
-            </div>
-            <div class="sku-list">
-              <span class="sku-name">礼盒装</span>
-            </div>   
           </div>
         </div>
         <div class="pack-goods-bill">
           <span>商品清单：</span>
-          <p>法国1982拉菲法国1982拉菲传奇Lafite + 开瓶器 + 红酒玻璃九件套 + 套餐商品A +套餐商品B + 套餐商品C</p>
+          <p>{{ packDetaList }}</p>
         </div>
         <div class="sku-num">
           <h4>数量</h4>
-          <van-stepper :min="1" v-model="num" :integer="true" />
+          <van-stepper :min="1" :max="nowpack.goodsNum" v-model="packDetaNum" :integer="true" />
         </div>
       </div>
     </van-actionsheet>
@@ -235,11 +203,14 @@
 </template>
 <script>
 import api from '~/utils/request'
+import { goodsApi } from '~/api/goods.js'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
-import uGraphic from '~/pages/detail/graphic'
-import uParame from '~/pages/detail/parame'
-import uComment from '~/pages/detail/comment'
-import uAfter from '~/pages/detail/after'
+import uGraphic from './_graphic'
+import uParame from './_parame'
+import uComment from './_comment'
+import uAfter from './_after'
+
+const goodsId = '1045619125717569536'
 
 export default {
   components: {
@@ -257,20 +228,77 @@ export default {
       ]
     }
   },
+  computed: {
+    getIndex (index, ind) {
+      console.log('index', index)
+      console.log('ind', ind)
+      console.log('ind', this.newSkuAttrs[index].length)
 
-  async asyncData () {
-    return api.serverGet('/api/area/86').then((res) => {
-      if (res.code === 200) {
-        return {
-          provinceList: res.data.map((n) => { return { text: n.areaName, id: n.id } }),
-          provinceId: res.data[0].id
-        }
+      return 0
+      // if (index === 0) {
+      //   return ind
+      // } else {
+      //   let arr = this.newSkuAttrs
+      //   console.log('arr', arr)
+      //   if (arr[index]) {
+      //     let len = arr[index].length
+      //     return (len - 1) + parseInt(ind)
+      //   }
+      // }
+    }
+  },
+
+  async asyncData (req) {
+    let id = goodsId
+    let detailFn = goodsApi.getDetail(id, req)
+    let topSaleFn = goodsApi.getTopSales(req)
+    const {code: detCode, data: detData} = await detailFn
+    const {code: hotCode, data: hotData} = await topSaleFn
+    if (detCode === 200) {
+      let hotlist = []
+      if (hotCode === 200) {
+        hotlist = hotData
       }
-    })
+      console.log('detData', detData)
+      let { imgList, goodsName, actualPrice, introduce } = detData
+      let topData = {
+        imgList: imgList,
+        goodsName: goodsName,
+        actualPrice: actualPrice,
+        introduce: introduce
+      }
+      let { skuAttrList, skuList, packList } = detData
+
+      // 商品清单
+      let { goodsDetailMobile, listDetailMobile, lists } = detData
+      let goodsList = {
+        goodsDetailMobile: goodsDetailMobile, // 商品详情
+        listDetailMobile: listDetailMobile, // 包装清单
+        lists: lists // 清单列表
+      }
+      // 酒评参数
+      let { redAttr, brandName, goodsWineCommentResp } = detData
+      let wineParams = {
+        redAttr: redAttr, // 红酒属性
+        brandName: brandName,
+        goodsWineCommentResp: goodsWineCommentResp
+      }
+
+      return {
+        topGoods: topData,
+        skuAttrList: skuAttrList,
+        skuList: skuList,
+        packList: packList,
+        goodsList: goodsList,
+        wineParams: wineParams,
+        hotlist: hotlist
+      }
+    }
   },
 
   data () {
     return {
+      goodsId: goodsId,
       bannerImg: bannerImg,
       // 初始化数据
       swiperBanner: {
@@ -285,7 +313,24 @@ export default {
           }
         }
       },
-
+      topGoods: {}, // 上部商品详情数据
+      skuAttrList: [], // 商品规格
+      newSkuAttrs: [], // 重新组合skuAttrList
+      elskuIndex: 0, // 商品规格选中Index
+      nowSkuAttr: {}, // 选中商品规格
+      elSkuId: '', // 选中商品规格 id
+      skuList: [],
+      packList: [], // 套餐集合
+      elpackIndex: 0, // 选中套餐索引
+      packDetaNum: 1, // 套餐 当前数量
+      packDetaList: '', // 套餐 商品清单
+      nowpack: {}, // 选中套餐
+      ifsend: true, // 是否可配送
+      goodsDetailMobile: '', // 商品详情
+      listDetailMobile: '', // 包装清单
+      goodsList: {}, // 商品清单
+      wineParams: {}, // 酒评参数
+      viewData: {}, // 组件传递的参数
       active: 1,
       view: uGraphic,
       tabIndex: 1,
@@ -319,11 +364,37 @@ export default {
     }
   },
 
-  async created () {
-    await this.getArea(this.provinceList[0].id, 'city')
-    // await this.getArea(this.cityList[0].id, 'district')
-    this.cityId = this.cityList[0].id
-    // this.districtId = this.districtList[0].id
+  async created (req) {
+    const {code, data} = await goodsApi.getProvince('86')
+    if (code === 200) {
+      // console.log(data)
+      this.provinceList = data.map(v => {
+        return {
+          id: v.id,
+          text: v.areaName
+        }
+      })
+    }
+    // skuAttrListi生成二维数组
+    let skuArr = this.skuAttrList
+    let arr = skuArr.map(v => {
+      return v.specName
+    })
+    let setArr = [...new Set(arr)]
+    // console.log('setArr', setArr)
+    let newArr = Array.from({ length: setArr.length })
+    for (let i = 0; i < skuArr.length; i++) {
+      setArr.map((value, index) => {
+        if (skuArr[i].specName === value) {
+          if (!newArr[index]) {
+            newArr[index] = []
+          }
+          newArr[index].push(skuArr[i])
+        }
+      })
+    }
+    this.elSkuId = newArr[0][0].skuid
+    this.newSkuAttrs = newArr
   },
 
   mounted () {
@@ -371,15 +442,20 @@ export default {
       this.goAnchor('#local')
       switch (val) {
         case 1:
+          this.viewData = this.goodsList
           this.view = 'uGraphic'
           break
         case 2:
+          this.viewData = this.wineParams
           this.view = 'uParame'
           break
         case 3:
           this.view = 'uComment'
           break
         case 4:
+          this.viewData = {
+            name: 'uAfter'
+          }
           this.view = 'uAfter'
           break
       }
@@ -391,6 +467,7 @@ export default {
     },
     openAreaSelect () {
       this.getArea(this.provinceId, 'city')
+      console.log('789456')
       // this.getArea(this.cityId, 'district')
       if (this.$refs.areaPicker) {
         this.$refs.areaPicker.setColumnValues(1, this.cityList)
@@ -414,28 +491,90 @@ export default {
     async handleChange (instance, val, column) {
       if (column === 0) {
         await this.getArea(val[column].id, 'city')
-        // await this.getArea(this.cityList[0].id, 'district')
         instance.setColumnValues(1, this.cityList)
       }
     },
     onCancel () {
       this.popupShow = false
     },
-    onConfirm (val, idx) {
+    async onConfirm (val, idx) {
+      console.log('val confirm', val)
       this.provinceId = val[0].id
       this.cityId = val[1].id
-      // this.districtId = val[2] ? val[2].id : ''
+
       this.provinceTxt = val[0].text
       this.cityTxt = val[1].text
-      // this.districtTxt = val[2] ? val[2].text : ''
+
       this.provinceIndex = idx[0]
       this.cityIndex = idx[1]
-      // this.districtIndex = idx[2] ? idx[2] : ''
+
       this.areaTxt = this.provinceTxt + this.cityTxt
+
+      let goodsId = this.goodsId
+      let cityId = this.cityId
+      const {code, data} = await goodsApi.checkDistr(goodsId, cityId)
+      if (code === 200) {
+        if (data === 2) {
+          this.ifsend = false
+        } else {
+          this.ifsend = true
+        }
+      }
       this.popupShow = false
+    },
+    openSkuFn () {
+      let skuAttr = this.newSkuAttrs[0][0]
+      this.elSkuId = skuAttr.skuid
+      this.getSkuFn()
+      this.nowSkuAttr = skuAttr
+      this.skuShow = true
+    },
+    elSkuFn (sku) {
+      console.log(sku)
+      this.nowSkuAttr = sku
+      this.elSkuId = sku.skuid
+      this.getSkuFn()
+    },
+    getSkuFn () {
+      // 根据id 拿到skuList
+      let skuid = this.elSkuId
+      console.log(this.skuList, 'skuList')
+      let obj = this.skuList.find(v => {
+        console.log(v.id, skuid)
+        return v.id === skuid
+      })
+      console.log('obj', obj)
+    },
+    openPack () {
+      if (this.packList.length > 0) {
+        this.elpackIndex = 0
+        this.packDetaNum = 1
+        this.packShow = true
+        this.nowpack = this.packList[0]
+        let packId = this.packList[0].id
+        this.getPackdetail(packId)
+      } else {
+        this.$toast('暂无套餐')
+      }
+    },
+    elpackFn (index, pack) {
+      this.elpackIndex = index
+      this.packDetaNum = 1
+      this.nowpack = pack
+      let packId = pack.id
+      this.getPackdetail(packId)
+    },
+    async getPackdetail (packid) {
+      const { code, data } = await goodsApi.getPack(packid)
+      if (code === 200) {
+        let goods = data.goodsPackResps
+        let arrs = goods.map(v => {
+          return v.goodsName
+        })
+        this.packDetaList = arrs.join(' + ')
+      }
     }
   }
-
 }
 </script>
 <style lang="less">
