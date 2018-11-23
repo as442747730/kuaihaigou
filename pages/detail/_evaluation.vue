@@ -49,6 +49,7 @@ export default {
       height: 158px;
       text-align: center;
       line-height: 158px;
+      overflow: hidden;
       img {
         display: inline-block;
         vertical-align: middle;
@@ -63,8 +64,9 @@ export default {
         margin: 12px 0 10px;
         line-height: 18px;
         font-weight: bold;
-        height: 36px;
+        // height: 36px;
         overflow: hidden;
+        .u-ellipsis;
       }
       p {
         color: #999;

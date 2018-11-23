@@ -32,9 +32,9 @@
           <span v-for="(tag, index) in topGoods.topList" :key="index">{{tag}}</span>
         </p>
         <em class="price">
-          ¥ {{topGoods.actualPrice}}
+          ¥ {{ showPrice }}
         </em>
-        <div class="to-compare">
+        <div class="to-compare" @click="compareFn">
           去对比
         </div>
         <br>
@@ -65,14 +65,18 @@
       <div class="u-detail_choose-item" @click="openSkuFn">
         <span>选择规格</span>
         <div class="choose-txt">
-          <p class="ib-middle">礼盒装</p>
+          <p class="ib-middle">
+            <span>{{ getskuInfo.skuname }}</span>
+          </p>
           <i class="van-icon ib-middle van-icon-arrow"></i>
         </div>
       </div>
       <div class="u-detail_choose-item" @click="openPack">
         <span>套餐购买</span>
         <div class="choose-txt">
-          <p class="ib-middle">查看</p>
+          <p class="ib-middle">
+            <span v-if="!!elpackId">{{ nowpack.name }}</span>
+          </p>
           <i class="van-icon ib-middle van-icon-arrow"></i>
         </div>
       </div>
@@ -116,7 +120,7 @@
 
     <!-- 内容模块 -->
     <transition name='slide-fade2' mode="out-in">
-      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist"></component>
+      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId"></component>
     </transition>
 
     <!-- 底栏 -->
@@ -131,14 +135,14 @@
       <div class="sku-wrap">
         <div class="goods-info">
           <div class="pro ib-middle">
-            <img src="~/assets/img/img.png">
+            <img v-if="topGoods.imgList[0].imgUrl" :src="topGoods.imgList[0].imgUrl">
           </div>
           <div class="desc ib-bottom">
             <div class="price">
-              ¥399
+              ¥{{ getskuInfo.allprice }}
             </div>
             <div class="selected">
-              已选：【普通装】
+              已选：【{{ getskuInfo.skuname }}】
             </div>
           </div>
         </div>
@@ -146,8 +150,8 @@
           <h4 class="sku-title">{{skuList[0].specName}}</h4>
           <div class="sku-item-ul">
             <div class="sku-list"
-              :class="{cur: elSkuId === sku.skuid}"
-              @click="elSkuFn(sku)"
+              :class="{cur: sku.specValue === skuVals[index]}"
+              @click="elSkuFn(sku, index)"
               v-for="(sku, ind) in skuList"
               :key="ind">
               <span class="sku-name">{{sku.specValue}}</span>
@@ -156,7 +160,13 @@
         </div>
         <div class="sku-num">
           <h4>数量</h4>
-          <van-stepper :min="1" v-model="num" :integer="true" />
+          <van-stepper
+            :min="1"
+            :max="skuObj.stock"
+            @change="changeSkuFn"
+            v-model="getskuInfo.num"
+            :integer="true" />
+          <div class="surstock">剩余库存{{ skuObj.stock }}</div>
         </div>
       </div>
     </van-actionsheet>
@@ -169,17 +179,21 @@
           </div>
           <div class="desc ib-bottom">
             <div class="price">
-              ¥ {{ nowpack.price }}
+              ¥ {{ nowpack.allprice }}
             </div>
             <div class="selected">
-              已选：{{ nowpack.name}}
+              已选：【{{ nowpack.name}}】
             </div>
           </div>
         </div>
         <div class="sku-item">
           <h4 class="sku-title">包装</h4>
           <div class="sku-item-ul">
-            <div class="sku-list" :class="{cur: elpackIndex === index}" @click="elpackFn(index, pack)" v-for="(pack, index) in packList" :key="index">
+            <div class="sku-list"
+              :class="{cur: pack.id === elpackId}"
+              @click="elpackFn(index, elpackId, pack)"
+              v-for="(pack, index) in packList"
+              :key="index">
               <span class="sku-name">{{ pack.name }}</span>
             </div>
           </div>
@@ -190,7 +204,13 @@
         </div>
         <div class="sku-num">
           <h4>数量</h4>
-          <van-stepper :min="1" :max="nowpack.goodsNum" v-model="packDetaNum" :integer="true" />
+          <van-stepper
+            :min="1"
+            :max="nowpack.goodsNum"
+            @change="changepackFn"
+            v-model="packDetaNum"
+            :integer="true" />
+          <div class="surstock">剩余库存{{ nowpack.goodsNum }}</div>
         </div>
       </div>
     </van-actionsheet>
@@ -210,7 +230,8 @@ import uParame from './_parame'
 import uComment from './_comment'
 import uAfter from './_after'
 
-const goodsId = '1045619125717569536'
+// const goodsId = '1045619125717569536'
+const goodsId = '1045618556932198400'
 
 export default {
   components: {
@@ -228,26 +249,6 @@ export default {
       ]
     }
   },
-  computed: {
-    getIndex (index, ind) {
-      console.log('index', index)
-      console.log('ind', ind)
-      console.log('ind', this.newSkuAttrs[index].length)
-
-      return 0
-      // if (index === 0) {
-      //   return ind
-      // } else {
-      //   let arr = this.newSkuAttrs
-      //   console.log('arr', arr)
-      //   if (arr[index]) {
-      //     let len = arr[index].length
-      //     return (len - 1) + parseInt(ind)
-      //   }
-      // }
-    }
-  },
-
   async asyncData (req) {
     let id = goodsId
     let detailFn = goodsApi.getDetail(id, req)
@@ -314,17 +315,32 @@ export default {
         }
       },
       topGoods: {}, // 上部商品详情数据
+      turePrice: 0,
       skuAttrList: [], // 商品规格
       newSkuAttrs: [], // 重新组合skuAttrList
-      elskuIndex: 0, // 商品规格选中Index
       nowSkuAttr: {}, // 选中商品规格
-      elSkuId: '', // 选中商品规格 id
+      skuVals: [], // 选中 specValue 数组
       skuList: [],
+      skuObj: {}, // 选中sku对象
+      elSkuNum: 1, // 选择sku的数量
+      getskuInfo: {
+        num: 1,
+        oneprice: 0,
+        allprice: 0,
+        skuname: ''
+      }, // 获取sku 信息
       packList: [], // 套餐集合
       elpackIndex: 0, // 选中套餐索引
       packDetaNum: 1, // 套餐 当前数量
       packDetaList: '', // 套餐 商品清单
-      nowpack: {}, // 选中套餐
+      nowpack: {
+        coverUrl: '',
+        oneprice: 0,
+        allprice: 0,
+        name: '',
+        goodsNum: 0
+      }, // 选中套餐
+      elpackId: '', // 选中套餐id
       ifsend: true, // 是否可配送
       goodsDetailMobile: '', // 商品详情
       listDetailMobile: '', // 包装清单
@@ -364,6 +380,18 @@ export default {
     }
   },
 
+  computed: {
+    showPrice: function () {
+      let retprice = this.topGoods.actualPrice
+      if (this.elpackId !== '') {
+        retprice = this.nowpack.allprice
+      } else if (this.getskuInfo.skuname !== '') {
+        retprice = this.getskuInfo.allprice
+      }
+      return retprice
+    }
+  },
+
   async created (req) {
     const {code, data} = await goodsApi.getProvince('86')
     if (code === 200) {
@@ -375,26 +403,32 @@ export default {
         }
       })
     }
-    // skuAttrListi生成二维数组
-    let skuArr = this.skuAttrList
-    let arr = skuArr.map(v => {
-      return v.specName
-    })
-    let setArr = [...new Set(arr)]
-    // console.log('setArr', setArr)
-    let newArr = Array.from({ length: setArr.length })
-    for (let i = 0; i < skuArr.length; i++) {
-      setArr.map((value, index) => {
-        if (skuArr[i].specName === value) {
-          if (!newArr[index]) {
-            newArr[index] = []
-          }
-          newArr[index].push(skuArr[i])
-        }
+    // 判断 skuList 是否存在
+    if (this.skuList.length !== 0) {
+      // skuAttrListi生成二维数组
+      let skuArr = this.skuAttrList
+      let arr = skuArr.map(v => {
+        return v.specName
       })
+      let setArr = [...new Set(arr)]
+      // console.log('setArr', setArr)
+      let newArr = Array.from({ length: setArr.length })
+      for (let i = 0; i < skuArr.length; i++) {
+        setArr.map((value, index) => {
+          if (skuArr[i].specName === value) {
+            if (!newArr[index]) {
+              newArr[index] = []
+              // 初始化skuVals
+              this.skuVals.push(skuArr[i].specValue)
+            }
+            newArr[index].push(skuArr[i])
+          }
+        })
+      }
+      this.newSkuAttrs = newArr
+      // console.log(this.skuVals, 'skuVals')
+      // console.log(this.newSkuAttrs, 'newSkuAttrs')
     }
-    this.elSkuId = newArr[0][0].skuid
-    this.newSkuAttrs = newArr
   },
 
   mounted () {
@@ -523,48 +557,79 @@ export default {
       this.popupShow = false
     },
     openSkuFn () {
-      let skuAttr = this.newSkuAttrs[0][0]
-      this.elSkuId = skuAttr.skuid
-      this.getSkuFn()
-      this.nowSkuAttr = skuAttr
-      this.skuShow = true
+      // 打开规格弹窗
+      if (this.skuList.length !== 0) {
+        this.getSkuFn()
+        this.skuShow = true
+        this.elpackId = ''
+      }
     },
-    elSkuFn (sku) {
-      console.log(sku)
-      this.nowSkuAttr = sku
-      this.elSkuId = sku.skuid
+    elSkuFn (sku, index) {
+      // 选择规则
+      this.skuVals.splice(index, 1, sku.specValue)
+      console.log(this.skuVals, 'skuVals')
       this.getSkuFn()
     },
     getSkuFn () {
       // 根据id 拿到skuList
-      let skuid = this.elSkuId
       console.log(this.skuList, 'skuList')
       let obj = this.skuList.find(v => {
-        console.log(v.id, skuid)
-        return v.id === skuid
+        return this.everyGood(v.skuName)
       })
       console.log('obj', obj)
+      this.skuObj = obj
+      let {sellPrice, stock, skuName} = obj
+      let lastnum = this.getskuInfo.num
+      let nownum = stock >= lastnum ? lastnum : 1
+      let allprice = sellPrice * nownum
+      this.getskuInfo.skuname = skuName
+      this.getskuInfo.num = nownum
+      this.getskuInfo.oneprice = sellPrice
+      this.getskuInfo.allprice = allprice
+      console.log(this.getskuInfo, 'getskuInfo')
+    },
+    everyGood (str) {
+      // str 包含数组的每一个元素
+      return this.skuVals.every(val => str.includes(val))
     },
     openPack () {
+      // 打开套餐弹窗
       if (this.packList.length > 0) {
-        this.elpackIndex = 0
-        this.packDetaNum = 1
+        let index = this.elpackIndex
         this.packShow = true
-        this.nowpack = this.packList[0]
-        let packId = this.packList[0].id
-        this.getPackdetail(packId)
+        let {coverUrl, goodsNum, price, name, id} = this.packList[index]
+        this.setNowpack(coverUrl, goodsNum, price, name)
+        this.getPackdetail(id)
       } else {
         this.$toast('暂无套餐')
       }
     },
-    elpackFn (index, pack) {
+    elpackFn (index, elid, pack) {
+      // 选择套餐
+      console.log('pack', pack)
       this.elpackIndex = index
-      this.packDetaNum = 1
-      this.nowpack = pack
-      let packId = pack.id
-      this.getPackdetail(packId)
+      let {coverUrl, goodsNum, price, name, id} = pack
+      if (this.packDetaNum > goodsNum) {
+        this.packDetaNum = 1
+      }
+      // 当前 elid === id 则 取消选中状态
+      if (elid !== id) {
+        this.skuRest()
+      }
+      this.elpackId = elid === id ? '' : id
+      this.setNowpack(coverUrl, goodsNum, price, name)
+      this.getPackdetail(id)
+    },
+    setNowpack (coverUrl, goodsNum, price, name) {
+      // 设置当前选中套餐需要参数
+      this.nowpack.coverUrl = coverUrl
+      this.nowpack.goodsNum = goodsNum
+      this.nowpack.oneprice = price
+      this.nowpack.name = name
+      this.nowpack.allprice = price * this.packDetaNum
     },
     async getPackdetail (packid) {
+      // 套餐 的商品清单
       const { code, data } = await goodsApi.getPack(packid)
       if (code === 200) {
         let goods = data.goodsPackResps
@@ -572,6 +637,33 @@ export default {
           return v.goodsName
         })
         this.packDetaList = arrs.join(' + ')
+      }
+    },
+    changeSkuFn () {
+      let {num, oneprice} = this.getskuInfo
+      let allprice = oneprice * num
+      this.getskuInfo.allprice = allprice
+      console.log(this.getskuInfo, 'getskuInfo pluspack')
+    },
+    changepackFn () {
+      let oneprice = this.nowpack.oneprice
+      this.nowpack.allprice = oneprice * this.packDetaNum
+    },
+    skuRest () {
+      // 规格重置
+      this.getskuInfo.num = 1
+      this.getskuInfo.oneprice = 0
+      this.getskuInfo.allprice = 0
+      this.getskuInfo.skuname = ''
+    },
+    async compareFn () {
+      // 去对比
+      let goodsId = this.goodsId
+      const {code, data} = await goodsApi.addCompare(goodsId)
+      if (code === 200) {
+        this.$toast('加入对比')
+      } else {
+        this.$toast(data)
       }
     }
   }
@@ -717,7 +809,7 @@ export default {
         background: url('~/assets/img/icons/ic_position_b_18x18@2x.png') no-repeat center/contain
       }
       span {
-        width: 210px;
+        width: 200px;
         vertical-align: middle;
         display: inline-block;
         font-weight: bold;
@@ -779,6 +871,7 @@ export default {
         border: 1PX solid #e6e6e6;
         line-height: 100px;
         text-align: center;
+        overflow: hidden;
         img {
           max-height: 100%;
           max-width: 100%;
@@ -834,11 +927,18 @@ export default {
     }
     .sku-num {
       margin-top: 10px;
+      line-height: 24px;
       h4 {
         font-size: 15px;
         display: inline-block;
-        vertical-align: top;
-        margin-top: 6px;
+        line-height: 24px;
+        vertical-align: middle;
+      }
+      .surstock {
+        float: right;
+        font-size: 12px;
+        line-height: 24px;
+        margin-right: 20px;
       }
       .van-stepper {
         float: right;
@@ -975,6 +1075,7 @@ export default {
       height: 400px;
       text-align: center;
       line-height: 400px;
+      overflow: hidden;
       img {
         width: auto;
         height: 100;

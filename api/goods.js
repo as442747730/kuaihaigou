@@ -28,5 +28,9 @@ export const goodsApi = {
   // 获取省份
   getProvince (id) {
     return request.clientGet('/api/area/' + id)
+  },
+  // 加入商品对比
+  addCompare (goodsId) {
+    return request.clientPost('/api/goods/addToContrast/' + goodsId)
   }
 }

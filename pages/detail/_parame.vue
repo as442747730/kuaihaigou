@@ -115,7 +115,7 @@
     <div class="u-detail_line"></div>
 
     <!-- 推荐 -->
-    <u-evaluation :hostlist="hotList" :data-val="infos" /> 
+    <u-evaluation :hostlist="hotList" /> 
   </article>
 </template>
 <script>
@@ -140,6 +140,7 @@ export default {
   },
   computed: {
     infos: function () {
+      console.log(this.redAttr)
       let { typeIcon, typeRemark, typeUrl, type } = this.redAttr
       let typeobj = this.setObj('类型', typeIcon, typeRemark, type, typeUrl)
 
@@ -147,6 +148,8 @@ export default {
       let inteobj = this.setObj('国际级别', internationallevelIcon, internationalLevelRemark, internationallevel, instatlevelUrl)
 
       let { areaIcon, areaRemark, areaList } = this.redAttr
+      console.log('areaList', areaList)
+      areaList = !areaList ? [] : areaList
       let areaArray = areaList.map(v => {
         return v.areaName
       })
@@ -175,7 +178,7 @@ export default {
       let annuobj = this.setObj('年产量', annualOutputIcon, annualOutputRemark, annualOutput)
 
       let createArray = [typeobj, inteobj, areaobj, yearobj, varietyobj, alcohobj, oakobj, degobj, aveobj, annuobj]
-      // console.log('createArray', createArray)
+      console.log('createArray', createArray)
       return createArray
     }
   },
@@ -254,16 +257,21 @@ export default {
         margin-bottom: 25px;
         position: relative;
         display: block;
-        width: 100%;
+        // width: 100%;
+        padding-left: 50px;
+        padding-right: 12px;
         .pro {
           width: 35px;
           height: 35px;
           background: #82b5fa;
           border-radius: 50%;
           overflow: hidden;
-          margin-right: 15px;
+          float: left;
+          margin-left: -50px;
+          // margin-right: 15px;
         }
         .pd_type {
+         
           p {
             font-size: 12px;
             span {

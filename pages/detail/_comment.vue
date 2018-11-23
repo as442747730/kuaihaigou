@@ -88,45 +88,6 @@
             </van-nav-bar>
           </section>
 
-          <div class="u-reply-wrap">
-            <div class="floor-host reply-common">
-              <div class="header-img ib-middle" style="background-color: #88c3ff"></div>
-              <div class="user-infor ib-middle">
-                <span class="ib-middle">王小乐leshi</span>
-                <br>
-                <div class="ib-middle">
-                  <i class="level" style="background-color: #ff8888"></i>
-                  <i class="prove" style="background-color: #f79dec"></i>
-                </div>
-              </div>
-              <div class="like_type type1" style="background-color: #7ce4ff"></div>
-              <p class="desc">酒是好酒，只是我不会品，但是包装好看啊，不信你看。</p>
-            </div>
-            <div class="layer-master reply-common">
-              <div class="layer-master-item" v-for='($v, $k) in 4'>
-                <div class="header-img ib-middle" style="background-color: #88c3ff"></div>
-                <div class="user-infor ib-middle">
-                  <span class="ib-middle">王小乐leshi</span>
-                  <br>
-                  <div class="ib-middle">
-                    <i class="level" style="background-color: #ff8888"></i>
-                    <i class="prove" style="background-color: #f79dec"></i>
-                  </div>
-                </div>
-                <p class="desc">酒是好酒{{ $k }}，只是我不会品，但是包装好看啊，不信你看。</p>
-                <div class="other">
-                  <div class="time">2018-10-26</div>
-                  <div class="fr">
-                    <span @click='reply()'>回复</span>
-                    <span>
-                      <i class="ib-middle"></i>
-                      <u class="ib-middle">1</u>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           <div class="u-reply-form" id="replay">
             <van-field
               @focus="da"
@@ -152,7 +113,7 @@
     </transition>
     <!-- 提问 -->
     <transition name='nav-fade' mode="out-in">
-      <u-question v-show='!commentShow' />
+      <u-question :goodsid="goodsid" v-show='!commentShow' />
     </transition>
   </article>
 </template>
@@ -169,7 +130,9 @@ import Img3 from '~/assets/img/home/img_home_335x180@2x.png'
 
 export default {
   name: 'u-comment',
-
+  props: {
+    goodsid: String
+  },
   components: {
     uQuestion
   },
