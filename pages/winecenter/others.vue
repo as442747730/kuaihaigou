@@ -38,11 +38,11 @@
         </li>
       </ul>
     </section>
-    <u-footer :postIndex="1"></u-footer>
+    <!-- <u-footer :postIndex="1"></u-footer> -->
   </div>
 </template>
 <script>
-import uFooter from '~/components/footer'
+// import uFooter from '~/components/footer'
 import pureList from '~/components/cpms/pureList'
 import Imgs from '~/assets/img/green_wine.jpg'
 export default {
@@ -54,6 +54,9 @@ export default {
       ]
     }
   },
+
+  layout: 'page-with-tabbar',
+
   data () {
     return {
       isRoll: false,
@@ -69,7 +72,7 @@ export default {
     }
   },
   components: {
-    uFooter,
+    // uFooter,
     pureList
   },
   methods: {
