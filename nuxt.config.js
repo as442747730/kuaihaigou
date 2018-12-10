@@ -11,7 +11,7 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'keyword', content: '' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no,  viewport-fit=cover' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
       { name: 'description', content: '' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
@@ -35,7 +35,8 @@ module.exports = {
     { src: './plugins/lazyload.js', ssr: false },
     { src: './plugins/toast.js', ssr: false },
     { src: './plugins/wechat.js', ssr: false },
-    { src: './plugins/vant.js', ssr: true }
+    { src: './plugins/vant.js', ssr: true },
+    { src: './plugins/vconsole.js', ssr: false }
   ],
   css: [
     { src: './assets/css/normalize.css', lang: 'css' },

@@ -1,24 +1,23 @@
 <template>
   <div class="m-layout">
     <nuxt />
-    <!-- 带有tabbar的layout -->
-    <!-- tabbars -->
+    <u-footer :postIndex="0"></u-footer>
   </div>
 </template>
 
 <script>
-// import tabbar from ''
+import uFooter from '~/components/Footer'
+
 export default {
   data () {
     return {
     }
   },
-
   components: {
-    // tabbars
+    uFooter
   }
 }
 </script>
 
-<style lang="" scoped>
+<style lang="less" scoped>
 </style>

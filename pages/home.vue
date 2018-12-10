@@ -325,21 +325,17 @@
     
     </article>
 
-    <!-- 页脚 -->
-    <u-footer :postIndex="0"></u-footer>
 
   </div>
 </template>
 <script>
 // import api from '~/utils/request'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
-import uFooter from '~/components/footer'
+
 export default {
   name: 'home',
-  layout: 'default',
-  components: {
-    uFooter
-  },
+  layout: 'page-with-tabbar',
+
   // async asyncData (req) {
   //   return api.all([
   //     api.serverGet('/api-1', {}, req),
