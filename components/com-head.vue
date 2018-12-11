@@ -1,6 +1,6 @@
 <template>
   <header>
-    <span class="icon_back"></span>
+    <span class="icon_back" @click="goback"></span>
     <h3 class="title">{{titleConfig}}</h3>
     <slot></slot>
   </header>
@@ -10,6 +10,16 @@ export default {
   props: {
     titleConfig: {
       type: String
+    }
+  },
+  methods: {
+    goback () {
+      console.log('1234561')
+      console.log(window.location.hash, 'hash')
+      if (window.location.hash === '#editinfo') {
+        this.$bus.emit('closeHead', false)
+      }
+      this.$router.go(-1)
     }
   }
 }
@@ -24,6 +34,7 @@ header {
   position: relative;
   line-height: 1;
   font-size: 12px;
+  background: #fff;
 
   .icon_back {
     position: absolute;

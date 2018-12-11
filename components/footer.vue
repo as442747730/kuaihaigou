@@ -109,7 +109,7 @@ footer {
         background-image: url('~/assets/img/foot/ic_applets_nor@2x.png');
       }
       &-my {
-        background-image: url('~/assets/img/foot/ic_us_nor@2x.png');
+        background-image: url('~/assets/img/foot/ic_us_ele@2x.png');
       }
     }
   }

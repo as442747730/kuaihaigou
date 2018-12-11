@@ -35,7 +35,8 @@ module.exports = {
     { src: './plugins/lazyload.js', ssr: false },
     { src: './plugins/toast.js', ssr: false },
     { src: './plugins/wechat.js', ssr: false },
-    { src: './plugins/vant.js', ssr: true }
+    { src: './plugins/vant.js', ssr: true },
+    { src: './plugins/vue-bus.js', ssr: true }
   ],
   css: [
     { src: './assets/css/normalize.css', lang: 'css' },
