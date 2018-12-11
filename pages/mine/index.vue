@@ -1,3 +1,104 @@
+<template>
+  <div class="mine">
+    <header>
+      <div class="hd-head">
+        <div class="hd_l"></div>
+        <div class="hd_c">我的</div>
+        <div class="hd_r"></div>
+      </div>
+      <div class="hd-headimg" @click="toperson">
+        <div class="hd_img"></div>
+      </div>
+      <div class="hd-name">
+        <p class="hd_world">哆来咪NIco</p>
+        <i class="icons ic_level"></i>
+        <i class="icons ic_cms"></i>
+      </div>
+      <div class="hd-sign">
+        <p>这不是一个一般的用户签名。这不是一个一般的用户签名这不是一个一般的用户签名</p>
+      </div>
+    </header>
+    <div class="main">
+      <div class="main-top">
+        <div class="info">
+          <div class="info-item" @click="tomyInfo">
+            <p><span>1000</span> 瓶</p>
+            <p>已购(酒)</p>
+          </div>
+          <div class="info-item" @click="tofollow(1)">
+            <p><span>200</span></p>
+            <p>关注</p>
+          </div>
+          <div class="info-item" @click="tofollow(2)">
+            <p><span>1.2w</span></p>
+            <p>粉丝</p>
+          </div>
+        </div>
+        <nav class="navlist">
+          <a class="navitem ic_gwc" href="#">购物车</a>
+          <a class="navitem ic_wdgz" href="#">我的订单</a>
+          <a class="navitem ic_wdhd" href="#">我的活动</a>
+          <a class="navitem ic_wdsc" href="#">我的收藏</a>
+        </nav>
+      </div>
+      <div class="main-bottom">
+        <div class="bottom-head">
+          <div class="head_item" v-for="(headitem, index) in headitems" :class="{active: headactive === index}" @click="headFn(index)" :key="index">
+            <p :class="{head_one: index === 0}">{{ headitem }}</p>
+          </div>
+        </div>
+        <section class="bottom-content">
+          <component :is="iscomp"></component>
+        </section>
+      </div>
+    </div>
+    <u-footer :postIndex="footIndex"></u-footer>
+  </div>
+</template>
+<script>
+import uFooter from '~/components/footer'
+import uArticle from './_article'
+import uJarsclb from './_jarsclub'
+export default {
+  head () {
+    return {
+      title: '我的购物车',
+      meta: [
+        { hid: 'title', name: 'title', content: '我的购物车' }
+      ]
+    }
+  },
+  components: {
+    uFooter,
+    uArticle,
+    uJarsclb
+  },
+  data () {
+    return {
+      footIndex: 4,
+      iscomp: 'uArticle',
+      comps: ['uArticle', 'uJarsclb'],
+      headitems: ['我的文章', '酒坛诗社'],
+      headactive: 0
+    }
+  },
+  methods: {
+    headFn (index) {
+      this.headactive = index
+      this.iscomp = this.comps[index]
+    },
+    tomyInfo () {
+      this.$router.push('/mine/person')
+    },
+    tofollow (num) {
+      this.$router.push('/mine/follow')
+    },
+    toperson () {
+      this.$router.push('/mine/person')
+    }
+  }
+}
+</script>
 <style lang="less" scoped>
 .mine {
   padding-bottom: 50px;
@@ -7,7 +108,6 @@
     background: -webkit-linear-gradient(-45deg, #4FEDEF, #00A1F0);
     background: -o-linear-gradient(-45deg, #4FEDEF, #00A1F0);
     background: -moz-linear-gradient(-45deg, #4FEDEF, #00A1F0);
-    background: linear-gradient(-45deg, #4FEDEF, #00A1F0);
     background: linear-gradient(-45deg, #4FEDEF, #00A1F0);
 
     .hd-head {
@@ -203,98 +303,3 @@
   }
 }
 </style>
-<template>
-  <div class="mine">
-    <header>
-      <div class="hd-head">
-        <div class="hd_l"></div>
-        <div class="hd_c">我的</div>
-        <div class="hd_r"></div>
-      </div>
-      <div class="hd-headimg">
-        <div class="hd_img"></div>
-      </div>
-      <div class="hd-name">
-        <p class="hd_world">哆来咪NIco</p>
-        <i class="icons ic_level"></i>
-        <i class="icons ic_cms"></i>
-      </div>
-      <div class="hd-sign">
-        <p>这不是一个一般的用户签名。这不是一个一般的用户签名这不是一个一般的用户签名</p>
-      </div>
-    </header>
-    <div class="main">
-      <div class="main-top">
-        <div class="info">
-          <div class="info-item" @click="tomyInfo">
-            <p><span>1000</span> 瓶</p>
-            <p>已购(酒)</p>
-          </div>
-          <div class="info-item">
-            <p><span>200</span></p>
-            <p>关注</p>
-          </div>
-          <div class="info-item">
-            <p><span>1.2w</span></p>
-            <p>粉丝</p>
-          </div>
-        </div>
-        <nav class="navlist">
-          <a class="navitem ic_gwc" href="#">购物车</a>
-          <a class="navitem ic_wdgz" href="#">我的订单</a>
-          <a class="navitem ic_wdhd" href="#">我的活动</a>
-          <a class="navitem ic_wdsc" href="#">我的收藏</a>
-        </nav>
-      </div>
-      <div class="main-bottom">
-        <div class="bottom-head">
-          <div class="head_item" v-for="(headitem, index) in headitems" :class="{active: headactive === index}" @click="headFn(index)" :key="index">
-            <p :class="{head_one: index === 0}">{{ headitem }}</p>
-          </div>
-        </div>
-        <section class="bottom-content">
-          <component :is="iscomp"></component>
-        </section>
-      </div>
-    </div>
-    <u-footer :postIndex="footIndex"></u-footer>
-  </div>
-</template>
-<script>
-import uFooter from '~/components/footer'
-import uArticle from './_article'
-import uJarsclb from './_jarsclub'
-export default {
-  head () {
-    return {
-      title: '我的购物车',
-      meta: [
-        { hid: 'title', name: 'title', content: '我的购物车' }
-      ]
-    }
-  },
-  components: {
-    uFooter,
-    uArticle,
-    uJarsclb
-  },
-  data () {
-    return {
-      footIndex: 4,
-      iscomp: 'uArticle',
-      comps: ['uArticle', 'uJarsclb'],
-      headitems: ['我的文章', '酒坛诗社'],
-      headactive: 0
-    }
-  },
-  methods: {
-    headFn (index) {
-      this.headactive = index
-      this.iscomp = this.comps[index]
-    },
-    tomyInfo () {
-      this.$router.push('/mine/person')
-    }
-  }
-}
-</script>

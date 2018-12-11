@@ -7,68 +7,68 @@
       v-for="(foot, index) in footList"
       :key="index">
       <i :class="clsList[index]"></i>
-      <span class="footer-txt" v-if="index !== 2">
-        {{foot}}
-      </span>
+      <span class="footer-txt" v-if="index !== 2">{{ foot }}</span>
     </span>
   </footer>
 </template>
 <script>
-  export default {
-    name: 'u-footer',
-    props: ['postIndex'],
-    data () {
-      return {
-        clsList: ['footer-icon-index', 'footer-icon-xjzx', 'footer-icon-add', 'footer-icon-zsfx', 'footer-icon-my'],
-        footList: ['首页', '选酒中心', 'add', '知识分享', '我的']
-      }
-    },
-    methods: {
-      toPage (index) {
-        let path = ''
-        switch (index) {
-          case 0:
-            path = '/home'
-            break
-          case 1:
-            path = '/winecenter'
-            break
-          case 4:
-            path = '/account/login'
-            break
-          default:
-            path = '/home'
-            break
-        }
-        window.location.href = path
-      }
+export default {
+  name: 'u-footer',
+  props: ['postIndex'],
+  data () {
+    return {
+      clsList: ['footer-icon-index', 'footer-icon-xjzx', 'footer-icon-add', 'footer-icon-zsfx', 'footer-icon-my'],
+      footList: ['首页', '选酒中心', 'add', '知识分享', '我的']
     }
+  },
 
+  methods: {
+    toPage (index) {
+      let path = ''
+      switch (index) {
+        case 0:
+          path = '/home'
+          break
+        case 1:
+          path = '/winecenter'
+          break
+        case 4:
+          path = '/mine'
+          break
+        default:
+          path = '/home'
+          break
+      }
+      window.location.href = path
+    }
   }
+}
 </script>
 <style lang="less" scoped>
 footer {
   font-size: 0;
   border-top: 1PX solid #eee;
-  box-sizing: border-box;
+  // box-sizing: border-box;
   display: flex;
   width: 100%;
   height: 49px;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  padding: 0 24px; 
+  // padding: 0 24px;
   position: fixed;
   left: 0;
   bottom: 0;
   background: #fff; 
   z-index: 20;
+  padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
+  padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
   .footer-icon {
     display: block;
     text-align: center;
     color: #333;
     &.cur {
       .footer-txt {
-        color: #093C79
+        color: #093C79;
       }
     }
     i {
@@ -116,6 +116,7 @@ footer {
   .footer-txt {
     display: block;
     font-size: 10px;
+    line-height: 1;
     color: #C7CCD7;
   }
 }

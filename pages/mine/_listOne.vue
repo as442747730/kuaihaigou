@@ -5,7 +5,7 @@
       <slot class="list-l_switch" name="sl_l"></slot>
     </div>
     <div class="list-r">
-      {{list_right}}
+      <p>{{list_right}}</p>
       <i class="ic_arrow"></i>
     </div>
   </div>
@@ -38,18 +38,18 @@ export default {
   }
 
   &-r {
-    font-size: 15px;
-    font-family: PingFang-SC-Medium;
-    font-weight: 500;
-    color: rgba(153, 153, 153, 1);
-    display: flex;
-
+    .flex_between;
+    &>p {
+      font-size: 15px;
+      font-family: PingFang-SC-Medium;
+      font-weight: 500;
+      color: rgba(153, 153, 153, 1);
+    }
     .ic_arrow {
-      transform: rotate(180deg);
-      width: 8px;
-      height: 14px;
+      width: 7px;
+      height: 10px;
       margin-left: 10px;
-      background-image: url('~/assets/img/Icons/ic_return_b_30x30@2x.png');
+      background: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
       .bg_cover;
     }
   }

@@ -127,10 +127,9 @@ export default {
     }
 
     .ic_arrow {
-      width: 8px;
-      height: 12px;
-      transform: rotate(180deg);
-      background-image: url('~/assets/img/Icons/ic_return_b_30x30@2x.png');
+      width: 7px;
+      height: 10px;
+      background: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
       .bg_cover;
     }
   }

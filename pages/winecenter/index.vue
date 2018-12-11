@@ -119,13 +119,13 @@
         </div>
       </section>
     </div>
-    <u-footer :postIndex="footIndex"></u-footer>
+    <!-- <u-footer :postIndex="footIndex"></u-footer> -->
   </div>
 </template>
 <script>
 import testImg1 from '../../assets/img/img.png'
 import testImg2 from '../../assets/img/img2.png'
-import uFooter from '~/components/footer'
+// import uFooter from '~/components/footer'
 import countryCpm from '~/components/cpms/country-list.vue'
 import comList from '~/components/cpms/comList.vue'
 import api from '~/utils/request'
@@ -139,6 +139,9 @@ export default {
       ]
     }
   },
+
+  layout: 'page-with-tabbar',
+
   data () {
     return {
       footIndex: 1,
@@ -167,7 +170,7 @@ export default {
     }
   },
   components: {
-    uFooter,
+    // uFooter,
     countryCpm,
     comList
   },

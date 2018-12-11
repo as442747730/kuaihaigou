@@ -14,18 +14,18 @@
   border-bottom: 1PX solid @cor_border;
 
   &_one {
-    font-size: 13px;
-    font-family: PingFang-SC-Medium;
-    font-weight: 500;
-    color: rgba(153, 153, 153, 1);
     .flex_between;
-
+    &-title {
+      font-size: 13px;
+      font-family: PingFang-SC-Medium;
+      font-weight: bold;
+      color: rgba(153, 153, 153, 1);
+    }
     .ic_arrow {
-      transform: rotate(180deg);
-      width: 8px;
-      height: 14px;
+      width: 7px;
+      height: 10px;
       margin-left: 10px;
-      background-image: url('~/assets/img/Icons/ic_return_b_30x30@2x.png');
+      background: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
       .bg_cover;
     }
   }
