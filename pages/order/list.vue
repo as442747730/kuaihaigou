@@ -7,6 +7,7 @@
     <van-pull-refresh class="u-pull" v-model="isLoading" @refresh="refresh">
       <div class="order-wrapper">
 
+
         <div class="order-item" v-for="item in orderList">
 
           <div class="top">
@@ -15,17 +16,17 @@
             <p class="right">{{ statusTxt[+item.status - 1] }}</p>
           </div>
 
-          <div class="good-wrapper good-li" v-for="p in item.goods">
+          <div class="good-wrapper good-li" v-for="p in item.orderItemList">
             <!-- 普通商品 -->
             <div class="good-li-item flex-center box-gutter" v-if="!p.packName">
               <div class="content">
-                <img :src="p.imgUrl" alt="" width="90" height="100">
+                <img :src="p.goodsImg" alt="" width="90" height="100">
                 <div class="info">
                   <p class="title">{{ p.goodsName }}</p>
                   <div class="flex-jcsb" v-if="p.skuName">
                     <span class="sku">{{ p.skuName }}</span><span class="price">￥{{ p.price }}</span>
                   </div>
-                  <p class="num">x{{ item.num }}</p>
+                  <p class="num">x{{ p.num }}</p>
                 </div>
               </div>
             </div>
@@ -35,38 +36,44 @@
                 <div class="top-flex">
                   <div class="top-name">{{ p.packName }}</div>
                 </div>
-                <p class="top-price">￥{{ p.price }}</p>
+                <p class="top-price">￥{{ p.packPrice }}</p>
               </div>
               <div class="product-wrapper">
-                <div class="content" v-for="(good, idx) in p.itemList" :key="idx">
-                  <img src="~@/assets/img/img2.png" alt="" width="90" height="100">
+                <div class="content" v-for="(good, idx) in p.goodsList" :key="idx">
+                  <img :src="good.goodsImg" alt="" width="90" height="100">
                   <div class="info">
                     <p class="title">{{ good.goodsName }}</p>
                     <p class="desc">{{ good.skuName }}</p>
-                    <p class="desc">{{ good.num }}</p>
+                    <p class="desc">{{ good.num }} 件/套</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="result">共1件商品 总额：￥400</div>
+          <div class="result">共{{ item.totalNum }}件商品 总额：￥{{ item.totalPrice }}</div>
 
           <div class="bottom">
-            <div class="u-button small">马上支付</div>
 
-            <div class="u-button small" v-if="item.status === 2 || item.status === 3 || item.status === 4 || item.status === 5 || item.status === 6">{{ item.status === 2 || item.status === 3 || item.status === 4 ? '申请退款' : '申请售后'}}</div>
-            <div class="u-button small" v-if="item.status === 1" @click=''>取消订单</div>
-            <div class="u-button small">订单详情</div>
+            <!-- <div class="u-button small inline" v-if="item.status <= 2">{{ item.status === 2 || item.status === 3 || item.status === 4 ? '申请退款' : '申请售后'}}</div> -->
+            <div class="u-button small inline default" v-if="item.status === 7" @click="deleteOrder(item.id)">删除订单</div>
+
+
+            <div class="u-button small inline" v-if="item.status === 1" @click="cancelOrder(item.id)">取消订单</div>
+
             <div v-if='item.status === 5 || item.status === 6' style="display:inline-block">
-              <!-- <div class="u-button small" v-if="item.commentStatus === 1"><a :href="">评价</a></div> -->
-              <!-- <div class="u-button small green" v-if="item.commentStatus === 2"><a :href="">去追评</a></div> -->
+              <div class="u-button small inline" v-if="item.commentStatus === 1">评价</div>
+              <div class="u-button small inline green" v-else>去追评</div>
             </div>
-            <div class="u-button small" v-if="item.status === 4" @click=''>确认收货</div>
-            <div class="u-button small red" v-if="item.status === 1">支付订单</div>
-          </div>
 
+            <div class="u-button small inline" v-if="item.status === 4" @click="confirmReceive(item.id)">确认收货</div>
+
+            <div class="u-button small inline red" v-if="item.status === 1">马上支付</div>
+
+            <div class="u-button small inline" @click="getDetail(item.id)">订单详情</div>
+          </div>
         </div>
+        <div class="empty" v-if="orderList.length === 0">暂无更多订单</div>
 
       </div>
     </van-pull-refresh>
@@ -93,18 +100,15 @@ export default {
     }
   },
 
-  // async asyncData (req) {
-  //   return api.serverGet('/api/order/paginate', { page: 1, count: 10 }, req).then((res) => {
-  //     console.log(res.data)
-  //     if (res.code === 506) {
-  //       req.redirect('/account/login')
-  //     }
-  //     res.data.forEach((item) => {
-  //       item.chosen = false
-  //     })
-  //     return { goodsList: res.data }
-  //   })
-  // },
+  async asyncData (req) {
+    return api.serverGet('/api/order/paginate', { page: 1, count: 10 }, req).then((res) => {
+      console.log(res.data.array)
+      if (res.code === 506) {
+        req.redirect('/account/login')
+      }
+      return { orderList: res.data.array }
+    })
+  },
 
   data () {
     return {
@@ -112,50 +116,77 @@ export default {
 
       tabList: [
         { name: '全部', key: 'all' },
-        { name: '待付款', key: 'prep' },
-        { name: '待收货', key: 'prec' },
-        { name: '待评价', key: 'pree' }
+        { name: '待付款', key: '1' },
+        { name: '待收货', key: '4' },
+        { name: '待评价', key: '5' }
       ],
 
       isLoading: false,
 
-      /* eslint-disable */
-      orderList: [
-        { status: 1, 
-          goods: [
-          {
-            goodsName: '法国1982拉菲法国1982拉菲传奇Lafite', skuName: '单瓶/普通装', num: 1, price: 260, cover: 'fsdfdsfsdf.jpg'
-          },
-          {
-            packName: '法国1982拉菲-套餐A', price: 244, itemList: [
-            {
-              goodsName: '法国1982拉菲法国1982拉菲传奇Lafite', skuName: '单瓶/普通装', num: 1, imgUrl: 'sdfsdf'
-            },
-            {
-              goodsName: '法国1982拉菲法国1982拉菲传奇Lafite', skuName: '单瓶/普通装', num: 1, imgUrl: 'sdfsdf'
-            }
-          ]
-        }]
-      }],
-      /* eslint-disable */
+      orderList: [],
 
+      status: null,
       currentPage: 1
     }
   },
 
   methods: {
     handleTab (val) {
+      this.status = val === 'all' ? null : val
       this.fetchData()
     },
-    fetchData () {
-
-    },
-    // 刷新
-    async refresh () {
-      const { code, data } = await api.clientGet('api/order/paginate', { page: ++this.currentPage, count: 10 })
+    // 获取订单列表
+    async fetchData () {
+      const { code, data } = await api.clientGet('/api/order/paginate', { page: this.currentPage, count: 10, status: this.status })
       if (code === 200) {
         this.orderList = data.array
       }
+    },
+    // 刷新
+    async refresh () {
+      this.isLoading = true
+      this.currentPage = 1
+      await this.fetchData()
+      this.isLoading = false
+    },
+
+    cancelOrder (val) {
+      this.$dialog.confirm({
+        message: '确定取消订单吗？'
+      }).then(async () => {
+        const { code } = await api.clientGet('/api/order/cancelOrder/' + val)
+        if (code === 200) {
+          this.$toast.success('取消订单成功')
+          this.fetchData()
+        }
+      })
+    },
+    confirmReceive (val) {
+      this.$dialog.confirm({
+        message: '确定确认收货吗？'
+      }).then(async () => {
+        const { code } = await api.clientPost('/api/order/confirmReceipt/' + val)
+        if (code === 200) {
+          this.$toast.success('确认收货成功')
+          this.fetchData()
+        }
+      })
+    },
+
+    deleteOrder (val) {
+      this.$dialog.confirm({
+        message: '确定删除订单吗？'
+      }).then(async () => {
+        const { code } = await api.clientPost('')
+        if (code === 200) {
+          this.$toast.success('订单已删除')
+          this.fetchData()
+        }
+      })
+    },
+
+    getDetail (val) {
+      window.location.href = `/order/detail?id=${val}`
     }
   }
 }
@@ -163,13 +194,22 @@ export default {
 
 <style lang="less" scoped>
 .m-order-list {
-  background: #F5F5F5;
+  background: @cor_border;
   min-height: 100vh;
   .u-pull {
     height: calc(~'100vh - 45px');
+    overflow: scroll;
   }
   .order-wrapper {
+    .empty {
+      font-size: 14px;
+      color: @cor_999;
+      text-align: center;
+      height: 200px;
+      line-height: 80px;
+    }
     .order-item {
+      margin-bottom: 10px;
       .top {
         background: white;
         height: 50px;
@@ -205,8 +245,9 @@ export default {
         text-align: right;
         font-size: 0;
         .u-button {
-          display: inline-block;
-          padding: 0 12px;
+          &:not(:last-child) {
+            margin-right: 10px;
+          }
         }
       }
     }

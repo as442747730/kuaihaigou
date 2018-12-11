@@ -146,7 +146,7 @@ export default {
     background: white;
     position: relative;
     top: -37px;
-    border-bottom: 1PX solid #F5F5F5;
+    border-bottom: 1PX solid @cor_border;
     display: flex;
     padding: 0 45px;
     justify-content: space-between;
@@ -209,7 +209,7 @@ export default {
   }
   .tab-wrapper {
     height: 40px;
-    background: #F5F5F5;
+    background: @cor_border;
     display: flex;
     align-items: center;
     .tab-item {
@@ -322,7 +322,7 @@ export default {
       padding: 25px 20px;
       display: flex;
       &:not(:last-child) {
-        border-bottom: 1PX solid #F5F5F5;
+        border-bottom: 1PX solid @cor_border;
       }
       .date {
         width: 65px;
