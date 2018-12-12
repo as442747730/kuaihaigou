@@ -189,16 +189,16 @@ export default {
         margin: 0 auto;
         margin-bottom: 4px;
         &.cart {
-          background-image: url('~@/assets/img/me/icon-cart.png');
+          background-image: url('~/assets/img/me/icon-cart.png');
         }
         &.order {
-          background-image: url('~@/assets/img/me/icon-order.png');
+          background-image: url('~/assets/img/me/icon-order.png');
         }
         &.activity {
-          background-image: url('~@/assets/img/me/icon-activity.png');
+          background-image: url('~/assets/img/me/icon-activity.png');
         }
         &.collection {
-          background-image: url('~@/assets/img/me/icon-collection.png');
+          background-image: url('~/assets/img/me/icon-collection.png');
         }
       }
       .item-label {
@@ -247,7 +247,7 @@ export default {
         line-height: 14px;
         padding-left: 18px;
         color: @cor_999;
-        background-image: url('~@/assets/img/me/icon-clock.png');
+        background-image: url('~/assets/img/me/icon-clock.png');
         background-repeat: no-repeat;
         background-position: left center;
         background-size: 14px 14px;
@@ -297,14 +297,14 @@ export default {
             vertical-align: middle;
             margin-right: 3px;
             &.like {
-              background-image: url('~@/assets/img/me/icon-like.png');
+              background-image: url('~/assets/img/me/icon-like.png');
             }
             &.msg {
-              background-image: url('~@/assets/img/me/icon-message.png');
+              background-image: url('~/assets/img/me/icon-message.png');
             }
             &.view {
               margin-right: 5px;
-              background-image: url('~@/assets/img/me/icon-view.png');
+              background-image: url('~/assets/img/me/icon-view.png');
             }
           }
           .view-num {

@@ -193,26 +193,26 @@ export default {
     font-weight: bold;
     color: @cor_333;
     // &.clock {
-    //   background-image: url('~@/assets/img/order/icon-status-clock.png');
+    //   background-image: url('~/assets/img/order/icon-status-clock.png');
     // }
     // &.receive {
-    //   background-image: url('~@/assets/img/order/icon-status-receive.png');
+    //   background-image: url('~/assets/img/order/icon-status-receive.png');
     // }
     // &.comment {
-    //   background-image: url('~@/assets/img/order/icon-status-comment.png');
+    //   background-image: url('~/assets/img/order/icon-status-comment.png');
     // }
     // &.success {
-    //   background-image: url('~@/assets/img/order/icon-status-success.png');
+    //   background-image: url('~/assets/img/order/icon-status-success.png');
     // }
     // &.close {
-    //   background-image: url('~@/assets/img/order/icon-status-close.png');
+    //   background-image: url('~/assets/img/order/icon-status-close.png');
     // }
   }
   .logi-wrapper {
     background: white;
     padding: 30px 20px 20px 60px;
     margin-bottom: 1PX;
-    background-image: url('~@/assets/img/order/icon-car.png');
+    background-image: url('~/assets/img/order/icon-car.png');
     background-size: 35px 35px;
     background-position: 14px 30px;
     background-repeat: no-repeat;
@@ -226,7 +226,7 @@ export default {
         width: 12px;
         height: 12px;
         display: block;
-        background-image: url('~@/assets/img/order/icon-arrow.png');
+        background-image: url('~/assets/img/order/icon-arrow.png');
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -253,7 +253,7 @@ export default {
   .address-wrapper {
     background: white;
     padding: 30px 20px 25px 60px;
-    background-image: url('~@/assets/img/order/icon-position.png');
+    background-image: url('~/assets/img/order/icon-position.png');
     background-size: 17px 21px;
     background-position: 23px 38px;
     background-repeat: no-repeat;
