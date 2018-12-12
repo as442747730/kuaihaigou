@@ -36,6 +36,7 @@ module.exports = {
     { src: './plugins/toast.js', ssr: false },
     { src: './plugins/wechat.js', ssr: false },
     { src: './plugins/vant.js', ssr: true },
+    { src: './plugins/vue-bus.js', ssr: true },
     { src: './plugins/vconsole.js', ssr: false }
   ],
   css: [

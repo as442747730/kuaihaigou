@@ -14,10 +14,9 @@
         <div class="navmdl-logo" :class="{active: ctrlLogo}" ref="navmdlLogo" @click="navLogo"></div>
       </nav>
     </div>
-    
     <pureList ref="refSearch" :postObj="postSearch" postCls="mart86" @shut="closeLogo"></pureList>
-
     <div class="search-result">
+      <!-- 商品 -->
       <section class="goods" v-if="navData.elIndex === 0">
         <div v-if="!keywords">
           <div class="goods-hot">
@@ -69,6 +68,7 @@
           </div>
         </div>
       </section>
+      <!-- 名词解释 -->
       <section class="definitions" v-if="navData.elIndex === 1">
         <div class="definitions-list">
           <div class="definitions-list_item varity" v-for="(varity, index) in 4" :key="index">
@@ -88,6 +88,7 @@
           </div>
         </div>
       </section>
+      <!-- 知识分享 -->
       <section class="lore" v-if="navData.elIndex === 2">
         <div class="lore-items">
           <div class="lore_item" v-for="(item, index) in 5" :key="index">
@@ -121,12 +122,33 @@
                 <span class="num_same">100</span>
                 <i class="icon_same ic_look marl"></i>
                 <span class="num_same">100</span>
-
                 <i class="ic_ddd"></i>
               </footer>
             </div>
           </div>
         </div>
+      </section>
+      <!-- 新闻资讯 -->
+      <section class="news" v-if="navData.elIndex === 3">
+        <div class="news-item" v-for="(item, index) in 5" :key="index">
+          <div class="news_head">
+            <h1>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</h1>
+            <div class="times">
+              <time>2018-08-23 14:24:87</time>
+            </div>
+            <p>
+              <span>国际资讯</span>
+              <span>作者：拉菲尼斯</span>
+              <span>来源：红酒网</span>
+            </p>
+          </div>
+          <div class="news_main">
+            <img :src="bkImg2" />
+          </div>
+            <article class="news_article">
+              红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…
+            </article>
+          </div>
       </section>
     </div>
   </div>
@@ -515,12 +537,13 @@ export default {
                 font-weight: 600;
                 color: rgba(51, 51, 51, 1);
               }
-              &> p {
+
+              &>p {
                 padding-top: 9px;
-                font-size:12px;
-                font-family:PingFang-SC-Regular;
-                font-weight:400;
-                color:rgba(153,153,153,1);
+                font-size: 12px;
+                font-family: PingFang-SC-Regular;
+                font-weight: 400;
+                color: rgba(153, 153, 153, 1);
               }
             }
           }
@@ -529,47 +552,124 @@ export default {
         &-bottom {
           padding-top: 15px;
           .padlr20;
+
           &>h2 {
-            font-size:16px;
-            font-family:PingFangSC-Semibold;
-            font-weight:600;
-            color:rgba(51,51,51,1);
-            line-height:22px;
+            font-size: 16px;
+            font-family: PingFangSC-Semibold;
+            font-weight: 600;
+            color: rgba(51, 51, 51, 1);
+            line-height: 22px;
           }
         }
+
         &_tips {
           .u-mltip;
         }
+
         &_content {
           margin: 12px 0;
           background: #FBFBFB;
-          height:100px;
+          height: 100px;
           border-radius: 8px;
           overflow: hidden;
           border: 1px solid #EAEAEA;
           .flex_between;
+
           .lt {
             width: 100px;
             height: 100px;
           }
+
           .lore_content_js {
             width: calc(100% - 100px);
             height: 100%;
             display: flex;
             align-items: center;
-            &>p{
+
+            &>p {
               padding-left: 10px;
               padding-right: 10px;
               height: 70px;
-              font-size:13px;
-              font-family:PingFang-SC-Medium;
-              font-weight:500;
-              color:rgba(153,153,153,1);
-              line-height:23px;
+              font-size: 13px;
+              font-family: PingFang-SC-Medium;
+              font-weight: 500;
+              color: rgba(153, 153, 153, 1);
+              line-height: 23px;
               overflow: hidden;
 
             }
           }
+        }
+      }
+    }
+
+    .news {
+      &-item {
+        margin: 27px 0;
+        background: rgba(255, 255, 255, 1);
+        border-radius: 8px;
+        border: 1Px solid #EAEAEA;
+        padding: 20px 20px 15px;
+
+        .news_head {
+          &>h1 {
+            font-size: 16px;
+            font-family: PingFangSC-Semibold;
+            font-weight: 600;
+            color: rgba(51, 51, 51, 1);
+            line-height: 22px;
+          }
+
+          .times {
+            font-size: 12px;
+            font-family: PingFang-SC-Regular;
+            font-weight: 400;
+            color: rgba(153, 153, 153, 1);
+            line-height: 12px;
+            padding: 10px 0;
+          }
+
+          &>p {
+
+            &>span {
+              font-size: 12px;
+              font-family: PingFang-SC-Regular;
+              font-weight: 400;
+              color: rgba(153, 153, 153, 1);
+              line-height: 12px;
+              margin-left: 20px;
+            }
+
+            &>span:first-child {
+              margin-left: 0;
+            }
+
+          }
+
+        }
+
+        .news_main {
+          padding: 10px 0;
+          min-height: 120px;
+          text-align: center;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+
+          &>img {
+            display: inline-block;
+            max-width: 100%;
+            border-radius: 8px;
+            vertical-align: middle;
+          }
+        }
+
+        .news_article {
+          font-size: 14px;
+          font-family: PingFang-SC-Medium;
+          font-weight: 500;
+          color: rgba(153, 153, 153, 1);
+          line-height: 24px;
         }
       }
     }
@@ -641,6 +741,7 @@ export default {
     .ic_look {
       background-image: url('~/assets/img/Icons/ic_liulang_g_18x18@2x.png');
     }
+
     .ic_ddd {
       position: absolute;
       top: 50%;
@@ -652,6 +753,7 @@ export default {
       background-image: url('~/assets/img/Icons/头部icon_30x30_ic_more_g_30x30@2x.png');
       .bg_cover;
     }
+
     .num_same {
       font-size: 12px;
       font-family: PingFang-SC-Regular;

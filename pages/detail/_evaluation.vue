@@ -5,35 +5,32 @@
       <h3>为你推荐</h3>
     </div>
     <ul class="recommended-item margin-20">
-      <li class="recommended-list" v-for="$v in 4">
+      <li class="recommended-list" v-for="(hot, index) in hotList" :key="index">
         <div class="pro">
-          <img src="~/assets/img/img.png">
+          <img :src="hot.cover">
         </div>
         <div class="desc">
-          <h3>法国1982拉菲法国1982拉菲传奇Lafite</h3>
-          <p>750ml | 日常餐酒 | 紧致单宁</p>
-          <span>¥ 399</span>
+          <h3>{{ hot.goodsName }}</h3>
+          <p>
+            <span v-for="(tag, index) in hot.tagList" :key="index">{{ tag }}</span>
+          </p>
+          <span>¥ {{ hot.actualPrice }}</span>
         </div>
       </li>
     </ul>
   </div>
 </template>
 <script>
-
 export default {
   name: 'u-evaluation',
-
+  props: {
+    hostlist: Array
+  },
   data () {
     return {
+      hotList: this.hostlist
     }
-  },
-
-  mounted () {
-  },
-
-  methods: {
   }
-
 }
 </script>
 <style lang="less" scoped>
@@ -52,6 +49,7 @@ export default {
       height: 158px;
       text-align: center;
       line-height: 158px;
+      overflow: hidden;
       img {
         display: inline-block;
         vertical-align: middle;
@@ -66,8 +64,9 @@ export default {
         margin: 12px 0 10px;
         line-height: 18px;
         font-weight: bold;
-        height: 36px;
+        // height: 36px;
         overflow: hidden;
+        .u-ellipsis;
       }
       p {
         color: #999;

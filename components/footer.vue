@@ -33,7 +33,7 @@ export default {
           path = '/winecenter'
           break
         case 4:
-          path = '/account/login'
+          path = '/mine'
           break
         default:
           path = '/home'
@@ -109,7 +109,7 @@ footer {
         background-image: url('~/assets/img/foot/ic_applets_nor@2x.png');
       }
       &-my {
-        background-image: url('~/assets/img/foot/ic_us_nor@2x.png');
+        background-image: url('~/assets/img/foot/ic_us_ele@2x.png');
       }
     }
   }

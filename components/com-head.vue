@@ -1,7 +1,8 @@
 <template>
   <header>
-    <span class="icon_back"></span>
+    <span class="icon_back" @click="goback"></span>
     <h3 class="title">{{titleConfig}}</h3>
+    <slot></slot>
   </header>
 </template>
 <script>
@@ -9,6 +10,16 @@ export default {
   props: {
     titleConfig: {
       type: String
+    }
+  },
+  methods: {
+    goback () {
+      console.log('1234561')
+      console.log(window.location.hash, 'hash')
+      if (window.location.hash === '#editinfo') {
+        this.$bus.emit('closeHead', false)
+      }
+      this.$router.go(-1)
     }
   }
 }
@@ -19,10 +30,11 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #F1F1F1;
+  border-bottom: 1PX solid #F1F1F1;
   position: relative;
   line-height: 1;
   font-size: 12px;
+  background: #fff;
 
   .icon_back {
     position: absolute;
@@ -44,6 +56,7 @@ header {
       background-position: 50% 50%;
       background-size: cover;
       background-repeat: no-repeat;
+      
     }
   }
 
