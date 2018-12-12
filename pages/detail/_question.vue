@@ -16,13 +16,13 @@
     <div class="u-detail_line"></div>
 
     <div class="answer margin-20">
-      <h2>疑问解答<span>（102条）</span></h2>
+      <h2>疑问解答<span>（{{ qestNum }}条）</span></h2>
       <div class="u_comment u_answer">
         <ul>
-          <li class="u_comment-list u_answer-list" v-for="($v, $k) in testData">
-            <div class="header-img ib-middle" style="background-color: #88c3ff"></div>
+          <li class="u_comment-list u_answer-list" v-for="(qest, index) in qestList" :key="index" :data-qest="qest">
+            <div class="header-img ib-middle" :style="{ background: `url(${qest.headimgurl}) no-repeat center/cover`}"></div>
             <div class="user-infor ib-middle">
-              <span class="ib-middle">王小乐leshi</span>
+              <span class="ib-middle">{{ qest.username }}</span>
               <br>
               <div class="ib-middle">
                 <i class="level" style="background-color: #ff8888"></i>
@@ -30,34 +30,35 @@
               </div>
             </div>
             <div class="like_type type1" style="background-color: #7ce4ff"></div>
-            <p class="desc">酒是好酒，只是我不会品，但是包装好看啊，不信你看。</p>
+            <p class="desc">{{ qest.desc }}</p>
 
-            <div class="pro">
-              <div v-for="($v2, $k2) in $v.imgList" class="pro-item" :style="'background: url(' + $v2 + ') no-repeat center/cover'" @click='showBigImg($k2, $v.imgList)'></div>
+            <div class="pro" v-if ="qest.imgList">
+              <div v-for="(qestimg, $k) in qest.imgList" :key="$k" class="pro-item" :style="'background: url(' + qestimg + ') no-repeat center/cover'" @click='showBigImg($k, qest.imgList)'></div>
             </div>
 
             <div class="other">
-              <div class="time">2018-10-26</div>
+              <div class="time">{{ qest.createdAt }}</div>
               <div class="fr">
-                <span>回复(10)</span>
-                <span>
+                <span @click="replyFn(qest)">回复({{ qest.replyNum || 0}})</span>
+                <span @click="fabulous(qest)">
                   <i class="ib-middle"></i>
-                  <u class="ib-middle">1</u>
+                  <u class="ib-middle">{{ qest.likeNum}}</u>
                 </span>
               </div>
             </div>
-
             <!-- 官方回复 -->
-            <div class="office-comment">
+            <div class="office-comment" v-if="qest.official">
               <p>
-                <span>快海购官方：</span>
-                感谢您对我们快海购的支持，本着客户至上的原则，我们会努力做好每一个细节，愿我们的红酒能够给您的生活增添色彩，期待您的再次光临，祝您生活愉快！
+                <span>{{ qest.official.userName }}：</span>
+                {{ qest.official.desc }}
               </p>
             </div>
           </li>
         </ul>
       </div>
     </div>
+    <!-- 回复列表 -->
+    <reply-list :replystr="replystr"></reply-list>
   </div>
 </template>
 <script>
@@ -70,11 +71,26 @@ import Img2 from '~/assets/img/green_wine.jpg'
 
 import Img3 from '~/assets/img/home/img_home_335x180@2x.png'
 
+import { quizApi } from '~/api/quiz'
+import replyList from './_replylist'
+
 export default {
   name: 'u-question',
-
+  props: {
+    goodsid: String
+  },
+  components: {
+    replyList: replyList
+  },
   data () {
     return {
+      getGoodId: this.goodsid,
+      currentTotal: 3,
+      qestList: [],
+      qestNum: 0,
+      replyshow: false,
+      postdata: false,
+      replystr: '1',
       testData: [{
         imgList: [Img1, Img2]
       }, {
@@ -82,10 +98,21 @@ export default {
       }]
     }
   },
-
-  mounted () {
+  async mounted () {
+    let params = {
+      page: 1,
+      count: 3,
+      total: this.currentTotal,
+      goodsId: this.getGoodId
+    }
+    const {code, data} = await quizApi.getQuizlist(params)
+    if (code === 200) {
+      console.log('data', data)
+      let { array, total } = data
+      this.qestList = array
+      this.qestNum = total
+    }
   },
-
   methods: {
     showBigImg (index, val) {
       ImagePreview({
@@ -94,9 +121,22 @@ export default {
         onClose () {
         }
       })
+    },
+    replyFn (event) {
+      this.replystr = '2'
+      console.log(this.replystr, 'replystr')
+    },
+    async fabulous (event) {
+      // 点赞 / 取消点赞
+      let { ifLiked, consultid } = event
+      const { code, data } = !ifLiked ? await quizApi.consultLike(consultid) : await quizApi.consultDislike(consultid)
+      if (code === 200) {
+        this.$toast(data)
+      } else {
+        this.$toast(data)
+      }
     }
   }
-
 }
 </script>
 <style lang="less">

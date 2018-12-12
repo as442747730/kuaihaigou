@@ -343,6 +343,7 @@ export default {
       this.isRoll = false
     },
     customArray (arr) {
+      if (!Array.isArray(arr)) return false
       return JSON.parse(arr)
     }
   }

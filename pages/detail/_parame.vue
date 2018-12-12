@@ -1,12 +1,5 @@
 <template>
   <article class="u-goods-parama">
-    <div class="parama_intro margin-30">
-      <h3 class="title">商品推荐</h3>
-      <p>
-        精美包装的李红酒酒具礼盒，是赠礼佳品，无论是亲朋好友，还是领导客户，都能适用。精美包装的李红酒酒具礼盒，是赠礼佳品，无论是亲朋好友，还是领导客户，都能适用。精美包装的李红酒酒具礼盒，是赠礼佳品，无论是亲朋好友，还是领导客户，都能适用。精美包装的李红酒酒具礼盒，是赠礼佳品，无论是亲朋好友，还是领导客户，都能适用。
-      </p>
-    </div>
-
     <div class="parama_base margin-30">
       <h3 class="title">基本信息</h3>
       <div class="wrap">
@@ -16,31 +9,31 @@
         </div>
         <div class="parama_base-item">
           <span>国 家</span>
-          <p>法国</p>
+          <p>{{ redAttr.country }}</p>
         </div>
         <div class="parama_base-item">
           <span>酒 庄</span>
-          <p>Lopez Mercier</p>
+          <p>{{ redAttr.winery }}</p>
         </div>
         <div class="parama_base-item">
           <span>品 牌</span>
-          <p>拉菲传奇</p>
+          <p>{{ viewdata.brandName }}</p>
         </div>
         <div class="parama_base-item">
           <span>进口类型</span>
-          <p>原瓶进口</p>
+          <p>{{ redAttr.importType }}</p>
         </div>
         <div class="parama_base-item">
           <span>净 含 量</span>
-          <p>750ml</p>
+          <p>{{ redAttr.netVolume }}</p>
         </div>
         <div class="parama_base-item">
           <span>获奖信息</span>
-          <p>IWSC国际葡萄酒银奖</p>
+          <p></p>
         </div>
         <div class="parama_base-item">
           <span>保 质 期</span>
-          <p>10年</p>
+          <p>{{ redAttr.shelfLife }}</p>
         </div>
       </div>
     </div>
@@ -48,73 +41,73 @@
     <div class="parama_detail margin-30">
       <h3 class="title">详细信息</h3>
       <div class="wrap">
-        <div class="parama_detail-item" v-for='$v in 10'>
-          <div class="pro ib-middle"></div>
+        <a :href="info.link" class="parama_detail-item" v-for="(info, index) in infos" :key="index">
+          <div class="pro ib-middle" :style="{background: 'url(' + info.icon + ') no-repeat center/cover'}"></div>
           <div class="pd_type ib-middle">
             <p>
-              <span>类型</span>
-              <span>（含糖量在4g/L以下）</span>
+              <span>{{ info.name }}</span>
+              <span>（{{ info.mark }}）</span>
             </p>
-            <em>干红葡萄酒</em>
+            <em>{{ info.text }}</em>
           </div>
           <i class="van-icon van-icon-arrow"></i>
-        </div>
+        </a>
       </div>
     </div>
 
     <div class="parama_detail-attr margin-30">
-      <h3 class="title">详细信息</h3>
+      <h3 class="title">红酒属性</h3>
       <div class="attr-item">
         <span>涩度：</span>
         <div class="bar">
-          <i class="bar-long" style="width: 50%"></i>
+          <i class="bar-long" :style="{width: redAttr.astringency + '%'}"></i>
         </div>
       </div>
       <div class="attr-item">
         <span>苦度：</span>
         <div class="bar">
-          <i class="bar-long" style="width: 50%"></i>
+          <i class="bar-long" :style="{width: redAttr.bitterness + '%'}"></i>
         </div>
       </div>
       <div class="attr-item">
         <span>酸度：</span>
         <div class="bar">
-          <i class="bar-long" style="width: 50%"></i>
+          <i class="bar-long" :style="{width: redAttr.acidity + '%'}"></i>
         </div>
       </div>
       <div class="attr-item">
         <span>果香：</span>
         <div class="bar">
-          <i class="bar-long" style="width: 50%"></i>
+          <i class="bar-long" :style="{width: redAttr.fruity + '%'}"></i>
         </div>
       </div>
       <div class="attr-item">
         <span>复杂度：</span>
         <div class="bar">
-          <i class="bar-long" style="width: 50%"></i>
+          <i class="bar-long" :style="{width: redAttr.complexity + '%'}"></i>
         </div>
       </div>
 
       <div class="refer">
         <p>参考酒评</p>
-        <span>开瓶初饮，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</span>
+        <span> {{goodsWineCommentResp.longComment }}</span>
       </div>
 
-      <div class="tips-item">
+      <div class="tips-item" v-if="goodsWineCommentResp.wineCriticComment">
         <h3 class="title">酒评家评价</h3>
-        <p>初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</p>
+        <p>{{ goodsWineCommentResp.wineCriticComment }}</p>
       </div>
-      <div class="tips-item">
+      <div class="tips-item" v-if="goodsWineCommentResp.note">
         <h3 class="title">酿酒师笔记</h3>
-        <p>初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</p>
+        <p>{{ goodsWineCommentResp.note }}</p>
       </div>
-      <div class="tips-item">
+      <div class="tips-item" v-if="goodsWineCommentResp.wineFeature">
         <h3 class="title">酒款特点</h3>
-        <p>初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</p>
+        <p>{{ goodsWineCommentResp.wineFeature }}</p>
       </div>
-      <div class="tips-item">
+      <div class="tips-item" v-if="goodsWineCommentResp.wineryFeature">
         <h3 class="title">酒庄特点</h3>
-        <p>初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。初次开瓶，酒体厚重，复杂度高，随着与空气接触的时间增加，单宁的氧化，苦涩越来越轻，椰奶味越来越浓。</p>
+        <p>{{ goodsWineCommentResp.wineryFeature }}</p>
       </div>
 
     </div>
@@ -122,11 +115,11 @@
     <div class="u-detail_line"></div>
 
     <!-- 推荐 -->
-    <u-evaluation /> 
+    <u-evaluation :hostlist="hotList" /> 
   </article>
 </template>
 <script>
-import uEvaluation from '~/pages/detail/evaluation'
+import uEvaluation from './_evaluation'
 export default {
   name: 'u-parame',
 
@@ -134,17 +127,73 @@ export default {
     uEvaluation
   },
 
+  props: {
+    viewdata: Object,
+    hotlist: Array
+  },
   data () {
     return {
+      hotList: this.hotlist,
+      redAttr: this.viewdata.redAttr,
+      goodsWineCommentResp: this.viewdata.goodsWineCommentResp
     }
   },
+  computed: {
+    infos: function () {
+      console.log(this.redAttr)
+      let { typeIcon, typeRemark, typeUrl, type } = this.redAttr
+      let typeobj = this.setObj('类型', typeIcon, typeRemark, type, typeUrl)
 
-  mounted () {
+      let { internationallevelIcon, internationalLevelRemark, internationallevel, instatlevelUrl } = this.redAttr
+      let inteobj = this.setObj('国际级别', internationallevelIcon, internationalLevelRemark, internationallevel, instatlevelUrl)
+
+      let { areaIcon, areaRemark, areaList } = this.redAttr
+      console.log('areaList', areaList)
+      areaList = !areaList ? [] : areaList
+      let areaArray = areaList.map(v => {
+        return v.areaName
+      })
+      let areaStr = areaArray.join(',')
+      let areaobj = this.setObj('产区', areaIcon, areaRemark, areaStr)
+
+      let { yearIcon, yearRemark, year } = this.redAttr
+      let yearobj = this.setObj('年份', yearIcon, yearRemark, year)
+
+      let { varietyIcon, varietyRemark, varietyUrl, variety } = this.redAttr
+      let varietyobj = this.setObj('品种', varietyIcon, varietyRemark, variety, varietyUrl)
+
+      let { alcoholDegreeIcon, alcoholDegreeRemark, alcoholDegree } = this.redAttr
+      let alcohobj = this.setObj('酒精度', alcoholDegreeIcon, alcoholDegreeRemark, alcoholDegree)
+
+      let { oakBarrelTimeIcon, oakBarrelTimeRemark, oakBarrelTime } = this.redAttr
+      let oakobj = this.setObj('橡木桶时间', oakBarrelTimeIcon, oakBarrelTimeRemark, oakBarrelTime)
+
+      let { serveDegreeIcon, serveDegreeRemark, serveDegree } = this.redAttr
+      let degobj = this.setObj('适饮温度', serveDegreeIcon, serveDegreeRemark, serveDegree)
+
+      let { averageVineAgeIcon, averageVineAgeRemark, averageVineAge } = this.redAttr
+      let aveobj = this.setObj('平均树龄', averageVineAgeIcon, averageVineAgeRemark, averageVineAge)
+
+      let { annualOutputIcon, annualOutputRemark, annualOutput } = this.redAttr
+      let annuobj = this.setObj('年产量', annualOutputIcon, annualOutputRemark, annualOutput)
+
+      let createArray = [typeobj, inteobj, areaobj, yearobj, varietyobj, alcohobj, oakobj, degobj, aveobj, annuobj]
+      console.log('createArray', createArray)
+      return createArray
+    }
   },
-
   methods: {
+    setObj (name, icon, mark, text, link = 'javascript:;') {
+      let obj = {
+        name: name,
+        icon: icon,
+        mark: mark,
+        text: text,
+        link: link
+      }
+      return obj
+    }
   }
-
 }
 </script>
 <style lang="less" scoped>
@@ -207,15 +256,22 @@ export default {
       &-item {
         margin-bottom: 25px;
         position: relative;
+        display: block;
+        // width: 100%;
+        padding-left: 50px;
+        padding-right: 12px;
         .pro {
           width: 35px;
           height: 35px;
           background: #82b5fa;
           border-radius: 50%;
           overflow: hidden;
-          margin-right: 15px;
+          float: left;
+          margin-left: -50px;
+          // margin-right: 15px;
         }
         .pd_type {
+         
           p {
             font-size: 12px;
             span {
