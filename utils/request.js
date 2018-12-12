@@ -6,6 +6,7 @@
 
 import axios from 'axios'
 import qs from 'qs'
+import { Toast } from 'vant'
 import config from '../private.config'
 const _ = require('lodash')
 
@@ -14,7 +15,7 @@ const target = config.target
 
 // 请求时的拦截器
 axios.interceptors.request.use(config => {
-  // 这里可以加一些动作, 比如来个进度条开始动作
+  Toast.loading({ forbidClick: true, message: '拼命加载中...' })
   config.token = 123
   return config
 }, error => {
@@ -22,8 +23,10 @@ axios.interceptors.request.use(config => {
 })
 
 // 请求完成后的拦截器
-axios.interceptors.response.use(response => response, error => {
-  // 这里我们把错误信息捕捉, 后面就不需要写 catch 了
+axios.interceptors.response.use(response => {
+  Toast.clear()
+  return Promise.resolve(response)
+}, error => {
   return Promise.resolve(error.response)
 })
 

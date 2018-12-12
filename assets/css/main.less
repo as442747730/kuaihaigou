@@ -182,11 +182,21 @@ input[type="text"] {
   border-radius: 23px;
   background-color: #03A1CD;
   color: white;
+  box-sizing: border-box;
   &.small {
     height: 30px;
     line-height: 30px;
     border-radius: 15px;
     font-size: 12px;
+  }
+  &.default {
+    background-color: white;
+    color: @cor_666;
+    border: 1PX solid #C7C7C7;
+  }
+  &.inline {
+    display: inline-block;
+    padding: 0 12px;
   }
   &:active {
     opacity: 0.7;
