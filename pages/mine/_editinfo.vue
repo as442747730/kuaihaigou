@@ -1,22 +1,23 @@
 <template>
   <van-popup v-model="configs.isshow" position="right">
     <div class="editinfo">
-      <com-head :titleConfig="configs.title"></com-head>
+      <com-head :titleConfig="configs._title"></com-head>
       <div class="edit-main">
         <div class="edit-one">
-          <van-field v-model="configs.model" :placeholder="configs.plholder" />
+          <van-field v-model="configs.model" :placeholder="configs._plholder" />
         </div>
         <p class="edit-tip" v-if="configs.tips">{{ configs.tips }}</p>
         <!-- <p class="edit-tip">昵称由3-10位汉字/字母/符号组成，首位不能是符号</p> -->
       </div>
       <div class="edit-foot">
-        <p class="foot-btn" @click="changeTite">确定</p>
+        <p class="foot-btn" @click="updFn">确定</p>
       </div>
     </div>
   </van-popup>
 </template>
 <script>
 import comHead from '~/components/com-head'
+import { userApi } from '~/api/users'
 export default {
   components: {
     comHead
@@ -25,17 +26,20 @@ export default {
     return {
       configs: {
         isshow: false,
-        title: '',
+        _title: '',
         model: '',
-        plholder: '',
+        _plholder: '',
         tips: ''
       }
     }
   },
   mounted () {
     this.$bus.on('getConfigs', cfg => {
-      console.log('cfg', cfg)
-      this.configs = { ...cfg }
+      console.log('cfgxx', cfg)
+      let { type, model, isshow, nickname } = cfg
+      let getobj = this.getInfos(type)
+      console.log(getobj, 'getobj')
+      this.configs = { type, nickname, isshow, model, ...getobj }
     })
     this.$bus.on('closeHead', ch => {
       this.configs.isshow = ch
@@ -45,8 +49,90 @@ export default {
     cancleFn () {
       this.configs.isshow = false
     },
-    changeTite (title) {
-      this.cftitle = title
+    async updFn () {
+      let Ques = {}
+      let { nickname, model, type } = this.configs
+      switch (type) {
+        case 'nickname':
+          Ques = { nickname: model }
+          break
+        case 'qq':
+          Ques = { qq: model }
+          break
+        case 'wechat':
+          Ques = { wechat: model }
+          break
+        case 'signature':
+          Ques = { signature: model }
+          break
+        case 'wineWhen':
+          Ques = { wineWhen: model }
+          break
+        case 'wineArea':
+          Ques = { wineArea: model }
+          break
+        case 'wineVariety':
+          Ques = { wineVariety: model }
+          break
+        case 'wineHowMany':
+          Ques = { wineHowMany: model }
+          break
+      }
+      Object.assign(Ques, { nickname })
+      console.log(Ques, 'Ques')
+      const { code, data } = await userApi.upduserinfo(Ques)
+      if (code === 200) {
+        console.log(data)
+        // this.$toast('修改成功')
+        this.configs.isshow = false
+        this.$router.go(-1)
+        this.$bus.emit('editinfoChange', true)
+      } else {
+        this.$toast(data)
+      }
+    },
+    getInfos (type) {
+      let title
+      let tips
+      let _plholder
+      switch (type) {
+        case 'nickname':
+          title = '昵称'
+          _plholder = '请输入' + title
+          tips = '昵称由3-10位汉字/字母/符号组成，首位不能是符号'
+          break
+        case 'qq':
+          title = 'QQ号'
+          _plholder = '请输入' + title
+          break
+        case 'wechat':
+          title = '微信号'
+          _plholder = '请输入' + title
+          break
+        case 'signature':
+          title = '个性签名'
+          _plholder = '请输入' + title
+          break
+        case 'wineWhen':
+          title = '其它信息'
+          _plholder = '请输入什么时候开始喝葡萄酒'
+          break
+        case 'wineArea':
+          title = '其它信息'
+          _plholder = '最喜欢什么产区的葡萄酒'
+          break
+        case 'wineVariety':
+          title = '其它信息'
+          _plholder = '最喜欢什么品种的葡萄酒'
+          break
+        case 'wineHowMany':
+          title = '其它信息'
+          _plholder = '每个月喝多少瓶葡萄酒'
+          break
+      }
+      let _title = '编辑' + title
+      let okObj = { _title, _plholder, tips }
+      return okObj
     }
   },
   beforeDestory () {

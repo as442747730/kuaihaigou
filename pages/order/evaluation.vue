@@ -39,9 +39,9 @@
         <!-- <van-uploader :after-read="afterRead" accept="image/gif, image/jpeg" multiple>
           <van-icon name="photograph" />
         </van-uploader> -->
-        <Upload>
+       <!--  <Upload>
           <van-icon name="photograph" ></van-icon>
-        </Upload>
+        </Upload> -->
       </div>
 
 
@@ -50,14 +50,14 @@
   </div>
 </template>
 <script>
-import Upload from '~/components/Upload'
+// import Upload from '~/components/Upload'
 
 export default {
   name: '',
 
   layout: 'default',
 
-  components: { Upload },
+  // components: { Upload },
 
   head () {
     return {

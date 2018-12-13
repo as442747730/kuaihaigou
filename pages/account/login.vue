@@ -139,7 +139,7 @@ export default {
         const { code, data } = await api.clientPost('/api/login', { phone: this.phone, password: this.password })
         console.log(code, data)
         if (code === 200) {
-          this.$toast.success('登录成功')
+          // this.$toast.success('登录成功')
           window.location.href = '/home'
         } else {
           this.$toast(data)

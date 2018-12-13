@@ -83,6 +83,8 @@ export default {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
       }
     }
+    console.log('data', data)
+    console.log('req', req)
     if (req && req.req.headers.cookie) {
       var cookies = []
       _.each(req.req.headers.cookie, function (value, key) {
