@@ -1,182 +1,142 @@
 <template>
-  <div class="m-address">
+  <div class="m-address-list">
 
-    <div class="m-address-ul">
+    <van-pull-refresh v-model="refresing" @refresh="getRefresh">
 
-      <div class="m-address-li" v-for="(item, index) in addressList">
-        <div class="top">
-          <div class="top-title">{{ item.name }} <span>{{ item.phone }}</span></div>
-          <div class="top-desc">{{ String(item.province).split(',')[0] + String(item.city).split(',')[0] + String(item.district).split(',')[0] + String(item.street).split(',')[0] + item.address }}</div>
-        </div>
-        <div class="bottom">
-          <div :class="['u-checkbox', item.ifDefault ? 'active' : '']" @click="setDefault(item)"></div>
-          <span @click="setDefault(item)">默认地址</span>
-          <div class="icon-label icon-edit active-status" @click="editAddress(item)">编辑</div>
-          <div class="icon-label icon-delete active-status" @click="deleteAddress(item)">删除</div>
+      <div class="address-ul">
+        <div class="address-item" v-for="item in list" :key="item.id">
+          <div class="title">
+            <span class="contxt">{{ item.name }}</span><span class="contxt">{{ item.phone }}</span><span class="default" v-if="item.ifDefault">默认</span>
+          </div>
+          <p class="address">{{item.province | formatPlace }}{{item.city | formatPlace }}{{item.district | formatPlace }}{{item.street | formatPlace }}{{item.address}}</p>
         </div>
       </div>
 
-    </div>
+    </van-pull-refresh>
 
-    <div class="m-address-btn active-status" @click="addAddress">新增收货人</div>
+    <div class="btn-section">
+      <div class="btn-manage" @click="goManage">管理</div>
+    </div>
 
   </div>
 </template>
 
 <script>
-import api from '~/utils/request'
+import { addressApi } from '~/api/address'
 
 export default {
   name: 'addressList',
+
   layout: 'default',
 
+  head () {
+    return {
+      title: '收货地址',
+      meta: [
+        { hid: 'title', name: 'title', content: '收货地址' }
+      ]
+    }
+  },
+
   async asyncData (req) {
-    return api.serverGet('/api/shippingAddress/listAll', {}, req).then((res) => {
+    return addressApi.getAddressList(req).then((res) => {
       console.log(res)
       if (res.code === 506) {
         req.redirect('/account/login')
       }
       if (res.code === 200) {
-        return { addressList: res.data }
+        return { list: res.data }
       } else {
         req.redirect('/error')
       }
     })
   },
 
-  head () {
-    return {
-      title: '收货地址管理',
-      meta: [
-        { hid: 'title', name: 'title', content: '收货地址管理' }
-      ]
-    }
-  },
-
   data () {
     return {
-      addressList: []
+      refresing: false,
+      list: []
     }
   },
 
   methods: {
-
-    async getAddressList () {
-      const { code, data } = await api.clientGet('/api/shippingAddress/listAll')
+    async getRefresh () {
+      this.refresing = true
+      const { code, data } = await addressApi.getAddressListClient()
       if (code === 200) {
-        this.addressList = data
+        this.list = data
+        this.refresing = false
       }
     },
-
-    async setDefault (val) {
-      if (val.ifDefault) return
-      const { code, data } = await api.clientPost('/api/shippingAddress/setDefault/' + val.id)
-      if (code === 200) {
-        this.$toast('设置默认收货地址成功')
-        this.getAddressList()
-      } else {
-        this.$toast(data)
-      }
-    },
-
-    addAddress () {
-      window.location.href = '/address/add'
-    },
-
-    editAddress (val) {
-      window.location.href = '/address/' + val.id
-    },
-
-    deleteAddress (val) {
-      this.$dialog.confirm({
-        message: '确定删除该收货地址吗？'
-      }).then(async () => {
-        const { code, data } = await api.clientPost('/api/shippingAddress/delete/' + val.id)
-        if (code === 200) {
-          this.$toast.success('删除成功')
-          this.getAddressList()
-        } else {
-          this.$toast(data)
-        }
-      })
+    goManage () {
+      window.location.href = '/address/manage'
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.m-address {
+.m-address-list {
   min-height: 100vh;
-  background: @cor_border;
-  position: relative;
-  box-sizing: border-box;
-  padding-bottom: 50px;
-  &-ul {
-    padding-bottom: 50px;
+  .address-ul {
+    min-height: 100vh;
   }
-  &-li {
-    padding-top: 20px;
-    padding-left: 20px;
-    font-size: 0;
-    margin-bottom: 10px;
-    background: white;
-    .top {
-      padding-bottom: 20px;
-      border-bottom: 1PX solid @cor_border;
-      &-title {
-        font-size: 17px;
-        color: @cor_333;
-        margin-bottom: 10px;
-        font-weight: 500;
-        span {
-          padding-left: 15px;
-        }
-      }
-      &-desc {
-        font-size: 13px;
-        color: @cor_666;
-        line-height: 23px;
-      }
-    }
-    .bottom {
-      padding: 15px 0;
+  .address-item {
+    padding: 25px 20px 15px 20px;
+    .title {
       display: flex;
       align-items: center;
-      color: @cor_999;
-      font-size: 13px;
-      padding-right: 20px;
-      span {
-        flex: 1;
-        padding-left: 10px
+      .contxt {
+        font-size: 17px;
+        color: @cor_333;
+        font-weight: bold;
+        line-height: 1;
+        margin-right: 15px;
       }
-      .icon-label {
-        height: 22px;
-        line-height: 22px;
-        background-position: left center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        padding-left: 24px;
-        &.icon-edit {
-          background-image: url('../../assets/img/order/icon-edit.png');
-        }
-        &.icon-delete {
-          background-image: url('../../assets/img/order/icon-delete.png');
-          margin-left: 25px;
-        }
+      .default {
+        display: inline-block;
+        font-size: 9px;
+        font-weight: 400;
+        color: #FF5B1F;
+        border: 1PX solid #FF5B1F;
+        border-radius: 2px;
+        height: 14px;
+        box-sizing: border-box;
+        line-height: 14px;
+        padding: 0 3px;
       }
     }
+    & + .address-item {
+      border-top: 1PX solid @cor_border;
+    }
+    .address {
+      margin-top: 10px;
+      font-size: 13px;
+      color: @cor_666;
+      line-height: 23px;
+    }
   }
-  &-btn {
-    height: 50px;
+  .btn-section {
     width: 100%;
+    box-sizing: border-box;
     position: fixed;
     bottom: 0;
+    background: white;
     left: 0;
-    background: #03A1CD;
-    color: white;
-    font-size: 15px;
-    text-align: center;
-    line-height: 50px;
+    padding: 15px 20px;
+    .btn-manage {
+      height: 45px;
+      border: 1PX solid @nice-blue;
+      border-radius: 6px;
+      box-sizing: border-box;
+      text-align: center;
+      line-height: 45px;
+      font-size: 15px;
+      color: @nice-blue;
+      &:active {
+        opacity: 0.8;
+      }
+    }
   }
 }
 </style>

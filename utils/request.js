@@ -8,6 +8,7 @@ import axios from 'axios'
 import qs from 'qs'
 // import { Toast } from 'vant'
 import config from '../private.config'
+import { Toast } from 'vant'
 const _ = require('lodash')
 
 // API 服务器地址
@@ -64,8 +65,7 @@ function checkCode (res) {
     // router.push('/login')
   } else if (res.code !== 200) {
     console.log('fail')
-    // console.log(res.code, res)
-    // Notification.error({ title: '警告', message: `${res.data} ${res.message}. ` })
+    Toast.fail(res.data)
   }
   return res
 }

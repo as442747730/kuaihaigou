@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import uFooter from '~/components/Footer'
+import uFooter from '~/components/footer'
 
 export default {
   data () {
