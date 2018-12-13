@@ -11,7 +11,7 @@
         <div class="lists">
           <list-one  @rFn="editFn('nickname')" list_left="昵称" :list_right="infos.nickname"></list-one>
           <list-one @rFn="editSex(infos.sex)" list_left="性别" :list_right="infos.strSex"></list-one>
-           <list-one v-if="birshow" list_left="生日" :list_right="infos.birhday">
+           <list-one v-if="birshow" @rFn="changeBirhday" list_left="生日" :list_right="infos.birhday">
             <div class="list-switch" slot="sl_l">
               <van-switch @input="switchOpen('birst', birshow)" active-color="#03A1CD" size="24px" :value="birshow" />
             </div>
@@ -21,7 +21,7 @@
               <van-switch @input="switchOpen('birst', birshow)" active-color="#03A1CD" size="24px" :value="birshow" />
             </div>
           </list-one>
-          <list-one v-if="addrshow" @rFn="editSex(2)" list_left="居住地" :list_right="infos._dz">
+          <list-one v-if="addrshow" @rFn="editSex('_dz')" list_left="居住地" :list_right="infos._dz">
             <div class="list-switch" slot="sl_l">
               <van-switch @input="switchOpen('address', addrshow)" active-color="#03A1CD" size="24px" :value="addrshow" />
             </div>
@@ -68,6 +68,8 @@
     <selectHead></selectHead>
     <editinfo></editinfo>
     <el-sex></el-sex>
+    <el-date></el-date>
+
   </div>
 </template>
 <script>
@@ -78,6 +80,7 @@ import listTwo from './_listTwo'
 import selectHead from './_selectHead'
 import editinfo from './_editinfo'
 import elSex from './_elSex'
+import elDate from './elDate'
 export default {
   components: {
     comHead,
@@ -85,7 +88,8 @@ export default {
     listTwo,
     selectHead,
     editinfo,
-    elSex
+    elSex,
+    elDate
   },
   data () {
     return {
@@ -106,6 +110,8 @@ export default {
     })
   },
   methods: {
+    onChange (picker, values) {
+    },
     async getDetail () {
       const { code, data } = await userApi.userDetail()
       if (code === 200) {
@@ -125,7 +131,11 @@ export default {
         // 地址
         let { residenceProvince, residenceCity, residenceCanSee } = data
         this.addrshow = residenceCanSee
-        let _dz = residenceProvince + residenceCity
+        let _dz = ''
+        if (residenceProvince) _dz += residenceProvince
+        if (residenceCity) _dz += residenceCity
+        console.log('_dz', _dz, typeof _dz)
+        console.log(_dz.toString())
         this.infos = { _dz, ...obj1, ...obj2, ...obj3, ...wineObj }
         console.log(this.infos, 'infos')
       }
@@ -226,11 +236,22 @@ export default {
       }
     },
     editSex (num) {
+      let { nickname } = this.infos
       let objs = {
         type: num,
+        nickname: nickname,
         isshow: true
       }
       this.$bus.emit('elSexFn', objs)
+    },
+    changeBirhday () {
+      console.log('changeBirhday changeBirhday')
+      let { nickname } = this.infos
+      let objs = {
+        nickname: nickname,
+        isshow: true
+      }
+      this.$bus.emit('elDateFn', objs)
     }
   },
   beforeDestory () {

@@ -7,7 +7,6 @@
           <van-field v-model="configs.model" :placeholder="configs._plholder" />
         </div>
         <p class="edit-tip" v-if="configs.tips">{{ configs.tips }}</p>
-        <!-- <p class="edit-tip">昵称由3-10位汉字/字母/符号组成，首位不能是符号</p> -->
       </div>
       <div class="edit-foot">
         <p class="foot-btn" @click="updFn">确定</p>
@@ -35,10 +34,10 @@ export default {
   },
   mounted () {
     this.$bus.on('getConfigs', cfg => {
-      console.log('cfgxx', cfg)
+      // console.log('cfgxx', cfg)
       let { type, model, isshow, nickname } = cfg
       let getobj = this.getInfos(type)
-      console.log(getobj, 'getobj')
+      // console.log(getobj, 'getobj')
       this.configs = { type, nickname, isshow, model, ...getobj }
     })
     this.$bus.on('closeHead', ch => {
@@ -78,11 +77,12 @@ export default {
           Ques = { wineHowMany: model }
           break
       }
-      Object.assign(Ques, { nickname })
-      console.log(Ques, 'Ques')
+      if (type !== 'nickname') {
+        Object.assign(Ques, { nickname })
+      }
       const { code, data } = await userApi.upduserinfo(Ques)
       if (code === 200) {
-        console.log(data)
+        // console.log(data)
         // this.$toast('修改成功')
         this.configs.isshow = false
         this.$router.go(-1)

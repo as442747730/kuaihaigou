@@ -6,7 +6,7 @@
 
 import axios from 'axios'
 import qs from 'qs'
-import { Toast } from 'vant'
+// import { Toast } from 'vant'
 import config from '../private.config'
 const _ = require('lodash')
 
@@ -15,8 +15,8 @@ const target = config.target
 
 // 请求时的拦截器
 axios.interceptors.request.use(config => {
-  Toast.loading({ forbidClick: true, message: '拼命加载中...' })
-  config.token = 123
+  // Toast.loading({ forbidClick: true, message: '拼命加载中...' })
+  // config.token = 123
   return config
 }, error => {
   return Promise.reject(error)
@@ -24,7 +24,7 @@ axios.interceptors.request.use(config => {
 
 // 请求完成后的拦截器
 axios.interceptors.response.use(response => {
-  Toast.clear()
+  // Toast.clear()
   return Promise.resolve(response)
 }, error => {
   return Promise.resolve(error.response)

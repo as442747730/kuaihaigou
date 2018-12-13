@@ -58,31 +58,31 @@
         font-weight: bold;
         margin-bottom: 25px;
         &.msg {
-          background-image: url('~@/assets/img/me/icon-msg.png');
+          background-image: url('~/assets/img/me/icon-msg.png');
         }
         &.invo {
-          background-image: url('~@/assets/img/me/icon-invo.png');
+          background-image: url('~/assets/img/me/icon-invo.png');
         }
         &.address {
-          background-image: url('~@/assets/img/me/icon-address.png');
+          background-image: url('~/assets/img/me/icon-address.png');
         }
         &.coupon {
-          background-image: url('~@/assets/img/me/icon-coupon.png');
+          background-image: url('~/assets/img/me/icon-coupon.png');
         }
         &.after {
-          background-image: url('~@/assets/img/me/icon-after.png');
+          background-image: url('~/assets/img/me/icon-after.png');
         }
         &.account {
-          background-image: url('~@/assets/img/me/icon-account.png');
+          background-image: url('~/assets/img/me/icon-account.png');
         }
         &.certif {
-          background-image: url('~@/assets/img/me/icon-certif.png');
+          background-image: url('~/assets/img/me/icon-certif.png');
         }
         &.reward {
-          background-image: url('~@/assets/img/me/icon-reward.png');
+          background-image: url('~/assets/img/me/icon-reward.png');
         }
         &.service {
-          background-image: url('~@/assets/img/me/icon-service.png');
+          background-image: url('~/assets/img/me/icon-service.png');
         }
       }
     }
