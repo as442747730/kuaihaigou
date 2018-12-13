@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import api from '~/utils/request'
+import { orderApi } from '~/api/order'
 import uTabs from '@/components/Tabs'
 
 export default {
@@ -101,12 +101,16 @@ export default {
   },
 
   async asyncData (req) {
-    return api.serverGet('/api/order/paginate', { page: 1, count: 10 }, req).then((res) => {
+    return orderApi.getOrderList({ page: 1, count: 10 }, req).then((res) => {
       console.log(res.data.array)
       if (res.code === 506) {
         req.redirect('/account/login')
       }
-      return { orderList: res.data.array }
+      if (res.code === 200) {
+        return { orderList: res.data.array }
+      } else {
+        req.redirect('/error')
+      }
     })
   },
 
@@ -137,7 +141,7 @@ export default {
     },
     // 获取订单列表
     async fetchData () {
-      const { code, data } = await api.clientGet('/api/order/paginate', { page: this.currentPage, count: 10, status: this.status })
+      const { code, data } = await orderApi.getOrderListClient({ page: this.currentPage, count: 10, status: this.status })
       if (code === 200) {
         this.orderList = data.array
       }
@@ -154,7 +158,7 @@ export default {
       this.$dialog.confirm({
         message: '确定取消订单吗？'
       }).then(async () => {
-        const { code } = await api.clientGet('/api/order/cancelOrder/' + val)
+        const { code } = await orderApi.cancelOrder(val)
         if (code === 200) {
           this.$toast.success('取消订单成功')
           this.fetchData()
@@ -165,7 +169,7 @@ export default {
       this.$dialog.confirm({
         message: '确定确认收货吗？'
       }).then(async () => {
-        const { code } = await api.clientPost('/api/order/confirmReceipt/' + val)
+        const { code } = await orderApi.receiveOrder(val)
         if (code === 200) {
           this.$toast.success('确认收货成功')
           this.fetchData()
@@ -177,7 +181,7 @@ export default {
       this.$dialog.confirm({
         message: '确定删除订单吗？'
       }).then(async () => {
-        const { code } = await api.clientPost('')
+        const { code } = await orderApi.deleteOrder(val)
         if (code === 200) {
           this.$toast.success('订单已删除')
           this.fetchData()

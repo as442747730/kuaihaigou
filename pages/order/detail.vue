@@ -15,7 +15,7 @@
         <span>{{ orderDetail.name }}</span>
         <span>{{ orderDetail.phone }}</span>
       </div>
-      <div class="address">{{orderDetail.province | formatPlace()}}{{orderDetail.city | formatPlace()}}{{orderDetail.district | formatPlace()}}{{orderDetail.street | formatPlace()}}{{orderDetail.address}}</div>
+      <div class="address">{{orderDetail.province | formatPlace }}{{orderDetail.city | formatPlace }}{{orderDetail.district | formatPlace }}{{orderDetail.street | formatPlace }}{{orderDetail.address}}</div>
     </div>
 
     <div class="good-wrapper">
@@ -89,9 +89,9 @@
 
       <div class="u-button small inline default" v-if="orderDetail.status === 3 || orderDetail.status === 4" @click="">查看物流</div>
 
-      <div class="u-button small inline" v-if="orderDetail.status === 4" @click="">确认收货</div>
+      <div class="u-button small inline" v-if="orderDetail.status === 4" @click="confirmReceive">确认收货</div>
 
-      <div class="u-button small inline" v-if="orderDetail.status === 5" @click="">评价商品</div>
+      <div class="u-button small inline" v-if="orderDetail.status === 5" @click="goEvaluation">评价商品</div>
 
       <!-- 7 已关闭 -->
       <div class="u-button small inline default" v-if="orderDetail.status === 7" @click="">删除订单</div>
@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import api from '~/utils/request'
+import { orderApi } from '~/api/order'
 
 export default {
   name: '',
@@ -120,12 +120,16 @@ export default {
   },
 
   async asyncData (req) {
-    return api.serverGet('/api/order/getDetail/' + req.query.id, {}, req).then((res) => {
+    return orderApi.getOrderDetail(req.query.id, req).then((res) => {
       console.log(res.data)
       if (res.code === 506) {
         req.redirect('/account/login')
       }
-      return { orderDetail: res.data, orderId: req.query.id }
+      if (res.code === 200) {
+        return { orderDetail: res.data, orderId: req.query.id }
+      } else {
+        req.redirect('/error')
+      }
     })
   },
 
@@ -152,23 +156,27 @@ export default {
       this.$dialog.confirm({
         message: '确定取消订单吗？'
       }).then(async () => {
-        const { code } = await api.clientGet(`/api/order/cancelOrder/${this.orderId}`)
+        const { code } = await orderApi.cancelOrder(this.orderId)
         if (code === 200) {
           this.$toast.success('取消订单成功')
           this.fetchData()
         }
       }).catch(() => {})
-    }
-  },
-
-  filters: {
-    formatPlace (str) {
-      if (!str) return ''
-      return String(str).split(',')[0]
     },
-    getPayment (val) {
-      const t = ['未支付', '微信', '支付宝', 'Hi币支付', '优惠券支付']
-      return t[+val]
+    confirmReceive () {
+      this.$dialog.confirm({
+        message: '确定确认收货吗？'
+      }).then(async () => {
+        const { code } = await orderApi.receiveOrder(this.orderId)
+        if (code === 200) {
+          this.$toast.success('确认收货成功')
+          this.fetchData()
+        }
+      })
+    },
+
+    goEvaluation () {
+      window.location.href = `/order/evaluation/${this.orderId}`
     }
   }
 }
