@@ -1,17 +1,53 @@
 <template>
   <div class="jarsclub">
-    <div class="jars" v-for="(item, index) in 5" :key="index">
+    <div class="jars" v-for="(item, index) in poetrys" :key="index">
       <div class="jars-l">
-        <p class="jars-l_d">23</p>
-        <div class="jars-l_ym">2018/08</div>
+        <p class="jars-l_d">{{ item.dd }}</p>
+        <div class="jars-l_ym">{{ item.yymm }}</div>
       </div>
       <div class="jars-r">
         <div class="tip">酒坛诗社</div>
-        <p>品味杯中风情，曼妙醇香，未饮而醉，风情何止万种？品味杯中风情，曼妙醇香，</p>
+        <p>{{ item.content }}</p>
       </div>
     </div>
   </div>
 </template>
+<script>
+import { userApi } from '~/api/users'
+export default {
+  data () {
+    return {
+      curInfo: {
+        page: 1,
+        count: 10
+      },
+      poetrys: []
+    }
+  },
+  mounted () {
+    this.getpoetry()
+  },
+  methods: {
+    async getpoetry () {
+      let params = { ...this.curInfo }
+      const { code, data } = await userApi.windPoetry(params)
+      if (code === 200) {
+        let { array } = data
+        this.poetrys = array.map(v => {
+          let { content, createdAt } = v
+          let date = new Date(createdAt)
+          let yy = date.getFullYear()
+          let mm = date.getMonth() + 1
+          let dd = date.getDate()
+          let yymm = yy + '/' + mm
+          return { content, yymm, dd }
+        })
+        // console.log(this.poetrys, 'poetrys')
+      }
+    }
+  }
+}
+</script>
 <style lang="less" soped>
 .jars {
   display: flex;
@@ -53,7 +89,7 @@
   .jars-r {
     flex: 1;
     padding-left: 15px;
-
+    height: 73px;
     .tip {
       width: 60px;
       height: 20px;
@@ -67,11 +103,18 @@
     }
 
     &>p {
+      width: 100%;
       font-size: 14px;
       font-family: PingFang-SC-Medium;
       font-weight: 500;
       color: rgba(102, 102, 102, 1);
       line-height: 24px;
+      word-break: break-all;
+      overflow : hidden;
+      text-overflow: ellipsis;
+      display:-webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
   }
 }

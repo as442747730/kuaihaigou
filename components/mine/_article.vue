@@ -1,35 +1,62 @@
 <template>
 	<div>
-	  <article v-for="(x,index) in 4" :key="index">
-	    <h1>2017雄狮，Decanter 97分好评，帕克眼中实力一级庄</h1>
-	    <div class="time">2018-08-23 14:24:87</div>
+	  <article v-for="(art, index) in artArr" :key="index">
+	    <h1>{{ art.title }}</h1>
+	    <div class="time">{{ art.createdAt }}</div>
 	    <div class="tips">
-	      <span>频道：经验 | 心得 | 美食</span>
-	      <span>话题：红酒</span>
+	      <span class="tips_one">频道：{{ art.channelName }}</span>
+	      <span>话题：{{ art.topicName }}</span>
 	    </div>
-	    <p class="artcon">
-	      红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…
-	    </p>
-	    <div class="imglist">
-	      <div class="imgitem" v-for="(n, index) in 3" :key="index"></div>
+	    <div class="artcon">{{ art.summary }}</div>
+	    <div class="imglist" >
+	      <div class="imgitem" v-for="(imgs, index) in art.imgsPaht" :key="index">
+         <div class="imgitem_bk" :style="{background: `url(${ imgs }) no-repeat center/cover`}"></div>
+        </div>
 	    </div>
 	    <div class="ctrls">
 	      <div class="ctrl">
 	        <img src="~/assets/img/Icons/ic_dianzan_g_18x18@2x.png" />
-	        <span>100</span>
+	        <span>{{ art.likeNumber }}</span>
 	      </div>
 	      <div class="ctrl">
 	        <img src="~/assets/img/Icons/ic_pinglun_g_18x18@2x.png" />
-					<span>98</span>
+					<span>{{ art.commentNumber }}</span>
 	      </div>
 	      <div class="ctrl">
 	        <img src="~/assets/img/Icons/ic_liulang_g_18x18@2x.png" />
-	      	<span>20389</span>
+	      	<span>{{ art.readNumber }}</span>
 	      </div>
 	    </div>
 	  </article>
 	</div>
 </template>
+<script>
+import { userApi } from '~/api/users'
+export default {
+  asyncData () {
+    console.log('执行了asyncData 执行了asyncData 执行了asyncData')
+  },
+  data () {
+    return {
+      artArr: []
+    }
+  },
+  mounted () {
+    this.getArts()
+  },
+  methods: {
+    async getArts () {
+      let params = { page: 1, count: 10 }
+      const { code, data } = await userApi.getArticle(params)
+      if (code === 200) {
+        // console.log('data', data)
+        let { array } = data
+        this.artArr = array
+      }
+    }
+  }
+}
+</script>
 <style lang="less" scoped>
 article {
   background: #FBFBFB;
@@ -78,6 +105,9 @@ article {
     color: rgba(153, 153, 153, 1);
     line-height: 12px;
     margin: 10px 0;
+    &_one {
+      margin-right: 10px;
+    }
   }
 
   .artcon {
@@ -87,6 +117,13 @@ article {
     font-weight: 500;
     color: rgba(153, 153, 153, 1);
     line-height: 24px;
+    &>p {
+      width: 100%;
+    }
+    img {
+      display: inline-block;
+      max-width: 100%;
+    }
   }
 
   .imglist {
@@ -98,6 +135,10 @@ article {
       height: 88px;
       border-radius: 8px;
       background: #60aff5;
+      &>div {
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 

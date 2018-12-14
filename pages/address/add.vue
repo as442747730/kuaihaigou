@@ -30,7 +30,7 @@
       <div class="m-address-add-form-item">
         <div class="item-label">详细地址</div>
         <div class="item-content">
-          <input v-model="address" placeholder="请输入发票抬头"></input>
+          <input v-model="address" placeholder="请输入详细地址"></input>
         </div>
       </div>
     </div>
@@ -39,10 +39,14 @@
       <van-picker ref="areaPicker" :columns="columns" show-toolbar @change="handleChange" @cancel="onCancel" @confirm="onConfirm" />
     </van-popup>
 
+    <div class="btn-wrapper fit">
+      <van-button class="submit-btn" @click="createInfo">保存</van-button>
+    </div>
+
   </div>
 </template>
 <script>
-import api from '~/utils/request'
+import { addressApi } from '~/api/address'
 
 export default {
   name: 'addressAdd',
@@ -56,10 +60,9 @@ export default {
     }
   },
 
-  async asyncData () {
-    return api.serverGet('/api/area/86').then((res) => {
+  async asyncData (req) {
+    return addressApi.getAreaList(86, req).then((res) => {
       if (res.code === 200) {
-        console.log(res.data)
         return { provinceList: res.data.map((n) => { return { text: n.areaName, id: n.id } }), provinceId: res.data[0].id }
       }
     })
@@ -108,9 +111,9 @@ export default {
     ** @params val: 传 city || district
     */
     async getArea (id, val) {
-      const { code, data } = await api.clientGet('/api/area/' + id)
+      const { code, data } = await addressApi.getAreaListClient(id)
       if (code === 200) {
-        this[val + 'List'] = data.map((n) => { return { text: n.areaName, id: n.id } })
+        this[`${val}List`] = data.map((n) => { return { text: n.areaName, id: n.id } })
       }
     },
     // 每次打开时根据是否有选择的省市 id 去获取下级列表，并根据保存的选中索引 设置 选中的项
@@ -159,6 +162,25 @@ export default {
       this.districtIndex = idx[2] ? idx[2] : ''
       this.popupShow = false
       this.areaTxt = this.provinceTxt + this.cityTxt + this.districtTxt
+    },
+
+    async createInfo () {
+      // todo validate
+      const req = {
+        address: this.address,
+        // addressType:
+        alternatePhone: this.alternatePhone,
+        province: `${this.provinceTxt},${this.provinceId}`,
+        city: `${this.cityTxt},${this.cityId}`,
+        district: `${this.districtTxt},${this.districtId}`,
+        name: this.name,
+        phone: this.phone
+      }
+      const { code } = await addressApi.createAddress(req)
+      if (code === 200) {
+        this.$toast.success('新增成功')
+        window.location.href = '/address/manage'
+      }
     }
   }
 }
@@ -218,18 +240,23 @@ export default {
       }
     }
   }
-  &-btn {
+  .btn-wrapper {
     width: 100%;
-    height: 50px;
-    line-height: 50px;
-    text-align: center;
-    color: white;
-    font-size: 15px;
-    background: #03A1CD;
-    position: absolute;
+    position: fixed;
     bottom: 0;
-    &.disabled {
-      background: #CCCCCC;
+    left: 0;
+    background: white;
+    &.fit {
+      padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
+      padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
+    }
+    .submit-btn {
+      width: 100%;
+      height: 50px;
+      display: block;
+      background: #03A1CD;
+      border: none;
+      color: white;
     }
   }
 }
