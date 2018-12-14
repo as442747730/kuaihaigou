@@ -52,6 +52,15 @@
             background-image: url('~/assets/img/Icons/ic_tick_w_12x12@2x.png')
           }
         }
+        .item-wgz {
+          background: #cccccc;
+        }
+        .item-ygz {
+          background: #03A1CD;
+        }
+        .item-xhgz {
+          background: #cccccc;
+        }
       }
 
       .item-c {
@@ -68,11 +77,16 @@
           line-height: 15px;
           align-items: center;
           margin-bottom: 8px;
+          .name-world {
+            width: 60%;
+            overflow: hidden;
+          }
 
           .ic-name {
             display: inline-flex;
             width: 21px;
             height: 21px;
+            overflow: hidden;
             .bg_cover;
           }
 
@@ -117,34 +131,35 @@
   <div class="follow">
     <com-head :titleConfig="configtitle"></com-head>
     <div class="follow-items">
-      <div class="follow-item" v-for="n in 10">
-        <div class="item-l"></div>
+      <div class="follow-item" v-for="(list, index) in lists" :key="index">
+        <div class="item-l" :style="{background: `url(${list.headimgurl}) no-repeat center/cover`}"></div>
         <div class="item-c">
           <div class="item-c_name">
-            <p>小叶麦田</p>
+            <p class="name-world">{{ list.nickname }}</p>
             <p>
               <i class="ic-name ic-member"></i>
               <i class="ic-name ic-cms"></i>
             </p>
           </div>
           <div class="item-c_sign">
-            <p>这不是一个一般的用户签名这不是一个一般的用户签名</p>
+            <p>{{list.nickname }} </p>
           </div>
           <div class="item-c_count">
-            <span>创作 243</span>
-            <span class="mar_l">粉丝 3438</span>
+            <span>创作 {{ list.worksNumber }}</span>
+            <span class="mar_l">粉丝 {{ list.fanNumber }}</span>
           </div>
         </div>
         <div class="item-r">
-          <div class="item-gz item-wgz" v-if="followStatus === 0">
-            <div class="gz_level wgz_level"></div>
-            <p>关注</p>
-          </div>
-          <div class="item-gz item-ygz" v-else-if="followStatus === 1">
+          <div class="item-gz item-xhgz" v-if="list.checkAttention && getNum === 2">相互关注</div>
+          <div class="item-gz item-ygz" v-else-if="list.checkAttention">
             <div class="gz_level ygz_level"></div>
             <p>已关注</p>
           </div>
-          <div class="item-gz item-xhgz" v-else>相互关注</div>
+          <div class="item-gz item-wgz" v-else>
+            <div class="gz_level wgz_level"></div>
+            <p>关注</p>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -152,6 +167,7 @@
 </template>
 <script>
 import comHead from '~/components/com-head'
+import { userApi } from '~/api/users'
 export default {
   components: {
     comHead
@@ -159,7 +175,24 @@ export default {
   data () {
     return {
       configtitle: '我的关注',
-      followStatus: 0
+      followStatus: 0,
+      lists: [],
+      getNum: null
+    }
+  },
+  async mounted () {
+    let quenum = this.$route.query.num
+    this.getNum = quenum
+    let nums = parseInt(quenum)
+    let params = {
+      page: 1,
+      count: 10,
+      number: nums // number 1 好友， 2 粉丝
+    }
+    const { code, data } = await userApi.friendlist(params)
+    if (code === 200) {
+      console.log('data', data)
+      this.lists = data.array
     }
   }
 }

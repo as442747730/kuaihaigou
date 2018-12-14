@@ -7,22 +7,24 @@
         <div class="hd_r"></div>
       </div>
       <div class="hd-headimg" @click="toperson">
-        <div class="hd_img"></div>
+        <div class="hd_img">
+          <img :src="userInfo.userInfo" />
+        </div>
       </div>
       <div class="hd-name">
-        <p class="hd_world">哆来咪NIco</p>
+        <p class="hd_world">{{ userInfo.nickname }}</p>
         <i class="icons ic_level"></i>
         <i class="icons ic_cms"></i>
       </div>
       <div class="hd-sign">
-        <p>这不是一个一般的用户签名。这不是一个一般的用户签名这不是一个一般的用户签名</p>
+        <p>{{ userInfo.signature }}</p>
       </div>
     </header>
     <div class="main">
       <div class="main-top">
         <div class="info">
-          <div class="info-item" @click="tomyInfo">
-            <p><span>1000</span> 瓶</p>
+          <div class="info-item">
+            <p><span>{{ userInfo.buyNumber }}</span> 瓶</p>
             <p>已购(酒)</p>
           </div>
           <div class="info-item" @click="tofollow(1)">
@@ -57,8 +59,9 @@
 </template>
 <script>
 import uFooter from '~/components/footer'
-import uArticle from './_article'
-import uJarsclb from './_jarsclub'
+import uArticle from '~/components/mine/_article'
+import uJarsclb from '~/components/mine/_jarsclub'
+import { userApi } from '~/api/users'
 export default {
   head () {
     return {
@@ -79,7 +82,32 @@ export default {
       iscomp: 'uArticle',
       comps: ['uArticle', 'uJarsclb'],
       headitems: ['我的文章', '酒坛诗社'],
-      headactive: 0
+      headactive: 0,
+      userInfo: {
+        nickname: '',
+        buyNumber: 0,
+        signature: '',
+        headimgurl: ''
+      }
+    }
+  },
+  // async asyncData (req) {
+  //   let detfn = userApi.asyUserDetail(req)
+  //   const { detCode, detData } = await detfn
+  //   if (detCode === 200) {
+  //     let { nickname, buyNumber, signature, headimgurl } = detData
+  //     let userInfo = { nickname, buyNumber, signature, headimgurl }
+  //     console.log('userInfo', userInfo)
+  //     return { userInfo }
+  //   }
+  // },
+  async mounted () {
+    let detfn = userApi.asyUserDetail()
+    const { detCode, detData } = await detfn
+    if (detCode === 200) {
+      let { nickname, buyNumber, signature, headimgurl } = detData
+      let userInfo = { nickname, buyNumber, signature, headimgurl }
+      this.userInfo(...userInfo)
     }
   },
   methods: {
@@ -91,7 +119,11 @@ export default {
       this.$router.push('/mine/person')
     },
     tofollow (num) {
-      this.$router.push('/mine/follow')
+      let Que = {
+        path: '/mine/follow',
+        query: { num: num }
+      }
+      this.$router.push(Que)
     },
     toperson () {
       this.$router.push('/mine/person')
@@ -146,6 +178,12 @@ export default {
         height: 80px;
         border: 4PX solid #fff;
         border-radius: 50%;
+        &>img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+        }
       }
     }
 

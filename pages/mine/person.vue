@@ -65,6 +65,7 @@
         <list-two @ltwoFn="editFn('wineHowMany')" title="每个月喝多少瓶葡萄酒" :content="infos.wineHowMany"></list-two>
       </div>
     </div>
+
     <selectHead></selectHead>
     <editinfo></editinfo>
     <el-sex></el-sex>
@@ -75,12 +76,12 @@
 <script>
 import { userApi } from '~/api/users'
 import comHead from '~/components/com-head'
-import listOne from './_listOne'
-import listTwo from './_listTwo'
-import selectHead from './_selectHead'
-import editinfo from './_editinfo'
-import elSex from './_elSex'
-import elDate from './elDate'
+import listOne from '~/components/mine/_listOne'
+import listTwo from '~/components/mine/_listTwo'
+import selectHead from '~/components/mine/_selectHead'
+import editinfo from '~/components/mine/_editinfo'
+import elSex from '~/components/mine/_elSex'
+import elDate from '~/components/mine/elDate'
 export default {
   components: {
     comHead,
