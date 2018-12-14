@@ -1,5 +1,5 @@
 <template>
-  <div class="list" @click="editFn(title, content)">
+  <div class="list" @click="listFn">
     <div class="list_one">
     	<div class="list_one-title">{{title}}</div>
     	<i class="ic_arrow"></i>
@@ -49,6 +49,9 @@ export default {
     }
   },
   methods: {
+    listFn () {
+      this.$emit('ltwoFn')
+    },
     editFn (tit, content) {
       /**
       * ltit => 昵称
@@ -56,9 +59,8 @@ export default {
       */
       let configs = {
         isshow: true,
-        title: '其他信息',
-        model: '',
-        plholder: tit
+        type: 'oterinfo',
+        model: content
       }
       this.$bus.emit('getConfigs', configs)
       window.location.hash = '#editinfo'

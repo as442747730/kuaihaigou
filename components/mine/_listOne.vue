@@ -4,7 +4,7 @@
       <p class="list-l_name">{{list_left}}</p>
       <slot class="list-l_switch" name="sl_l"></slot>
     </div>
-    <div class="list-r">
+    <div class="list-r" @click="listFn">
       <p>{{list_right}}</p>
       <i class="ic_arrow"></i>
     </div>
@@ -16,6 +16,11 @@ export default {
     list_left: String,
     list_right: String,
     checked: Boolean
+  },
+  methods: {
+    listFn () {
+      this.$emit('rFn')
+    }
   }
 }
 </script>

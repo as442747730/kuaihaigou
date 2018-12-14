@@ -1,8 +1,24 @@
 <template>
   <div class="helps">
-    <header class="head"></header>
+    <header class="head">
+      <div class="head-top">
+        <van-icon class="ht-l" name="arrow-left" />
+        <div class="ht-c">帮助中心</div>
+        <div class="ht-r"></div>
+      </div>
+      <div class="head-ask">Hi，亲爱的用户</div>
+      <div class="head-tips">已为您定制了如下服务</div>
+    </header>
     <section class="sec secone">
       <div class="sec-kf">
+        <div class="kf-item">
+          <div class="kf_icon kf_icon1"></div>
+          <p>在线客服</p>
+        </div>
+        <div class="kf-item">
+          <div class="kf_icon kf_icon2"></div>
+          <p>电话客服</p>
+        </div>
       </div>
       <div class="sec-head">帮助中心</div>
       <div class="sec-item1">
@@ -78,7 +94,7 @@
         <i class="ic_arrow"></i>
       </div>
     </section>
-    <section class="sec">
+    <section class="sec seclast">
       <div class="sec-head">特色服务</div>
       <div class="sec-item1">
         <p class="item1_title">轻松赚稿费</p>
@@ -100,11 +116,51 @@
   width: 100vw;
   min-height: 100vh;
   background: #F5F5F5;
+  font-size: 14px;
 
   .head {
-    height: 161px;
+    padding: 0 20px 40px;
     background: linear-gradient(137deg, rgba(0, 161, 240, 1) 0%, rgba(79, 237, 239, 1) 100%);
     -webkit-background: linear-gradient(137deg, rgba(0, 161, 240, 1) 0%, rgba(79, 237, 239, 1) 100%);
+
+    &-top {
+      width: 100%;
+      height: 40px;
+      .flex_between;
+
+      .ht-l {
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .ht-c {
+        font-size: 17px;
+        font-family: PingFangSC-Medium;
+        color: rgba(255, 255, 255, 1);
+      }
+
+      .ht-r {
+        width: 1px;
+        height: 1px;
+      }
+    }
+
+    &-ask {
+      padding: 20px 0 5px;
+      font-size: 17px;
+      font-family: PingFangSC-Semibold;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 1);
+      line-height: 24px;
+    }
+
+    &-tips {
+      font-size: 12px;
+      font-family: PingFangSC-Regular;
+      color: rgba(255, 255, 255, 1);
+      line-height: 17px;
+    }
   }
 
   .sec {
@@ -149,6 +205,7 @@
     margin-top: 0;
     padding-top: 75px;
     position: relative;
+
     .sec-kf {
       width: calc(100% - 40px);
       height: 90px;
@@ -158,7 +215,28 @@
       position: absolute;
       top: -25px;
       left: 20px;
+      .flex_around;
+
+      .kf-item {
+        .kf_icon {
+          width: 21px;
+          height: 21px;
+          padding-bottom: 10px;
+          margin: 0 auto;
+          .bg_cover;
+        }
+        &>p {
+          font-size: 12px;
+          font-family: PingFangSC-Medium;
+          color: rgba(51, 51, 51, 1);
+          font-weight: bold;
+          line-height: 17px;
+        }
+      }
     }
+  }
+  .seclast {
+    padding-bottom: 20px;
   }
 }
 </style>
