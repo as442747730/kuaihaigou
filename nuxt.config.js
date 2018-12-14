@@ -37,7 +37,8 @@ module.exports = {
     { src: './plugins/wechat.js', ssr: false },
     { src: './plugins/vant.js', ssr: true },
     { src: './plugins/vue-bus.js', ssr: true },
-    { src: './plugins/vconsole.js', ssr: false }
+    { src: './plugins/vconsole.js', ssr: false },
+    { src: './plugins/filter.js', ssr: true }
   ],
   css: [
     { src: './assets/css/normalize.css', lang: 'css' },
@@ -93,10 +94,10 @@ module.exports = {
     },
 
     extend (config, ctx) {
-      if (ctx.isClient) {
+      if (process.client) {
         config.resolve.alias['vue'] = 'vue/dist/vue.js'
       }
-      if (ctx.isDev && ctx.isClient) {
+      if (ctx.isDev && process.client) {
         config.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
@@ -104,7 +105,7 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-      if (!ctx.isDev && !ctx.isClient) {
+      if (!ctx.isDev && !process.client) {
         config.plugins.push(
           new webpack.optimize.UglifyJsPlugin({
             compress: {
