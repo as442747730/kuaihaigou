@@ -72,7 +72,7 @@ import Img2 from '~/assets/img/green_wine.jpg'
 import Img3 from '~/assets/img/home/img_home_335x180@2x.png'
 
 import { quizApi } from '~/api/quiz'
-import replyList from './_replylist'
+import replyList from './Replylist'
 
 export default {
   name: 'u-question',

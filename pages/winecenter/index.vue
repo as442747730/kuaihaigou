@@ -49,7 +49,9 @@
       <section class="novice">
         <div class="com-item" v-for="(good, index) in goodsList" :key="index">
           <div class="item_l">
-            <div class="item_l_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
+            <a :href="'/detail/' + good.id">
+              <div class="item_l_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
+            </a>
           </div>
           <div class="item_r" v-if="!isNovice">
             <h3>{{good.goodsName}}</h3>
@@ -133,9 +135,9 @@ import api from '~/utils/request'
 export default {
   head () {
     return {
-      title: '我的购物车',
+      title: '选酒中心',
       meta: [
-        { hid: 'title', name: 'title', content: '我的购物车' }
+        { hid: 'title', name: 'title', content: '选酒中心' }
       ]
     }
   },
