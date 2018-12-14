@@ -183,6 +183,7 @@ export default {
         model: value,
         nickname: nickname
       }
+      console.log('person configs', configs)
       this.$bus.emit('getConfigs', configs)
       window.location.hash = '#editinfo'
     },

@@ -8,5 +8,9 @@ export const userApi = {
   // 修复用户详情
   upduserinfo (params) {
     return request.clientPost('/api/user/upd_info', params)
+  },
+  // 更新用户个性签名
+  updsignature (params) {
+    return request.clientPost('/api/user/signature', params)
   }
 }

@@ -268,7 +268,7 @@ export default {
     &-bottom {
       .bottom-head {
         height: 40px;
-        background: #ccc;
+        background: #F5F5F5;
         .flex_between;
 
         .head_item {
@@ -291,7 +291,7 @@ export default {
 
         .head_one {
           width: 100%;
-          border-right: 1px solid @cor_border;
+          border-right: 1px solid #DADADA;
           .flex_allCenter;
         }
       }

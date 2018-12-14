@@ -37,7 +37,6 @@ export default {
       // console.log('cfgxx', cfg)
       let { type, model, isshow, nickname } = cfg
       let getobj = this.getInfos(type)
-      // console.log(getobj, 'getobj')
       this.configs = { type, nickname, isshow, model, ...getobj }
     })
     this.$bus.on('closeHead', ch => {
@@ -51,6 +50,7 @@ export default {
     async updFn () {
       let Ques = {}
       let { nickname, model, type } = this.configs
+      console.log('edit configs', this.configs)
       switch (type) {
         case 'nickname':
           Ques = { nickname: model }
@@ -80,7 +80,12 @@ export default {
       if (type !== 'nickname') {
         Object.assign(Ques, { nickname })
       }
-      const { code, data } = await userApi.upduserinfo(Ques)
+      if (type === 'signature') {
+
+      } else {
+
+      }
+      const { code, data } = type !== 'signature' ? await userApi.upduserinfo(Ques) : await userApi.updsignature(Ques)
       if (code === 200) {
         // console.log(data)
         // this.$toast('修改成功')
