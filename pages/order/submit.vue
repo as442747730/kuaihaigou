@@ -76,7 +76,7 @@
       </div>
       <div class="m-section-cell-item">
         <div class="label">活动优惠</div>
-        <div class="content"><div class="badge" v-if="promotion">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div>
+        <div class="content"><div class="badge" v-if="promotion.ifEnable">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div>
       </div>
     </div>
 

@@ -1,16 +1,18 @@
 <template>
   <div class="m-cart">
 
-    <div class="m-cart-ul">
+    <div class="m-cart-ul" v-if='goodsList.length !== 0'>
 
       <div class="m-cart-li" v-for="(item, index) in goodsList" :key="index">
         <!-- 普通商品 -->
         <div class="m-cart-li-item flex-center box-gutter" v-if="!item.packName">
           <van-checkbox v-model="item.chosen"></van-checkbox>
           <div class="content">
-            <img :src="item.imgUrl" alt="" width="90" height="100">
+            <div class="pro">
+              <img :src="item.imgUrl" alt="">
+            </div>
             <div class="info">
-              <p class="title">{{ item.goodsName }}</p>
+              <p class="title font_medium">{{ item.goodsName }}</p>
               <div class="flex-jcsb" v-if="item.skuName">
                 <span class="sku">{{ item.skuName }}</span>
                 <span class="sku right">选规格</span>
@@ -46,6 +48,8 @@
       </div>
 
     </div>
+
+    <div class="default-empty full" v-if='goodsList.length === 0' @click='backToGoods'>您的购物车空空如也，赶块去购物吧~</div>
 
     <div class="m-cart-bottom">
       <div class="m-cart-bottom-left">
@@ -109,6 +113,10 @@ export default {
     }
   },
 
+  created () {
+    console.log(this.goodsList)
+  },
+
   methods: {
     toggleChooseAll (val) {
       this.goodsList.forEach((item) => {
@@ -141,6 +149,10 @@ export default {
           window.location.href = '/order/submit'
         }
       }
+    },
+
+    backToGoods () {
+      window.location.href = '/detail'
     }
   }
 }
@@ -201,9 +213,14 @@ export default {
         .content {
           flex: 1;
           display: flex;
-          img {
+          .pro {
+            padding: 5px;
+            width: 80px;
             border: 1PX solid #E6E6E6;
             margin-left: 15px;
+          }
+          img {
+            max-width: 100%;
           }
           .info {
             flex: 1;
@@ -212,17 +229,17 @@ export default {
             .title {
               font-size: 15px;
               line-height: 22px;
-              color: #333333;
+              color: #333;
             }
             .flex-jcsb {
               display: flex;
               justify-content: space-between;
               margin-top: 8px;
               .sku {
-                color: #999999;
+                color: #999;
                 font-size: 13px;
                 &.right {
-                  color: #333333;
+                  color: #333;
                 }
               }
               .price {

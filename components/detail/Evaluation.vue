@@ -1,3 +1,4 @@
+<!-- 推荐商品，所有商品的组件模块都通用 -->
 <template>
   <div class="recommended">
     <div class="u-detail-title">
@@ -7,10 +8,14 @@
     <ul class="recommended-item margin-20">
       <li class="recommended-list" v-for="(hot, index) in hotList" :key="index">
         <div class="pro">
-          <img :src="hot.cover">
+          <a :href="'/detail/' + hot.id">
+            <img :src="hot.cover">
+          </a>
         </div>
         <div class="desc">
-          <h3>{{ hot.goodsName }}</h3>
+          <h3>
+            <a :href="'/detail/' + hot.id">{{ hot.goodsName }}</a>
+          </h3>
           <p>
             <span v-for="(tag, index) in hot.tagList" :key="index">{{ tag }}</span>
           </p>

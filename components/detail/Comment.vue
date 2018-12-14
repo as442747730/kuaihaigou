@@ -118,7 +118,7 @@
   </article>
 </template>
 <script>
-import uQuestion from './_question'
+import uQuestion from './Question'
 
 import { ImagePreview } from 'vant'
 
@@ -478,6 +478,8 @@ export default {
   transform: translateX(100%);
   transition: ease .5s transform;
   background: #fff;
+  width: 100%;
+  height: 100%;
   &.show {
     transform: none;
   }
@@ -601,6 +603,7 @@ export default {
 }
 .u-reply-form {
   // position: fixed;
+  position: absolute;
   z-index: 99;
   background: #fff;
   box-sizing: border-box;
@@ -609,7 +612,7 @@ export default {
   width: 100%;
   min-height: 60px;
   padding: 13px 20px;
-  box-shadow:0px 0px 8px 0px rgba(0,0,0,0.08);
+  box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.08);
   .van-field {
     display: inline-block;
     padding: 6px 10px 6px 15px;

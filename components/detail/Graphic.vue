@@ -46,7 +46,6 @@
           </div>
         </div>
 
-
       </div>
     </div>
     <!-- <div class="u-detail-loading" v-if='!parameShow'>
@@ -59,7 +58,7 @@
   </article>
 </template>
 <script>
-import uEvaluation from './_evaluation'
+import uEvaluation from './Evaluation'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 
 export default {

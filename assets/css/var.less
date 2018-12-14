@@ -55,14 +55,15 @@
   background: rgba(0, 0, 0, .8);
   z-index: 0;
   opacity: 0;
-  transition: opacity ease .5s;
-
+  transition: ease .5s;
+  visibility: hidden;
   &-in {
     background: #fff;
     position: relative;
     transition: transform ease 1s;
     transform: translateY(-100%);
     overflow: hidden;
+    visibility: visible;
   }
 }
 
