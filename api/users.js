@@ -1,8 +1,12 @@
 import request from '~/utils/request'
 // 用户接口
 export const userApi = {
+  // serve
+  serveUserDetail (req) {
+    return request.serverPost('/api/user/detail', null, req)
+  },
+  // client
   asyUserDetail () {
-    // return request.serverPost('/api/user/detail', null, req)
     return request.clientPost('/api/user/detail')
   },
   // 获取用户详情

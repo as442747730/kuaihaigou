@@ -1,6 +1,9 @@
 <template>
   <div class="m-order-submit">
 
+    <van-nav-bar title="填写订单" left-arrow>
+    </van-nav-bar>
+
     <div class="m-section-position more-link" @click="openAddress">
       <span v-if="!addressSelected.phone">添加收货地址</span>
       <div class="address-info" v-else>
@@ -15,9 +18,36 @@
 
     <div class="m-section-product" v-for="(item, index) in productList" :key="index">
       <div class="m-section-product-logistics">快递：{{ item.logisticsCompany }}</div>
-      <div class="m-section-product-li" v-for="p in item.list" >
-
+      <div class="m-section-product-li" v-for="(p, k) in item.list" :key='k'>
         <template v-if="!p.packName">
+          <div class="m-section-product-item">
+            <div class="m-section-product-item-pro">
+              <img class="m-section-product-item-img" :src="p.imgUrl" alt="">
+            </div>
+            <div class="m-section-product-item-content">
+              <p class="title font_medium">{{ p.goodsName }}</p>
+              <p class="desc">{{ p.skuName ? '规格：' + p.skuName : '规格：单品' }}<span class="price font_impact">￥{{ p.sellPrice }}</span></p>
+              <p class="desc">x{{ p.num }}</p>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="pack-title" :class="{'mt-10': k > 0}">
+            <div class="pack-title-left font_medium">{{ p.packName }}</div>
+            <div class="pack-title-right font_impact">¥{{ p.sellPrice }}</div>
+          </div>
+          <div class="m-section-product-item bor-top" v-for="(d, i) in p.cartGoodsList" :key="i">
+            <div class="m-section-product-item-pro">
+              <img class="m-section-product-item-img" :src="d.imgUrl" alt="">
+            </div>
+            <div class="m-section-product-item-content">
+              <p class="title font_medium">{{ d.goodsName }}</p>
+              <p class="desc">{{ d.skuName ? '规格：' + d.skuName : '规格：单品' }}</p>
+              <p class="desc">x{{ d.num }}</p>
+            </div>
+          </div>
+        </template>
+        <!-- <template v-if="!p.packName">
           <div class="m-section-product-item">
             <img class="m-section-product-item-img" :src="p.imgUrl" alt="">
             <div class="m-section-product-item-content">
@@ -40,7 +70,7 @@
               <p class="desc">x{{ d.num }}</p>
             </div>
           </div>
-        </template>
+        </template> -->
       </div>
 
     </div>
@@ -74,9 +104,9 @@
         <div class="label">优币抵扣</div>
         <div class="content">0</div>
       </div>
-      <div class="m-section-cell-item">
+      <div class="m-section-cell-item" v-if='promotion.amount'>
         <div class="label">活动优惠</div>
-        <div class="content"><div class="badge" v-if="promotion.ifEnable">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div>
+        <div class="content"><div class="badge">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div>
       </div>
     </div>
 
@@ -92,7 +122,7 @@
       <div class="m-section-bottom-right active-status" @click="submitOrder">提交订单</div>
     </div>
 
-    <transition name="slide">
+    <!-- <transition name="slide">
       <uAddress v-show="addressShow" :addressList="addressArray" @handleSelect="handleSelect"></uAddress>
     </transition>
 
@@ -102,21 +132,21 @@
 
     <transition name="slide">
       <uCoupon v-show="couponShow" :usableList="couponArray.filter(n => { return n.useThreshold <= this.totalPrice })" :unusableList="couponArray.filter(n => { return n.useThreshold >= this.totalPrice })" @handleSelectCoupon="handleSelectCoupon"></uCoupon>
-    </transition>
+    </transition> -->
 
   </div>
 </template>
 <script>
 import api from '~/utils/request'
-import uAddress from '~/components/Address'
-import uInoince from '~/components/Invoice'
-import uCoupon from '~/components/Coupon'
+// import uAddress from '~/components/Address'
+// import uInoince from '~/components/Invoice'
+// import uCoupon from '~/components/Coupon'
 
 export default {
   name: 'submit',
   layout: 'default',
 
-  components: { uAddress, uInoince, uCoupon },
+  // components: { uAddress, uInoince, uCoupon },
 
   computed: {
     payable () {
@@ -132,7 +162,7 @@ export default {
     return api.all([
       api.serverGet('/api/shippingAddress/listAll', {}, req), // 地址
       api.serverGet('/api/order/calcFreight?time=' + new Date().getTime(), {}, req), // 运费
-      api.serverGet('/api/promotion/get', {}, req), // 活动
+      api.serverGet('/api/promotion/get', null, req), // 活动
       api.serverGet('/api/coupon/listForUsable', { amount: 100 }, req), // 优惠券
       api.serverGet('/api/invoice/listAll', {}, req)
     ])
@@ -142,7 +172,7 @@ export default {
         }
         // console.log(res1.data)
         // console.log(res2.data)
-        console.log(res3.data)
+        console.log('res3', res3)
         // console.log(res4.data)
 
         let a = []
@@ -161,7 +191,7 @@ export default {
           totalFreight: res2.data.totalFreight, // 总运费
           totalPrice: res2.data.totalPrice, // 商品合计
           reductionStrategy: res2.data.reductionStrategy, // 减免策略
-          promotion: res3.data,
+          promotion: res3.data || {},
           productList: a,
           usableCouponCount: res4.data.length, // 可用优惠券数量
           couponArray: res4.data,
@@ -205,6 +235,10 @@ export default {
 
       productList: []
     }
+  },
+
+  created () {
+    console.log(this.productList)
   },
 
   methods: {
@@ -366,8 +400,8 @@ export default {
   }
 
   .m-section-product {
-    background: #FFFFFF;
-
+    background: #fff;
+    margin-bottom: 10px;
     &-logistics {
       height: 35px;
       line-height: 35px;
@@ -375,15 +409,21 @@ export default {
       font-size: 13px;
       color: @cor_333;
       padding-left: 20px;
+      margin-bottom: 10px;
     }
 
     &-li {
       .pack-title {
         border-top: 1PX solid @cor_border;
+        border-bottom: 1PX solid @cor_border;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 20px;
+        margin-bottom: 10px;
+        &.mt-10 {
+          margin-top: 10px;
+        }
         &-left {
           font-size: 15px;
           color: @cor_333;
@@ -396,14 +436,22 @@ export default {
     }
 
     &-item {
-      padding: 20px 0;
+      padding: 10px 0;
       margin: 0 20px;
-      // border-bottom: 1px solid #F1F1F1;
-      &-img {
+      display: flex;
+      &-pro {
         border: 1PX solid @cor_border;
         border-radius: 4px;
-        width: 88px;
-        height: 98px;
+        width: 78px;
+        height: 88px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        img {
+          max-width: 100%;
+          max-height: 100%;
+        }
       }
       &-content {
         width: 230px;
@@ -414,9 +462,14 @@ export default {
           font-size: 15px;
           color: @cor_333;
           line-height: 25px;
+          height: 50px;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          word-break: break-all;
         }
         .desc {
-          margin-top: 10px;
+          margin-top: 6px;
           font-size: 13px;
           color: @cor_666;
           .price {
