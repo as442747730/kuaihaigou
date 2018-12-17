@@ -1,7 +1,7 @@
 <template>
   <main class="u-detail">
     <section class="u-detail_header">
-      <van-nav-bar title="商品详情" left-arrow>
+      <van-nav-bar title="商品详情" left-arrow @click-left="historyBack">
         <van-icon name="fenxiang" slot="right" />
         <van-icon name="collect" slot="right" />
       </van-nav-bar>
@@ -42,9 +42,8 @@
           全场满88元免邮
         </div>
         <!-- 单品时出现 -->
-      
-        <div class="single-sku-num" v-if='singleObj.isSingle' style="margin-top: 20px;">
-          <h4>数量</h4>
+        <div class="single-sku-num" v-if='singleObj.isSingle'>
+          <h4>数量：</h4>
           <van-stepper
             :min="1"
             :max="singleObj.stock"
@@ -139,8 +138,8 @@
     <van-goods-action>
       <van-goods-action-mini-btn icon="kefu" text=" " @click="onClickefu" />
       <van-goods-action-mini-btn icon="cart2" text=" " @click="onClickMiniBtn" />
-      <van-goods-action-big-btn text="加入购物车" @click="onClickBigBtn" />
-      <van-goods-action-big-btn text="立即购买" @click="onClickBigBtn" primary />
+      <van-goods-action-big-btn :loading='isLoading' text="加入购物车" @click="onClickBigBtn" />
+      <van-goods-action-big-btn class='buy-now' text="立即购买" @click="onClickBigBtn" primary />
     </van-goods-action>
     <!-- 规格弹窗 -->
     <van-actionsheet v-model="skuShow" title="选择规格">
@@ -235,15 +234,12 @@
 </template>
 <script>
 import api from '~/utils/request'
-import { goodsApi } from '~/api/goods.js'
-import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
+import { goodsApi } from '~/api/goods'
+import { userApi } from '~/api/users'
 import uGraphic from '~/components/detail/Graphic'
 import uParame from '~/components/detail/Parame'
 import uComment from '~/components/detail/Comment'
 import uAfter from '~/components/detail/After'
-
-// const goodsId = '1045619125717569536'
-// const goodsId = '1045618556932198400'
 
 export default {
   components: {
@@ -266,12 +262,19 @@ export default {
     let id = goodsId
     let detailFn = goodsApi.getDetail(id, req)
     let topSaleFn = goodsApi.getTopSales(req)
+    let userInfoFn = userApi.serveUserDetail(req)
     const {code: detCode, data: detData} = await detailFn
     const {code: hotCode, data: hotData} = await topSaleFn
+    const {code: userCode} = await userInfoFn
     if (detCode === 200) {
       let hotlist = []
+      let isLogin = false
       if (hotCode === 200) {
         hotlist = hotData
+      }
+      console.log(userCode)
+      if (userCode === 200) {
+        isLogin = true
       }
       // console.log('detData', detData)
       let { imgList, goodsName, actualPrice, introduce } = detData
@@ -302,7 +305,7 @@ export default {
       // 商品是否单品
       let { stock } = detData
       let isSingle = false
-      if (skuList.length === 0 && packList.length === 0) isSingle = true
+      if (skuList.length === 0) isSingle = true
       let singleObj = {
         isSingle: isSingle,
         stock: stock,
@@ -310,10 +313,11 @@ export default {
         allprice: actualPrice
       }
 
-      console.log(singleObj)
+      console.log(isLogin)
 
       return {
         goodsId: goodsId,
+        isLogin: isLogin,
         topGoods: topData,
         skuAttrList: skuAttrList,
         skuList: skuList,
@@ -329,7 +333,7 @@ export default {
   data () {
     return {
       goodsId: '',
-      bannerImg: bannerImg,
+      isLogin: false,
       // 初始化数据
       swiperBanner: {
         speed: 600,
@@ -408,7 +412,10 @@ export default {
       // districtList: [],
 
       popupShow: false,
-      columns: [{ values: [] }, { values: [] }]
+      columns: [{ values: [] }, { values: [] }],
+
+      // 底栏
+      isLoading: false
     }
   },
 
@@ -419,8 +426,7 @@ export default {
         retprice = this.nowpack.allprice
       } else if (this.getskuInfo.skuname !== '') {
         retprice = this.getskuInfo.allprice
-      }
-      if (this.singleObj.isSingle) {
+      } else {
         retprice = this.singleObj.allprice
       }
       return retprice
@@ -430,7 +436,6 @@ export default {
   async created (req) {
     const {code, data} = await goodsApi.getProvince('86')
     if (code === 200) {
-      // console.log(data)
       this.provinceList = data.map(v => {
         return {
           id: v.id,
@@ -446,7 +451,6 @@ export default {
         return v.specName
       })
       let setArr = [...new Set(arr)]
-      // console.log('setArr', setArr)
       let newArr = Array.from({ length: setArr.length })
       for (let i = 0; i < skuArr.length; i++) {
         setArr.map((value, index) => {
@@ -463,11 +467,6 @@ export default {
       this.newSkuAttrs = newArr
       // 初始化规格选择
       this.getSkuFn()
-      // console.log(this.skuVals, 'skuVals')
-      // console.log(this.newSkuAttrs, 'newSkuAttrs')
-    }
-    // 判断该商品是否为单品
-    if (this.isSingle) {
     }
   },
 
@@ -577,7 +576,7 @@ export default {
     openSkuFn () {
       // 打开规格弹窗
       if (this.skuList.length !== 0) {
-        // this.getSkuFn()
+        this.getSkuFn()
         this.skuShow = true
         this.elpackId = ''
       }
@@ -617,7 +616,7 @@ export default {
         let index = this.elpackIndex
         this.packShow = true
         let {coverUrl, goodsNum, price, name, id} = this.packList[index]
-        this.setNowpack(coverUrl, goodsNum, price, name)
+        this.setNowpack(coverUrl, goodsNum, price, name, id)
         this.getPackdetail(id)
       } else {
         this.$toast('暂无套餐')
@@ -625,17 +624,30 @@ export default {
     },
     elpackFn (index, elid, pack) {
       // 选择套餐
-      console.log('pack', pack)
+      // console.log('pack', pack)
       this.elpackIndex = index
       let {coverUrl, goodsNum, price, name, id} = pack
       if (this.packDetaNum > goodsNum) {
         this.packDetaNum = 1
       }
-      // 当前 elid === id 则 取消选中状态
-      if (elid !== id) {
-        this.skuRest()
+      // if (elid !== id && !this.singleObj.isSingle) {
+      //   this.skuRest()
+      //   this.elpackId = id
+      //   console.log(1)
+      // } else {
+      //   console.log(2)
+      //   this.elpackId = elid === id ? '' : id
+      // }
+      // 当前 elid === id，则 取消选中状态
+      if (!this.singleObj.isSingle) {
+        if (elid !== id) {
+          this.skuRest()
+          this.elpackId = id
+        }
+      } else {
+        this.elpackId = elid === id ? '' : id
       }
-      this.elpackId = elid === id ? '' : id
+      // this.elpackId = elid === id ? '' : id
       this.setNowpack(coverUrl, goodsNum, price, name, id)
       this.getPackdetail(id)
     },
@@ -679,7 +691,6 @@ export default {
     // 单品
     changeSingleFn () {
       this.singleObj.allprice = this.singleObj.num * this.singleObj.actualPrice
-      console.log(this.singleObj.allprice)
     },
     async compareFn () {
       // 去对比
@@ -696,51 +707,46 @@ export default {
       window.location.href = '/order/cart'
     },
     // 加入购物车
-    onClickBigBtn () {
-      let data = {}
-      // sku
-      // data = {
-      //   skuNum: this.getskuInfo.num,
-      //   skuid: this.getskuInfo.skuid
-      // }
-      // 套餐
-      // data = {
-      //   packNum: this.nowpack.goodsNum,
-      //   packid: this.nowpack.id
-      // }
-      // 单品
-      data = {
-        packNum: this.nowpack.goodsNum,
-        packid: this.nowpack.id
+    async onClickBigBtn () {
+      if (!this.isLogin) return this.jumpLogin()
+      let param = {}
+      if (this.elpackId) {
+        // 套餐
+        param = {
+          packNum: this.packDetaNum,
+          packid: this.nowpack.id
+        }
+        // 验证购买套餐数量小于库存
+        if (param.packNum > this.nowpack.goodsNum) return this.$toast('当前商品库存不足！')
+      } else if (this.getskuInfo.skuid) {
+        // sku
+        param = {
+          skuNum: this.getskuInfo.num,
+          skuid: this.getskuInfo.skuid
+        }
+        if (param.skuNum > this.skuObj.stock) return this.$toast('当前商品库存不足！')
+      } else {
+        // 单品
+        param = {
+          goodsNum: this.singleObj.num,
+          goodsId: this.goodsId
+        }
+        if (param.goodsNum > this.singleObj.stock) return this.$toast('当前商品库存不足！')
       }
-      console.log(data)
-      // 套餐
-      // if (this.packid) {
-      //   if (this.packChoose === false && this.skuList.length === 0) {
-      //     data = {
-      //       goodsNum: this.num,
-      //       goodsId: tools.getQueryValue(window.location.search, 'goodsId')
-      //     }
-      //   } else {
-      //     data = {
-      //     /* packNum 套餐数量 */ /* packid 套餐id */
-      //       packNum: this.num,
-      //       packid: this.packid
-      //     }
-      //   }
-      // } else if (this.skuid) {
-      //   // sku
-      //   data = {
-      //     skuNum: this.num,
-      //     skuid: this.skuid
-      //   }
-      // } else {
-      //   // 非sku
-      //   data = {
-      //     goodsNum: this.num,
-      //     goodsId: this.goodsId
-      //   }
-      // }
+      this.isLoading = true
+      console.log(param)
+      const { code, data } = await goodsApi.addCart(param)
+      if (code === 200) {
+        this.$toast('加入购物车成功！')
+        setTimeout(() => {
+          this.isLoading = false
+        }, 1000)
+      } else if (code === 506) {
+        this.jumpLogin()
+      } else {
+        this.$toast(data)
+        this.isLoading = false
+      }
     },
     onClickefu () {
       console.log(3)
@@ -755,6 +761,17 @@ export default {
           Switch = true
         }, 300)
       }
+    },
+    // 跳转登录
+    jumpLogin () {
+      this.$toast('检测到您未登录，请先登录！')
+      setTimeout(() => {
+        window.location.href = '/account/login'
+      }, 1000)
+    },
+
+    historyBack () {
+      window.history.go(-1)
     }
   }
 }
@@ -879,6 +896,22 @@ export default {
         font-family: 'PingFangSC-Medium';
         border-radius: 2px;
         background:rgba(251,98,72,1)
+      }
+      .single-sku-num {
+        margin-top: 20px;
+        font-size: 14px;
+        h4 {
+          vertical-align: middle;
+          display: inline-block;
+        }
+        &>div {
+          vertical-align: middle;
+          display: inline-block;
+        }
+        .surstock {
+          margin-left: 10px;
+          font-size: 12px;
+        }
       }
     }
   }
@@ -1056,6 +1089,15 @@ export default {
   }
   .van-goods-action {
     z-index: 9999;
+  }
+  .van-goods-action-big-btn {
+    background: #f6f6f6;
+    border: 0;
+    color: #333;
+    &.buy-now {
+      background: #03A1CD;
+      color: #fff;
+    }
   }
   &_tab {
     &.hidden {
