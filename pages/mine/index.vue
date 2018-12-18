@@ -103,11 +103,12 @@ export default {
   // },
   async mounted () {
     let detfn = userApi.asyUserDetail()
-    const { detCode, detData } = await detfn
+    const { code:detCode, data:detData } = await detfn
+    console.log(detCode, 'detCode')
     if (detCode === 200) {
       let { nickname, buyNumber, signature, headimgurl } = detData
       let userInfo = { nickname, buyNumber, signature, headimgurl }
-      this.userInfo(...userInfo)
+      this.userInfo = { ...userInfo }
     }
   },
   methods: {
