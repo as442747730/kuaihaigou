@@ -54,13 +54,15 @@
         </section>
       </div>
     </div>
+    <left-menu v-if="showmenu"></left-menu>
     <u-footer :postIndex="footIndex"></u-footer>
   </div>
 </template>
 <script>
 import uFooter from '~/components/footer'
-import uArticle from '~/components/mine/_article'
-import uJarsclb from '~/components/mine/_jarsclub'
+import uArticle from '~/components/mine/Article'
+import uJarsclb from '~/components/mine/Jarsclub'
+import leftMenu from '~/components/Menu'
 import { userApi } from '~/api/users'
 export default {
   head () {
@@ -74,7 +76,8 @@ export default {
   components: {
     uFooter,
     uArticle,
-    uJarsclb
+    uJarsclb,
+    leftMenu
   },
   data () {
     return {
@@ -88,7 +91,8 @@ export default {
         buyNumber: 0,
         signature: '',
         headimgurl: ''
-      }
+      },
+      showmenu: false
     }
   },
   // async asyncData (req) {
@@ -103,7 +107,7 @@ export default {
   // },
   async mounted () {
     let detfn = userApi.asyUserDetail()
-    const { code:detCode, data:detData } = await detfn
+    const { code: detCode, data: detData } = await detfn
     console.log(detCode, 'detCode')
     if (detCode === 200) {
       let { nickname, buyNumber, signature, headimgurl } = detData
