@@ -26,6 +26,13 @@ i,em {
 u {
   text-decoration-line: none;
 }
+
+a {
+  text-decoration: none;
+}
+a:-webkit-any-link {
+  color: inherit;
+}
 // a, a:hover, a:focus, a:visited
 // {
 //   color: #000;
@@ -173,6 +180,34 @@ input[type="text"] {
   float: right;
 }
 
+// 字体
+.font {
+  &_hight {
+    font-family: 'PingFangSC-Semibold';
+    font-weight: bold;
+  }
+  &_medium {
+    font-family: 'PingFangSC-Medium';
+    font-weight: bold;
+  }
+  &_impact {
+    font-family: 'Impact'
+  }
+}
+
+.default-empty {
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  &.full {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+  }
+}
+
 // 按钮
 .u-button {
   text-align: center;
@@ -250,6 +285,9 @@ input[type="text"] {
 }
 .van-nav-bar__right {
   top: 0;
+}
+.van-hairline--bottom::after {
+  border-bottom: 2PX solid #ebedf0!important
 }
 .van-icon {
   &-fenxiang {

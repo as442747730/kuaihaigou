@@ -139,8 +139,10 @@ export default {
         const { code, data } = await api.clientPost('/api/login', { phone: this.phone, password: this.password })
         console.log(code, data)
         if (code === 200) {
-          // this.$toast.success('登录成功')
-          window.location.href = '/home'
+          this.$toast('登录成功')
+          setTimeout(() => {
+            window.location.href = '/home'
+          }, 500)
         } else {
           this.$toast(data)
         }
@@ -148,8 +150,10 @@ export default {
         console.log(123)
         const { code, data } = await api.clientPost('/api/loginWithcode', { phone: this.phone, code: this.captcha })
         if (code === 200) {
-          this.$toast.success('登录成功')
-          window.location.href = '/home'
+          this.$toast('登录成功')
+          setTimeout(() => {
+            window.location.href = '/home'
+          }, 500)
         } else {
           this.$toast(data)
         }

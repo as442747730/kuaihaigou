@@ -32,5 +32,9 @@ export const goodsApi = {
   // 加入商品对比
   addCompare (goodsId) {
     return request.clientPost('/api/goods/addToContrast/' + goodsId)
+  },
+  // 加入购物车
+  addCart (data) {
+    return request.clientPostJson('/api/cart/addGoods', data)
   }
 }

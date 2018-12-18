@@ -5,7 +5,7 @@
       <div class="wrap">
         <div class="parama_base-item">
           <span>商品编号</span>
-          <p>1000001</p>
+          <p>{{ goodsIndentify }}</p>
         </div>
         <div class="parama_base-item">
           <span>国 家</span>
@@ -26,10 +26,6 @@
         <div class="parama_base-item">
           <span>净 含 量</span>
           <p>{{ redAttr.netVolume }}</p>
-        </div>
-        <div class="parama_base-item">
-          <span>获奖信息</span>
-          <p></p>
         </div>
         <div class="parama_base-item">
           <span>保 质 期</span>
@@ -119,7 +115,7 @@
   </article>
 </template>
 <script>
-import uEvaluation from './_evaluation'
+import uEvaluation from './Evaluation'
 export default {
   name: 'u-parame',
 
@@ -135,6 +131,7 @@ export default {
     return {
       hotList: this.hotlist,
       redAttr: this.viewdata.redAttr,
+      goodsIndentify: this.viewdata.goodsIndentify,
       goodsWineCommentResp: this.viewdata.goodsWineCommentResp
     }
   },
