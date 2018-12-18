@@ -929,7 +929,7 @@ export default {
         margin-right: 10px;
         width: 14px;
         height: 17px;
-        background: url('~/assets/img/icons/ic_position_b_18x18@2x.png') no-repeat center/contain
+        background: url('~/assets/img/Icons/ic_position_b_18x18@2x.png') no-repeat center/contain
       }
       span {
         width: 200px;
