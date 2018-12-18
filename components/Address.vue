@@ -2,7 +2,7 @@
   <div class="u-address">
 
     <div class="u-address-ul">
-      <div class="u-address-li" v-for="(item, index) in addressList" :key="index" @click="selectAddress(item)">
+      <div class="u-address-li" v-for="(item, $k) in addressList" :key="$k" @click="selectAddress(item)">
         <div class="head">
           <div class="title">{{ item.name }}</div>
           <div class="title">{{ item.phone }}</div>
@@ -42,12 +42,14 @@
   width: 100%;
   background: @cor_border;
   min-height: 100vh;
+  box-sizing: border-box;
+  padding-top: 46px;
   &-ul {
     background: white;
     font-size: 0;
   }
   &-li {
-    padding: 25px 20px 15px 20px;
+    padding: 20px 20px 15px 20px;
     &:not(:last-child) {
       border-bottom: 1PX solid @cor_border;
     }

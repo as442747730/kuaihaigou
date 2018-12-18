@@ -6,6 +6,6 @@ import Toast from 'vue2-toast'
 Vue.use(Toast, {
   defaultType: 'center',
   duration: 3000,
-  wordWrap: true,
-  width: '150px'
+  wordWrap: true
+  // width: '150px'
 })
