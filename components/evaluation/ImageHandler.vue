@@ -1,11 +1,11 @@
 <template>
   <div class="u-eva-img-handler">
-    <!-- 商品评价页面的 图片上传 组件 -->
+    <!-- 商品评价 售后申请 页面的 图片上传 组件 -->
     <div class="image-wrapper">
-      <Upload @on-success="handleUploadSuccess" v-if="imgList.length !== 5">
+      <Upload @on-success="handleUploadSuccess" v-if="imgList.length !== maxNum" :max="maxNum">
         <div class="upload-box">添加图片</div>
       </Upload>
-      <div :class="['img-item', index > 2 && index === imgList.length - 1 ? 'gap' : '']" v-for="(item, index) in imgList" :key="index" v-lazy:background-image="item" @click="preview(index)">
+      <div class="img-item" v-for="(item, index) in imgList" :key="index" v-lazy:background-image="item" @click="preview(index)">
         <span class="img-close-btn" @click.stop="removeImg(index)">
           <van-icon size="20px" color="#03A0CB" name="clear" />
         </span>
@@ -41,13 +41,17 @@ export default {
     imgList: {
       type: Array,
       default: []
+    },
+    maxNum: {
+      type: Number,
+      default: 5
     }
   },
 
   methods: {
     handleUploadSuccess (data) {
-      if (this.imgList.length >= 5) {
-        return this.$toast('最多只可上传5张图片')
+      if (this.imgList.length >= this.maxNum) {
+        return this.$toast(`最多只可上传${this.maxNum}张图片`)
       }
       this.imgList.push(data)
       this.$emit('parent-event', this.imgList)
@@ -66,13 +70,16 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .u-eva-img-handler {
   .image-wrapper {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+    .u-upload {
+      margin-bottom: 15px;
+    }
     .img-item {
       width: 70px;
       height: 70px;
@@ -82,9 +89,7 @@ export default {
       background-repeat: no-repeat;
       position: relative;
       transition: 0.2s;
-      &.gap {
-        margin-top: 20px;
-      }
+      margin-bottom: 15px;
       .img-close-btn {
         position: absolute;
         left: -7px;

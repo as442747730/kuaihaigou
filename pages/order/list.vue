@@ -1,12 +1,10 @@
 <template>
   <div class="m-order-list">
 
-
     <uTabs :list="tabList" @on-change="handleTab"></uTabs>
 
     <van-pull-refresh class="u-pull" v-model="isLoading" @refresh="refresh">
       <div class="order-wrapper">
-
 
         <div class="order-item" v-for="item in orderList">
 
@@ -101,7 +99,8 @@ export default {
   },
 
   async asyncData (req) {
-    return orderApi.getOrderList({ page: 1, count: 10 }, req).then((res) => {
+    console.log(Object.keys(req))
+    orderApi.getOrderList({ page: 1, count: 10 }, req).then((res) => {
       console.log(res.data.array)
       if (res.code === 506) {
         req.redirect('/account/login')
@@ -213,7 +212,9 @@ export default {
       line-height: 80px;
     }
     .order-item {
-      margin-bottom: 10px;
+      &:not(:last-child) {
+        margin-bottom: 10px;
+      }
       .top {
         background: white;
         height: 50px;

@@ -6,7 +6,7 @@
  ****************/
 /*css reset*/
 body,nav,dl,dt,dd,p,h1,h2,h3,h4,ul,ol,li,input,button,textarea,footer{margin:0;padding:0}
-body{font:16px/1.5 'Microsoft Yahei','Simsun';  color:#333;background:#fff;-webkit-text-size-adjust: none; min-width:320px;line-height: 1;}
+body{font:16px/1.5 'Microsoft Yahei','Simsun';  color:#333;-webkit-text-size-adjust: none; min-width:320px;line-height: 1;}
 h1,h2,h3,h4,h5,h6{font-size:100%}
 form{display:inline}
 ul,ol{list-style:none}

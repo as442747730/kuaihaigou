@@ -9,7 +9,7 @@
 .slide-enter, .slide-leave-to {
   transform: translateX(100%);
 }
-/*  */
+/* slide-left */
 .slide-left-enter-active {
   transition: all .2s;
 }
@@ -18,6 +18,16 @@
 }
 .slide-left-enter, .slide-left-leave-to {
   transform: translateX(-100%);
+}
+/* slide-right */
+.slide-right-enter-active {
+  transition: all .2s;
+}
+.slide-right-leave-active {
+  transition: all .2s;
+}
+.slide-right-enter, .slide-right-leave-to {
+  transform: translateX(100%);
 }
 
 /*  */

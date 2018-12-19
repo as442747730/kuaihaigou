@@ -57,7 +57,6 @@
 <script>
 import { orderApi } from '~/api/order'
 import ImageHandler from '~/components/evaluation/ImageHandler'
-import { ImagePreview } from 'vant'
 
 export default {
   name: '',
@@ -76,7 +75,7 @@ export default {
   },
 
   async asyncData (req) {
-    return orderApi.getEvaluationInfo(req.params.evaluation, req).then(res => {
+    orderApi.getEvaluationInfo(req.params.evaluation, req).then(res => {
       if (res.code === 506) {
         req.redirect('/account/login')
       }
@@ -107,7 +106,7 @@ export default {
     async submitEvalua () {
       let reqObj = []
       const v = this
-      reqObj =  this.list.map(n => { return { content: n.content, evaluationLevel: n.rate, goodsId: n.id, ifAnonymous: v.ifAnonymous, imgs: JSON.stringify(n.imgList), orderId: v.orderId } })
+      reqObj = this.list.map(n => { return { content: n.content, evaluationLevel: n.rate, goodsId: n.id, ifAnonymous: v.ifAnonymous, imgs: JSON.stringify(n.imgList), orderId: v.orderId } })
       const { code } = await orderApi.submitEvaluation(reqObj)
       if (code === 200) {
         this.$toast.success('提交成功')

@@ -38,6 +38,12 @@ a:-webkit-any-link {
 //   color: #000;
 // }
 
+input,textarea {
+  &::placeholder {
+    color: #C7C7C7;
+  }
+}
+
 img[lazy=loaded] {
   animation-duration: .6s;
   animation-fill-mode: both;
@@ -421,4 +427,42 @@ input[type="text"] {
 @font-face {
   font-family: DINPro;
   src: url('../font/DINPro.woff');
+}
+
+
+// 可复用的 商品样式 g-：指general，通用
+.g-product {
+  display: flex;
+  .cover {
+    width: 90px;
+    height: 100px;
+    border: 1PX solid @cor_border;
+    margin-right: 15px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  .info {
+    flex: 1;
+    .title {
+      font-size: 15px;
+      color: @cor_333;
+      line-height: 25px;
+      font-weight: bold;
+    }
+    .desc {
+      margin-top: 10px;
+      font-size: 13px;
+      color: @cor_666;
+      &.sku {
+        display: flex;
+        justify-content: space-between;
+        .price {
+          font-size: 17px;
+          font-family: Impact;
+          color: @cor_333;
+        }
+      }
+    }
+  }
 }
