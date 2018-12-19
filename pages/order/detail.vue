@@ -31,14 +31,15 @@
             </div>
             <p class="desc">x{{ item.num }}</p>
           </div>
-          <div class="product-handler" v-if="orderDetail.status !== 1">
-            <div class="u-button default small inline">{{ orderDetail.status < 5 ? '申请退款' : '申请售后'}}</div>
+          <div class="product-handler" v-if="orderDetail.status !== 1 && item.ifEnable">
+            <div class="u-button default small inline" @click="goAftersale(item.orderItemId)">{{ orderDetail.status < 5 ? '申请退款' : '申请售后'}}</div>
           </div>
         </div>
         <!-- 套餐 -->
         <div class="package" v-else>
           <div class="top">{{ item.packName }} <span>￥{{ item.packPrice }}</span></div>
           <div class="container">
+
             <div class="item" v-for="p in item.goodsList" :key="p.id">
               <div class="cover" :style="`background-image: url(${p.goodsImg})`"></div>
               <div class="info">
@@ -46,10 +47,13 @@
                 <div class="desc">{{ p.skuName }}</div>
                 <p class="desc">x{{ p.num }}</p>
               </div>
+
+              <div class="product-handler pack" v-if="orderDetail.status !== 1 && p.ifEnable">
+                <div class="u-button default small inline" @click="goAftersale(item.orderItemId)">{{ orderDetail.status < 5 ? '申请退款' : '申请售后'}}</div>
+              </div>
+
             </div>
-          </div>
-          <div class="product-handler pack" v-if="orderDetail.status !== 1">
-            <div class="u-button default small inline">{{ orderDetail.status < 5 ? '申请退款' : '申请售后'}}</div>
+
           </div>
         </div>
       </div>
@@ -103,7 +107,8 @@
 </template>
 
 <script>
-import { orderApi } from '~/api/order'
+import { orderApi, aftersaleApi } from '~/api/order'
+import api from '~/utils/request'
 
 export default {
   name: '',
@@ -120,17 +125,37 @@ export default {
   },
 
   async asyncData (req) {
-    return orderApi.getOrderDetail(req.query.id, req).then((res) => {
-      console.log(res.data)
-      if (res.code === 506) {
+    return api.all([
+      orderApi.getOrderDetail(req.query.id, req),
+      aftersaleApi.getAlreadyComplate(req.query.id, req)
+    ]).then(api.spread(function (res1, res2) {
+      if (res1.code === 506 || res2.code === 506) {
         req.redirect('/account/login')
       }
-      if (res.code === 200) {
-        return { orderDetail: res.data, orderId: req.query.id }
+      if (res1.code === 200 && res2.code === 200) {
+        res2.data.orderItemList.forEach((n, i) => {
+          if (!n.packName && n.num === res2.data.filter(m => m.orderItemId === n.orderItemId)[0].num) {
+            n.ifEnable = false
+          } else {
+            n.ifEnable = true
+          }
+        })
+        res2.data.orderItemList.forEach((n, id) => {
+          if (n.packName) {
+            n.goodsList.forEach((m, idx) => {
+              if (m.num === res2.data.filter(t => m.orderItemId === t.orderItemId)[0].num) {
+                n.ifEnable = false
+              } else {
+                n.ifEnable = true
+              }
+            })
+          }
+        })
+        return { orderDetail: res1.data, orderId: req.query.id }
       } else {
         req.redirect('/error')
       }
-    })
+    }))
   },
 
   computed: {
@@ -156,6 +181,7 @@ export default {
       this.$dialog.confirm({
         message: '确定取消订单吗？'
       }).then(async () => {
+        this.$toast('ssdfsd')
         const { code } = await orderApi.cancelOrder(this.orderId)
         if (code === 200) {
           this.$toast.success('取消订单成功')
@@ -173,6 +199,10 @@ export default {
           this.fetchData()
         }
       })
+    },
+
+    goAftersale (val) {
+      window.location.href = `/aftersale/application/${val}`
     },
 
     goEvaluation () {
@@ -299,10 +329,8 @@ export default {
         text-align: right;
         box-sizing: border-box;
         &.pack {
-          margin-top: 0;
-          border-top: none;
+          width: 100%;
           padding-bottom: 15px;
-          padding-right: 20px;
         }
       }
       .product {
@@ -330,6 +358,7 @@ export default {
           border-bottom: 1PX solid @cor_border;
           .item {
             display: flex;
+            flex-wrap: wrap;
             & + .item {
               margin-top: 10px;
             }

@@ -33,8 +33,7 @@ module.exports = {
   plugins: [
     { src: './plugins/swiper.js' },
     { src: './plugins/lazyload.js', ssr: false },
-    { src: './plugins/toast.js', ssr: false },
-    { src: './plugins/wechat.js', ssr: false },
+    // { src: './plugins/wechat.js', ssr: false },
     { src: './plugins/vant.js', ssr: true },
     { src: './plugins/vue-bus.js', ssr: true },
     { src: './plugins/vconsole.js', ssr: false },
@@ -117,7 +116,7 @@ module.exports = {
         )
       }
     },
-    vendor: ['axios', 'vue2-toast', './utils/request.js', './static/flexible.js'],
+    vendor: ['axios', './utils/request.js', './static/flexible.js'],
     // flexible结合使用，px2rem
     postcss: [
       require('postcss')(),
