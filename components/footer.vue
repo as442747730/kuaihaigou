@@ -21,7 +21,8 @@ export default {
       footList: ['首页', '选酒中心', 'add', '知识分享', '我的']
     }
   },
-
+  computed: {
+  },
   methods: {
     toPage (index) {
       let path = ''

@@ -14,7 +14,7 @@
         <div class="navmdl-logo" :class="{active: ctrlLogo}" ref="navmdlLogo" @click="navLogo"></div>
       </nav>
     </div>
-    <pureList ref="refSearch" :postObj="postSearch" postCls="mart86" @shut="closeLogo"></pureList>
+    <list-one :showlist="showList" @closeFn="closeLogo"></list-one>
     <div class="search-result">
       <!-- 商品 -->
       <section class="goods" v-if="navData.elIndex === 0">
@@ -158,7 +158,7 @@ import bkImg from '~/assets/img/green_wine.jpg'
 import bkImg2 from '~/assets/img/bk1.png'
 import Imgs from '~/assets/img/foot/ic_home_ele@2x.png'
 import tools from '~/utils/tools.js'
-import pureList from '~/components/cpms/pureList'
+import listOne from '~/components/cpms/listOne'
 export default {
   head () {
     return {
@@ -171,6 +171,7 @@ export default {
   data () {
     return {
       isRoll: false,
+      showList: false,
       keywords: '',
       bkImg: bkImg,
       bkImg2: bkImg2,
@@ -188,7 +189,7 @@ export default {
     }
   },
   components: {
-    pureList
+    listOne
   },
   methods: {
     toWinecenter () {
@@ -204,14 +205,13 @@ export default {
       this.navData.elIndex = index
     },
     navLogo () {
-      this.ctrlLogo = !this.ctrlLogo
-      this.isRoll = this.ctrlLogo
-      let ele = this.$refs.refSearch
-      this.isRoll ? ele.addClass() : ele.resetFn()
+      this.showList = true
+      this.ctrlLogo = true
     },
-    closeLogo () {
-      this.isRoll = false
-      this.ctrlLogo = false
+    closeLogo (val) {
+      console.log('val', val)
+      this.showList = val
+      this.ctrlLogo = val
     }
   }
 }
@@ -219,12 +219,17 @@ export default {
 <style lang="less" scoped>
 .search {
   .u-restout;
+  padding-top: 70px;
+  position: relative;
 
   &-head {
     border: 1PX solid #F5F5F5;
+    z-index: 3000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #fff;
     .padlr20;
-    .cpmzIndex;
-
     .inputmdl {
       height: 48px;
       .flex_allCenter;
