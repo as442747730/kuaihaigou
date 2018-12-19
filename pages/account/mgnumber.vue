@@ -27,8 +27,11 @@ export default {
   },
   data () {
     return {
-      configtitle: '账号管理'
+      configtitle: '账号管理',
+      vanshow: true
     }
+  },
+  methods: {
   }
 }
 </script>

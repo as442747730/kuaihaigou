@@ -63,7 +63,7 @@ header {
   .title {
     font-size: 17px;
     font-family: PingFangSC-Medium;
-    font-weight: 500;
+    font-weight: bold;
     color: rgba(51, 51, 51, 1);
   }
 }

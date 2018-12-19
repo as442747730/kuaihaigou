@@ -2,7 +2,7 @@
   <div class="mine">
     <header>
       <div class="hd-head">
-        <div class="hd_l"></div>
+        <div class="hd_l" data-val="123" @click="openMenu"></div>
         <div class="hd_c">我的</div>
         <div class="hd_r"></div>
       </div>
@@ -54,7 +54,9 @@
         </section>
       </div>
     </div>
-    <left-menu v-if="showmenu"></left-menu>
+    <van-popup class="vanpopup" v-model="showmenu" position="left">
+      <left-menu></left-menu>
+    </van-popup>
     <u-footer :postIndex="footIndex"></u-footer>
   </div>
 </template>
@@ -132,6 +134,10 @@ export default {
     },
     toperson () {
       this.$router.push('/mine/person')
+    },
+    openMenu () {
+      console.log(this.showmenu, 'showmenu')
+      this.showmenu = !this.showmenu
     }
   }
 }
@@ -343,6 +349,10 @@ export default {
         padding: 30px 20px 10px;
       }
     }
+  }
+  .vanpopup {
+    width: 250px;
+    height: 100vh;
   }
 }
 </style>
