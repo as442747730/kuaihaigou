@@ -1,7 +1,7 @@
 <template>
   <div class="m-order-submit" :class="{'fullScreen': fullScreen}">
 
-    <van-nav-bar :title="navTitle || '填写订单'" left-arrow @click-left='historyBack'>
+    <van-nav-bar :title="navTitle || '填写订单'" left-arrow :right-text="navTxt" @click-left='historyBack' @click-right="jump">
     </van-nav-bar>
 
     <div class="m-section-position more-link" @click="openAddress">
@@ -91,11 +91,11 @@
       <div class="m-section-cell-item more-link small" @click="openCoupon">
         <div class="label">优惠券</div>
         <span class="content" v-if="!couponSelected.faceValue">{{ usableCouponCount ? usableCouponCount + '张可用' : '无可用优惠券' }}</span>
-        <span class="content" v-else>{{ couponSelected.faceValue }}</span>
+        <span class="content" v-else>￥{{ formatMoney(couponSelected.faceValue) }}</span>
       </div>
       <div class="m-section-cell-item">
-        <div class="label">优币抵扣<span class="tip">您有Hi币 2222个</span></div>
-        <van-stepper ></van-stepper>
+        <div class="label">优币抵扣<span class="tip">您有Hi币 {{ formatMoney(rewardNow) }}个</span></div>
+        <van-stepper :min='0' :max="maxReward" v-model='rewardMoney' @change='handleNumChange'></van-stepper>
       </div>
     </div>
 
@@ -106,19 +106,25 @@
       </div>
       <div class="m-section-cell-item">
         <div class="label">运费</div>
-        <div class="content"><div class="badge">满88元包邮</div>￥{{ totalFreight - reduceFreight }}</div>
+        <div class="content">
+          <template v-if='ifReduction'>
+            <div class="badge" v-if='reductionStrategy.ifDeliveryIncluded'>满{{ reductionStrategy.minimumCost }}包邮</div>
+            <div class="badge" v-else>满{{ reductionStrategy.minimumCost }}减{{ reductionStrategy.reduceMoney }}</div>
+          </template>
+          ￥{{ totalFreight - reduceFreight }}
+        </div>
       </div>
       <div class="m-section-cell-item">
         <div class="label">优惠券</div>
-        <div class="content">￥{{ couponSelected.faceValue || 0 }}</div>
+        <div class="content">￥-{{ couponSelected.faceValue || 0 }}</div>
       </div>
       <div class="m-section-cell-item">
         <div class="label">优币抵扣</div>
-        <div class="content">0</div>
+        <div class="content">-{{ rewardMoney }}</div>
       </div>
-      <div class="m-section-cell-item" v-if='promotion.amount'>
+      <div class="m-section-cell-item" v-if='fullSub !== 0'>
         <div class="label">活动优惠</div>
-        <div class="content"><div class="badge">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div>
+        <div class="content"><div class="badge">{{ promotion.promotionName }}</div>￥-{{ fullSub }}</div>
       </div>
     </div>
 
@@ -138,38 +144,64 @@
       <uAddress v-show="addressShow" :addressList="addressArray" @handleSelect="handleSelect"></uAddress>
     </transition>
 
-    <!-- <transition name="slide">
+    <transition name="slide">
       <uInoince v-show="invoinceShow" :invoiceList="invoinceArray" @selectInvoice="handleSelectInvoice"></uInoince>
     </transition>
 
     <transition name="slide">
       <uCoupon v-show="couponShow" :usableList="couponArray.filter(n => { return n.useThreshold <= this.totalPrice })" :unusableList="couponArray.filter(n => { return n.useThreshold >= this.totalPrice })" @handleSelectCoupon="handleSelectCoupon"></uCoupon>
-    </transition> -->
+    </transition>
+
+    <van-actionsheet class='pay-methods' v-model="payMethodShow">
+      <div class="pay-methods-top">
+        <h3 class="font_medium">付款方式</h3>
+        <p>请在00小时59分59秒内完成支付</p>
+        <span>支付金额 <b>¥260</b></span>
+      </div>
+      <div class="pay-methods-chose">
+        <div class="item zfb" :class="{'checked': payMethod === 0}">
+          <i class="ib-middle"></i>
+          <h4 class="ib-middle">支付宝支付</h4>
+          <div class="icon-check"></div>
+        </div>
+        <div class="item wx" :class="{'checked': payMethod === 1}">
+          <i class="ib-middle"></i>
+          <h4 class="ib-middle">支付宝支付</h4>
+          <div class="icon-check"></div>
+        </div>
+      </div>
+    </van-actionsheet>
 
   </div>
 </template>
 <script>
 import api from '~/utils/request'
 import uAddress from '~/components/Address'
-// import uInoince from '~/components/Invoice'
-// import uCoupon from '~/components/Coupon'
+import uInoince from '~/components/Invoice'
+import uCoupon from '~/components/Coupon'
 import { Toast } from 'vant'
+import tools from '~/utils/tools'
 
 export default {
   name: 'submit',
   layout: 'default',
 
   components: {
-    uAddress
-    // uInoince,
-    // uCoupon
+    uAddress,
+    uInoince,
+    uCoupon
   },
 
   computed: {
     payable () {
-      let c = +this.couponSelected.faceValue || 0
-      let p = +this.promotion.amount || 0
-      return (this.totalPrice + this.totalFreight - this.reduceFreight - c - p)
+      let c = +this.couponSelected.faceValue || 0 // 优惠卷
+      let p = +this.promotion.amount || 0 // 活动满减
+      let s = +this.rewardMoney || 0
+      this.maxReward = this.totalPrice - c - p
+      if (this.maxReward > this.rewardNow) {
+        this.maxReward = this.rewardNow
+      }
+      return (this.totalPrice + this.totalFreight - this.reduceFreight - c - p - s)
     }
   },
 
@@ -181,15 +213,16 @@ export default {
       api.serverGet('/api/order/calcFreight?time=' + new Date().getTime(), {}, req), // 运费
       api.serverGet('/api/promotion/get', null, req), // 活动
       api.serverGet('/api/coupon/listForUsable', { amount: 100 }, req), // 优惠券
-      api.serverGet('/api/invoice/listAll', {}, req)
+      api.serverGet('/api/invoice/listAll', {}, req), // 发票信息
+      api.serverGet('/api/reward/getTotalActualAmount/', null, req) // hi币总额
     ])
-      .then(api.spread(function (res1, res2, res3, res4, res5) {
+      .then(api.spread(function (res1, res2, res3, res4, res5, res6) {
         if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506 || res5.code === 506) {
           return req.redirect('/account/login')
         }
         // console.log(res1.data)
         // console.log(res2.data)
-        console.log('res3', res3)
+        console.log('res2', res2)
         // console.log(res4.data)
 
         let a = []
@@ -200,19 +233,28 @@ export default {
           item.list.push(...res2.data.goodsList.filter(n => { return n.logistics === item.logisticsCompany }))
           item.list.push(...res2.data.packList.filter(n => { return n.logistics === item.logisticsCompany }))
         })
-        // console.log(a)
 
+        // 不可配送
+        let b = []
+        b.push(...res2.data.goodsList.filter(n => !n.ifDistribute))
+        b.push(...res2.data.packList.filter(n => !n.ifDistribute))
+
+        // 获取默认收货地址
+        let defaultAdress = res1.data.find(v => v.ifDefault)
         return {
           addressArray: res1.data, // 所有可选的收货地址
+          addressSelected: defaultAdress,
           reduceFreight: res2.data.reduceFreight, //
           totalFreight: res2.data.totalFreight, // 总运费
           totalPrice: res2.data.totalPrice, // 商品合计
-          reductionStrategy: res2.data.reductionStrategy, // 减免策略
+          reductionStrategy: res2.data.reductionStrategy || {}, // 减免策略
           promotion: res3.data || {},
           productList: a,
+          goodsNoSend: b,
           usableCouponCount: res4.data.length, // 可用优惠券数量
           couponArray: res4.data,
-          invoinceArray: res5.data
+          invoinceArray: res5.data,
+          rewardNow: res6.data // hi币总额
         }
       }))
   },
@@ -230,6 +272,7 @@ export default {
     return {
       fullScreen: false,
       navTitle: '',
+      navTxt: '',
       // 活动
       promotion: {},
       // 地址
@@ -250,7 +293,17 @@ export default {
       reduceFreight: 0,
       totalFreight: 0,
       totalPrice: 0,
-      reductionStrategy: {},
+      reductionStrategy: {}, // 减免策略
+      ifReduction: false,
+      // hi钱币
+      rewardNow: 0, // 现有hi币
+      rewardMoney: 0, // 使用hi币
+      maxReward: 0, // 最大hi币额度
+      // 活动优惠 全场满减
+      fullSub: 0,
+      payMethodShow: false, // 支付弹框
+      // 支付方式
+      payMethod: 0,
 
       productList: [],
       goodsNoSend: []
@@ -258,7 +311,17 @@ export default {
   },
 
   created () {
-    console.log(this.productList)
+    console.log('reductionStrategy', this.reductionStrategy)
+    if (this.promotion.promotionName && this.totalPrice >= this.promotion.threshold) {
+      this.fullSub = this.promotion.amount
+      this.promotionId = this.promotion.id
+    }
+    // 减免策略
+    let { minimumCost, ifDeliveryIncluded, reduceMoney } = this.reductionStrategy
+    if (this.totalPrice > minimumCost) {
+      this.ifReduction = true
+      this.reduceFreight = ifDeliveryIncluded ? this.totalFreight : reduceMoney >= this.reduceFreight ? this.totalFreight : reduceMoney
+    }
   },
 
   methods: {
@@ -282,31 +345,27 @@ export default {
           this.productList.push({ logisticsCompany: item.logisticsCompany, list: [], listNoSend: [] })
         })
         this.productList.forEach((item, index) => {
-          // console.log(item)
           item.list.push(...data.goodsList.filter(n => { return n.logistics === item.logisticsCompany }))
           item.list.push(...data.packList.filter(n => { return n.logistics === item.logisticsCompany }))
         })
-        // console.log(this.productList)
         // 不可配送
         this.goodsNoSend = []
         this.goodsNoSend.push(...data.goodsList.filter(n => !n.ifDistribute))
         this.goodsNoSend.push(...data.packList.filter(n => !n.ifDistribute))
-        // let { packList, goodsList } = data
-        // let arr1 = packList.filter(n => !n.ifDistribute)
-        // let arr2 = goodsList.filter(n => !n.ifDistribute)
-        // let arr3 = []
-        // Array.prototype.push.apply(arr3, arr1)
-        // Array.prototype.push.apply(arr3, arr2)
-        console.log(this.goodsNoSend)
-        // this.goodsNoSend = arr3
         toast1.clear()
       }
     },
 
     openInvoice () {
       this.invoinceShow = true
+      this.fullScreen = true
+      this.navTitle = '选择发票信息'
+      this.navTxt = '管理'
     },
     handleSelectInvoice (val) {
+      this.fullScreen = false
+      this.navTitle = ''
+      this.navTxt = ''
       if (val.id === this.invoinceSelected.id) {
         this.invoinceSelected = {}
       } else {
@@ -318,10 +377,23 @@ export default {
     openCoupon () {
       if (this.usableCouponCount === 0) return
       this.couponShow = true
+      this.fullScreen = true
+      this.navTitle = '选择优惠卷'
     },
     handleSelectCoupon (val) {
       this.couponShow = false
+      this.fullScreen = false
+      this.navTitle = ''
       this.couponSelected = val
+      // 当优惠卷不可以与全场满减活动叠加时
+      if (!this.promotion.ifAccumulated && this.totalPrice >= this.promotion.threshold && !!val) {
+        this.promotionId = null
+        this.fullSub = 0
+        this.$toast('该满减活动与优惠卷不可叠加，请在两者选一项')
+      } else {
+        this.fullSub = this.promotion.amount || 0
+        this.promotionId = this.promotion.id
+      }
     },
 
     async submitOrder () {
@@ -329,19 +401,20 @@ export default {
       if (!this.addressSelected.id) {
         return this.$toast('请选择收货地址')
       }
-      this.$toast.loading({ mask: true, message: '提交订单中', duration: 0 })
-      const { code, data } = await api.clientPostJson('/api/order/order', {
-        shippingAddressId: this.addressSelected.id,
-        // remark
-        invoiceId: this.invoinceSelected.id,
-        promotionId: '', // todo
-        couponId: this.couponSelected.couponId
-      })
-      if (code === 200) {
-        this.$toast.clear()
-      } else {
-        this.$toast(data)
-      }
+      this.payMethodShow = true
+      // const toast2 = Toast.loading({ mask: true, message: '提交订单中', duration: 0 })
+      // const { code, data } = await api.clientPostJson('/api/order/order', {
+      //   shippingAddressId: this.addressSelected.id,
+      //   // remark
+      //   invoiceId: this.invoinceSelected.id,
+      //   promotionId: '', // todo
+      //   couponId: this.couponSelected.couponId
+      // })
+      // if (code === 200) {
+      //   toast2.clear()
+      // } else {
+      //   this.$toast(data)
+      // }
     },
 
     historyBack () {
@@ -351,7 +424,31 @@ export default {
         this.addressShow = false
         return
       }
+      if (this.invoinceShow) {
+        this.invoinceShow = false
+        return
+      }
+      if (this.couponShow) {
+        this.couponShow = false
+        return
+      }
       window.location.href = '/order/cart'
+    },
+
+    handleNumChange () {
+      console.log(this.maxReward)
+      if (this.rewardMoney === undefined) this.rewardMoney = 0
+      this.rewardMoney = this.formatMoney(this.rewardMoney)
+    },
+
+    jump () {
+      if (this.invoinceShow) {
+        window.location.href = '/invoice/list'
+      }
+    },
+
+    formatMoney (a) {
+      return tools.money(a)
     }
   }
 }
@@ -601,6 +698,65 @@ export default {
       top: 50%;
       right: 30px;
       transform: translate(0, -50%);
+    }
+  }
+
+  .pay-methods { 
+    padding: 30px 20px 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    ul {
+      display: none!important;
+    }
+    &-top {
+      text-align: center;
+      h3 {
+        color: #333;
+        font-size: 19px;
+      }
+      p {
+        font-size: 14px;
+        color: #999;
+        margin: 22px 0 10px;        
+      }
+      span {
+        color: #666;
+        font-size: 15px;
+        b {
+          color: #fb6248;
+        }
+      }
+    }
+    &-chose {
+      border-top: 1PX solid #eee;
+      font-size: 15px;
+      color: #333;
+      margin-top: 20px;
+      i {
+        width: 30px;
+        height: 30px;
+        margin-right: 8px;
+      }
+      .zfb i{
+        background: url('~/assets/img/ic_alipay 30x30@2x.png') no-repeat center/contain
+      }
+      .wx i{
+        background: url('~/assets/img/ic_wachat_pay_30x30@2x.png') no-repeat center/contain
+      }
+      .item {
+        padding: 15px 0;
+        &.checked .icon-check {
+          background: url('~/assets/img/icon-checkbox-active.png') no-repeat center/contain
+        }
+      }
+      .icon-check {
+        float: right;
+        width: 18px;
+        height: 18px;
+        border: 1PX solid #eee;
+        border-radius: 50%;
+        margin-top: 5px;
+      }
     }
   }
 }

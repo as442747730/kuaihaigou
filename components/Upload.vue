@@ -9,6 +9,7 @@
 
 <script>
 import axios from 'axios'
+import { Toast } from 'vant'
 
 export default {
   name: '',
@@ -16,6 +17,13 @@ export default {
   data () {
     return {
       token: ''
+    }
+  },
+
+  props: {
+    max: {
+      type: Number,
+      default: 5
     }
   },
 
@@ -34,10 +42,11 @@ export default {
     },
 
     async handleRead (file) {
-      if (Array.isArray(file) && file.length > 5) {
-        return this.$toast.fail('最多只可上传5张图片')
+      if (Array.isArray(file) && file.length > this.max) {
+        return Toast.fail(`最多只可上传${this.max}张图片`)
       }
-      this.$toast.loading({
+
+      Toast.loading({
         duration: 0,
         forbidClick: true,
         loadingType: 'spinner',
@@ -92,11 +101,11 @@ export default {
         headers: { 'Content-Type': 'multipart/form-data; charset=UTF-8' }
       }).then((res) => {
         if (res.status === 200) {
-          this.$toast.clear()
+          Toast.clear()
           // this.$emit('handleUploadSuccess', res.data.data)
           return res.data.data
         } else {
-          this.$toast.fail(res.statusText)
+          Toast.fail(res.statusText)
           return res.statusText
         }
       })

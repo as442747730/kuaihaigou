@@ -9,7 +9,7 @@ export const orderApi = {
     return request.serverGet(`/api/order/getDetail/${id}`, {}, req)
   },
   getEvaluationInfo (id, req) {
-    return request.serverGet(`/api/order/toComment/${id}`, req)
+    return request.serverGet(`/api/order/toComment/${id}`, {}, req)
   },
   // client
   getOrderListClient (obj) {
@@ -26,5 +26,31 @@ export const orderApi = {
   },
   submitEvaluation (obj) {
     return request.clientPost('/api/cmt/createComment', obj)
+  }
+}
+
+export const afterSaleApi = {
+  // server
+  getAfterSaleList (obj, req) {
+    return request.serverGet('/pf-api/afterSale/paginate', obj, req)
+  },
+  getAftersaleDetail (id, req) {
+    return request.serverGet(`/api/afterSale/getDetail/${id}`, { afterSaleId: id }, req)
+  },
+  getGoodAndPriceInfo (id, req) {
+    return request.serverGet(`/api/afterSale/getGoodsForAfterSale/${id}`, { orderItemId: id }, req)
+  },
+  getAlreadyComplate (id, req) {
+    return request.serverGet(`/api/afterSale/listGoodsInAfterSale/${id}`, { orderId: id }, req)
+  },
+  // client
+  getAfterSaleListClient (obj) {
+    return request.clientGet('/pf-api/afterSale/paginate', obj)
+  },
+  createApplication (obj) {
+    return request.clientPost('/api/afterSale/create', obj)
+  },
+  cancelAftersale (id) {
+    return request.clientPost(`/api/afterSale/cancel/${id}`)
   }
 }

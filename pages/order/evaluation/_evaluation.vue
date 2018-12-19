@@ -76,7 +76,7 @@ export default {
   },
 
   async asyncData (req) {
-    return orderApi.getEvaluationInfo(req.params.evaluation, req).then(res => {
+    orderApi.getEvaluationInfo(req.params.evaluation, req).then(res => {
       if (res.code === 506) {
         req.redirect('/account/login')
       }
