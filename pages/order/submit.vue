@@ -1,7 +1,7 @@
 <template>
-  <div class="m-order-submit">
+  <div class="m-order-submit" :class="{'fullScreen': fullScreen}">
 
-    <van-nav-bar title="填写订单" left-arrow>
+    <van-nav-bar :title="navTitle || '填写订单'" left-arrow @click-left='historyBack'>
     </van-nav-bar>
 
     <div class="m-section-position more-link" @click="openAddress">
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="m-section-product" v-for="(item, index) in productList" :key="index">
+    <div class="m-section-product" v-for="(item, index) in productList" :key="index" :style="{'marginBottom' : goodsNoSend.length !== 0 ? '0px' : ''}">
       <div class="m-section-product-logistics">快递：{{ item.logisticsCompany }}</div>
       <div class="m-section-product-li" v-for="(p, k) in item.list" :key='k'>
         <template v-if="!p.packName">
@@ -47,33 +47,45 @@
             </div>
           </div>
         </template>
-        <!-- <template v-if="!p.packName">
-          <div class="m-section-product-item">
-            <img class="m-section-product-item-img" :src="p.imgUrl" alt="">
-            <div class="m-section-product-item-content">
-              <p class="title">{{ p.goodsName }}</p>
-              <p class="desc">{{ p.skuName }}<span class="price">￥{{ p.price }}</span></p>
-              <p class="desc">x{{ p.num }}</p>
-            </div>
-          </div>
-        </template>
-        <template v-else>
-          <div class="pack-title">
-            <div class="pack-title-left">{{ p.packName }}</div>
-            <div class="pack-title-right">¥{{ p.price }}</div>
-          </div>
-          <div class="m-section-product-item bor-top" v-for="(d, i) in p.cartGoodsList" :key="i">
-            <img class="m-section-product-item-img" :src="d.imgUrl" alt="">
-            <div class="m-section-product-item-content">
-              <p class="title">{{ d.goodsName }}</p>
-              <p class="desc">{{ d.skuName }}</p>
-              <p class="desc">x{{ d.num }}</p>
-            </div>
-          </div>
-        </template> -->
       </div>
-
     </div>
+
+    <!-- 不可配送 -->
+    <template v-if='goodsNoSend.length !== 0'>
+      <div class="m-section-product-logistics" style="text-align: center;margin-bottom: 0">不可配送</div>
+      <div class="m-section-product no-send" v-for="(item, index2) in goodsNoSend">
+        <div class="m-section-product-li">
+          <template v-if="!item.packName">
+            <div class="m-section-product-item">
+              <div class="m-section-product-item-pro">
+                <img class="m-section-product-item-img" :src="item.imgUrl" alt="">
+              </div>
+              <div class="m-section-product-item-content">
+                <p class="title font_medium">{{ item.goodsName }}</p>
+                <p class="desc">{{ item.skuName ? '规格：' + item.skuName : '规格：单品' }}<span class="price font_impact">￥{{ item.sellPrice }}</span></p>
+                <p class="desc">x{{ item.num }}</p>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <div class="pack-title" :class="{'mt-10': index2 > 0}">
+              <div class="pack-title-left font_medium">{{ item.packName }}</div>
+              <div class="pack-title-right font_impact">¥{{ item.sellPrice }}</div>
+            </div>
+            <div class="m-section-product-item bor-top" v-for="(d, i2) in item.cartGoodsList" :key="i2">
+              <div class="m-section-product-item-pro">
+                <img class="m-section-product-item-img" :src="d.imgUrl" alt="">
+              </div>
+              <div class="m-section-product-item-content">
+                <p class="title font_medium">{{ d.goodsName }}</p>
+                <p class="desc">{{ d.skuName ? '规格：' + d.skuName : '规格：单品' }}</p>
+                <p class="desc">x{{ d.num }}</p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </template>
 
     <div class="m-section-cell">
       <div class="m-section-cell-item more-link small" @click="openCoupon">
@@ -122,11 +134,11 @@
       <div class="m-section-bottom-right active-status" @click="submitOrder">提交订单</div>
     </div>
 
-    <!-- <transition name="slide">
+    <transition name="slide">
       <uAddress v-show="addressShow" :addressList="addressArray" @handleSelect="handleSelect"></uAddress>
     </transition>
 
-    <transition name="slide">
+    <!-- <transition name="slide">
       <uInoince v-show="invoinceShow" :invoiceList="invoinceArray" @selectInvoice="handleSelectInvoice"></uInoince>
     </transition>
 
@@ -138,15 +150,20 @@
 </template>
 <script>
 import api from '~/utils/request'
-// import uAddress from '~/components/Address'
+import uAddress from '~/components/Address'
 // import uInoince from '~/components/Invoice'
 // import uCoupon from '~/components/Coupon'
+import { Toast } from 'vant'
 
 export default {
   name: 'submit',
   layout: 'default',
 
-  // components: { uAddress, uInoince, uCoupon },
+  components: {
+    uAddress
+    // uInoince,
+    // uCoupon
+  },
 
   computed: {
     payable () {
@@ -211,6 +228,8 @@ export default {
 
   data () {
     return {
+      fullScreen: false,
+      navTitle: '',
       // 活动
       promotion: {},
       // 地址
@@ -233,7 +252,8 @@ export default {
       totalPrice: 0,
       reductionStrategy: {},
 
-      productList: []
+      productList: [],
+      goodsNoSend: []
     }
   },
 
@@ -244,13 +264,42 @@ export default {
   methods: {
     openAddress () {
       this.addressShow = true
+      this.fullScreen = true
+      this.navTitle = '选择地址'
     },
     async handleSelect (val) {
       this.addressSelected = val
       this.addressShow = false
+      this.fullScreen = false
+      this.navTitle = ''
+      const toast1 = Toast.loading({ mask: true, message: '数据获取中', duration: 0 })
       const { code, data } = await api.clientGet('/api/order/calcFreight', { areaId: val.city.split(',')[1] })
       if (code === 200) {
-        console.log(data)
+        // console.log(data)
+        // 可配送
+        this.productList = []
+        data.freightList.forEach((item) => {
+          this.productList.push({ logisticsCompany: item.logisticsCompany, list: [], listNoSend: [] })
+        })
+        this.productList.forEach((item, index) => {
+          // console.log(item)
+          item.list.push(...data.goodsList.filter(n => { return n.logistics === item.logisticsCompany }))
+          item.list.push(...data.packList.filter(n => { return n.logistics === item.logisticsCompany }))
+        })
+        // console.log(this.productList)
+        // 不可配送
+        this.goodsNoSend = []
+        this.goodsNoSend.push(...data.goodsList.filter(n => !n.ifDistribute))
+        this.goodsNoSend.push(...data.packList.filter(n => !n.ifDistribute))
+        // let { packList, goodsList } = data
+        // let arr1 = packList.filter(n => !n.ifDistribute)
+        // let arr2 = goodsList.filter(n => !n.ifDistribute)
+        // let arr3 = []
+        // Array.prototype.push.apply(arr3, arr1)
+        // Array.prototype.push.apply(arr3, arr2)
+        console.log(this.goodsNoSend)
+        // this.goodsNoSend = arr3
+        toast1.clear()
       }
     },
 
@@ -293,6 +342,16 @@ export default {
       } else {
         this.$toast(data)
       }
+    },
+
+    historyBack () {
+      this.fullScreen = false
+      this.navTitle = ''
+      if (this.addressShow) {
+        this.addressShow = false
+        return
+      }
+      window.location.href = '/order/cart'
     }
   }
 }
@@ -304,6 +363,11 @@ export default {
   background: @cor_border;
   font-size: 0;
   padding-bottom: 50px;
+  &.fullScreen {
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
   .m-section-position {
     height: 65px;
     background: #FFFFFF;
