@@ -45,6 +45,7 @@ module.exports = {
     { src: './assets/css/transition.css', lang: 'css' }
   ],
   router: {
+    base: '/mobile/',
     scrollBehavior (to, from, savedPosition) {
       return { x: 0, y: 0 }
     },

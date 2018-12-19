@@ -92,6 +92,10 @@ export default {
       return a - b
     })
   },
+  money (value) {
+    const val = (value / 1).toFixed(2)
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  },
   /**
    * 获取地址栏参数
    * @params 传入需要获取的参数
