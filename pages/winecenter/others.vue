@@ -1,7 +1,7 @@
 <template>
   <div class="others" :class="{stopwineScroll: isRoll}">
     <div class="others-head">
-      <div class="upper">
+      <div class="upper upzindex">
         <div class="top">
           <div class="top_l" @click="toWinecenter">
             <span class="top_l-span icon_switch"></span>
@@ -16,9 +16,7 @@
           <div class="screen-item" :class="{active: classify.elIndex == index}" @click="elClassify(index)" v-for="(cls, index) in classify.list" :key="index">{{cls}}</div>
         </div>
       </div>
-      
-      <pure-list ref="pureList" :postObj="postObj" @shut="closeClassify"></pure-list>
-
+      <list-one :showlist="showList" @closeFn="closeClassify"></list-one>  
     </div>
     <section class="other-content">
       <ul class="othList">
@@ -43,7 +41,7 @@
 </template>
 <script>
 // import uFooter from '~/components/footer'
-import pureList from '~/components/cpms/pureList'
+import listOne from '~/components/cpms/listOne'
 import Imgs from '~/assets/img/green_wine.jpg'
 export default {
   head () {
@@ -60,6 +58,7 @@ export default {
   data () {
     return {
       isRoll: false,
+      showList: false,
       classify: {
         list: ['大分类', '子分类', '小分类'],
         elIndex: null,
@@ -73,7 +72,7 @@ export default {
   },
   components: {
     // uFooter,
-    pureList
+    listOne
   },
   methods: {
     toWinecenter () {
@@ -83,20 +82,17 @@ export default {
       window.location.href = '/search?id=others'
     },
     elClassify (index) {
+      this.showList = !this.showList
       if (index === 0) {
         this.$set(this.postObj, 'list', this.lists)
       } else {
         this.$set(this.postObj, 'list', this.lists2)
       }
-      this.isRoll = true
-      setTimeout(() => {
-        this.$refs.pureList.addClass()
-      })
     },
-    closeClassify () {
+    closeClassify (val) {
+      this.showList = val
       this.classify.elIndex = null
       this.classify.nowList = []
-      this.isRoll = false
     }
   }
 }
@@ -293,5 +289,8 @@ export default {
     }
   }
 
+}
+.upper.upzindex {
+  z-index: 3000;
 }
 </style>

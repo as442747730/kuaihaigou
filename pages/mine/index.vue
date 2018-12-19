@@ -57,11 +57,11 @@
     <van-popup class="vanpopup" v-model="showmenu" position="left">
       <left-menu></left-menu>
     </van-popup>
-    <u-footer :postIndex="footIndex"></u-footer>
+    <!-- <u-footer :postIndex="footIndex"></u-footer> -->
   </div>
 </template>
 <script>
-import uFooter from '~/components/footer'
+// import uFooter from '~/components/footer'
 import uArticle from '~/components/mine/Article'
 import uJarsclb from '~/components/mine/Jarsclub'
 import leftMenu from '~/components/Menu'
@@ -76,7 +76,7 @@ export default {
     }
   },
   components: {
-    uFooter,
+    // uFooter,
     uArticle,
     uJarsclb,
     leftMenu
