@@ -49,6 +49,7 @@ export default {
   padding-bottom: 50px;
   box-sizing: border-box;
   overflow: scroll;
+  padding-top: 46px;
   &-ul {
     background: white;
     font-size: 0;

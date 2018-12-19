@@ -94,6 +94,7 @@
   left: 0;
   width: 100%;
   overflow: scroll;
+  padding-top: 56px;
   &-cell {
     padding: 15px;
     background: white;
@@ -199,6 +200,7 @@
   &-bottom {
     // width: 100%;
     text-align: center;
+    color: #03A1CD;
   }
 }
 </style>

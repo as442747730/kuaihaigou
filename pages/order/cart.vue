@@ -205,7 +205,7 @@ export default {
                 this.$set(v2, 'empty', true)
               } else if (v2.packid === v.packid && (v.packid !== undefined)) {
                 this.$set(v2, 'empty', true)
-              } else if (v2.goodsid === v.goodsid) {
+              } else if (v2.goodsid === v.goodsid && (v.goodsid !== undefined)) {
                 this.$set(v2, 'empty', true)
               }
             })
