@@ -1,5 +1,8 @@
 <template>
-  <div class="m-order-submit">
+  <div class="m-order-submit" :class="{'fullScreen': fullScreen}">
+
+    <van-nav-bar :title="navTitle || '填写订单'" left-arrow @click-left='historyBack'>
+    </van-nav-bar>
 
     <div class="m-section-position more-link" @click="openAddress">
       <span v-if="!addressSelected.phone">添加收货地址</span>
@@ -13,37 +16,76 @@
       </div>
     </div>
 
-    <div class="m-section-product" v-for="(item, index) in productList" :key="index">
+    <div class="m-section-product" v-for="(item, index) in productList" :key="index" :style="{'marginBottom' : goodsNoSend.length !== 0 ? '0px' : ''}">
       <div class="m-section-product-logistics">快递：{{ item.logisticsCompany }}</div>
-      <div class="m-section-product-li" v-for="p in item.list" >
-
+      <div class="m-section-product-li" v-for="(p, k) in item.list" :key='k'>
         <template v-if="!p.packName">
           <div class="m-section-product-item">
-            <img class="m-section-product-item-img" :src="p.imgUrl" alt="">
+            <div class="m-section-product-item-pro">
+              <img class="m-section-product-item-img" :src="p.imgUrl" alt="">
+            </div>
             <div class="m-section-product-item-content">
-              <p class="title">{{ p.goodsName }}</p>
-              <p class="desc">{{ p.skuName }}<span class="price">￥{{ p.price }}</span></p>
+              <p class="title font_medium">{{ p.goodsName }}</p>
+              <p class="desc">{{ p.skuName ? '规格：' + p.skuName : '规格：单品' }}<span class="price font_impact">￥{{ p.sellPrice }}</span></p>
               <p class="desc">x{{ p.num }}</p>
             </div>
           </div>
         </template>
         <template v-else>
-          <div class="pack-title">
-            <div class="pack-title-left">{{ p.packName }}</div>
-            <div class="pack-title-right">¥{{ p.price }}</div>
+          <div class="pack-title" :class="{'mt-10': k > 0}">
+            <div class="pack-title-left font_medium">{{ p.packName }}</div>
+            <div class="pack-title-right font_impact">¥{{ p.sellPrice }}</div>
           </div>
           <div class="m-section-product-item bor-top" v-for="(d, i) in p.cartGoodsList" :key="i">
-            <img class="m-section-product-item-img" :src="d.imgUrl" alt="">
+            <div class="m-section-product-item-pro">
+              <img class="m-section-product-item-img" :src="d.imgUrl" alt="">
+            </div>
             <div class="m-section-product-item-content">
-              <p class="title">{{ d.goodsName }}</p>
-              <p class="desc">{{ d.skuName }}</p>
+              <p class="title font_medium">{{ d.goodsName }}</p>
+              <p class="desc">{{ d.skuName ? '规格：' + d.skuName : '规格：单品' }}</p>
               <p class="desc">x{{ d.num }}</p>
             </div>
           </div>
         </template>
       </div>
-
     </div>
+
+    <!-- 不可配送 -->
+    <template v-if='goodsNoSend.length !== 0'>
+      <div class="m-section-product-logistics" style="text-align: center;margin-bottom: 0">不可配送</div>
+      <div class="m-section-product no-send" v-for="(item, index2) in goodsNoSend">
+        <div class="m-section-product-li">
+          <template v-if="!item.packName">
+            <div class="m-section-product-item">
+              <div class="m-section-product-item-pro">
+                <img class="m-section-product-item-img" :src="item.imgUrl" alt="">
+              </div>
+              <div class="m-section-product-item-content">
+                <p class="title font_medium">{{ item.goodsName }}</p>
+                <p class="desc">{{ item.skuName ? '规格：' + item.skuName : '规格：单品' }}<span class="price font_impact">￥{{ item.sellPrice }}</span></p>
+                <p class="desc">x{{ item.num }}</p>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <div class="pack-title" :class="{'mt-10': index2 > 0}">
+              <div class="pack-title-left font_medium">{{ item.packName }}</div>
+              <div class="pack-title-right font_impact">¥{{ item.sellPrice }}</div>
+            </div>
+            <div class="m-section-product-item bor-top" v-for="(d, i2) in item.cartGoodsList" :key="i2">
+              <div class="m-section-product-item-pro">
+                <img class="m-section-product-item-img" :src="d.imgUrl" alt="">
+              </div>
+              <div class="m-section-product-item-content">
+                <p class="title font_medium">{{ d.goodsName }}</p>
+                <p class="desc">{{ d.skuName ? '规格：' + d.skuName : '规格：单品' }}</p>
+                <p class="desc">x{{ d.num }}</p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </template>
 
     <div class="m-section-cell">
       <div class="m-section-cell-item more-link small" @click="openCoupon">
@@ -74,9 +116,9 @@
         <div class="label">优币抵扣</div>
         <div class="content">0</div>
       </div>
-      <div class="m-section-cell-item">
+      <div class="m-section-cell-item" v-if='promotion.amount'>
         <div class="label">活动优惠</div>
-        <div class="content"><div class="badge" v-if="promotion.ifEnable">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div>
+        <div class="content"><div class="badge">{{ promotion.promotionName }}</div>￥{{ promotion.amount }}</div>
       </div>
     </div>
 
@@ -96,27 +138,32 @@
       <uAddress v-show="addressShow" :addressList="addressArray" @handleSelect="handleSelect"></uAddress>
     </transition>
 
-    <transition name="slide">
+    <!-- <transition name="slide">
       <uInoince v-show="invoinceShow" :invoiceList="invoinceArray" @selectInvoice="handleSelectInvoice"></uInoince>
     </transition>
 
     <transition name="slide">
       <uCoupon v-show="couponShow" :usableList="couponArray.filter(n => { return n.useThreshold <= this.totalPrice })" :unusableList="couponArray.filter(n => { return n.useThreshold >= this.totalPrice })" @handleSelectCoupon="handleSelectCoupon"></uCoupon>
-    </transition>
+    </transition> -->
 
   </div>
 </template>
 <script>
 import api from '~/utils/request'
 import uAddress from '~/components/Address'
-import uInoince from '~/components/Invoice'
-import uCoupon from '~/components/Coupon'
+// import uInoince from '~/components/Invoice'
+// import uCoupon from '~/components/Coupon'
+import { Toast } from 'vant'
 
 export default {
   name: 'submit',
   layout: 'default',
 
-  components: { uAddress, uInoince, uCoupon },
+  components: {
+    uAddress
+    // uInoince,
+    // uCoupon
+  },
 
   computed: {
     payable () {
@@ -132,7 +179,7 @@ export default {
     return api.all([
       api.serverGet('/api/shippingAddress/listAll', {}, req), // 地址
       api.serverGet('/api/order/calcFreight?time=' + new Date().getTime(), {}, req), // 运费
-      api.serverGet('/api/promotion/get', {}, req), // 活动
+      api.serverGet('/api/promotion/get', null, req), // 活动
       api.serverGet('/api/coupon/listForUsable', { amount: 100 }, req), // 优惠券
       api.serverGet('/api/invoice/listAll', {}, req)
     ])
@@ -142,7 +189,7 @@ export default {
         }
         // console.log(res1.data)
         // console.log(res2.data)
-        console.log(res3.data)
+        console.log('res3', res3)
         // console.log(res4.data)
 
         let a = []
@@ -161,7 +208,7 @@ export default {
           totalFreight: res2.data.totalFreight, // 总运费
           totalPrice: res2.data.totalPrice, // 商品合计
           reductionStrategy: res2.data.reductionStrategy, // 减免策略
-          promotion: res3.data,
+          promotion: res3.data || {},
           productList: a,
           usableCouponCount: res4.data.length, // 可用优惠券数量
           couponArray: res4.data,
@@ -181,6 +228,8 @@ export default {
 
   data () {
     return {
+      fullScreen: false,
+      navTitle: '',
       // 活动
       promotion: {},
       // 地址
@@ -203,20 +252,54 @@ export default {
       totalPrice: 0,
       reductionStrategy: {},
 
-      productList: []
+      productList: [],
+      goodsNoSend: []
     }
+  },
+
+  created () {
+    console.log(this.productList)
   },
 
   methods: {
     openAddress () {
       this.addressShow = true
+      this.fullScreen = true
+      this.navTitle = '选择地址'
     },
     async handleSelect (val) {
       this.addressSelected = val
       this.addressShow = false
+      this.fullScreen = false
+      this.navTitle = ''
+      const toast1 = Toast.loading({ mask: true, message: '数据获取中', duration: 0 })
       const { code, data } = await api.clientGet('/api/order/calcFreight', { areaId: val.city.split(',')[1] })
       if (code === 200) {
-        console.log(data)
+        // console.log(data)
+        // 可配送
+        this.productList = []
+        data.freightList.forEach((item) => {
+          this.productList.push({ logisticsCompany: item.logisticsCompany, list: [], listNoSend: [] })
+        })
+        this.productList.forEach((item, index) => {
+          // console.log(item)
+          item.list.push(...data.goodsList.filter(n => { return n.logistics === item.logisticsCompany }))
+          item.list.push(...data.packList.filter(n => { return n.logistics === item.logisticsCompany }))
+        })
+        // console.log(this.productList)
+        // 不可配送
+        this.goodsNoSend = []
+        this.goodsNoSend.push(...data.goodsList.filter(n => !n.ifDistribute))
+        this.goodsNoSend.push(...data.packList.filter(n => !n.ifDistribute))
+        // let { packList, goodsList } = data
+        // let arr1 = packList.filter(n => !n.ifDistribute)
+        // let arr2 = goodsList.filter(n => !n.ifDistribute)
+        // let arr3 = []
+        // Array.prototype.push.apply(arr3, arr1)
+        // Array.prototype.push.apply(arr3, arr2)
+        console.log(this.goodsNoSend)
+        // this.goodsNoSend = arr3
+        toast1.clear()
       }
     },
 
@@ -259,6 +342,16 @@ export default {
       } else {
         this.$toast(data)
       }
+    },
+
+    historyBack () {
+      this.fullScreen = false
+      this.navTitle = ''
+      if (this.addressShow) {
+        this.addressShow = false
+        return
+      }
+      window.location.href = '/order/cart'
     }
   }
 }
@@ -270,6 +363,11 @@ export default {
   background: @cor_border;
   font-size: 0;
   padding-bottom: 50px;
+  &.fullScreen {
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
   .m-section-position {
     height: 65px;
     background: #FFFFFF;
@@ -366,8 +464,8 @@ export default {
   }
 
   .m-section-product {
-    background: #FFFFFF;
-
+    background: #fff;
+    margin-bottom: 10px;
     &-logistics {
       height: 35px;
       line-height: 35px;
@@ -375,15 +473,21 @@ export default {
       font-size: 13px;
       color: @cor_333;
       padding-left: 20px;
+      margin-bottom: 10px;
     }
 
     &-li {
       .pack-title {
         border-top: 1PX solid @cor_border;
+        border-bottom: 1PX solid @cor_border;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 20px;
+        margin-bottom: 10px;
+        &.mt-10 {
+          margin-top: 10px;
+        }
         &-left {
           font-size: 15px;
           color: @cor_333;
@@ -396,14 +500,22 @@ export default {
     }
 
     &-item {
-      padding: 20px 0;
+      padding: 10px 0;
       margin: 0 20px;
-      // border-bottom: 1px solid #F1F1F1;
-      &-img {
+      display: flex;
+      &-pro {
         border: 1PX solid @cor_border;
         border-radius: 4px;
-        width: 88px;
-        height: 98px;
+        width: 78px;
+        height: 88px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        img {
+          max-width: 100%;
+          max-height: 100%;
+        }
       }
       &-content {
         width: 230px;
@@ -414,9 +526,14 @@ export default {
           font-size: 15px;
           color: @cor_333;
           line-height: 25px;
+          height: 50px;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          word-break: break-all;
         }
         .desc {
-          margin-top: 10px;
+          margin-top: 6px;
           font-size: 13px;
           color: @cor_666;
           .price {
