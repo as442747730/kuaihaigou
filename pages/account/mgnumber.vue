@@ -3,14 +3,14 @@
     <com-head :titleConfig="configtitle"></com-head>
     <div class="mange-in">
     	<section class="manage_sec">
-	      <list-one list_left="手机号" list_right="138****8000"></list-one>
+	      <list-one @click.native="updPhone" list_left="手机号" :list_right="userInfo.phone"></list-one>
 	      <list-one list_left="修改密码"></list-one>
     	</section>
       <div class="manage_title">账号绑定</div>
       <section class="manage_sec">
-        <list-two l_one="微信" l_two="Winter"></list-two>
-        <list-two l_one="QQ" l_two="500000000"></list-two>
-      	<list-two l_one="微博" l_two="未绑定"></list-two>
+        <list-two @okSwitch="okSwitch" @noSwitch="noSwitch"  l_one="微信" type="wx" :l_two="userInfo.wxNickname" :vsw="bindWx"></list-two>
+        <list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="QQ" type="qq" :l_two="userInfo.qqNickname" :vsw="bindQQ"></list-two>
+      	<list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="微博" type="wb" :l_two="userInfo.wbNickname" :vsw="bindWb"></list-two>
       </section>
     </div>
   </div>
@@ -19,19 +19,117 @@
 import comHead from '~/components/com-head'
 import ListOne from '~/components/list/ListOne'
 import ListTwo from '~/components/list/ListTwo'
+import { userApi } from '~/api/users'
 export default {
   components: {
     comHead,
     ListOne,
     ListTwo
   },
+  async asyncData (req) {
+    let personInfo = userApi.serverPostInfo(req)
+    const { code: detCode, data: detData } = await personInfo
+    if (detCode === 506) {
+      req.redirect('/account/login')
+    } else if (detCode === 200) {
+      console.log(detData.phone)
+      let { wxNickname, qqNickname, wbNickname } = detData
+      let bindWx = false
+      let bindQQ = false
+      let bindWb = false
+      if (wxNickname) {
+        bindWx = true
+      }
+      if (qqNickname) {
+        bindQQ = true
+      }
+      if (wbNickname) {
+        bindWb = true
+      }
+      return {
+        userInfo: detData,
+        bindWx: bindWx,
+        bindQQ: bindQQ,
+        bindWb: bindWb
+      }
+    } else {
+      req.redirect('/error')
+    }
+  },
   data () {
     return {
       configtitle: '账号管理',
-      vanshow: true
+      vanshow: true,
+      userInfo: {},
+      bindWx: false,
+      bindQQ: false,
+      bindWb: false
     }
   },
   methods: {
+    updPhone () {
+      let _phone = this.userInfo.phone
+      window.location.href = '/account/mgphone?phone=' + _phone
+    },
+    async getInfo () {
+      // 获取用户信息
+      const { code: detCode, data: detData } = await userApi.userDetail()
+      if (detCode === 200) {
+        let { wxNickname, qqNickname, wbNickname } = detData
+        let bindWx = false
+        let bindQQ = false
+        let bindWb = false
+        if (wxNickname) {
+          bindWx = true
+        }
+        if (qqNickname) {
+          bindQQ = true
+        }
+        if (wbNickname) {
+          bindWb = true
+        }
+        return {
+          userInfo: detData,
+          bindWx: bindWx,
+          bindQQ: bindQQ,
+          bindWb: bindWb
+        }
+      }
+    },
+    okSwitch (type) {
+      this.bindMethod(type)
+    },
+    noSwitch (type) {
+      this.unbindMethod(type)
+    },
+    bindMethod (type) {
+      // 绑定
+      let sameurl = 'http://' + window.location.host + 'account/mgnumber'
+      let diffurl = ''
+      switch (type) {
+        case 'wx':
+          diffurl = 'wx'
+          break
+        case 'qq':
+          diffurl = 'qq'
+          break
+        case 'wb':
+          diffurl = 'wb'
+          break
+      }
+      let newurl = '/api/authorize/' + diffurl + '?returnUrl=' + sameurl
+      console.log('newurl', newurl)
+      window.location.href = newurl
+    },
+    async unbindMethod (type) {
+      // 解绑
+      const { code, data } = await userApi.dsunbind(type)
+      if (code === 200) {
+        console.log(data)
+        this.getInfo()
+        this.$toast('解绑成功')
+      }
+    }
   }
 }
 </script>

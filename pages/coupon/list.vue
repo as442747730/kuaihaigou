@@ -11,29 +11,29 @@
     </nav>
     <div class="lists">
       <section class="list" v-if="navIndex === 0">
-        <div class="list-item" v-for="n in 5">
+        <div class="list-item" v-for="(wsy, index) in wsylist" :key="index">
           <div class="item-l">
-            <div class="price">￥<span class="price_weight">10</span></div>
-            <p class="useok">满100元可用</p>
+            <div class="price">￥<span class="price_weight">{{wsy.faceValue}}</span></div>
+            <p class="useok">满{{wsy.useThreshold}}元可用</p>
           </div>
           <div class="item-r">
             <h4 class="r_name">全品类通用券</h4>
-            <p>适用平台：全平台</p>
-            <p>有效期：2018-4-30至2018-12-30</p>
+            <!-- <p>适用平台：全平台</p> -->
+            <p>有效期：{{wsy.startTimeDesc}}至{{wsy.endTimeDesc}}</p>
           </div>
         </div>
       </section>
       <section class="list" v-else-if="navIndex === 1">
-        <div class="list-item list-used" v-for="n in 5">
+        <div class="list-item list-used" v-for="(record, index) in recordlist" :key="index">
           <div class="item-l">
-            <div class="price use_used">￥<span class="price_weight">10</span></div>
-            <p class="useok use_used">满100元可用</p>
+            <div class="price use_used">￥<span class="price_weight">{{record.faceValue}}</span></div>
+            <p class="useok use_used">满{{record.useThreshold}}元可用</p>
           </div>
           <div class="item-r">
             <div class="r_logo"></div>
-            <h4 class="r_name use_used r_name-logo">全品类通用券全品类通用券全品类通用券全品类通用券</h4>
-            <p class="use_used r_name-logo">适用平台：全平台</p>
-            <p class="use_used">有效期：2018-4-30至2018-12-30</p>
+            <h4 class="r_name use_used r_name-logo">全品类通用券</h4>
+            <!-- <p class="use_used r_name-logo">适用平台：全平台</p> -->
+            <p class="use_used">有效期：{{record.startTimeDesc}}至{{record.endTimeDesc}}</p>
           </div>
         </div>
       </section>
@@ -45,7 +45,7 @@
           </div>
           <div class="item-r">
             <h4 class="r_name use_used">全品类通用券</h4>
-            <p class="use_used">适用平台：全平台</p>
+            <!-- <p class="use_used">适用平台：全平台</p> -->
             <p class="use_used">有效期：2018-4-30至2018-12-30</p>
           </div>
         </div>
@@ -55,20 +55,59 @@
 </template>
 <script>
 import comHead from '~/components/com-head'
+import { couponApi } from '~/api/coupon'
 export default {
   components: {
     comHead
+  },
+  async asyncData (req) {
+    let params = { page: 1, count: 10, ifUsed: false }
+    const { code, data } = await couponApi.serverGetList(params, req)
+    console.log('code', code)
+    if (code === 200) {
+      console.log(data)
+      return { wsylist: data.array }
+    }
   },
   data () {
     return {
       configtitle: '我的优惠券',
       navlist: ['未使用', '使用记录', '已过期'],
-      navIndex: 0
+      navIndex: 0,
+      wsylist: [],
+      recordlist: []
     }
   },
   methods: {
     navFn (index) {
       this.navIndex = index
+      if (index === 0) {
+        this.wsyFn()
+      } else if (index === 1) {
+        this.recordFn()
+      }
+    },
+    async wsyFn () {
+      let params = {
+        page: 1,
+        count: 10,
+        ifUsed: false
+      }
+      const { code, data } = await couponApi.couponlist(params)
+      if (code === 200) {
+        this.wsylist = data.array
+      }
+    },
+    async recordFn () {
+      let params = {
+        page: 1,
+        count: 10,
+        ifUsed: true
+      }
+      const { code, data } = await couponApi.couponlist(params)
+      if (code === 200) {
+        this.recordlist = data.array
+      }
     }
   }
 }
@@ -76,7 +115,7 @@ export default {
 <style lang="less" scoped>
 .coupon {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background: #F5F5F5;
 }
 

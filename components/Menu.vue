@@ -3,7 +3,7 @@
   <div class="u-menu">
     <div class="menu-wrapper">
       <div class="menu-ul">
-        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key">{{ m.name }}</div>
+        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key" @click="topage(m.key)">{{ m.name }}</div>
       </div>
     </div>
   </div>
@@ -25,6 +25,28 @@
           { name: '打赏记录', key: 'reward' },
           { name: '服务中心', key: 'service' }
         ]
+      }
+    },
+    methods: {
+      topage (key) {
+        console.log('key', key)
+        switch (key) {
+          case 'invo':
+            window.location.href = '/invoice/list'
+            break
+          case 'address':
+            window.location.href = '/address/list'
+            break
+          case 'coupon':
+            window.location.href = '/coupon/list'
+            break
+          case 'account':
+            window.location.href = '/account/mgnumber'
+            break
+          default:
+            console.log('暂未开放')
+            break
+        }
       }
     }
   }
