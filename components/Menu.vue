@@ -3,7 +3,7 @@
   <div class="u-menu">
     <div class="menu-wrapper">
       <div class="menu-ul">
-        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key" @click="topage(m.key)">{{ m.name }}</div>
+        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key" @click="linkTo(m.url)">{{ m.name }}</div>
       </div>
     </div>
   </div>
@@ -15,38 +15,21 @@
     data () {
       return {
         menuList: [
-          { name: '我的消息', key: 'msg' },
-          { name: '发票信息', key: 'invo' },
-          { name: '地址管理', key: 'address' },
-          { name: '我的优惠券', key: 'coupon' },
-          { name: '售后记录', key: 'after' },
-          { name: '账号管理', key: 'account' },
-          { name: '资质认证', key: 'certif' },
-          { name: '打赏记录', key: 'reward' },
-          { name: '服务中心', key: 'service' }
+          { name: '我的消息', key: 'msg', url: '' },
+          { name: '发票信息', key: 'invo', url: '/invoice/list' },
+          { name: '地址管理', key: 'address', url: '/address/list' },
+          { name: '我的优惠券', key: 'coupon', url: '/coupon/list' },
+          { name: '售后记录', key: 'after', url: '/aftersale/list' },
+          { name: '账号管理', key: 'account', url: '/account/mgnumber' },
+          { name: '资质认证', key: 'certif', url: '' },
+          { name: '打赏记录', key: 'reward', url: '' },
+          { name: '服务中心', key: 'service', url: '' }
         ]
       }
     },
     methods: {
-      topage (key) {
-        console.log('key', key)
-        switch (key) {
-          case 'invo':
-            window.location.href = '/invoice/list'
-            break
-          case 'address':
-            window.location.href = '/address/list'
-            break
-          case 'coupon':
-            window.location.href = '/coupon/list'
-            break
-          case 'account':
-            window.location.href = '/account/mgnumber'
-            break
-          default:
-            console.log('暂未开放')
-            break
-        }
+      linkTo (val) {
+        window.location.href = val
       }
     }
   }

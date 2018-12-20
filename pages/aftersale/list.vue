@@ -17,12 +17,12 @@
             <span class="status">{{ statusTxt[item.status - 1] }}</span>
           </div>
           <div class="body">
-            <div class="cover" v-lazy:background-image=""></div>
+            <div class="cover" v-lazy:background-image="item.cover"></div>
             <div class="info">
               <p class="title">{{ item.goodsName }}</p>
               <p class="desc">{{ item.skuName }}</p>
-              <p class="desc">x{{  }}</p>
-              <div class="u-button small default inline">查看详情</div>
+              <p class="desc">x{{ item.num }}</p>
+              <div class="u-button small default inline" @click="getDetail(item.id)">查看详情</div>
             </div>
           </div>
         </div>
@@ -49,6 +49,7 @@
 
 <script>
 import { afterSaleApi } from '~/api/order'
+import api from '~/utils/request'
 import AfterFilter from '~/components/evaluation/AfterFilter'
 
 export default {
@@ -68,11 +69,17 @@ export default {
   },
 
   async asyncData (req) {
-    afterSaleApi.getAfterSaleList({ page: 1, count: 10 }, req).then(res => {
-      console.log(res.code)
-      if (res.code === 506) return req.redirect('/account/login')
-      if (res.code === 200) return { list: res.data.array }
-      return req.redirect('/error')
+    return api.serverGet('/api/afterSale/paginate', { page: 1, count: 10 }, req).then((res) => {
+    // afterSaleApi.getAfterSaleList().then(res => {
+      console.log(res.data)
+      if (res.code === 506) {
+        req.redirect('/account/login')
+      }
+      if (res.code === 200) {
+        return { list: res.data.array }
+      } else {
+        req.redirect('/error')
+      }
     })
   },
 
@@ -112,7 +119,7 @@ export default {
       const { code, data } = await afterSaleApi.getAfterSaleListClient({ page: this.currentPage, count: 10, status: this.status, serviceType: this.serviceType, ...this.searchKey })
       if (code === 200) {
         if (getmore) {
-          this.list.push(data.array)
+          this.list.push(...data.array)
         } else {
           this.list = data.array
         }
@@ -140,6 +147,10 @@ export default {
       console.log('getMore')
       await this.fetchData(true)
       this.loading = false
+    },
+
+    getDetail (val) {
+      window.location.href = `/aftersale/detail/${val}`
     },
 
     showFilter () {

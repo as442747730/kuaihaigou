@@ -31,7 +31,7 @@
             </div>
             <p class="desc">x{{ item.num }}</p>
           </div>
-          <div class="product-handler" v-if="orderDetail.status !== 1 && item.ifEnable">
+          <div class="product-handler" v-if="orderDetail.status !== 1 && orderDetail.status !== 7 && item.ifEnable">
             <div class="u-button default small inline" @click="goAftersale(item.orderItemId)">{{ orderDetail.status < 5 ? '申请退款' : '申请售后'}}</div>
           </div>
         </div>
@@ -49,7 +49,7 @@
               </div>
 
               <div class="product-handler pack" v-if="orderDetail.status !== 1 && p.ifEnable">
-                <div class="u-button default small inline" @click="goAftersale(item.orderItemId)">{{ orderDetail.status < 5 ? '申请退款' : '申请售后'}}</div>
+                <div class="u-button default small inline" @click="goAftersale(p.orderItemId)">{{ orderDetail.status < 5 ? '申请退款' : '申请售后'}}</div>
               </div>
 
             </div>
@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { orderApi, aftersaleApi } from '~/api/order'
+import { orderApi, afterSaleApi } from '~/api/order'
 import api from '~/utils/request'
 
 export default {
@@ -127,30 +127,32 @@ export default {
   async asyncData (req) {
     return api.all([
       orderApi.getOrderDetail(req.query.id, req),
-      aftersaleApi.getAlreadyComplate(req.query.id, req)
+      afterSaleApi.getAlreadyComplate(req.query.id, req)
     ]).then(api.spread(function (res1, res2) {
       if (res1.code === 506 || res2.code === 506) {
         req.redirect('/account/login')
       }
+      // console.log(res1.data, res2.data)
       if (res1.code === 200 && res2.code === 200) {
-        res2.data.orderItemList.forEach((n, i) => {
-          if (!n.packName && n.num === res2.data.filter(m => m.orderItemId === n.orderItemId)[0].num) {
+        res1.data.orderItemList.forEach((n, i) => {
+          if (!n.packName && res2.data.filter(m => m.orderItemId === n.orderItemId).length !== 0 && res2.data.filter(m => m.orderItemId === n.orderItemId)[0].num === n.num) {
             n.ifEnable = false
           } else {
             n.ifEnable = true
           }
         })
-        res2.data.orderItemList.forEach((n, id) => {
+        res1.data.orderItemList.forEach((n, id) => {
           if (n.packName) {
-            n.goodsList.forEach((m, idx) => {
-              if (m.num === res2.data.filter(t => m.orderItemId === t.orderItemId)[0].num) {
-                n.ifEnable = false
+            n.goodsList.forEach((m) => {
+              if (res2.data.filter(t => m.orderItemId === t.orderItemId).length !== 0 && m.num === res2.data.filter(t => m.orderItemId === t.orderItemId)[0].num) {
+                m.ifEnable = false
               } else {
-                n.ifEnable = true
+                m.ifEnable = true
               }
             })
           }
         })
+        console.log(res1.data.orderItemList[0].goodsList)
         return { orderDetail: res1.data, orderId: req.query.id }
       } else {
         req.redirect('/error')
@@ -172,7 +174,7 @@ export default {
       statusIcon: ['clock', 'receive', 'receive', 'receive', 'comment', 'success', 'close'],
 
       orderStatus: null,
-      orderDetail: { status: 1, province: '广州,9230923423', city: '搜索,f2323', district: '无缝无法,fwefwe', address: '232fwe' }
+      orderDetail: {}
     }
   },
 

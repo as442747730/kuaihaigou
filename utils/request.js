@@ -134,7 +134,7 @@ export default {
       withCredentials: false,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json;charset=UTF-8'
       }
     }).then(checkStatus).then(checkCode)
   },

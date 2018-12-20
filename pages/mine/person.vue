@@ -81,7 +81,7 @@ import listTwo from '~/components/mine/ListTwo'
 import selectHead from '~/components/mine/SelectHead'
 import editinfo from '~/components/mine/Editinfo'
 import elSex from '~/components/mine/ElSex'
-import elDate from '~/components/mine/ElDate'
+import elDate from '~/components/mine/elDate'
 export default {
   components: {
     comHead,
