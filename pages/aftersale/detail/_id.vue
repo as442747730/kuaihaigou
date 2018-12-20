@@ -1,10 +1,10 @@
 <template>
-  <div :class="['m-aftersale-detail', status < 5 ? 'hasButton' : '']">
+  <div class="m-aftersale-detail">
 
     <uTabs :list="tabList" @on-change="handleTab"></uTabs>
 
     <transition name="fade">
-      <div class="info-section" v-if="section === 1">
+      <div :class="['info-section', status < 5 ? 'hasButton' : '']" v-if="section === 1">
 
         <div class="status-wrapper">
           <div :class="['status-title', status === 6 ? 'light-orange' : '']">{{ statusTxt }}</div>
@@ -17,19 +17,19 @@
         <div class="info-wrapper">
           <div class="info-top">
             <div class="info-top-item">
-              <span>申请号：198014266</span>
+              <span>申请号：{{ detailObj.afterSaleIdentify }}</span>
               <span class="link" @click="getCredentials">查看申请凭证</span>
             </div>
-            <div class="info-top-item">申请时间：2017-05-01 16:00</div>
+            <div class="info-top-item">申请时间：{{ detailObj.createdAt }}</div>
           </div>
           <div class="info-content">
             <div class="g-product">
-              <div class="cover" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
+              <div class="cover" v-lazy:background-image="detailObj.cover"></div>
               <div class="info">
-                <p class="title">法国1982拉菲法国1982拉菲传奇Lafite</p>
-                <p class="desc sku">单瓶/普通装<span>x1</span></p>
-                <p class="desc"><span :class="{ 'light-orange': status !== 5 }">申请退款：¥199</span>
-                  <span class="light-orange" v-if="status === 5">实际退款： ￥392</span></p>
+                <p class="title">{{ detailObj.goodsName }}</p>
+                <p class="desc sku">{{ detailObj.skuName }}<span>x{{ detailObj.num }}</span></p>
+                <p class="desc"><span :class="{ 'light-orange': status !== 5 }">申请退款：¥{{ detailObj.totalRefundAmount }}</span>
+                  <span class="light-orange" v-if="status === 5">实际退款： ￥{{ detailObj.actualRefundAmount }}</span></p>
               </div>
             </div>
           </div>
@@ -37,15 +37,15 @@
 
         <div class="contact-wrapper">
           <div class="wrapper-title">联系方式</div>
-          <p class="cnotact-cell"><span class="label">联系人：</span><span class="subs">刘德华</span></p>
-          <p class="cnotact-cell"><span class="label">联系电话：</span><span class="subs">18272637263</span></p>
-          <p class="cnotact-cell"><span class="label">收货地址：</span><span class="subs">广东广州市海珠区新港东路(黄埔村北码头28号)M创工场1号楼210</span></p>
+          <p class="cnotact-cell"><span class="label">联系人：</span><span class="subs">{{ detailObj.contact }}</span></p>
+          <p class="cnotact-cell"><span class="label">联系电话：</span><span class="subs">{{ detailObj.phone }}</span></p>
+          <p class="cnotact-cell"><span class="label">收货地址：</span><span class="subs">{{ `${detailObj.province}${detailObj.city}${detailObj.district}${detailObj.address}` }}</span></p>
         </div>
 
-        <div class="courior-wrapper" v-if="serviceType === 2 && status > 2">
+        <div class="courior-wrapper" v-if="detailObj.serviceType === 2 && status > 2">
           <div class="wrapper-title">退货快递信息</div>
-          <div class="wrapper-desc">快递公司：顺丰快递</div>
-          <div class="wrapper-desc">快递单号：382994802475927530</div>
+          <div class="wrapper-desc">快递公司：{{ detailObj.logistics }}</div>
+          <div class="wrapper-desc">快递单号：{{ detailObj.logisticsIdentify }}</div>
         </div>
 
         <div class="btn-wrapper fit" v-if="status < 5">
@@ -73,14 +73,14 @@
             <div class="g-product">
               <div class="cover" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
               <div class="info">
-                <p class="title">法国1982拉菲法国1982拉菲传奇Lafite</p>
-                <p class="desc">单瓶/普通装<span>x1</span></p>
+                <p class="title">{{ detailObj.goodsName }}</p>
+                <p class="desc">{{ detailObj.skuName }}<span>x{{ detailObj.num }}</span></p>
               </div>
             </div>
             <div class="detail">
-              <p><span class="label">申请退款：</span><span class="desc">￥399</span></p>
-              <p><span class="label">退货原因：</span><span class="desc">与商品描述不符</span></p>
-              <p><span class="label">问题描述：</span><span class="desc">怎么送过来的旧的描述和你们商品界面的描述不一致，而且查了下价格也差很多，你们怎么搞的？</span></p>
+              <p><span class="label">申请退款：</span><span class="desc">￥{{ detailObj.totalRefundAmount }}</span></p>
+              <p><span class="label">退货原因：</span><span class="desc">{{ detailObj.reason }}</span></p>
+              <p><span class="label">问题描述：</span><span class="desc">{{ detailObj.description }}</span></p>
             </div>
             <div class="photo">
               <p class="title">凭证图片</p>
@@ -98,6 +98,25 @@
 
     <transition name="fade">
       <div class="record-section" v-if="section === 2">
+        <div class="msg-box">
+
+          <div :class="['msg-item', item.userid === 0 ? 'js' : '']" v-for="(item, index) in recordList" :key="index">
+            <div class="time" v-if="index === 0 || getRecordTime(item.createdAt) - getRecordTime(recordList[index - 1].createdAt) > 120000">{{ item.createdAt }}</div>
+            <div class="left avatar" v-if="item.userid === 0" style="background-image: url('~/assets/img/foot/ic_home_ele@2x.png')"></div>
+            <div class="center">
+              <span v-if="!item.ifImg">{{ item.content }}</span>
+              <img v-else :src="item.content" alt="" @click="viewPhoto(item.content)">
+            </div>
+            <div class="right avatar" :style="`background-image: url(${item.headimgurl})`"></div>
+          </div>
+
+        </div>
+        <div class="input-box">
+          <input class="input-select" v-model="content" placeholder="输入你的内容" @keyup.enter="sendMessage"></input>
+          <Upload @on-success="sendImageRecord" :ifMult="false">
+            <div class="image-select"></div>
+          </Upload>
+        </div>
       </div>
     </transition>
 
@@ -106,14 +125,16 @@
 </template>
 
 <script>
-import uTabs from '@/components/Tabs'
-import { aftersaleApi } from '~/api/order'
+import { afterSaleApi } from '~/api/order'
 import { ImagePreview } from 'vant'
+import uTabs from '@/components/Tabs'
+import Upload from '@/components/Upload'
+import api from '~/utils/request'
 
 export default {
   name: '',
 
-  components: { uTabs },
+  components: { uTabs, Upload },
 
   head () {
     return {
@@ -125,13 +146,18 @@ export default {
   },
 
   async asyncData (req) {
-    aftersaleApi.getAftersaleDetail(req.params.id, req).then(res => {
+    return api.serverGet(`/api/afterSale/getDetail/${req.params.id}`, { afterSaleId: req.params.id }, req).then(res => {
+    // afterSaleApi.getAftersaleDetail(req.params.id, req).then(res => {
+      console.log(res.data)
       if (res.code === 506) {
         req.redirect('/account/login')
       }
       if (res.code === 200) {
         return {
-          id: req.params.id
+          id: req.params.id,
+          status: res.data.status,
+          imgList: res.data.imgs,
+          detailObj: res.data
         }
       } else {
         req.redirect('/error')
@@ -151,18 +177,24 @@ export default {
 
       reasonShow: false,
 
+      detailObj: {},
+
       id: null,
       status: 1,
-      serviceType: 2, // 1 仅退款 2 退货退款
+
       statusList: ['待审核', '审核中', '审核中', '退款中', '退款完成', '已拒绝', '已关闭'],
       descList: ['当前申请单已提交审核，我们会尽快处理', '等待您寄回货物，请提交退货运单号，', '等待接受您寄回的货物中', '正在走退款流程中，款项将原路返回您的账号', '款项已经原路退返至您的账号，请注意查收', '抱歉，您不符合退款条件，', '当前申请已经关闭'],
 
       crenShow: false,
-      imgList: [require('~/assets/img/img2.png'), require('~/assets/img/img2.png'), require('~/assets/img/img2.png')],
+      imgList: [],
+
+      content: '',
 
       transfromShow: false,
       logiName: '',
       logiNum: '',
+
+      recordList: [],
 
       tabList: [{ name: '申请信息', key: 1 }, { name: '协商记录', key: 2 }]
     }
@@ -178,8 +210,27 @@ export default {
   },
 
   methods: {
+    /* eslint-disable */
+    getRecordTime (t) {
+      const m = t.match(/(\d+)年(\d+)月(\d+)日 (\d+)\:(\d+)\:(\d+)/)
+      m.splice(0, 1)
+      m[1] = (m[1] - 1).toString()
+      return new Date(...m).getTime()
+    },
+    /* eslint-disable */
+
     handleTab (val) {
+      if (val === 2) {
+        this.getRecord()
+      }
       this.section = val
+    },
+
+    async getRecord () {
+      const { code, data } = await afterSaleApi.getNegotiation(this.id)
+      if (code === 200) {
+        this.recordList = data
+      }
     },
 
     showReason () {
@@ -188,9 +239,6 @@ export default {
 
     getCredentials () {
       window.location.hash = '#credentials'
-      // console.log(this.$nuxt._route)
-      // console.log(this.$nuxt.$route)
-      // this.crenShow = true
     },
     preview (index) {
       ImagePreview({
@@ -199,18 +247,45 @@ export default {
       })
     },
 
+    viewPhoto (val) {
+      ImagePreview({
+        images: [val]
+      })
+    },
+    async sendMessage () {
+      const { code } = await afterSaleApi.sendMessage({ content: this.content, id: this.id, ifImg: false })
+      if (code === 200) {
+        this.$toast.success('发送成功')
+        this.getRecord()
+      }
+    },
+    async sendImageRecord (val) {
+      const { code } = await afterSaleApi.sendMessage({ content: val, id: this.id, ifImg: true })
+      if (code === 200) {
+        this.$toast.success('发送成功')
+        this.content = ''
+        this.getRecord()
+      }
+    },
+
     openTransform () {
+      this.logiName = ''
+      this.logiNum = ''
       this.transfromShow = true
     },
-    sendTransform () {
-
+    async sendTransform () {
+      const { code } = await afterSaleApi.sendTransform({ id: this.id, logistics: this.logiName, logisticsIdendity: this.logiNum })
+      if (code === 200) {
+        this.$toast.success('填写成功')
+      }
+      this.transfromShow = false
     },
 
     async handleCancel () {
       this.$dialog.confirm({
         message: '确定取消售后吗？'
       }).then(async () => {
-        const { code } = await aftersaleApi.cancelAftersale(this.id)
+        const { code } = await afterSaleApi.cancelAftersale(this.id)
         if (code === 200) {
           this.$toast.success('取消订单成功')
           this.fetchData()
@@ -225,10 +300,11 @@ export default {
 .m-aftersale-detail {
   min-height: 100vh;
   background: @cor_border;
-  // todo
-  &.hasButton {
-    box-sizing: border-box;
-    margin-bottom: 50px;
+  .info-section {
+    &.hasButton {
+      box-sizing: border-box;
+      margin-bottom: 50px;
+    }
   }
   .status-wrapper {
     padding: 40px 15px;
@@ -424,6 +500,86 @@ export default {
   }
   .light-orange {
     color: #FB6248;
+  }
+
+  .record-section {
+    height: calc(100vh - 45px);
+    display: flex;
+    flex-direction: column;
+    .msg-box {
+      padding: 20px 10px;
+      flex: 1;
+      overflow: scroll;
+      .msg-item {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        &.js {
+          justify-content: flex-start;
+          .content {
+            margin-right: 45px;
+            margin-left: 0;
+          }
+        }
+        &:not(:last-child) {
+          margin-bottom: 30px;
+        }
+        .time {
+          width: 100%;
+          text-align: center;
+          font-size: 13px;
+          color: @cor_999;
+          padding: 20px;
+        }
+        .avatar {
+          width: 35px;
+          height: 35px;
+          background-position: center;
+          background-size: cover;
+          background-repeat: no-repeat;
+          border-radius: 4px;
+          &.left {
+            margin-right: 10px;
+          }
+          &.right {
+            margin-left: 10px;
+          }
+        }
+        .center {
+          padding: 8px 10px;
+          border-radius: 4px;
+          background: #03A1CD;
+          font-size: 15px;
+          line-height: 25px;
+          color: white;
+          margin-left: 45px;
+          margin-right: 0;
+          img {
+            width: 120px;
+            height: auto;
+          }
+        }
+      }
+    }
+    .input-box {
+      background: white;
+      padding: 18px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      .input-select {
+        flex: 1;
+        margin-right: 15px;
+      }
+      .image-select {
+        width: 22px;
+        height: 20px;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-image: url(~/assets/img/afterSale/icon-image.png);
+      }
+    }
   }
 
   .dialog-title {

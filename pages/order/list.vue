@@ -81,6 +81,7 @@
 
 <script>
 import { orderApi } from '~/api/order'
+import api from '~/utils/request'
 import uTabs from '@/components/Tabs'
 
 export default {
@@ -99,9 +100,9 @@ export default {
   },
 
   async asyncData (req) {
-    console.log(Object.keys(req))
-    orderApi.getOrderList({ page: 1, count: 10 }, req).then((res) => {
-      console.log(res.data.array)
+    return api.serverGet('/api/order/paginate', { page: 1, count: 10 }, req).then((res) => {
+      // orderApi.getOrderList({ page: 1, count: 10 }, req).then((res) => {
+      console.log(res.code)
       if (res.code === 506) {
         req.redirect('/account/login')
       }
@@ -202,6 +203,7 @@ export default {
   .u-pull {
     height: calc(~'100vh - 45px');
     overflow: scroll;
+    -webkit-overflow-scrolling: touch;
   }
   .order-wrapper {
     .empty {

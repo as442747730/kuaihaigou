@@ -1,7 +1,7 @@
 <template>
 
   <div class="u-upload" >
-    <van-uploader :after-read="handleRead" accept="image/*" multiple >
+    <van-uploader :after-read="handleRead" accept="image/*" :multiple="ifMult" >
       <slot></slot>
     </van-uploader>
   </div>
@@ -24,6 +24,10 @@ export default {
     max: {
       type: Number,
       default: 5
+    },
+    ifMult: {
+      type: Boolean,
+      default: true
     }
   },
 

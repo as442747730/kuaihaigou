@@ -402,19 +402,19 @@ export default {
         return this.$toast('请选择收货地址')
       }
       this.payMethodShow = true
-      // const toast2 = Toast.loading({ mask: true, message: '提交订单中', duration: 0 })
-      // const { code, data } = await api.clientPostJson('/api/order/order', {
-      //   shippingAddressId: this.addressSelected.id,
-      //   // remark
-      //   invoiceId: this.invoinceSelected.id,
-      //   promotionId: '', // todo
-      //   couponId: this.couponSelected.couponId
-      // })
-      // if (code === 200) {
-      //   toast2.clear()
-      // } else {
-      //   this.$toast(data)
-      // }
+      const toast2 = Toast.loading({ mask: true, message: '提交订单中', duration: 0 })
+      const { code, data } = await api.clientPostJson('/api/order/order', {
+        shippingAddressId: this.addressSelected.id,
+        // remark
+        invoiceId: this.invoinceSelected.id,
+        promotionId: '', // todo
+        couponId: this.couponSelected.couponId
+      })
+      if (code === 200) {
+        toast2.clear()
+      } else {
+        this.$toast(data)
+      }
     },
 
     historyBack () {
