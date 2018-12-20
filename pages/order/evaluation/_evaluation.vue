@@ -57,10 +57,6 @@
 <script>
 import { orderApi } from '~/api/order'
 import ImageHandler from '~/components/evaluation/ImageHandler'
-<<<<<<< HEAD
-=======
-// import { ImagePreview } from 'vant'
->>>>>>> 0face60a9dbe20b909fa75bc6a82fbef43f6d14b
 
 export default {
   name: '',

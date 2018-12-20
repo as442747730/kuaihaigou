@@ -1,13 +1,5 @@
-import 'vue2-toast/lib/toast.css'
 import Vue from 'vue'
-import Toast from 'vue2-toast'
-
-Vue.use(Toast, {
-  defaultType: 'center',
-  duration: 3000,
-  wordWrap: true,
-  width: '150px'
-})
+import Toast from 'vant'
 
 const vue = new Vue()
 
@@ -32,21 +24,21 @@ export default {
   // 正则检测
   async validate (val, type, message) {
     if (!regexp[type].test(val)) {
-      vue.$toast.center(message)
+      Toast(message)
     }
     return regexp[type].test(val)
   },
   validateSame (val1, val2, message) {
     console.log('here')
     if (!(val1 === val2)) {
-      vue.$toast.center(message)
+      Toast(message)
     }
     return val1 === val2
   },
   // 空值检测
   validateEmpty (val, message) {
     if (!val) {
-      vue.$toast.center(message)
+      Toast(message)
     }
     return !val === false
   },
