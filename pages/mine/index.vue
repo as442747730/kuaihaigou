@@ -2,7 +2,7 @@
   <div class="mine">
     <header>
       <div class="hd-head">
-        <div class="hd_l"></div>
+        <div class="hd_l" data-val="123" @click="openMenu"></div>
         <div class="hd_c">我的</div>
         <div class="hd_r"></div>
       </div>
@@ -54,13 +54,17 @@
         </section>
       </div>
     </div>
-    <u-footer :postIndex="footIndex"></u-footer>
+    <van-popup class="vanpopup" v-model="showmenu" position="left">
+      <left-menu></left-menu>
+    </van-popup>
+    <!-- <u-footer :postIndex="footIndex"></u-footer> -->
   </div>
 </template>
 <script>
-import uFooter from '~/components/footer'
-import uArticle from '~/components/mine/_article'
-import uJarsclb from '~/components/mine/_jarsclub'
+// import uFooter from '~/components/footer'
+import uArticle from '~/components/mine/Article'
+import uJarsclb from '~/components/mine/Jarsclub'
+import leftMenu from '~/components/Menu'
 import { userApi } from '~/api/users'
 export default {
   head () {
@@ -72,9 +76,10 @@ export default {
     }
   },
   components: {
-    uFooter,
+    // uFooter,
     uArticle,
-    uJarsclb
+    uJarsclb,
+    leftMenu
   },
   data () {
     return {
@@ -88,7 +93,8 @@ export default {
         buyNumber: 0,
         signature: '',
         headimgurl: ''
-      }
+      },
+      showmenu: false
     }
   },
   // async asyncData (req) {
@@ -103,11 +109,12 @@ export default {
   // },
   async mounted () {
     let detfn = userApi.asyUserDetail()
-    const { detCode, detData } = await detfn
+    const { code: detCode, data: detData } = await detfn
+    console.log(detCode, 'detCode')
     if (detCode === 200) {
       let { nickname, buyNumber, signature, headimgurl } = detData
       let userInfo = { nickname, buyNumber, signature, headimgurl }
-      this.userInfo(...userInfo)
+      this.userInfo = { ...userInfo }
     }
   },
   methods: {
@@ -127,6 +134,10 @@ export default {
     },
     toperson () {
       this.$router.push('/mine/person')
+    },
+    openMenu () {
+      console.log(this.showmenu, 'showmenu')
+      this.showmenu = !this.showmenu
     }
   }
 }
@@ -338,6 +349,10 @@ export default {
         padding: 30px 20px 10px;
       }
     }
+  }
+  .vanpopup {
+    width: 250px;
+    height: 100vh;
   }
 }
 </style>

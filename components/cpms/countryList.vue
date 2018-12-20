@@ -1,31 +1,39 @@
 <template>
-  <div class="countrys" ref="refcountry">
-    <header>
-      <h1>
+  <van-popup style="width: 100vw; height: 100vh;" overlay-class="active" v-model="showcountry" position="left">
+    <div class="countrys">
+      <header>
+        <h1>
         <span class="icon_del" @click="delCountry"></span> 国家产区
       </h1>
-    </header>
-    <section>
-      <div class="sec-l rollList">
-        <ul class="countrylist">
-          <li :class="{active: index===1}" v-for="(country, index) in countries" :key="index">{{country}}</li>
-        </ul>
-      </div>
-      <div class="sec-r rollList">
-        <ul class="areaList">
-          <li class="one">所有产区</li>
-          <li v-for="(area, index) in produceAreas" :key="index">{{area}}</li>
-        </ul>
-      </div>
-    </section>
-    <footer>
-      <div class="btn">重置</div>
-      <div class="btn active">确认</div>
-    </footer>
-  </div>
+      </header>
+      <section>
+        <div class="sec-l rollList">
+          <ul class="countrylist">
+            <li :class="{active: index===1}" v-for="(country, index) in countries" :key="index">{{country}}</li>
+          </ul>
+        </div>
+        <div class="sec-r rollList">
+          <ul class="areaList">
+            <li class="one">所有产区</li>
+            <li v-for="(area, index) in produceAreas" :key="index">{{area}}</li>
+          </ul>
+        </div>
+      </section>
+      <footer>
+        <div class="btn">重置</div>
+        <div class="btn active">确认</div>
+      </footer>
+    </div>
+  </van-popup>
 </template>
 <script>
 export default {
+  props: {
+    showcountry: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       countries: ['所有国家', '法国', '德国', '西班牙', '葡萄牙', '澳大利亚', '阿根廷', '新西兰', '保加利亚', '意大利'],
@@ -33,20 +41,13 @@ export default {
     }
   },
   methods: {
-    addClass () {
-      let country = this.$refs.refcountry
-      country.classList.add('transx')
-    },
     delCountry () {
-      let country = this.$refs.refcountry
-      country.classList.remove('transx')
       this.$emit('delCountry')
     }
   }
 }
 </script>
 <style lang="less" scoped>
-
 .countrys {
 
   position: fixed;
@@ -62,10 +63,6 @@ export default {
   z-index: 110;
 
   background: #fff;
-
-  overflow: hidden;
-  transform: translateX(-100%);
-  transition: transform ease 1s;
 
   &>header {
 

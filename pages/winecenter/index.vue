@@ -1,6 +1,6 @@
 <template>
   <div class="winecenter" :class="{stopwineScroll: isRoll}">
-    <div class="winecenter-head">
+    <div class="winecenter-head" :class="{whZindex: twoType}">
       <div class="upper">
         <div class="top">
           <div class="top_l" @click="toOthers">
@@ -17,7 +17,6 @@
           <div class="screen-item" :class="{active: screens.elIndex == index}" @click="elScreens(index)" v-for="(item, index) in screens.list" :key="index">{{item}}</div>
         </div>
       </div>
-      <country-cpm ref="refcountryCpm" :postCountry="countryList" :postArea="areaList" @delCountry="elCountry"></country-cpm>
       
       <div class="elmdl">
         <div class="elmdl-item" :class="{active: ranks.elIndex == index + 3}" @click="elScreens(index + 3)" v-for="(rank, index) in ranks.list" :key="index">
@@ -27,23 +26,6 @@
           <span>{{noviceMaster}}</span>
         </div>
       </div>
-
-      <com-list ref="refComlist" :postType="postType" :postObj="postObj" :martop="martop" @shut="closeScreens">
-        <div slot="headSild" v-if="screens.elIndex === 0">
-          <h2 class="headprice">¥700</h2>
-          <div class="slider">
-            <van-slider v-model="stepvalue" :step="10" bar-height="4px" />
-            <div class="slider-items">
-              <span>¥0</span>
-              <span>¥300</span>
-              <span>¥900</span>
-              <span>不限</span>
-            </div>
-          </div>
-        </div>
-        <div slot="foot" v-if="screens.elIndex === 2 || screens.elIndex === 6"></div>
-      </com-list>
-
     </div>
     <div class="winecenter-content">
       <section class="novice">
@@ -121,15 +103,31 @@
         </div>
       </section>
     </div>
-    <!-- <u-footer :postIndex="footIndex"></u-footer> -->
+    <!-- 国家弹窗 start -->
+    <country-cpm :showcountry="showCountry" @delCountry="elCountry"></country-cpm>
+    <!-- 国家弹窗 end -->
+    <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens">
+      <div class="slideall" slot="headSild" v-if="screens.elIndex === 0">
+        <h2 class="headprice">¥700</h2>
+        <div class="slider">
+          <van-slider v-model="stepvalue" :step="10" bar-height="4px" />
+          <div class="slider-items">
+            <span>¥0</span>
+            <span>¥300</span>
+            <span>¥900</span>
+            <span>不限</span>
+          </div>
+        </div>
+      </div>
+      <div slot="foot" v-if="screens.elIndex === 2 || screens.elIndex === 6"></div>
+    </list-two>
   </div>
 </template>
 <script>
 import testImg1 from '../../assets/img/img.png'
 import testImg2 from '../../assets/img/img2.png'
-// import uFooter from '~/components/footer'
-import countryCpm from '~/components/cpms/country-list.vue'
-import comList from '~/components/cpms/comList.vue'
+import countryCpm from '~/components/cpms/countryList'
+import listTwo from '~/components/cpms/listTwo'
 import api from '~/utils/request'
 
 export default {
@@ -146,6 +144,10 @@ export default {
 
   data () {
     return {
+      showCountry: false,
+      showCom: false,
+      showtwo: false,
+      twoType: false,
       footIndex: 1,
       bkImg1: testImg1,
       bkImg2: testImg2,
@@ -154,7 +156,6 @@ export default {
       stepvalue: 0,
       postObj: {},
       postType: true,
-      martop: false, // 控制comList 组件的属性
       screens: {
         list: ['价格类型', '场景特色', '推荐排序'],
         elIndex: null
@@ -172,9 +173,8 @@ export default {
     }
   },
   components: {
-    // uFooter,
     countryCpm,
-    comList
+    listTwo
   },
   mounted () {
     this.getPageData()
@@ -225,41 +225,22 @@ export default {
       this.isNovice = (index === 0)
       this.addBarwid()
     },
-
     elCountry () {
-      if (this.ranks.elIndex !== null) {
-        this.$refs.refRank.resetFn()
-        return false
-      }
-      if (this.screens.elIndex !== null) {
-        this.$refs.refPrice.resetFn()
-        return false
-      }
-      this.isCountry = !this.isCountry
-      this.isRoll = this.isCountry
-      if (this.isCountry) {
-        setTimeout(() => {
-          this.$refs.refcountryCpm.addClass()
-        })
-      }
+      this.showCountry = !this.showCountry
     },
     elScreens (index) {
-      index <= 2 ? this.martop = false : this.martop = true
       if (index === 2 || index === 6) {
         this.postType = false
       } else {
         this.postType = true
       }
+      if (index < 3) {
+        this.twoType = false
+      } else {
+        this.twoType = true
+      }
       this.$set(this.screens, 'elIndex', index)
-      this.isRoll = true
-      setTimeout(() => {
-        if (index <= 2) {
-          this.$refs.refComlist.addClsType2()
-        } else {
-          this.$refs.refComlist.addClsType1()
-        }
-      }, 10)
-
+      this.showtwo = !this.showtwo
       let getList = []
       switch (index) {
         case 0:
@@ -340,9 +321,9 @@ export default {
       }
       this.$set(this.postObj, 'list', getList)
     },
-    closeScreens () {
+    closeScreens (val) {
       this.screens.elIndex = null
-      this.isRoll = false
+      this.showtwo = val
     },
     customArray (arr) {
       if (!Array.isArray(arr)) return false
@@ -352,6 +333,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
+.vps {
+  z-index: 20;
+}
 
 .stopwineScroll {
   height: 100vh;
@@ -365,12 +350,20 @@ export default {
   &-content {
     .padlr20;
   }
+  &-head {
+    position: relative;
+  }
+  .whZindex {
+    z-index: 3000;
+  }
 }
 
 .upper {
   padding-top: 10px;
+  z-index: 3000;
+  position: relative;
+  background: #fff;
   .padlr20;
-  .cpmzIndex;
 }
 
 .top {
@@ -710,6 +703,28 @@ export default {
 
   }
 
+}
+
+.slideall {
+  .headprice {
+    font-size: 19px;
+    font-family: PingFangSC-Semibold;
+    font-weight: 600;
+    text-align: center;
+    .padtb20;
+  }
+  .slider {
+    &-items {
+      .padtb20;
+      .flex_between;
+      &>span {
+        font-size: 12px;
+        font-family: PingFang-SC-Medium;
+        font-weight: 500;
+        color: @cor_666;
+      }
+    }
+  }
 }
 
 </style>

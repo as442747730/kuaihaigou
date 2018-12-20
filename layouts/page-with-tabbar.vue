@@ -13,6 +13,14 @@ export default {
     return {
     }
   },
+  computed: {
+    ufIndex: {
+      get: function () {
+        console.log(this)
+        console.log(this.$route)
+      }
+    }
+  },
   components: {
     uFooter
   }

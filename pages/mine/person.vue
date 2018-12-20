@@ -76,12 +76,12 @@
 <script>
 import { userApi } from '~/api/users'
 import comHead from '~/components/com-head'
-import listOne from '~/components/mine/_listOne'
-import listTwo from '~/components/mine/_listTwo'
-import selectHead from '~/components/mine/_selectHead'
-import editinfo from '~/components/mine/_editinfo'
-import elSex from '~/components/mine/_elSex'
-import elDate from '~/components/mine/elDate'
+import listOne from '~/components/mine/ListOne'
+import listTwo from '~/components/mine/ListTwo'
+import selectHead from '~/components/mine/SelectHead'
+import editinfo from '~/components/mine/Editinfo'
+import elSex from '~/components/mine/ElSex'
+import elDate from '~/components/mine/ElDate'
 export default {
   components: {
     comHead,
