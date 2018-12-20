@@ -577,7 +577,7 @@ export default {
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
-        background-image: url(~/assets/img/afterSale/icon-image.png);
+        background-image: url(~/assets/img/aftersale/icon-image.png);
       }
     }
   }
