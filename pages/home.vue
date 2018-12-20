@@ -391,6 +391,7 @@ export default {
 @import '../assets/css/var.less';
 .m-home {
   display: block;
+  padding-bottom: 50px;
   header {
     padding: 0 20px 24px 20px;
     margin: 49px 0 24px;

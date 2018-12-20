@@ -1,7 +1,4 @@
-import Vue from 'vue'
 import Toast from 'vant'
-
-const vue = new Vue()
 
 const regexp = {
   phoneOrEmail: /(^1[34578]{1}\d{9}$)|(^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$)/,

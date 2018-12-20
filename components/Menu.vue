@@ -3,7 +3,7 @@
   <div class="u-menu">
     <div class="menu-wrapper">
       <div class="menu-ul">
-        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key">{{ m.name }}</div>
+        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key" @click="linkTo(m.url)">{{ m.name }}</div>
       </div>
     </div>
   </div>
@@ -15,16 +15,22 @@
     data () {
       return {
         menuList: [
-          { name: '我的消息', key: 'msg' },
-          { name: '发票信息', key: 'invo' },
-          { name: '地址管理', key: 'address' },
-          { name: '我的优惠券', key: 'coupon' },
-          { name: '售后记录', key: 'after' },
-          { name: '账号管理', key: 'account' },
-          { name: '资质认证', key: 'certif' },
-          { name: '打赏记录', key: 'reward' },
-          { name: '服务中心', key: 'service' }
+          { name: '我的消息', key: 'msg', url: '' },
+          { name: '发票信息', key: 'invo', url: '' },
+          { name: '地址管理', key: 'address', url: '' },
+          { name: '我的优惠券', key: 'coupon', url: '' },
+          { name: '售后记录', key: 'after', url: '/aftersale/list' },
+          { name: '账号管理', key: 'account', url: '' },
+          { name: '资质认证', key: 'certif', url: '' },
+          { name: '打赏记录', key: 'reward', url: '' },
+          { name: '服务中心', key: 'service', url: '' }
         ]
+      }
+    },
+
+    methods: {
+      linkTo (val) {
+        window.location.href = val
       }
     }
   }
