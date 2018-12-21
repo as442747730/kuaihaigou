@@ -13,28 +13,28 @@
     <div class="form-wrapper">
       <div class="title">申请售后类型</div>
       <div class="btn-box">
-        <div class="btn">退货退款</div>
-        <div class="btn">仅退款</div>
+        <div :class="['btn', serviceType === 2 ? 'active' : '']" @click="handleType(2)">退货退款</div>
+        <div :class="['btn', serviceType === 1 ? 'active' : '']" @click="handleType(1)">仅退款</div>
       </div>
       <div class="select-box">
         <div class="select-left">
           <p class="select-left-title">退货数量</p>
-          <p class="select-left-desc">(您最多可以提交的的商品数量为1)</p>
+          <p class="select-left-desc">(您最多可以提交的的商品数量为{{ detailObj.remainNum }})</p>
         </div>
         <van-stepper v-model="num" :max="detailObj.remainNum" :min="1" />
       </div>
       <div class="select-box">
         <div class="select-left">
           <p class="select-left-title">退货金额</p>
-          <p class="select-left-desc">(当前可退最大金额为¥1{{ detailObj.totalRefundAmount }}元)</p>
+          <p class="select-left-desc">(当前可退最大金额为¥{{ detailObj.totalRefundAmount }}元)</p>
         </div>
-        <input class="select-right-input" type="number"></input>
+        <input class="select-right-input" v-model="amount" type="number"></input>
       </div>
     </div>
 
     <div class="reason-wrapper">
       <div class="reason-wrapper-title">退货原因
-        <div class="reason-select" @click="openReasonPicker">请选择退货原因</div>
+        <div class="reason-select" @click="openReasonPicker">{{reason ? reason : '请选择退货原因'}}</div>
       </div>
       <div class="reason-wrapper-desc">
         <div class="reason-title">问题描述</div>
@@ -54,17 +54,17 @@
       <div class="contact-wrapper-title">联系方式</div>
       <div class="contact-wrapper-cell">
         <div class="label">联系人</div>
-        <div class="desc"><input class="contact-input"></input></div>
+        <div class="desc"><input v-model="name" class="contact-input"></input></div>
       </div>
       <div class="contact-wrapper-cell">
         <div class="label">联系电话</div>
-        <div class="desc"><input class="contact-input" type="number"></input></div>
+        <div class="desc"><input v-model="phone" class="contact-input" type="number"></input></div>
       </div>
       <div class="contact-wrapper-cell">
         <div class="label">收货地址</div>
         <div class="desc">
           <input class="contact-select" v-model="areaTxt" readonly placeholder="请选择所在省份、城市、区县" @click="openAreaSelect"></input>
-          <input class="contact-input" placeholder="请输入详细地址"></input>
+          <input class="contact-input" v-model="address" placeholder="请输入详细地址"></input>
         </div>
       </div>
     </div>
@@ -117,6 +117,7 @@ export default {
 
   data () {
     return {
+      orderItemId: null,
       detailObj: {},
 
       serviceType: null, // 售后类型
@@ -131,10 +132,11 @@ export default {
       province: '',
       city: '',
       district: '',
+
       address: '',
 
       reasonShow: false,
-      reasonCol: [{ values: ['买错商品', '商品质量', '其他'] }],
+      reasonCol: ['买错商品', '商品质量', '其他'],
 
       areaTxt: '',
 
@@ -166,16 +168,30 @@ export default {
       afterSaleApi.getGoodAndPriceInfo(req.params.id, req)
     ])
       .then(api.spread(function (res1, res2) {
-        if (res1.code === 200) {
-          console.log(res1.code)
+        if (res1.code === 506 || res2.code === 506) {
+          req.redirect('/account/login')
+        }
+        console.log(res2.code)
+        console.log(res2.data)
+        if (res1.code === 200 && res2.code === 200) {
           return {
+            orderItemId: req.params.id,
             provinceList: res1.data.map((n) => { return { text: n.areaName, id: n.id } }),
             detailObj: res2.data,
-            // 假数据
-            provinceId: '1026342557216411649',
-            cityId: '1026342742638202881',
-            districtId: '1026342743196045313',
-            areaTxt: '广东省广州市海珠区'
+            provinceId: String(res2.data.province).split(',')[1],
+            cityId: String(res2.data.city).split(',')[1],
+            districtId: String(res2.data.district).split(',')[1],
+            provinceTxt: String(res2.data.province).split(',')[0],
+            cityTxt: String(res2.data.city).split(',')[0],
+            districtTxt: String(res2.data.district).split(',')[0],
+            areaTxt: String(res2.data.province).split(',')[0] + String(res2.data.city).split(',')[0] + String(res2.data.district).split(',')[0],
+            address: res2.data.address,
+            // provinceId: '1026342557216411649',
+            // cityId: '1026342742638202881',
+            // districtId: '1026342743196045313',
+            // areaTxt: '广东省广州市海珠区'
+            name: res2.data.name,
+            phone: res2.data.phone
           }
         } else {
           req.redirect('/error')
@@ -201,6 +217,12 @@ export default {
     },
     confirmReason (val) {
       this.reason = val
+      this.reasonShow = false
+    },
+
+    handleType (val) {
+      if (val === this.serviceType) return
+      this.serviceType = val
     },
 
     /* 根据上级去获取 列表
@@ -257,27 +279,50 @@ export default {
       this.districtIndex = idx[2] ? idx[2] : ''
       this.popupShow = false
       this.areaTxt = this.provinceTxt + this.cityTxt + this.districtTxt
-    }
-  },
+    },
 
-  async submit () {
-    const { code } = await afterSaleApi.createApplication({
-      serviceType: this.serviceType,
-      num: this.num,
-      refundAmount: this.amount,
-      reason: this.reason,
-      description: this.questionDesc,
-      imgs: this.imgList,
-      contact: this.name,
-      phone: this.phone,
-      province: `${this.provinceTxt},${this.provinceId}`,
-      city: `${this.cityTxt},${this.cityId}`,
-      district: `${this.districtTxt},${this.districtId}`,
-      address: this.address
-    })
-    if (code === 200) {
-      this.$toast.success('提交成功')
-      window.location.href = '/aftersale/list'
+    async submit () {
+      if (!(/^\d+(\.\d+)?$/).test(this.amount)) {
+        return this.$toast('请输入正确的价钱')
+      }
+      if (this.amount > this.detailObj.totalRefundAmount) {
+        return this.$toast('退款金额不可大于最大可退金额')
+      }
+      if (this.validate(this.serviceType, '请选择售后类型') || this.validate(this.amount, '请填写退款金额') || this.validate(this.reason, '请选择退货原因') || this.validate(this.name, '请填写联系人') || this.validate(this.phone, '请填写联系人电话') || this.validate([this.address, this.provinceId, this.cityId, this.districtId], '请填写收货地址')) {
+        return
+      }
+      const { code } = await afterSaleApi.createApplication({
+        orderItemId: this.orderItemId,
+        serviceType: this.serviceType,
+        num: this.num,
+        totalRefundAmount: this.amount,
+        reason: this.reason,
+        description: this.questionDesc,
+        imgs: this.imgList,
+        contact: this.name,
+        phone: this.phone,
+        province: this.provinceTxt,
+        city: this.cityTxt,
+        district: this.districtTxt,
+        address: this.address
+      })
+      if (code === 200) {
+        this.$toast.success('提交成功')
+        window.location.href = '/aftersale/list'
+      }
+    },
+    validate (val, msg) {
+      if (Array.isArray(val)) {
+        if (val.some(n => !n)) {
+          this.$toast(msg)
+        }
+        return val.some(n => !n)
+      }
+      if (!val) {
+        this.$toast(msg)
+        return true
+      }
+      return false
     }
   }
 }
@@ -314,6 +359,11 @@ export default {
         color: @cor_333;
         text-align: center;
         border: 1PX solid #F1F1F1;
+        &.active {
+          background: #DEF3F9;
+          border-color: #DEF3F9;
+          color: #03A1CD;
+        }
       }
     }
     .select-box {

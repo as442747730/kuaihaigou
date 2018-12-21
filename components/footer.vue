@@ -21,7 +21,8 @@ export default {
       footList: ['首页', '选酒中心', 'add', '知识分享', '我的']
     }
   },
-
+  computed: {
+  },
   methods: {
     toPage (index) {
       let path = ''
@@ -58,7 +59,7 @@ footer {
   position: fixed;
   left: 0;
   bottom: 0;
-  background: #fff; 
+  background: #fff;
   z-index: 20;
   // padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
   // padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */

@@ -225,6 +225,12 @@
           margin: 0 auto;
           .bg_cover;
         }
+        .kf_icon2 {
+          background-image: url('~/assets/img/Icons/ic_dianhuakefu_30x30@2x.png')
+        }
+        .kf_icon1 {
+          background-image: url('~/assets/img/Icons/ic_zaixiankefu_30x30@2x.png')
+        }
         &>p {
           font-size: 12px;
           font-family: PingFangSC-Medium;

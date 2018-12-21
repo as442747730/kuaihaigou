@@ -1,15 +1,4 @@
-import 'vue2-toast/lib/toast.css'
-import Vue from 'vue'
-import Toast from 'vue2-toast'
-
-Vue.use(Toast, {
-  defaultType: 'center',
-  duration: 3000,
-  wordWrap: true,
-  width: '150px'
-})
-
-const vue = new Vue()
+import Toast from 'vant'
 
 const regexp = {
   phoneOrEmail: /(^1[34578]{1}\d{9}$)|(^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$)/,
@@ -32,21 +21,21 @@ export default {
   // 正则检测
   async validate (val, type, message) {
     if (!regexp[type].test(val)) {
-      vue.$toast.center(message)
+      Toast(message)
     }
     return regexp[type].test(val)
   },
   validateSame (val1, val2, message) {
     console.log('here')
     if (!(val1 === val2)) {
-      vue.$toast.center(message)
+      Toast(message)
     }
     return val1 === val2
   },
   // 空值检测
   validateEmpty (val, message) {
     if (!val) {
-      vue.$toast.center(message)
+      Toast(message)
     }
     return !val === false
   },

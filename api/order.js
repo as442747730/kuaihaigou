@@ -40,7 +40,7 @@ export const orderApi = {
 export const afterSaleApi = {
   // server
   getAfterSaleList (obj, req) {
-    return request.serverGet('/pf-api/afterSale/paginate', obj, req)
+    return request.serverGet('/api/afterSale/paginate', obj, req)
   },
   getAftersaleDetail (id, req) {
     return request.serverGet(`/api/afterSale/getDetail/${id}`, { afterSaleId: id }, req)
@@ -53,12 +53,21 @@ export const afterSaleApi = {
   },
   // client
   getAfterSaleListClient (obj) {
-    return request.clientGet('/pf-api/afterSale/paginate', obj)
+    return request.clientGet('/api/afterSale/paginate', obj)
   },
   createApplication (obj) {
-    return request.clientPost('/api/afterSale/create', obj)
+    return request.clientPostJson('/api/afterSale/create', obj)
   },
   cancelAftersale (id) {
     return request.clientPost(`/api/afterSale/cancel/${id}`)
+  },
+  sendTransform (obj) {
+    return request.clientPost('/api/afterSale/submitShipMsg', obj)
+  },
+  getNegotiation (id) {
+    return request.clientGet(`/api/afterSale/getNegotiation/${id}`, { afterSaleId: id })
+  },
+  sendMessage (obj) {
+    return request.clientPostJson('/api/afterSale/sendNegotiationContent', obj)
   }
 }
