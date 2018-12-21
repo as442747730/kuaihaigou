@@ -37,7 +37,8 @@ module.exports = {
     { src: './plugins/vant.js', ssr: true },
     { src: './plugins/vue-bus.js', ssr: true },
     { src: './plugins/vconsole.js', ssr: false },
-    { src: './plugins/filter.js', ssr: true }
+    { src: './plugins/filter.js', ssr: true },
+    { src: './plugins/nuxt-quill.js' }
   ],
   css: [
     { src: './assets/css/normalize.css', lang: 'css' },
