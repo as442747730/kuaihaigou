@@ -5,7 +5,7 @@
       <span class="l_name">{{ l_two }}</span>
     </div>
     <div class="list-r">
-      <van-switch active-color="#03A1CD" size="24px" v-model="vswch" />
+      <van-switch active-color="#03A1CD" size="24px" :value="vswch" @input="onInput" />
     </div>
   </div>
 </template>
@@ -13,11 +13,25 @@
 export default {
   props: {
     l_one: String,
-    l_two: String
+    l_two: String,
+    type: String,
+    vsw: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
-      vswch: false
+      vswch: this.vsw
+    }
+  },
+  methods: {
+    onInput () {
+      if (!this.vswch) {
+        this.$emit('okSwitch', this.type)
+      } else {
+        this.$emit('noSwitch', this.type)
+      }
     }
   }
 }
@@ -32,7 +46,7 @@ export default {
   &-l {
     .l_before {
       display: inline-flex;
-      width: 30px;
+      width: 40px;
       text-align: center;
       font-size:15px;
       font-family:PingFang-SC-Medium;

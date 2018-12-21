@@ -1,6 +1,6 @@
 <template>
 	<div>
-	  <article v-for="(art, index) in artArr" :key="index">
+	  <article v-for="(art, index) in artlist" :key="index">
 	    <h1>{{ art.title }}</h1>
 	    <div class="time">{{ art.createdAt }}</div>
 	    <div class="tips">
@@ -33,8 +33,11 @@
 <script>
 import { userApi } from '~/api/users'
 export default {
-  asyncData () {
-    console.log('执行了asyncData 执行了asyncData 执行了asyncData')
+  props: {
+    artlist: {
+      type: Array,
+      default: []
+    }
   },
   data () {
     return {
@@ -42,16 +45,16 @@ export default {
     }
   },
   mounted () {
-    this.getArts()
   },
   methods: {
     async getArts () {
       let params = { page: 1, count: 10 }
       const { code, data } = await userApi.getArticle(params)
       if (code === 200) {
-        // console.log('data', data)
-        let { array } = data
-        this.artArr = array
+        console.log('data', data)
+        if (data && data.array) {
+          this.artArr = data.array
+        }
       }
     }
   }

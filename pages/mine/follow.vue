@@ -194,6 +194,11 @@ export default {
       console.log('data', data)
       this.lists = data.array
     }
+  },
+  methods: {
+    headBack () {
+      window.location.href = '/mine'
+    }
   }
 }
 </script>
