@@ -29,6 +29,16 @@
 .slide-right-enter, .slide-right-leave-to {
   transform: translateX(100%);
 }
+/* slide-bottom */
+.slide-bottom-enter-active {
+  transition: all .2s;
+}
+.slide-bottom-leave-active {
+  transition: all .2s;
+}
+.slide-bottom-enter, .slide-bottom-leave-to {
+  transform: translateY(-100%);
+}
 
 /*  */
 .slide-fade-enter-active {
