@@ -21,6 +21,10 @@ export const userApi = {
   updsignature (params) {
     return request.clientPost('/api/user/signature', params)
   },
+  // 更新用户头像
+  updateHeadImg (headimgurl) {
+    return request.clientPost('/api/user/head_img', { headimgurl: headimgurl })
+  },
   // 我的文章
   getArticle (params) {
     return request.clientGet('/api/sk/myCreation', params)

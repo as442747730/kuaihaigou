@@ -8,7 +8,7 @@
       </div>
       <div class="hd-headimg" @click="toperson">
         <div class="hd_img">
-          <img :src="userInfo.userInfo" />
+          <img :src="userInfo.headimgurl" />
         </div>
       </div>
       <div class="hd-name">
@@ -28,11 +28,11 @@
             <p>已购(酒)</p>
           </div>
           <div class="info-item" @click="tofollow(1)">
-            <p><span>200</span></p>
+            <p><span>{{ userInfo.attentionNumber }}</span></p>
             <p>关注</p>
           </div>
           <div class="info-item" @click="tofollow(2)">
-            <p><span>1.2w</span></p>
+            <p><span>{{ userInfo.fanNumber }}</span></p>
             <p>粉丝</p>
           </div>
         </div>
@@ -89,9 +89,7 @@ export default {
       req.redirect('/account/login')
     } else if (detCode === 200) {
       console.log(detData)
-      let { nickname, buyNumber, signature, headimgurl } = detData
-      let userInfo = { nickname, buyNumber, signature, headimgurl }
-      return { userInfo: userInfo }
+      return { userInfo: detData }
     } else {
       req.redirect('/error')
     }
@@ -280,6 +278,7 @@ export default {
             font-weight: 500;
             color: rgba(153, 153, 153, 1);
             margin: 10px 0;
+            text-align: center;
 
             &>span {
               font-size: 19px;

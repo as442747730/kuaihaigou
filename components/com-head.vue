@@ -41,6 +41,9 @@ export default {
         case '/invoice/add':
           window.location.href = '/invoice/list'
           break
+        case '/coupon/explain':
+          window.location.href = '/coupon/list'
+          break
         default:
           console.log('未知页面')
           break

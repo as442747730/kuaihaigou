@@ -54,17 +54,20 @@ export default {
       this.updPhone(val)
     },
     async updPhone (value) {
-      let params = {
-        phone: '18924141161',
-        code: value
-      }
-      const { code, data } = await userApi.updatephone(params)
-      if (code === 200) {
-        this.showkey = false
+      if (value !== '') {
         window.location.href = '/account/bindphone'
-      } else {
-        this.$toast(data)
       }
+      // let params = {
+      //   phone: '18924141161',
+      //   code: value
+      // }
+      // const { code, data } = await userApi.updatephone(params)
+      // if (code === 200) {
+      //   this.showkey = false
+      //   window.location.href = '/account/bindphone'
+      // } else {
+      //   this.$toast(data)
+      // }
     }
   }
 }

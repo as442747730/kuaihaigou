@@ -82,6 +82,7 @@ import selectHead from '~/components/mine/SelectHead'
 import editinfo from '~/components/mine/Editinfo'
 import elSex from '~/components/mine/ElSex'
 import elDate from '~/components/mine/elDate'
+
 export default {
   components: {
     comHead,
@@ -302,7 +303,8 @@ export default {
 
     .headimg {
       width: 50px;
-      width: 50px;
+      height: 50px;
+      border-radius: 50%;
     }
 
     .ic_arrow {
