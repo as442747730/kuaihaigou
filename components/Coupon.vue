@@ -6,7 +6,7 @@
       <div :class="['u-checkbox', noUse ? 'active' : '']"></div>
     </div>
     <!-- 可用 -->
-    <div class="u-coupon-cell" v-for="(item, index) in usableList" :key="index" @click="selectCoupon(item)">
+    <div class="u-coupon-cell" v-for="item in usableList" @click="selectCoupon(item)">
       <div class="left">
         <div class="left-content">
           <div class="price">￥<span>{{ item.faceValue }}</span></div>
@@ -22,7 +22,7 @@
     </div>
     <!-- 不可用 -->
     <div class="u-coupon-tip" v-if="unusableList.length !== 0">不可用优惠券</div>
-    <div class="u-coupon-cell disabled" v-for="(item, index) in unusableList" :key="index">
+    <div class="u-coupon-cell disabled" v-for="(item, index2) in unusableList" :key="index2">
       <div class="left">
         <div class="left-content">
           <div class="price">￥<span>{{ item.faceValue }}</span></div>
