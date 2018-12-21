@@ -131,15 +131,15 @@
 
     <!-- 内容模块 -->
     <transition name='slide-fade2' mode="out-in">
-      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId"></component>
+      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom='scrollBottom'></component>
     </transition>
 
     <!-- 底栏 -->
     <van-goods-action>
       <van-goods-action-mini-btn icon="kefu" text=" " @click="onClickefu" />
       <van-goods-action-mini-btn icon="cart2" text=" " @click="onClickMiniBtn" />
-      <van-goods-action-big-btn :loading='isLoading' text="加入购物车" @click="onClickBigBtn" />
-      <van-goods-action-big-btn class='buy-now' text="立即购买" @click="onClickBigBtn" primary />
+      <van-goods-action-big-btn :loading='isLoading' text="加入购物车" @click="addCart" />
+      <van-goods-action-big-btn :loading='buyLoading' class='buy-now' text="立即购买" @click="buyNow" primary />
     </van-goods-action>
     <!-- 规格弹窗 -->
     <van-actionsheet v-model="skuShow" title="选择规格">
@@ -236,6 +236,7 @@
 import api from '~/utils/request'
 import { goodsApi } from '~/api/goods'
 import { userApi } from '~/api/users'
+import { cartApi } from '~/api/cart'
 import uGraphic from '~/components/detail/Graphic'
 import uParame from '~/components/detail/Parame'
 import uComment from '~/components/detail/Comment'
@@ -302,6 +303,13 @@ export default {
         goodsWineCommentResp: goodsWineCommentResp
       }
 
+      // 评价提问
+      let { satisfactionNum, satisfactionDegree } = detData
+      let commentParams = {
+        satisfactionNum: satisfactionNum,
+        satisfactionDegree: satisfactionDegree
+      }
+
       // 商品是否单品
       let { stock } = detData
       let isSingle = false
@@ -324,6 +332,7 @@ export default {
         packList: packList,
         goodsList: goodsList,
         wineParams: wineParams,
+        commentParams: commentParams,
         hotlist: hotlist,
         singleObj: singleObj
       }
@@ -377,7 +386,7 @@ export default {
       }, // 选中套餐
       elpackId: '', // 选中套餐id
       singleObj: {}, // 单品信息
-      ifsend: true, // 是否可配送
+      ifsend: false, // 是否可配送
       goodsDetailMobile: '', // 商品详情
       listDetailMobile: '', // 包装清单
       goodsList: {}, // 商品清单
@@ -395,7 +404,7 @@ export default {
       // 配送功能
       areaTxt: '请选择',
       // 省市区的id
-      provinceId: '',
+      provinceId: '86',
       cityId: '',
       // districtId: '',
       // 省市区的中文
@@ -415,7 +424,11 @@ export default {
       columns: [{ values: [] }, { values: [] }],
 
       // 底栏
-      isLoading: false
+      isLoading: false,
+      buyLoading: false,
+
+      // 滚动到底部
+      scrollBottom: false
     }
   },
 
@@ -471,15 +484,21 @@ export default {
   },
 
   mounted () {
-    this.windowHeight = document.documentElement.clientHeight || document.body.clientHeight
-    this.scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
     this.scrollTimer = null
     let that = this
     window.addEventListener('scroll', this.handleScroll(function () {
+      this.windowHeight = document.documentElement.clientHeight || document.body.clientHeight
+      this.scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
       let scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
       let tabOffsetTop = document.querySelector('.u-detail_tab').offsetTop
       // 距离底部大约200像素
-      // let nowPosition = scrollTop + this.windowHeight
+      console.log(scrollTop)
+      if (scrollTop + this.windowHeight === this.scrollHeight) {
+        console.log('到底部了')
+        this.scrollBottom = true
+      } else {
+        this.scrollBottom = false
+      }
       if (scrollTop >= tabOffsetTop) {
         that.tabFixed = true
       } else {
@@ -503,6 +522,7 @@ export default {
           this.view = 'uParame'
           break
         case 3:
+          this.viewData = this.commentParams
           this.view = 'uComment'
           break
         case 4:
@@ -584,7 +604,6 @@ export default {
     elSkuFn (sku, index) {
       // 选择规则
       this.skuVals.splice(index, 1, sku.specValue)
-      // console.log(this.skuVals, 'skuVals')
       this.getSkuFn()
     },
     getSkuFn () {
@@ -707,7 +726,7 @@ export default {
       window.location.href = '/order/cart'
     },
     // 加入购物车
-    async onClickBigBtn () {
+    async addCart () {
       if (!this.isLogin) return this.jumpLogin()
       let param = {}
       if (this.elpackId) {
@@ -748,6 +767,65 @@ export default {
         this.isLoading = false
       }
     },
+    // 立即购买
+    async buyNow () {
+      if (!this.isLogin) return this.jumpLogin()
+      let param = {}
+      let reqObj = {}
+      if (this.elpackId) {
+        // 套餐
+        param = {
+          packNum: this.packDetaNum,
+          packid: this.nowpack.id
+        }
+        reqObj = {
+          num: this.packDetaNum,
+          packid: this.nowpack.id
+        }
+        // 验证购买套餐数量小于库存
+        if (param.packNum > this.nowpack.goodsNum) return this.$toast('当前商品库存不足！')
+      } else if (this.getskuInfo.skuid) {
+        // sku
+        param = {
+          skuNum: this.getskuInfo.num,
+          skuid: this.getskuInfo.skuid
+        }
+        reqObj = {
+          num: this.getskuInfo.num,
+          skuid: this.getskuInfo.skuid
+        }
+        if (param.skuNum > this.skuObj.stock) return this.$toast('当前商品库存不足！')
+      } else {
+        // 单品
+        param = {
+          goodsNum: this.singleObj.num,
+          goodsId: this.goodsId
+        }
+        reqObj = {
+          num: this.singleObj.num,
+          goodsId: this.goodsId
+        }
+        if (param.goodsNum > this.singleObj.stock) return this.$toast('当前商品库存不足！')
+      }
+      this.buyLoading = true
+      const { code: cartCode, data: cartData } = await goodsApi.addCart(param)
+      if (cartCode !== 200) {
+        this.$toast(cartData)
+        this.buyLoading = false
+        return
+      }
+      const { code: setCode, data: setData } = await cartApi.readyToSettle({ orderDetailReqList: reqObj })
+      if (setCode === 200) {
+        if (setData.length !== 0) {
+          this.$toast('您购买的商品库存不足')
+          this.buyLoading = false
+        } else {
+          window.location.href = '/order/submit'
+        }
+      } else {
+        this.$toast(setData)
+      }
+    },
     onClickefu () {
       console.log(3)
     },
@@ -759,7 +837,7 @@ export default {
         setTimeout(() => {
           fn.apply(this, arguments)
           Switch = true
-        }, 300)
+        }, 200)
       }
     },
     // 跳转登录

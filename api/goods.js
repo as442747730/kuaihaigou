@@ -36,5 +36,16 @@ export const goodsApi = {
   // 加入购物车
   addCart (data) {
     return request.clientPostJson('/api/cart/addGoods', data)
+  },
+  // 获取商品客户评价
+  getComment (obj) {
+    return request.clientGet('/api/cmt/paginate', obj)
+  },
+  // 评价点赞
+  like (commentId) {
+    return request.clientPost('/api/cmt/like/' + commentId)
+  },
+  unlike (commentId) {
+    return request.clientPost('/api/cmt/unlike/' + commentId)
   }
 }

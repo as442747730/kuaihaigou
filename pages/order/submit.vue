@@ -52,7 +52,7 @@
 
     <!-- 不可配送 -->
     <template v-if='goodsNoSend.length !== 0'>
-      <div class="m-section-product-logistics" style="text-align: center;margin-bottom: 0">不可配送</div>
+      <div class="m-section-product-logistics" style="color: #FB6248; margin-bottom: 0">不可配送</div>
       <div class="m-section-product no-send" v-for="(item, index2) in goodsNoSend">
         <div class="m-section-product-li">
           <template v-if="!item.packName">
@@ -152,25 +152,7 @@
       <uCoupon v-show="couponShow" :usableList="couponArray.filter(n => { return n.useThreshold <= this.totalPrice })" :unusableList="couponArray.filter(n => { return n.useThreshold >= this.totalPrice })" @handleSelectCoupon="handleSelectCoupon"></uCoupon>
     </transition>
 
-    <van-actionsheet class='pay-methods' v-model="payMethodShow">
-      <div class="pay-methods-top">
-        <h3 class="font_medium">付款方式</h3>
-        <p>请在00小时59分59秒内完成支付</p>
-        <span>支付金额 <b>¥260</b></span>
-      </div>
-      <div class="pay-methods-chose">
-        <div class="item zfb" :class="{'checked': payMethod === 0}">
-          <i class="ib-middle"></i>
-          <h4 class="ib-middle">支付宝支付</h4>
-          <div class="icon-check"></div>
-        </div>
-        <div class="item wx" :class="{'checked': payMethod === 1}">
-          <i class="ib-middle"></i>
-          <h4 class="ib-middle">支付宝支付</h4>
-          <div class="icon-check"></div>
-        </div>
-      </div>
-    </van-actionsheet>
+    <uPay :payMethodShow='payMethodShow' :orderId='orderId' @payClose='payClose'></uPay>
 
   </div>
 </template>
@@ -179,6 +161,7 @@ import api from '~/utils/request'
 import uAddress from '~/components/Address'
 import uInoince from '~/components/Invoice'
 import uCoupon from '~/components/Coupon'
+import uPay from '~/components/Pay'
 import { Toast } from 'vant'
 import tools from '~/utils/tools'
 
@@ -189,7 +172,8 @@ export default {
   components: {
     uAddress,
     uInoince,
-    uCoupon
+    uCoupon,
+    uPay
   },
 
   computed: {
@@ -220,33 +204,34 @@ export default {
         if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506 || res5.code === 506) {
           return req.redirect('/account/login')
         }
+        let a = []
+        let b = []
+        if (res2.code === 200) {
+          res2.data.freightList.forEach((item) => {
+            a.push({ logisticsCompany: item.logisticsCompany, list: [] })
+          })
+          a.forEach((item, index) => {
+            item.list.push(...res2.data.goodsList.filter(n => { return n.logistics === item.logisticsCompany }))
+            item.list.push(...res2.data.packList.filter(n => { return n.logistics === item.logisticsCompany }))
+          })
+
+          // 不可配送
+          b.push(...res2.data.goodsList.filter(n => !n.ifDistribute))
+          b.push(...res2.data.packList.filter(n => !n.ifDistribute))
+        }
         // console.log(res1.data)
         // console.log(res2.data)
         console.log('res2', res2)
         // console.log(res4.data)
-
-        let a = []
-        res2.data.freightList.forEach((item) => {
-          a.push({ logisticsCompany: item.logisticsCompany, list: [] })
-        })
-        a.forEach((item, index) => {
-          item.list.push(...res2.data.goodsList.filter(n => { return n.logistics === item.logisticsCompany }))
-          item.list.push(...res2.data.packList.filter(n => { return n.logistics === item.logisticsCompany }))
-        })
-
-        // 不可配送
-        let b = []
-        b.push(...res2.data.goodsList.filter(n => !n.ifDistribute))
-        b.push(...res2.data.packList.filter(n => !n.ifDistribute))
 
         // 获取默认收货地址
         let defaultAdress = res1.data.find(v => v.ifDefault)
         return {
           addressArray: res1.data, // 所有可选的收货地址
           addressSelected: defaultAdress,
-          reduceFreight: res2.data.reduceFreight, //
-          totalFreight: res2.data.totalFreight, // 总运费
-          totalPrice: res2.data.totalPrice, // 商品合计
+          reduceFreight: res2.data.reduceFreight || 0, //
+          totalFreight: res2.data.totalFreight || 0, // 总运费
+          totalPrice: res2.data.totalPrice || 0, // 商品合计
           reductionStrategy: res2.data.reductionStrategy || {}, // 减免策略
           promotion: res3.data || {},
           productList: a,
@@ -304,13 +289,26 @@ export default {
       payMethodShow: false, // 支付弹框
       // 支付方式
       payMethod: 0,
+      // 生成的订单id
+      orderId: null,
 
       productList: [],
       goodsNoSend: []
     }
   },
 
-  created () {
+  async mounted () {
+    const { code } = await api.clientGet('/api/order/calcFreight?time=' + new Date().getTime(), {})
+    if (code === 60004) {
+      this.$toast('该商品已过期，请到购物车重新下单或者完成之前的订单')
+      setTimeout(() => {
+        if (this.orderId) {
+          window.location.href = '/order/detail?id=' + this.orderId
+        } else {
+          window.location.href = '/order/cart'
+        }
+      }, 1000)
+    }
     console.log('reductionStrategy', this.reductionStrategy)
     if (this.promotion.promotionName && this.totalPrice >= this.promotion.threshold) {
       this.fullSub = this.promotion.amount
@@ -320,7 +318,7 @@ export default {
     let { minimumCost, ifDeliveryIncluded, reduceMoney } = this.reductionStrategy
     if (this.totalPrice > minimumCost) {
       this.ifReduction = true
-      this.reduceFreight = ifDeliveryIncluded ? this.totalFreight : reduceMoney >= this.reduceFreight ? this.totalFreight : reduceMoney
+      this.reduceFreight = ifDeliveryIncluded ? this.totalFreight : reduceMoney >= this.totalFreight ? this.totalFreight : reduceMoney
     }
   },
 
@@ -360,7 +358,7 @@ export default {
       this.invoinceShow = true
       this.fullScreen = true
       this.navTitle = '选择发票信息'
-      this.navTxt = '管理'
+      this.navTxt = ''
     },
     handleSelectInvoice (val) {
       this.fullScreen = false
@@ -397,24 +395,37 @@ export default {
     },
 
     async submitOrder () {
-      console.log(this.addressSelected)
       if (!this.addressSelected.id) {
         return this.$toast('请选择收货地址')
       }
-      this.payMethodShow = true
-      // const toast2 = Toast.loading({ mask: true, message: '提交订单中', duration: 0 })
-      // const { code, data } = await api.clientPostJson('/api/order/order', {
-      //   shippingAddressId: this.addressSelected.id,
-      //   // remark
-      //   invoiceId: this.invoinceSelected.id,
-      //   promotionId: '', // todo
-      //   couponId: this.couponSelected.couponId
-      // })
-      // if (code === 200) {
-      //   toast2.clear()
-      // } else {
-      //   this.$toast(data)
-      // }
+      let obj = {
+        shippingAddressId: this.addressSelected.id, // 收货地址id
+        // remark: this.remark, // 留言
+        invoiceId: this.invoinceSelected.id, // 发票信息id
+        promotionId: this.promotionId || '', // 优惠活动id
+        couponId: this.couponSelected.couponId, // 优惠卷id
+        hiCoinReduction: this.rewardMoney // hi币抵扣
+      }
+      const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
+      const { code, data } = await api.clientPostJson('/api/order/order', obj)
+      if (code === 200) {
+        toast2.clear()
+        this.payMethodShow = true
+        this.orderId = data.orderid
+      } else {
+        this.$toast(data)
+      }
+    },
+
+    payClose (val) {
+      this.payMethodShow = val
+      if (!this.payMethodShow) {
+        const toast3 = Toast.loading({ mask: true, message: '正在跳转到订单页面', duration: 0 })
+        setTimeout(() => {
+          window.location.href = '/order/detail?id=' + this.orderId
+          toast3.clear()
+        }, 1000)
+      }
     },
 
     historyBack () {
@@ -453,7 +464,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .m-order-submit {
   position: relative;
   min-height: 100vh;
@@ -698,65 +709,6 @@ export default {
       top: 50%;
       right: 30px;
       transform: translate(0, -50%);
-    }
-  }
-
-  .pay-methods { 
-    padding: 30px 20px 10px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    ul {
-      display: none!important;
-    }
-    &-top {
-      text-align: center;
-      h3 {
-        color: #333;
-        font-size: 19px;
-      }
-      p {
-        font-size: 14px;
-        color: #999;
-        margin: 22px 0 10px;        
-      }
-      span {
-        color: #666;
-        font-size: 15px;
-        b {
-          color: #fb6248;
-        }
-      }
-    }
-    &-chose {
-      border-top: 1PX solid #eee;
-      font-size: 15px;
-      color: #333;
-      margin-top: 20px;
-      i {
-        width: 30px;
-        height: 30px;
-        margin-right: 8px;
-      }
-      .zfb i{
-        background: url('~/assets/img/ic_alipay 30x30@2x.png') no-repeat center/contain
-      }
-      .wx i{
-        background: url('~/assets/img/ic_wachat_pay_30x30@2x.png') no-repeat center/contain
-      }
-      .item {
-        padding: 15px 0;
-        &.checked .icon-check {
-          background: url('~/assets/img/icon-checkbox-active.png') no-repeat center/contain
-        }
-      }
-      .icon-check {
-        float: right;
-        width: 18px;
-        height: 18px;
-        border: 1PX solid #eee;
-        border-radius: 50%;
-        margin-top: 5px;
-      }
     }
   }
 }

@@ -1,3 +1,4 @@
+import defaulthead from '~/assets/img/defaultImg.png'
 const install = (Vue) => {
   const Bus = new Vue({
     methods: {
@@ -12,6 +13,8 @@ const install = (Vue) => {
       }
     }
   })
+  // 默认头像
+  Vue.prototype.defaulthead = defaulthead
   Vue.prototype.$bus = Bus
 }
 export default install

@@ -26,6 +26,14 @@ export const orderApi = {
   },
   submitEvaluation (obj) {
     return request.clientPost('/api/cmt/createComment', obj)
+  },
+  // 获取订单信息
+  getPayMsg (orderId) {
+    return request.clientGet('/api/order/getPayMsg/' + orderId)
+  },
+  // 支付宝创建wap支付
+  alipay (obj) {
+    return request.clientPostJson('/api/alipay/wap/build', obj)
   }
 }
 
