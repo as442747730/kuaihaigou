@@ -186,6 +186,108 @@ input[type="text"] {
   float: right;
 }
 
+// 等级与认证icon
+.u-level {
+  &_1{
+    background: url('~/assets/img/level/level_1.png') no-repeat center/contain;
+  }
+  &_2{
+    background: url('~/assets/img/level/level_2.png') no-repeat center/contain;
+  }
+  &_3{
+    background: url('~/assets/img/level/level_3.png') no-repeat center/contain;
+  }
+  &_4{
+    background: url('~/assets/img/level/level_4.png') no-repeat center/contain;
+  }
+  &_5{
+    background: url('~/assets/img/level/level_5.png') no-repeat center/contain;
+  }
+  &_6{
+    background: url('~/assets/img/level/level_6.png') no-repeat center/contain;
+  }
+  &_7{
+    background: url('~/assets/img/level/level_7.png') no-repeat center/contain;
+  }
+  &_8{
+    background: url('~/assets/img/level/level_8.png') no-repeat center/contain;
+  }
+  &_9{
+    background: url('~/assets/img/level/level_9.png') no-repeat center/contain;
+  }
+}
+// 官方
+.u-office {
+  background: url('~/assets/img/level/official.png') no-repeat center/contain;
+}
+// 专业
+.u-profess() {
+  &.CMS_IS{
+    background: url('~/assets/img/level/CMS_IS.png') no-repeat center/contain;
+  }
+  &.CMS_CS{
+    background: url('~/assets/img/level/CMS_CS.png') no-repeat center/contain;
+  }
+  &.CMS_AS{
+    background: url('~/assets/img/level/CMS_AS.png') no-repeat center/contain;
+  }
+  &.CMS_MS{
+    background: url('~/assets/img/level/CMS_MS.png') no-repeat center/contain;
+  }
+  &.WSRT_2ND{
+    background: url('~/assets/img/level/WSRT_2ND.png') no-repeat center/contain;
+  }
+  &.WSRT_3TH{
+    background: url('~/assets/img/level/WSRT_3TH.png') no-repeat center/contain;
+  }
+  &.WSRT_DIP{
+    background: url('~/assets/img/level/WSRT_DIP.png') no-repeat center/contain;
+  }
+  &.WSRT_MW{
+    background: url('~/assets/img/level/WSRT_MW.png') no-repeat center/contain;
+  }
+  &.ISG_2ND{
+    background: url('~/assets/img/level/ISG_2ND.png') no-repeat center/contain;
+  }
+  &.ISG_3TH{
+    background: url('~/assets/img/level/ISG_3TH.png') no-repeat center/contain;
+  }
+  &.ISG_DIP{
+    background: url('~/assets/img/level/ISG_DIP.png') no-repeat center/contain;
+  }
+  &.STATE_3TH{
+    background: url('~/assets/img/level/STATE_3TH.png') no-repeat center/contain;
+  }
+  &.STATE_2ND{
+    background: url('~/assets/img/level/STATE_2ND.png') no-repeat center/contain;
+  }
+  &.STATE_1ST{
+    background: url('~/assets/img/level/STATE_1ST.png') no-repeat center/contain;
+  }
+  // 自媒体
+  &.OFFICIAL_MEDIA{
+    background: url('~/assets/img/level/media.png') no-repeat center/contain;
+  }
+  &.PERSONAL_MEDIA{
+    background: url('~/assets/img/level/media.png') no-repeat center/contain;
+  }
+  // 官方认证
+  &.OFFICIAL{
+    background: url('~/assets/img/level/official.png') no-repeat center/contain;
+  }
+}
+// 自媒体--认证
+.u-self() {
+  // 企业
+  &_0{
+    background: url('~/assets/img/level/media.png') no-repeat center/contain;
+  }
+  // 个人
+  &_1{
+    background: url('~/assets/img/level/media.png') no-repeat center/contain;
+  }
+}
+
 // 字体
 .font {
   &_hight {
@@ -207,7 +309,7 @@ input[type="text"] {
   text-align: center;
   &.full {
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 95px);
     display: flex;
     align-items:center;
     justify-content: center;
