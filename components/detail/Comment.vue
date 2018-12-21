@@ -11,13 +11,13 @@
       <div class="detail_comment" v-show='commentShow'>
         <div class="detail_comment-satisfy">
           <div class="how-much">
-            <em class="ib-middle">872387</em>
+            <em class="ib-middle">{{ viewdata.satisfactionNum }}</em>
             <span class="ib-middle">人购买后满意</span>
             <div class="bar">
-              <i class="bar-now" style="width: 50%"></i>
-              <p>满意度97.5%</p>
-              <div class="fake-p" style="width: 50%">
-                <p>满意度97.5%</p>
+              <i class="bar-now" :style="'width:' + viewdata.satisfactionDegree + '%'"></i>
+              <p>满意度{{ viewdata.satisfactionDegree }}%</p>
+              <div class="fake-p" :style="'width:' + viewdata.satisfactionDegree + '%'">
+                <p>满意度{{ viewdata.satisfactionDegree }}%</p>
               </div>
             </div>
           </div>
@@ -35,45 +35,47 @@
 
         <div class="u_comment">
           <ul>
-            <li class="u_comment-list" v-for="($v, $k) in testData">
-              <div class="header-img ib-middle" style="background-color: #88c3ff"></div>
+            <li class="u_comment-list" v-for="($v, $k) in commentData">
+              <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + $v.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
+              <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
               <div class="user-infor ib-middle">
-                <span class="ib-middle">王小乐leshi</span>
+                <span class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</span>
+                <span class="ib-middle" v-else>匿名用户</span>
                 <br>
-                <div class="ib-middle">
-                  <i class="level" style="background-color: #ff8888"></i>
-                  <i class="prove" style="background-color: #f79dec"></i>
-                </div>
+                <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
               </div>
-              <div class="like_type type1" style="background-color: #7ce4ff"></div>
-              <p class="desc">酒是好酒，只是我不会品，但是包装好看啊，不信你看。</p>
+              <div v-if='$v.evaluationLevel >= 4' class="like_type type1">
+                <i></i>
+                <span>超爱</span>
+              </div>
+              <p class="desc">{{ $v.content || '此用户没有填写评论!' }}</p>
 
               <div class="pro">
-                <div v-for="($v2, $k2) in $v.imgList" class="pro-item" :style="'background: url(' + $v2 + ') no-repeat center/cover'" @click='showBigImg($k2, $v.imgList)'></div>
+                <div v-for="($v2, $k2) in getJSONArr($v.imgs)" class="pro-item" :style="'background: url(' + $v2 + ') no-repeat center/cover'" @click='showBigImg($k2, getJSONArr($v.imgs))'></div>
               </div>
 
               <div class="other">
-                <div class="time">2018-10-26</div>
+                <div class="time">{{ changeTime($v.createdAt) }}</div>
                 <div class="fr">
-                  <span @click='reply()'>回复(10)</span>
-                  <span>
+                  <span @click='reply()'>回复({{ $v.replyNum }})</span>
+                  <span @click='zan($v, $v.id, $v.ifLiked)'>
                     <i class="ib-middle"></i>
-                    <u class="ib-middle">1</u>
+                    <u class="ib-middle">{{ $v.likeNum }}</u>
                   </span>
                 </div>
               </div>
 
               <!-- 追评 -->
-              <div class="add-comment">
-                <h3>用户33天后追评</h3>
-                <p>好好好好，酒色香味都是上品！跟朋友喝了一瓶，剩下的全让盆友掠夺去了，准备再买几箱囤着！</p>
+              <div class="add-comment" v-if='$v.review'>
+                <h3>用户{{ countTimeAgo($v.reviewTime, $v.createdAt) }}追评</h3>
+                <p>{{ $v.review }}</p>
               </div>
 
               <!-- 官方回复 -->
-              <div class="office-comment">
+              <div class="office-comment" v-if='$v.officialReply'>
                 <p>
                   <span>快海购官方：</span>
-                  感谢您对我们快海购的支持，本着客户至上的原则，我们会努力做好每一个细节，愿我们的红酒能够给您的生活增添色彩，期待您的再次光临，祝您生活愉快！
+                  {{ $v.officialReply }}
                 </p>
               </div>
             </li>
@@ -122,19 +124,30 @@ import uQuestion from './Question'
 
 import { ImagePreview } from 'vant'
 
-import Img1 from '~/assets/img/bk1.png'
+import { goodsApi } from '~/api/goods'
 
-import Img2 from '~/assets/img/green_wine.jpg'
+import tools from '~/utils/tools'
 
-import Img3 from '~/assets/img/home/img_home_335x180@2x.png'
+import uUsericon from '~/components/Usericon'
+
+// import Img1 from '~/assets/img/bk1.png'
+
+// import Img2 from '~/assets/img/green_wine.jpg'
+
+// import Img3 from '~/assets/img/home/img_home_335x180@2x.png'
 
 export default {
   name: 'u-comment',
   props: {
-    goodsid: String
+    goodsid: String,
+    viewdata: Object,
+    scrollbottom: {
+      type: Boolean
+    }
   },
   components: {
-    uQuestion
+    uQuestion,
+    uUsericon
   },
 
   data () {
@@ -154,15 +167,21 @@ export default {
         name: '取消'
       }],
 
-      testData: [{
-        imgList: [Img1, Img2]
-      }, {
-        imgList: [Img3]
-      }]
+      // 默认头像
+      defaulthead: this.defaulthead,
+      commentData: []
     }
   },
 
-  mounted () {
+  created () {
+    console.log(this.scrollBottom)
+    this.getComment(1)
+    // window.addEventListener('scroll', this.handleScroll(function () {
+    //   let scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
+    //   console.log(scrollTop)
+    //   // 距离底部大约200像素
+    //   // let nowPosition = scrollTop + this.windowHeight
+    // }))
   },
 
   watch: {
@@ -171,10 +190,29 @@ export default {
         this.replyShowDelay = false
         document.body.classList = ''
       }
+    },
+    scrollbottom (val) {
+      console.log(val)
     }
   },
 
   methods: {
+    // 获取评价数据
+    async getComment (page, hasContent = false, hasImg = false) {
+      let param = {
+        page: page,
+        count: 1,
+        hasContent: hasContent,
+        hasImg: hasImg,
+        goodsId: this.goodsid
+      }
+      const { code, data } = await goodsApi.getComment(param)
+      if (code === 200) {
+        this.commentData = data.array
+        console.log(data)
+      }
+    },
+    // 查看大图
     showBigImg (index, val) {
       ImagePreview({
         images: val,
@@ -183,6 +221,7 @@ export default {
         }
       })
     },
+    // 回复
     reply () {
       document.body.classList = 'hidden'
       window.location.hash = 'replay'
@@ -190,6 +229,18 @@ export default {
       setTimeout(() => {
         this.replyShowDelay = true
       }, 60)
+    },
+    // 点赞
+    async zan (val, id, ifLike) {
+      console.log(ifLike)
+      let likeFn = ifLike ? goodsApi.unlike(id) : goodsApi.like(id)
+      const { code, data } = await likeFn
+      if (code === 200) {
+        let msg = ifLike ? '取消点赞成功' : '点赞成功'
+        this.$toast(msg)
+        this.$set(val, 'likeNum', data)
+        this.$set(val, 'ifLiked', !ifLike)
+      }
     },
     onClickLeft () {
       document.body.classList = ''
@@ -204,6 +255,7 @@ export default {
     report () {
       this.showReport = true
     },
+    // 举报
     onSelect (item) {
       if (item.name === '举报') {
         this.showReport = false
@@ -218,6 +270,17 @@ export default {
       } else {
         this.showReport = false
       }
+    },
+    changeTime (time) {
+      time = new Date(time).getTime()
+      return tools.timeago(time)
+    },
+    countTimeAgo (now, setTime) {
+      const getTime = new Date(now).getTime() - new Date(setTime).getTime()
+      return Math.floor(getTime / (3600 * 24 * 1e3)) === 0 ? '当天' : Math.floor(getTime / (3600 * 24 * 1e3)) + '天后'
+    },
+    getJSONArr (strArr) {
+      return JSON.parse(strArr)
     }
   }
 }
@@ -360,28 +423,32 @@ export default {
         font-family: 'PingFangSC-Semibold';
         font-weight: bold;
         margin-bottom: 5px;
-      }
-      &>div {
-        i {
-          width: 22px;
-          height: 22px;
-          border-radius: 50%;
-          overflow: hidden;
-          background-size: contain;
-          background-position: center;
-          background-repeat: no-repeat;
-          display: inline-block;
-          margin-right: 5px;
-        }
+        width: 200px;
+        display: inline-block;
+        word-break: break-all;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
     .like_type {
       float: right;
-      background: red;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
       overflow: hidden;
+      text-align: center;
+      i{
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: url('~/assets/img/ic_chaoai_35x35@2x.png') no-repeat center/contain;
+      }
+      span {
+        margin-top: 4px;
+        display: block;
+        text-align: center;
+        color: #999;
+        font-size: 11px;
+      }
     }
     .desc {
       color: #333;

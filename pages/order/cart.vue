@@ -246,11 +246,12 @@ export default {
     },
 
     backToGoods () {
-      window.location.href = '/detail'
+      window.location.href = '/winecenter'
     },
 
     historyBack () {
-      window.history.go(-1)
+      window.location.href = '/winecenter'
+      // window.history.go(-1)
     }
   }
 }
