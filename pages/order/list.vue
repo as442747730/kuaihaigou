@@ -3,7 +3,7 @@
 
     <uTabs :list="tabList" @on-change="handleTab"></uTabs>
 
-    <van-pull-refresh class="u-pull" v-model="isLoading" @refresh="refresh">
+    <van-pull-refresh class="u-pull" v-model="isLoading" @refresh="refresh" :loading-text="'刷新中'">
       <div class="order-wrapper">
 
         <div class="order-item" v-for="item in orderList">
