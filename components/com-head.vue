@@ -2,7 +2,9 @@
   <header>
     <span class="icon_back" @click="goback"></span>
     <h3 class="title">{{titleConfig}}</h3>
-    <slot></slot>
+    <div class="h_r" @click="rbFn">
+      <slot></slot>
+    </div>
   </header>
 </template>
 <script>
@@ -13,13 +15,39 @@ export default {
     }
   },
   methods: {
+    rbFn () {
+      this.$emit('headRigfn')
+    },
     goback () {
-      console.log('1234561')
-      console.log(window.location.hash, 'hash')
-      if (window.location.hash === '#editinfo') {
-        this.$bus.emit('closeHead', false)
+      let path = this.$route.path
+      switch (path) {
+        case '/mine/person':
+        case '/mine/follow':
+        case '/invoice/list':
+        case '/address/list':
+        case '/coupon/list':
+        case '/account/mgnumber':
+          window.location.href = '/mine'
+          break
+        case '/account/mgphone':
+          window.location.href = '/account/mgnumber'
+          break
+        case '/address/manage':
+          window.location.href = '/address/list'
+          break
+        case '/address/add':
+          window.location.href = '/address/manage'
+          break
+        case '/invoice/add':
+          window.location.href = '/invoice/list'
+          break
+        case '/coupon/explain':
+          window.location.href = '/coupon/list'
+          break
+        default:
+          console.log('未知页面')
+          break
       }
-      this.$router.go(-1)
     }
   }
 }
@@ -28,7 +56,7 @@ export default {
 header {
   height: 45px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   border-bottom: 1PX solid #F1F1F1;
   position: relative;
@@ -37,9 +65,12 @@ header {
   background: #fff;
 
   .icon_back {
-    position: absolute;
-    top: 0;
-    left: 0;
+    // position: absolute;
+    // top: 0;
+    // left: 0;
+    // width: 45px;
+    // height: 100%;
+    position: relative;
     width: 45px;
     height: 100%;
 
@@ -65,6 +96,17 @@ header {
     font-family: PingFangSC-Medium;
     font-weight: bold;
     color: rgba(51, 51, 51, 1);
+  }
+  .h_r {
+    padding-right: 20px;
+    height: 100%;
+    font-size:13px;
+    font-family:PingFangSC-Semibold;
+    font-weight:600;
+    color:rgba(102,102,102,1);
+    display: flex;
+    justify-content: left;
+    align-items: center;
   }
 }
 </style>

@@ -1,6 +1,8 @@
 <template>
   <div class="m-address">
-
+    <com-head :titleConfig="configtitle" @headRigfn="successFn">
+      <div>完成</div>
+    </com-head>
     <van-pull-refresh v-model="refresing" @refresh="getRefresh">
       <div class="m-address-ul">
 
@@ -27,6 +29,7 @@
 
 <script>
 import { addressApi } from '~/api/address'
+import comHead from '~/components/com-head'
 
 export default {
   name: 'addressList',
@@ -55,10 +58,15 @@ export default {
     }
   },
 
+  components: {
+    comHead
+  },
+
   data () {
     return {
       refresing: false,
-      addressList: []
+      addressList: [],
+      configtitle: '收货地址'
     }
   },
 
@@ -110,6 +118,8 @@ export default {
           this.$toast(data)
         }
       })
+    },
+    successFn () {
     }
   }
 }

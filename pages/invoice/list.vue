@@ -1,6 +1,8 @@
 <template>
   <div class="m-invoice">
-
+    <com-head :titleConfig="configtitle">
+      <div>管理</div>
+    </com-head>
     <div class="m-invoice-ul">
 
       <div class="m-invoice-li" v-for="(item, index) in invoiceList">
@@ -27,6 +29,7 @@
 </template>
 <script>
 import api from '~/utils/request'
+import comHead from '~/components/com-head'
 export default {
   name: 'invoice',
   layout: 'default',
@@ -39,7 +42,9 @@ export default {
       ]
     }
   },
-
+  components: {
+    comHead
+  },
   async asyncData (req) {
     return api.serverGet('/api/invoice/listAll', {}, req)
       .then((res) => {
@@ -52,7 +57,8 @@ export default {
 
   data () {
     return {
-      invoiceList: []
+      invoiceList: [],
+      configtitle: '发票信息'
     }
   },
 

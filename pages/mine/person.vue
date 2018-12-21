@@ -3,8 +3,7 @@
     <com-head :titleConfig="configtitle"></com-head>
     <div class="person-main">
       <div class="person-head" @click="elheadFn">
-        <img v-if="infos.headimgurl" class="headimg" :src="infos.headimgurl" />
-        <img v-else class="headimg" src="~/assets/img/Icons/ic_dashangtongzhi_40x40@2x.png" />
+        <img class="headimg" :src="infos.headimgurl || defaulthead" />
         <i class="ic_arrow"></i>
       </div>
       <div class="person-listone">
@@ -82,6 +81,7 @@ import selectHead from '~/components/mine/SelectHead'
 import editinfo from '~/components/mine/Editinfo'
 import elSex from '~/components/mine/ElSex'
 import elDate from '~/components/mine/elDate'
+
 export default {
   components: {
     comHead,
@@ -92,6 +92,34 @@ export default {
     elSex,
     elDate
   },
+  async asyncData (req) {
+    const { code, data } = await userApi.serverPostInfo(req)
+    if (code === 200) {
+      console.log(data)
+      let { headimgurl, nickname, birhday, birhdayCanSee } = data
+      let obj1 = { headimgurl, nickname, birhday }
+      let { wechat, wechatCanSee, qq, qqCanSee } = data
+      let obj2 = { wechat, wechatCanSee, qq, qqCanSee }
+      let { signature, sex } = data
+      let strSex = sex === 1 ? '男' : sex === 2 ? '女' : '未知/保密'
+      let obj3 = { signature, sex, strSex }
+      let { wineWhen, wineArea, wineVariety, wineHowMany } = data
+      let wineObj = { wineWhen, wineArea, wineVariety, wineHowMany }
+      // 地址
+      let { residenceProvince, residenceCity, residenceCanSee } = data
+      let _dz = ''
+      if (residenceProvince) _dz += residenceProvince
+      if (residenceCity) _dz += residenceCity
+      let allInfo = { _dz, ...obj1, ...obj2, ...obj3, ...wineObj }
+      return {
+        birshow: birhdayCanSee,
+        wxshow: wechatCanSee,
+        qqshow: qqCanSee,
+        addrshow: residenceCanSee,
+        infos: allInfo
+      }
+    }
+  },
   data () {
     return {
       configtitle: '个人信息',
@@ -99,11 +127,11 @@ export default {
       wxshow: false,
       qqshow: false,
       addrshow: false,
-      infos: {}
+      infos: {},
+      defaulthead: this.defaulthead
     }
   },
   mounted () {
-    this.getDetail()
     this.$bus.on('editinfoChange', v => {
       if (v) {
         this.getDetail()
@@ -118,7 +146,7 @@ export default {
       if (code === 200) {
         console.log(data)
         let { headimgurl, nickname, birhday, birhdayCanSee } = data
-        this.birshow = birhdayCanSee
+        if (birhdayCanSee) this.birshow = birhdayCanSee
         let obj1 = { headimgurl, nickname, birhday }
         let { wechat, wechatCanSee, qq, qqCanSee } = data
         this.wxshow = wechatCanSee
@@ -275,7 +303,8 @@ export default {
 
     .headimg {
       width: 50px;
-      width: 50px;
+      height: 50px;
+      border-radius: 50%;
     }
 
     .ic_arrow {

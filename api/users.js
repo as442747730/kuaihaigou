@@ -2,16 +2,16 @@ import request from '~/utils/request'
 // 用户接口
 export const userApi = {
   // serve
-  serveUserDetail (req) {
+  serverPostInfo (req) {
     return request.serverPost('/api/user/detail', null, req)
   },
-  // client
-  asyUserDetail () {
-    return request.clientPost('/api/user/detail')
+  serveGetAartical (params, req) {
+    return request.serverGet('/api/sk/myCreation', params, req)
   },
+  // client
   // 获取用户详情
   userDetail () {
-    return request.clientPost('/api/user/detail', null)
+    return request.clientPost('/api/user/detail')
   },
   // 修复用户详情
   upduserinfo (params) {
@@ -20,6 +20,10 @@ export const userApi = {
   // 更新用户个性签名
   updsignature (params) {
     return request.clientPost('/api/user/signature', params)
+  },
+  // 更新用户头像
+  updateHeadImg (headimgurl) {
+    return request.clientPost('/api/user/head_img', { headimgurl: headimgurl })
   },
   // 我的文章
   getArticle (params) {
@@ -36,5 +40,17 @@ export const userApi = {
   // 关注好友
   likeFriend (params) {
     return request.clientPost('/api/friend/followFriends', params)
+  },
+  // 解绑
+  dsunbind (type) {
+    return request.clientPost('/api/user/unbind/' + type)
+  },
+  // 获取验证码
+  getPhoneCode (params) {
+    return request.clientPost('/api/code/', params)
+  },
+  // 修改手机号码
+  updatephone (params) {
+    return request.clientPost('/api/phone', params)
   }
 }

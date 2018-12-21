@@ -2,17 +2,26 @@
   <div class="person-vant">
     <van-popup v-model="showHead" position="bottom" @click-overlay="cancleFn">
       <div class="vant-items pics">
-        <div class="vant-item camera">拍照</div>
+        <div class="vant-item camera">
+          <Upload @on-success="onSuccess">
+            <div>拍照</div>
+          </Upload>
+        </div>
         <div class="vant-item photos">从相册中选取</div>
       </div>
-      <div class="vant-items">
+      <div class="vant-items" @click="cancleFn">
         <div class="vant-item">取消</div>
       </div>
     </van-popup>
   </div>
 </template>
 <script>
+import Upload from '~/components/Upload'
+import { userApi } from '~/api/users'
 export default {
+  components: {
+    Upload
+  },
   data () {
     return {
       showHead: false
@@ -26,6 +35,16 @@ export default {
   methods: {
     cancleFn () {
       this.showHead = false
+    },
+    async onSuccess (val) {
+      console.log('val', val)
+      const { code, data } = await userApi.updateHeadImg(val)
+      if (code === 200) {
+        this.cancleFn()
+        this.$bus.emit('editinfoChange', true)
+      } else {
+        this.$toast(data)
+      }
     }
   },
   beforeDestroy () {
@@ -52,6 +71,9 @@ export default {
       font-weight: 500;
       color: rgba(0, 122, 255, 1);
       .flex_allCenter;
+      .u-upload {
+        font-size: 19px;
+      }
     }
 
     .camera {
@@ -59,4 +81,5 @@ export default {
     }
   }
 }
+
 </style>

@@ -9,23 +9,70 @@
         </div>
       </div>
       <div class="btns">
-      	<p class="btns_in" v-if="!nextstep">下一步</p>
-      	<p class="btns_in active" v-else>下一步</p>
+      	<p class="btns_in active" v-if="checkphone" @click="opKeyboard">下一步</p>
+        <p class="btns_in" v-else>下一步</p>
       </div>
     </div>
+    <key-board :getphone="newphone" :showkey="showkey" @okInp="updPhone"></key-board>
   </div>
 </template>
 <script>
 import comHead from '~/components/com-head'
+import keyBoard from '~/components/Keyboard'
+import { userApi } from '~/api/users'
 export default {
   components: {
-    comHead
+    comHead,
+    keyBoard
   },
   data () {
     return {
       configtitle: '手机号绑定',
       newphone: '',
-      nextstep: false
+      nextstep: false,
+      showkey: false
+    }
+  },
+  computed: {
+    checkphone () {
+      // 校验手机号码
+      if (!(/^1[34578]{1}\d{9}$/).test(this.newphone)) {
+        return false
+      } else {
+        return true
+      }
+    }
+  },
+  methods: {
+    async opKeyboard () {
+      this.showkey = true
+      let params = {
+        phone: this.newphone,
+        use: 2
+      }
+      const { code, data } = await userApi.getPhoneCode(params)
+      if (code === 200) {
+        this.showkey = true
+      } else {
+        this.$toast(data)
+      }
+    },
+    okInput () {
+      this.showkey = false
+    },
+    async updPhone (value) {
+      let params = {
+        phone: this.newphone,
+        code: value
+      }
+      const { code, data } = await userApi.updatephone(params)
+      console.log('code', code)
+      if (code === 200) {
+        this.showkey = false
+        window.location.href = '/account/login'
+      } else {
+        this.$toast(data)
+      }
     }
   }
 }
