@@ -3,8 +3,7 @@
     <com-head :titleConfig="configtitle"></com-head>
     <div class="person-main">
       <div class="person-head" @click="elheadFn">
-        <img v-if="infos.headimgurl" class="headimg" :src="infos.headimgurl" />
-        <img v-else class="headimg" src="~/assets/img/Icons/ic_dashangtongzhi_40x40@2x.png" />
+        <img class="headimg" :src="infos.headimgurl || defaulthead" />
         <i class="ic_arrow"></i>
       </div>
       <div class="person-listone">
@@ -128,7 +127,8 @@ export default {
       wxshow: false,
       qqshow: false,
       addrshow: false,
-      infos: {}
+      infos: {},
+      defaulthead: this.defaulthead
     }
   },
   mounted () {

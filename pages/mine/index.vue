@@ -8,7 +8,7 @@
       </div>
       <div class="hd-headimg" @click="toperson">
         <div class="hd_img">
-          <img :src="userInfo.headimgurl" />
+          <img :src="userInfo.headimgurl || defaulthead" />
         </div>
       </div>
       <div class="hd-name">
@@ -103,6 +103,7 @@ export default {
     return {
       footIndex: 4,
       iscomp: 'uArticle',
+      defaulthead: this.defaulthead,
       comps: ['uArticle', 'uJarsclb'],
       headitems: ['我的文章', '酒坛诗社'],
       headactive: 0,
@@ -130,7 +131,7 @@ export default {
       this.headactive = index
     },
     tofollow (num) {
-      window.location.href = '/mine/follow?num' + num
+      window.location.href = '/mine/follow?num=' + num
     },
     toperson () {
       window.location.href = '/mine/person'
