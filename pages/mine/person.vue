@@ -3,8 +3,7 @@
     <com-head :titleConfig="configtitle"></com-head>
     <div class="person-main">
       <div class="person-head" @click="elheadFn">
-        <img v-if="infos.headimgurl" class="headimg" :src="infos.headimgurl" />
-        <img v-else class="headimg" src="~/assets/img/Icons/ic_dashangtongzhi_40x40@2x.png" />
+        <img class="headimg" :src="infos.headimgurl || defaulthead" />
         <i class="ic_arrow"></i>
       </div>
       <div class="person-listone">
@@ -82,6 +81,7 @@ import selectHead from '~/components/mine/SelectHead'
 import editinfo from '~/components/mine/Editinfo'
 import elSex from '~/components/mine/ElSex'
 import elDate from '~/components/mine/elDate'
+
 export default {
   components: {
     comHead,
@@ -127,7 +127,8 @@ export default {
       wxshow: false,
       qqshow: false,
       addrshow: false,
-      infos: {}
+      infos: {},
+      defaulthead: this.defaulthead
     }
   },
   mounted () {
@@ -302,7 +303,8 @@ export default {
 
     .headimg {
       width: 50px;
-      width: 50px;
+      height: 50px;
+      border-radius: 50%;
     }
 
     .ic_arrow {

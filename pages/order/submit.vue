@@ -417,7 +417,7 @@ export default {
       }
     },
 
-    payClose (val) {
+    async payClose (val) {
       this.payMethodShow = val
       if (!this.payMethodShow) {
         const toast3 = Toast.loading({ mask: true, message: '正在跳转到订单页面', duration: 0 })

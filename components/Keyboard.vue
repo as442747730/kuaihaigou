@@ -70,7 +70,7 @@ export default {
     reduceSec () {
       let timer = setInterval(() => {
         this.allTime -= 1
-        if (this.allTime < 0) {
+        if (this.allTime <= 0) {
           this.sendAgain = true
           window.clearInterval(timer)
         }

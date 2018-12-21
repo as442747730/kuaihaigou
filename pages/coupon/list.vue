@@ -2,12 +2,7 @@
   <div class="coupon">
     <com-head :titleConfig="configtitle"></com-head>
     <nav class="navs">
-      <div
-        class="navs-item"
-        :class="{active: index === navIndex}"
-        v-for="(nav, index) in navlist"
-        @click="navFn(index)"
-        :key="index">{{ nav }}</div>
+      <div class="navs-item" :class="{active: index === navIndex}" v-for="(nav, index) in navlist" @click="navFn(index)" :key="index">{{ nav }}</div>
     </nav>
     <div class="lists">
       <section class="list" v-if="navIndex === 0">
@@ -18,7 +13,6 @@
           </div>
           <div class="item-r">
             <h4 class="r_name">全品类通用券</h4>
-            <!-- <p>适用平台：全平台</p> -->
             <p>有效期：{{wsy.startTimeDesc}}至{{wsy.endTimeDesc}}</p>
           </div>
         </div>
@@ -32,7 +26,6 @@
           <div class="item-r">
             <div class="r_logo"></div>
             <h4 class="r_name use_used r_name-logo">全品类通用券</h4>
-            <!-- <p class="use_used r_name-logo">适用平台：全平台</p> -->
             <p class="use_used">有效期：{{record.startTimeDesc}}至{{record.endTimeDesc}}</p>
           </div>
         </div>
@@ -45,11 +38,13 @@
           </div>
           <div class="item-r">
             <h4 class="r_name use_used">全品类通用券</h4>
-            <!-- <p class="use_used">适用平台：全平台</p> -->
             <p class="use_used">有效期：2018-4-30至2018-12-30</p>
           </div>
         </div>
       </section>
+    </div>
+    <div class="explain" v-if="navIndex === 0">
+      <nuxt-link to="/coupon/explain">优惠券说明</nuxt-link>
     </div>
   </div>
 </template>
@@ -90,7 +85,7 @@ export default {
     async wsyFn () {
       let params = {
         page: 1,
-        count: 10,
+        count: 5,
         ifUsed: false
       }
       const { code, data } = await couponApi.couponlist(params)
@@ -184,6 +179,7 @@ export default {
             font-size: 29px;
           }
         }
+
         .useok {
           font-size: 10px;
           font-family: PingFang-SC-Medium;
@@ -191,6 +187,7 @@ export default {
           color: rgba(251, 98, 72, 1);
           text-align: center;
         }
+
         .price.use_used,
         .useok.use_used {
           color: #CCCCCC;
@@ -202,6 +199,7 @@ export default {
         padding-left: 15px;
         box-sizing: border-box;
         position: relative;
+
         .r_logo {
           position: absolute;
           top: 0px;
@@ -211,6 +209,7 @@ export default {
           background-image: url('~/assets/img/ic_yishiyong_60x40@2x.png');
           .bg_cover;
         }
+
         .r_name {
           font-size: 15px;
           font-family: PingFangSC-Semibold;
@@ -222,9 +221,11 @@ export default {
           overflow: hidden;
           .u-ellipsis;
         }
+
         .r_name.r_name-logo {
           width: calc(100% - 75px);
         }
+
         .r_name.use_used {
           color: #CCCCCC;
         }
@@ -236,11 +237,22 @@ export default {
           font-weight: 400;
           color: rgba(153, 153, 153, 1);
         }
+
         &>p.use_used {
           color: #CCCCCC;
         }
       }
     }
   }
+}
+
+.explain {
+  padding: 20px 0;
+  text-align: center;
+  font-size: 13px;
+  font-family: PingFang-SC-Medium;
+  font-weight: 500;
+  color: rgba(3, 161, 205, 1);
+  line-height: 13px;
 }
 </style>

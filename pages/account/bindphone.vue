@@ -13,7 +13,7 @@
         <p class="btns_in" v-else>下一步</p>
       </div>
     </div>
-    <key-board :getphone="newphone" :showkey="showkey" @okInp="okInput"></key-board>
+    <key-board :getphone="newphone" :showkey="showkey" @okInp="updPhone"></key-board>
   </div>
 </template>
 <script>
@@ -66,6 +66,7 @@ export default {
         code: value
       }
       const { code, data } = await userApi.updatephone(params)
+      console.log('code', code)
       if (code === 200) {
         this.showkey = false
         window.location.href = '/account/login'
