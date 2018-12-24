@@ -263,7 +263,7 @@ export default {
     let id = goodsId
     let detailFn = goodsApi.getDetail(id, req)
     let topSaleFn = goodsApi.getTopSales(req)
-    let userInfoFn = userApi.serveUserDetail(req)
+    let userInfoFn = userApi.serverPostInfo(req)
     const {code: detCode, data: detData} = await detailFn
     const {code: hotCode, data: hotData} = await topSaleFn
     const {code: userCode} = await userInfoFn
