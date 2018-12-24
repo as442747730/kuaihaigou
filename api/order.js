@@ -11,6 +11,10 @@ export const orderApi = {
   getEvaluationInfo (id, req) {
     return request.serverGet(`/api/order/toComment/${id}`, {}, req)
   },
+  // 获取支付信息
+  getPayMsgServer (id, req) {
+    return request.serverGet('/api/order/getPayMsg/' + id, {}, req)
+  },
   // client
   getOrderListClient (obj) {
     return request.clientGet('/api/order/paginate', obj)
@@ -34,6 +38,10 @@ export const orderApi = {
   // 支付宝创建wap支付
   alipay (obj) {
     return request.clientPostJson('/api/alipay/wap/build', obj)
+  },
+  // 检测支付状态
+  getOrderPayOrNot (orderId) {
+    return request.clientGet('/api/order/getOrderPayOrNot/' + orderId)
   }
 }
 

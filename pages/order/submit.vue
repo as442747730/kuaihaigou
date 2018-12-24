@@ -299,7 +299,7 @@ export default {
 
   async mounted () {
     const { code } = await api.clientGet('/api/order/calcFreight?time=' + new Date().getTime(), {})
-    if (code === 60004) {
+    if (code === 60004 || code === 506) {
       this.$toast('该商品已过期，请到购物车重新下单或者完成之前的订单')
       setTimeout(() => {
         if (this.orderId) {
@@ -404,7 +404,8 @@ export default {
         invoiceId: this.invoinceSelected.id, // 发票信息id
         promotionId: this.promotionId || '', // 优惠活动id
         couponId: this.couponSelected.couponId, // 优惠卷id
-        hiCoinReduction: this.rewardMoney // hi币抵扣
+        hiCoinReduction: this.rewardMoney, // hi币抵扣
+        totalFeight: this.totalFreight - this.reduceFreight // 实际运费
       }
       const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
       const { code, data } = await api.clientPostJson('/api/order/order', obj)
@@ -417,7 +418,7 @@ export default {
       }
     },
 
-    payClose (val) {
+    async payClose (val) {
       this.payMethodShow = val
       if (!this.payMethodShow) {
         const toast3 = Toast.loading({ mask: true, message: '正在跳转到订单页面', duration: 0 })
@@ -425,20 +426,6 @@ export default {
           window.location.href = '/order/detail?id=' + this.orderId
           toast3.clear()
         }, 1000)
-      }
-      this.payMethodShow = true
-      const toast2 = Toast.loading({ mask: true, message: '提交订单中', duration: 0 })
-      const { code, data } = await api.clientPostJson('/api/order/order', {
-        shippingAddressId: this.addressSelected.id,
-        // remark
-        invoiceId: this.invoinceSelected.id,
-        promotionId: '', // todo
-        couponId: this.couponSelected.couponId
-      })
-      if (code === 200) {
-        toast2.clear()
-      } else {
-        this.$toast(data)
       }
     },
 

@@ -97,7 +97,8 @@
         if (this.payMethod === 0) {
           let obj = {
             orderid: this.orderId,
-            returnUrl: window.location.href
+            // returnUrl: '/order/detail?id=' + this.orderId
+            returnUrl: 'http://' + window.location.host + '/order/result?orderId=' + this.orderId
           }
           const { code, data } = await orderApi.alipay(obj)
           if (code === 200) {
