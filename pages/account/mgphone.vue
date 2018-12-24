@@ -5,53 +5,69 @@
       <div class="in-bk">
         <div class="bk_logo"></div>
       </div>
-      <div class="in-phone">您绑定的手机号：13873688000</div>
+      <div class="in-phone">您绑定的手机号：{{getphone}}</div>
       <div class="in-tip">手机号码修改成功后需要使用新的手机号码进行登录。</div>
       <div class="in-btn">
-        <a class="btn_link" @click="changephone">更换手机号</a>
+        <a class="btn_link" @click="opKeyboard">更换手机号</a>
       </div>
     </div>
-    <van-dialog class="vand" v-model="cpmshow" :show-cancel-button="false" :show-confirm-button="false">
-      <div class="vand">
-        <div class="vand-title">
-          请输入短信验证码
-          <i class="ic_close" @click="closeFn"></i>
-        </div>
-        <ul class="vand-keys">
-          <li class="keys-item" v-for="(key, index) in 6" :key="index">
-            <input class="item_input" type="text" min="0" max="1" />
-          </li>
-        </ul>
-        <div class="vand-tip1">短信验证码已发送至134 1477 5964</div>
-        <div class="vand-tip1 vand-tip2" v-if="false">
-          <span class="tip1_reset">59</span>
-          秒后可重新发送
-        </div>
-        <div class="vand-tip1 vand-tip2" v-else>
-          <span class="btnsend">重新发送</span>
-        </div>
-      </div>
-    </van-dialog>
+    <key-board :getphone="getphone" :showkey="showkey" @okInp="okInput"></key-board>
   </div>
 </template>
 <script>
 import comHead from '~/components/com-head'
+import keyBoard from '~/components/Keyboard'
+import { userApi } from '~/api/users'
 export default {
   components: {
-    comHead
+    comHead,
+    keyBoard
   },
   data () {
     return {
       configtitle: '手机号管理',
-      cpmshow: false
+      cpmshow: false,
+      getphone: '',
+      passwordvalue: '',
+      showKeyboard: false,
+      showkey: false
     }
   },
+  created () {
+    this.getphone = this.$route.query.phone
+  },
   methods: {
-    changephone () {
-      this.cpmshow = true
+    async opKeyboard () {
+      this.showkey = true
+      let params = {
+        phone: this.newphone,
+        use: 2
+      }
+      const { code, data } = await userApi.getPhoneCode(params)
+      if (code === 200) {
+        this.showkey = true
+      } else {
+        this.$toast(data)
+      }
     },
-    closeFn () {
-      this.cpmshow = false
+    okInput (val) {
+      this.updPhone(val)
+    },
+    async updPhone (value) {
+      if (value !== '') {
+        window.location.href = '/account/bindphone'
+      }
+      // let params = {
+      //   phone: '18924141161',
+      //   code: value
+      // }
+      // const { code, data } = await userApi.updatephone(params)
+      // if (code === 200) {
+      //   this.showkey = false
+      //   window.location.href = '/account/bindphone'
+      // } else {
+      //   this.$toast(data)
+      // }
     }
   }
 }
@@ -159,6 +175,9 @@ export default {
   &-tip2 {
     padding-bottom: 14px;
   }
+  &-tip3 {
+    margin-top: 10px;
+  }
 
   .btnsend {
     font-size: 13px;
@@ -167,6 +186,8 @@ export default {
     color: rgba(0, 122, 255, 1);
     line-height: 18px;
   }
-
+}
+.van-number-keyboard {
+  z-index: 3000 !important;
 }
 </style>

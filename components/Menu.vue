@@ -16,18 +16,17 @@
       return {
         menuList: [
           { name: '我的消息', key: 'msg', url: '' },
-          { name: '发票信息', key: 'invo', url: '' },
-          { name: '地址管理', key: 'address', url: '' },
-          { name: '我的优惠券', key: 'coupon', url: '' },
+          { name: '发票信息', key: 'invo', url: '/invoice/list' },
+          { name: '地址管理', key: 'address', url: '/address/list' },
+          { name: '我的优惠券', key: 'coupon', url: '/coupon/list' },
           { name: '售后记录', key: 'after', url: '/aftersale/list' },
-          { name: '账号管理', key: 'account', url: '' },
+          { name: '账号管理', key: 'account', url: '/account/mgnumber' },
           { name: '资质认证', key: 'certif', url: '' },
           { name: '打赏记录', key: 'reward', url: '' },
           { name: '服务中心', key: 'service', url: '' }
         ]
       }
     },
-
     methods: {
       linkTo (val) {
         window.location.href = val

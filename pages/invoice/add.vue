@@ -1,6 +1,6 @@
 <template>
   <div class="m-invoice-add">
-
+    <com-head :titleConfig="configtitle"></com-head>
     <div class="m-invoice-add-cell">
       <div class="title">发票类型</div>
       <div class="checkbox-wrapper">
@@ -71,6 +71,7 @@
 </template>
 <script>
 import api from '~/utils/request'
+import comHead from '~/components/com-head'
 
 export default {
   name: 'addInvoice',
@@ -82,7 +83,9 @@ export default {
       ]
     }
   },
-
+  components: {
+    comHead
+  },
   data () {
     return {
       selectContentShow: false,
@@ -94,7 +97,7 @@ export default {
       contentType: '',
       contentText: '',
       email: '',
-
+      configtitle: '发票信息',
       columns: [
         { text: '酒水/饮料', value: 1 },
         { text: '商品明细', value: 2 }

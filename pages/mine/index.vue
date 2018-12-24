@@ -8,7 +8,7 @@
       </div>
       <div class="hd-headimg" @click="toperson">
         <div class="hd_img">
-          <img :src="userInfo.userInfo" />
+          <img :src="userInfo.headimgurl || defaulthead" />
         </div>
       </div>
       <div class="hd-name">
@@ -28,11 +28,11 @@
             <p>已购(酒)</p>
           </div>
           <div class="info-item" @click="tofollow(1)">
-            <p><span>200</span></p>
+            <p><span>{{ userInfo.attentionNumber }}</span></p>
             <p>关注</p>
           </div>
           <div class="info-item" @click="tofollow(2)">
-            <p><span>1.2w</span></p>
+            <p><span>{{ userInfo.fanNumber }}</span></p>
             <p>粉丝</p>
           </div>
         </div>
@@ -49,15 +49,17 @@
             <p :class="{head_one: index === 0}">{{ headitem }}</p>
           </div>
         </div>
-        <section class="bottom-content">
-          <component :is="iscomp"></component>
+        <section class="bottom-content" v-if="headactive === 0">
+          <u-article :artlist="artList"></u-article>
+        </section>
+        <section class="bottom-content" v-else>
+          <u-jarsclb></u-jarsclb>
         </section>
       </div>
     </div>
     <van-popup class="vanpopup" v-model="showmenu" position="left">
       <left-menu></left-menu>
     </van-popup>
-    <!-- <u-footer :postIndex="footIndex"></u-footer> -->
   </div>
 </template>
 <script>
@@ -67,24 +69,41 @@ import uJarsclb from '~/components/mine/Jarsclub'
 import leftMenu from '~/components/Menu'
 import { userApi } from '~/api/users'
 export default {
+  name: 'mineIndex',
+  layout: 'page-with-tabbar',
   head () {
     return {
-      title: '我的购物车',
+      title: '我的',
       meta: [
-        { hid: 'title', name: 'title', content: '我的购物车' }
+        { hid: 'title', name: 'title', content: '我的' }
       ]
     }
   },
-  components: {
-    // uFooter,
-    uArticle,
-    uJarsclb,
-    leftMenu
+  async asyncData (req) {
+    let params = { page: 1, count: 10 }
+    let personInfo = userApi.serverPostInfo(req)
+    let artList = userApi.serveGetAartical(params, req)
+    const { code: detCode, data: detData } = await personInfo
+    const { code: artCode, data: artData } = await artList
+    if (detCode === 506) {
+      req.redirect('/account/login')
+    } else if (detCode === 200) {
+      console.log(detData)
+      return { userInfo: detData }
+    } else {
+      req.redirect('/error')
+    }
+    if (artCode === 200) {
+      if (artData) {
+        return { artList: artData.array }
+      }
+    }
   },
   data () {
     return {
       footIndex: 4,
       iscomp: 'uArticle',
+      defaulthead: this.defaulthead,
       comps: ['uArticle', 'uJarsclb'],
       headitems: ['我的文章', '酒坛诗社'],
       headactive: 0,
@@ -94,50 +113,57 @@ export default {
         signature: '',
         headimgurl: ''
       },
-      showmenu: false
+      showmenu: false,
+      artList: [],
+      poetrys: []
     }
   },
-  // async asyncData (req) {
-  //   let detfn = userApi.asyUserDetail(req)
-  //   const { detCode, detData } = await detfn
-  //   if (detCode === 200) {
-  //     let { nickname, buyNumber, signature, headimgurl } = detData
-  //     let userInfo = { nickname, buyNumber, signature, headimgurl }
-  //     console.log('userInfo', userInfo)
-  //     return { userInfo }
-  //   }
-  // },
-  async mounted () {
-    let detfn = userApi.asyUserDetail()
-    const { code: detCode, data: detData } = await detfn
-    console.log(detCode, 'detCode')
-    if (detCode === 200) {
-      let { nickname, buyNumber, signature, headimgurl } = detData
-      let userInfo = { nickname, buyNumber, signature, headimgurl }
-      this.userInfo = { ...userInfo }
-    }
+  mounted () {
+  },
+  components: {
+    // uFooter,
+    uArticle,
+    uJarsclb,
+    leftMenu
   },
   methods: {
     headFn (index) {
       this.headactive = index
-      this.iscomp = this.comps[index]
-    },
-    tomyInfo () {
-      this.$router.push('/mine/person')
     },
     tofollow (num) {
-      let Que = {
-        path: '/mine/follow',
-        query: { num: num }
-      }
-      this.$router.push(Que)
+      window.location.href = '/mine/follow?num=' + num
     },
     toperson () {
-      this.$router.push('/mine/person')
+      window.location.href = '/mine/person'
     },
     openMenu () {
-      console.log(this.showmenu, 'showmenu')
       this.showmenu = !this.showmenu
+    },
+    async getArts () {
+      let params = { page: 1, count: 10 }
+      const { code, data } = await userApi.getArticle(params)
+      if (code === 200) {
+        console.log('data', data)
+        if (data && data.array) {
+          this.artList = data.array
+        }
+      }
+    },
+    async getpoetry () {
+      let params = { ...this.curInfo }
+      const { code, data } = await userApi.windPoetry(params)
+      if (code === 200) {
+        let { array } = data
+        this.poetrys = array.map(v => {
+          let { content, createdAt } = v
+          let date = new Date(createdAt)
+          let yy = date.getFullYear()
+          let mm = date.getMonth() + 1
+          let dd = date.getDate()
+          let yymm = yy + '/' + mm
+          return { content, yymm, dd }
+        })
+      }
     }
   }
 }
@@ -253,6 +279,7 @@ export default {
             font-weight: 500;
             color: rgba(153, 153, 153, 1);
             margin: 10px 0;
+            text-align: center;
 
             &>span {
               font-size: 19px;

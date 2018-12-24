@@ -438,7 +438,11 @@ export default {
       margin-top: -2.5px;
       width: 8px;
       height: 5px;
-      background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
+      background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
+      opacity: 0.5;
+      transform: rotate(0);
+      transition: 0.2s;
+      // background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
       .bg_cover;
     }
   }
@@ -449,6 +453,8 @@ export default {
     font-weight: 500;
 
     &:after {
+      opacity: 1;
+      transform: rotate(180deg);
       background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
     }
   }

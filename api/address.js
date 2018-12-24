@@ -25,9 +25,11 @@ export const addressApi = {
     return request.clientPost(`/api/shippingAddress/delete/${val}`)
   },
   createAddress (obj) {
-    return request.clientPost('/api/shippingAddress/create', obj)
+    // return request.clientPost('/api/shippingAddress/create', obj)
+    return request.clientPostJson('/api/shippingAddress/create', obj)
   },
   updateAddress (obj) {
-    return request.clientPost('/api/shippingAddress/update', obj)
+    // return request.clientPost('/api/shippingAddress/update', obj)
+    return request.clientPostJson('/api/shippingAddress/update', obj)
   }
 }
