@@ -47,5 +47,9 @@ export const goodsApi = {
   },
   unlike (commentId) {
     return request.clientPost('/api/cmt/unlike/' + commentId)
+  },
+  // 获取评价回复内容
+  getCommentReply (obj) {
+    return request.clientGet('/api/cmt/paginateCommentReply', obj)
   }
 }

@@ -495,7 +495,7 @@ export default {
       let tabOffsetTop = document.querySelector('.u-detail_tab').offsetTop
       // 距离底部大约200像素
       // console.log(scrollTop)
-      if (scrollTop + this.windowHeight === this.scrollHeight) {
+      if (scrollTop + this.windowHeight >= this.scrollHeight - 200) {
         that.scrollBottom = true
       } else {
         that.scrollBottom = false
@@ -838,7 +838,7 @@ export default {
         setTimeout(() => {
           fn.apply(this, arguments)
           Switch = true
-        }, 200)
+        }, 150)
       }
     },
     // 跳转登录
