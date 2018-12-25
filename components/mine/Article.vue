@@ -31,31 +31,11 @@
 	</div>
 </template>
 <script>
-import { userApi } from '~/api/users'
 export default {
   props: {
     artlist: {
       type: Array,
       default: []
-    }
-  },
-  data () {
-    return {
-      artArr: []
-    }
-  },
-  mounted () {
-  },
-  methods: {
-    async getArts () {
-      let params = { page: 1, count: 10 }
-      const { code, data } = await userApi.getArticle(params)
-      if (code === 200) {
-        console.log('data', data)
-        if (data && data.array) {
-          this.artArr = data.array
-        }
-      }
     }
   }
 }

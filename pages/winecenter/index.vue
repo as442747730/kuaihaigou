@@ -167,17 +167,14 @@ export default {
       count: 10,
       ifWine: true
     }
-    const { code, data } = await wineApi.goodList(params, req)
-    console.log(code)
-    if (code === 200) {
-      console.log(data)
-      let { array, extras, total, page, totalPageNo } = data
+    const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
+    if (goodCode === 200) {
+      let { array, total, page, totalPageNo } = goodData
       return {
         curTotal: total,
         curPage: page,
         curTotalPage: totalPageNo,
-        goodsList: array,
-        extras: extras
+        goodsList: array
       }
     }
   },
@@ -243,9 +240,18 @@ export default {
     countryCpm,
     listTwo
   },
+  async created () {
+    let params = { ifWine: true }
+    const { code, data } = await wineApi.clientAttrs(params)
+    if (code === 200) {
+      console.log('data extras', data)
+      this.extras = data
+      this.getProplist()
+      this.getInfos()
+    }
+  },
   mounted () {
     this.addBarwid()
-    this.getInfos()
     window.addEventListener('scroll', () => {
       let winH = document.documentElement.clientHeight || document.body.clientHeight
       let elemBound = this.$refs.scrollElem.getBoundingClientRect()
@@ -495,20 +501,31 @@ export default {
           ]
           break
         case 3:
-          getList = [
-            {
-              title: '站内等级',
-              clsType: 'u-list4',
-              list: this.stationList,
-              elIndex: this.stationIndex
-            },
-            {
-              title: '国际级别',
-              clsType: 'u-list4',
-              list: this.internationList,
-              elIndex: this.internationIndex
-            }
-          ]
+          if (this.internationList.length > 0) {
+            getList = [
+              {
+                title: '站内等级',
+                clsType: 'u-list4',
+                list: this.stationList,
+                elIndex: this.stationIndex
+              },
+              {
+                title: '国际级别',
+                clsType: 'u-list4',
+                list: this.internationList,
+                elIndex: this.internationIndex
+              }
+            ]
+          } else {
+            getList = [
+              {
+                title: '站内等级',
+                clsType: 'u-list4',
+                list: this.stationList,
+                elIndex: this.stationIndex
+              }
+            ]
+          }
           break
         case 4:
           getList = [
@@ -563,30 +580,27 @@ export default {
     },
     getProplist () {
       // 品种类型
-      this.varietyList = this.adjustProps(this.extras[2])
+      this.varietyList = this.adjustProps(this.extras.typeRespList, 'typeName')
       // 国家
-      this.countryList = this.adjustProps(this.extras[3])
-      // 产区
-      this.areaList = this.adjustProps(this.extras[4])
+      this.countryList = this.adjustProps(this.extras.countryRespList, 'countryName')
       // 普通品种
-      this.grapeList = this.adjustProps(this.extras[5])
+      this.grapeList = this.adjustProps(this.extras.varietyRespList, 'varietyName')
       // 网站等级
-      this.stationList = this.adjustProps(this.extras[6])
+      this.stationList = this.adjustProps(this.extras.instationLevelRespList, 'levelName')
       // 场景
-      this.sceneList = this.adjustProps(this.extras[7])
+      this.sceneList = this.adjustProps(this.extras.sceneRespList, 'scene')
       // 特点
-      this.featureList = this.adjustProps(this.extras[8])
-      // 国际等级
-      this.internationList = this.adjustProps(this.extras[12])
+      this.featureList = this.adjustProps(this.extras.charactRespList, 'charact')
       // 净含量
-      this.netList = this.combProps(this.extras[10], 'ml')
+      this.netList = this.combProps(this.extras.netVolumeList, 'ml')
       // 酒精度
-      this.alcoholList = this.combProps(this.extras[11], '%')
+      this.alcoholList = this.combProps(this.extras.alcoholDegreeList, '%')
     },
     async getAreaList (countried) {
       // 获取产区
       const { code, data } = await wineApi.getAreaList(countried)
       if (code === 200) {
+        console.log('data', data)
         let {internationalLevelRespList, productionAreaRespList} = data
         this.areaList = productionAreaRespList.map(v => {
           return { name: v.areaName, id: v.id }
@@ -596,45 +610,53 @@ export default {
         })
       }
     },
-    adjustProps (array) {
-      // ['1032464259549761537_白葡萄'] => [{name: '白葡萄', id: '1032464259549761537'}]
+    adjustProps (array, prop) {
       return array.map(v => {
-        let arrs = v.split('_')
-        return { id: arrs[0], name: arrs[1] }
+        return { id: v.id, name: v[prop] }
       })
     },
     getInfos () {
       // 价格类型中的价格
-      let lens = this.extras[1].length
+      let priceArr = this.extras.priceRangeRespList
+      let lens = priceArr.length
       let oneStep = 1 / lens * 100
       let halfStep = 1 / (lens * 2) * 100
       this.stepOne = oneStep
       this.stepHalf = halfStep
       this.sliderStep = halfStep
-      this.$nextTick(() => {
-        console.log(this.extras, 'extras')
-        let arr = []
-        this.extras[1].map((v, index, array) => {
-          arr.push(v.split('-')[0])
-          if (index === array.length - 1) {
-            let last = v.split('-')[1] === '*' ? '不限' : v.split('-')[1]
-            arr.push(last)
+      let truePirce = []
+      priceArr.map((v, index) => {
+        if (index === 0) {
+          truePirce.push(v.min)
+        }
+        if (index === lens - 1) {
+          let lastone
+          if (v.max === 0) {
+            lastone = '不限'
+          } else {
+            lastone = v.max
           }
-        })
-        this.priceList = arr
-        // 其它筛选器
-        this.getProplist()
+          truePirce.push(lastone)
+          return false
+        }
+        truePirce.push(v.max)
       })
+      // console.log(truePirce, 'truePirce')
+      this.priceList = truePirce
     },
     combProps (array, mark) {
-      // ['0.0-300.0'] => [{ name: '0.0-300.0'}]
+      //  { "max": 300, "min": 0 } => { name: '0 ~ 300', id: { "max": 300, "min": 0 } }
       let arr1 = []
       array.map(v => {
-        let arrs = v.split('-')
-        if (arrs[1] === '*') {
-          arrs[1] = '以上'
+        let { min, max } = v
+        if (typeof (min) === 'undefined') {
+          min = 0
         }
-        arr1.push({ id: arrs, name: arrs[0] + mark + '~' + arrs[1] + mark })
+        if (typeof (max) === 'undefined') {
+          max = '以上'
+        }
+        let strs = min + mark + ' ~ ' + max + mark
+        arr1.push({ id: v, name: strs })
       })
       return arr1
     },
@@ -821,21 +843,24 @@ export default {
         top: 50%;
         right: 0;
         margin-top: -6px;
+        opacity: 0.5;
+        transform: rotate(0);
+        transition: 0.2s;
+        background-image: url("~/assets/img/Icons/ic_xiala_b_line_12x12.png");
         .bg_cover;
-        background-image: url("~/assets/img/Icons/ic_xiala_g_line_12x12.png");
+        // background-image: url("~/assets/img/Icons/ic_xiala_g_line_12x12.png");
       }
     }
-  }
-
-  .active {
-
-    &>span {
-      font-family: PingFangSC-Semibold;
-      font-weight: 600;
-      color: @cor_333;
-
-      &:after {
-        background-image: url("~/assets/img/Icons/ic_xiala_b_line_12x12.png");
+    &.active {
+      &>span {
+        font-family: PingFangSC-Semibold;
+        font-weight: 600;
+        color: @cor_333;
+        &:after {
+          opacity: 1;
+          transform: rotate(180deg);
+          background-image: url("~/assets/img/Icons/ic_xiala_b_line_12x12.png");
+        }
       }
     }
   }

@@ -11,7 +11,7 @@
             :class="[{active: items.elIndex === ind}, changeCls(items.clsType)]"
             @click="liFn(item, index, ind)"
             :key="ind">{{item.name}}</li>
-          <li class="empty" :class="changeCls(items.clsType)" v-for="(item, $ind) in addEmpty(items.clsType, items.list.length)" :key="$ind + 10"></li>
+          <li class="empty" :class="changeCls(items.clsType)" v-for="(item, key) in addEmpty(items.clsType, items.list.length)" :key="items.list.length + key"></li>
         </ul>
       </div>
     </section>

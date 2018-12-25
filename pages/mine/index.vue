@@ -53,7 +53,7 @@
           <u-article :artlist="artList"></u-article>
         </section>
         <section class="bottom-content" v-else>
-          <u-jarsclb></u-jarsclb>
+          <u-jarsclb :poetryList="poetrys"></u-jarsclb>
         </section>
       </div>
     </div>
@@ -80,32 +80,24 @@ export default {
     }
   },
   async asyncData (req) {
-    let params = { page: 1, count: 10 }
-    let personInfo = userApi.serverPostInfo(req)
-    let artList = userApi.serveGetAartical(params, req)
-    const { code: detCode, data: detData } = await personInfo
-    const { code: artCode, data: artData } = await artList
+    const { code: detCode, data: detData } = await userApi.serverPostInfo(req)
     if (detCode === 506) {
       req.redirect('/account/login')
     } else if (detCode === 200) {
-      console.log(detData)
       return { userInfo: detData }
     } else {
       req.redirect('/error')
     }
-    if (artCode === 200) {
-      if (artData) {
-        return { artList: artData.array }
-      }
-    }
+  },
+  components: {
+    uArticle,
+    uJarsclb,
+    leftMenu
   },
   data () {
     return {
       footIndex: 4,
-      iscomp: 'uArticle',
       defaulthead: this.defaulthead,
-      comps: ['uArticle', 'uJarsclb'],
-      headitems: ['我的文章', '酒坛诗社'],
       headactive: 0,
       userInfo: {
         nickname: '',
@@ -113,12 +105,28 @@ export default {
         signature: '',
         headimgurl: ''
       },
-      artList: [],
-      poetrys: [],
-      loadOk: true,
-      moreData: false, // 没有更多数据
+      headitems: ['我的文章', '酒坛诗社'],
+      artList: [], // 我的文章
+      artTotalPage: 1,
+      curArt: {
+        page: 1,
+        count: 10
+      }, // 我的文章请求参数
+      artLoad: true,
+      artMore: true,
+      poetrys: [], // 酒坛诗社
+      poetTotalPage: 1,
+      curPoes: {
+        page: 1,
+        count: 10
+      }, // 酒坛诗社请求参数
+      poesLoad: true,
+      poesMore: true,
       showmenu: false // 是否显示菜单栏
     }
+  },
+  created () {
+    this.getArts()
   },
   mounted () {
     window.addEventListener('scroll', () => {
@@ -128,30 +136,36 @@ export default {
       let _height = elemBound.height
       let bottomH = _height - (_top + winH)
       if (bottomH <= 100) {
-        if (this.loadOk && !this.moreData) {
-          this.loadOk = false
-          this.curPage += 1
-          let baseCount = this.tansmit.count * this.curPage
-          if (baseCount >= this.curTotal) {
-            this.moreData = true
-            baseCount = this.curTotal
+        if (this.headactive === 0) {
+          if (this.artLoad && this.artMore) {
+            if (this.artTotalPage > this.curArt.page) {
+              this.artLoad = false
+              this.curPoes.page += 1
+              this.getArts()
+            } else {
+              this.artMore = false
+            }
           }
-          let chObj = { count: baseCount }
-          Object.assign(this.tansmit, chObj)
-          this.getPageData()
+        } else {
+          if (this.poesLoad && this.poesMore) {
+            if (this.poetTotalPage > this.curPoes.page) {
+              this.poesLoad = false
+              this.curPoes.page += 1
+              this.getpoetry()
+            } else {
+              this.poesMore = false
+            }
+          }
         }
       }
     })
   },
-  components: {
-    // uFooter,
-    uArticle,
-    uJarsclb,
-    leftMenu
-  },
   methods: {
     headFn (index) {
       this.headactive = index
+      if (index === 1) {
+        this.getpoetry()
+      }
     },
     tofollow (num) {
       window.location.href = '/mine/follow?num=' + num
@@ -163,21 +177,24 @@ export default {
       this.showmenu = !this.showmenu
     },
     async getArts () {
-      let params = { page: 1, count: 10 }
+      // 获取文章
+      let params = { ...this.curArt }
       const { code, data } = await userApi.getArticle(params)
       if (code === 200) {
-        console.log('data', data)
         if (data && data.array) {
-          this.artList = data.array
+          this.artList.push(...data.array)
         }
+        this.artLoad = true
       }
     },
     async getpoetry () {
-      let params = { ...this.curInfo }
+      // 酒坛诗社
+      let params = { ...this.curPoes }
       const { code, data } = await userApi.windPoetry(params)
       if (code === 200) {
-        let { array } = data
-        this.poetrys = array.map(v => {
+        let { array, totalPageNo } = data
+        this.poetTotalPage = totalPageNo
+        let poeArr = array.map(v => {
           let { content, createdAt } = v
           let date = new Date(createdAt)
           let yy = date.getFullYear()
@@ -186,6 +203,8 @@ export default {
           let yymm = yy + '/' + mm
           return { content, yymm, dd }
         })
+        this.poetrys.push(...poeArr)
+        this.artLoad = true
       }
     }
   }
