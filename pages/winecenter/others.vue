@@ -1,5 +1,5 @@
 <template>
-  <div class="others" :class="{stopwineScroll: isRoll}">
+  <div class="others" ref="scrollElem">
     <div class="others-head">
       <div class="upper upzindex">
         <div class="top">
@@ -7,92 +7,240 @@
             <span class="top_l-span icon_switch"></span>
             <span class="top_l-span world">红酒商品</span>
           </div>
-          <div class="top_r" @click="toSearch">
-            <i class="icon_search"></i>
+          <div class="top_r">
+            <i class="icon_search" @click="toSearch"></i>
             <i class="icon_buy"></i>
           </div>
         </div>
         <div class="screen">
-          <div class="screen-item" :class="{active: classify.elIndex == index}" @click="elClassify(index)" v-for="(cls, index) in classify.list" :key="index">{{cls}}</div>
+          <div class="screen-item" :class="{active: sizerIndex === index}" @click="elClassify(index)" v-for="(cls, index) in sortList" :key="index">{{cls}}</div>
         </div>
       </div>
-      <list-one :showlist="showList" @closeFn="closeClassify"></list-one>  
     </div>
     <section class="other-content">
       <ul class="othList">
-        <li class="othList-item" v-for="n in 10">
+        <li class="othList-item" v-for="(good, index) in goodsList" :key="index">
           <div class="top">
-            <div class="top_bk" :style="'background: url(' + mybk + ') no-repeat center/contain'"></div>
+            <div class="top_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
           </div>
           <div class="bottom">
-            <div class="head">法国1982拉菲法国1982拉菲传奇Lafite</div>
+            <div class="head">{{good.goodsName}}</div>
             <p>
-              <span>750ml</span>
-              <span>日常餐酒</span>
-              <span>紧致单宁</span>
+              <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
             </p>
-            <div class="price">¥ 399</div>
+            <div class="price">¥ {{good.actualPrice}}</div>
           </div>
         </li>
       </ul>
     </section>
-    <!-- <u-footer :postIndex="1"></u-footer> -->
+    <list-one :isShow="isShow" :postObjs="classify" @selectOk="selectOk" @closeFn="closeClassify"></list-one>  
   </div>
 </template>
 <script>
-// import uFooter from '~/components/footer'
 import listOne from '~/components/cpms/listOne'
-import Imgs from '~/assets/img/green_wine.jpg'
+import tools from '~/utils/tools'
+import { wineApi } from '~/api/wine'
+
 export default {
   head () {
     return {
-      title: '我的购物车',
+      title: '选酒中心',
       meta: [
-        { hid: 'title', name: 'title', content: '我的购物车' }
+        { hid: 'title', name: 'title', content: '选酒中心' }
       ]
     }
   },
 
   layout: 'page-with-tabbar',
 
+  async asyncData (req) {
+    let params = {
+      page: 1,
+      count: 10,
+      ifWine: false
+    }
+    const { code, data } = await wineApi.goodList(params, req)
+    console.log(code)
+    if (code === 200) {
+      console.log(data)
+      let { array, extras, total, page, totalPageNo } = data
+      let firstCategory = tools.adjustProps(extras.firstCategory)
+      let secondCategory = tools.adjustProps(extras.secondCategory)
+      let thirdCategory = tools.adjustProps(extras.thirdCategory)
+      return {
+        curTotal: total,
+        curPage: page,
+        curTotalPage: totalPageNo,
+        tansmit: params,
+        goodsList: array,
+        extras: extras,
+        firstList: firstCategory,
+        secondList: secondCategory,
+        thirdList: thirdCategory
+      }
+    }
+  },
+
   data () {
     return {
-      isRoll: false,
-      showList: false,
+      tansmit: {}, // 传递参数
+      curPage: 1,
+      curTotal: 0,
+      curTotalPage: 1,
+      loadOk: true, // 加载是否完成
+      moreData: false, // 没有更多数据
+      firstList: [], // 大分类
+      firstIndex: null, // 大分类选中索引
+      secondList: [], // 子分类
+      secondIndex: null, // 子分类选中索引
+      thirdList: [], // 小分类
+      thirdIndex: null, // 小分类选中索引
+      postList: [],
+      isShow: false,
+      sortList: ['大分类', '子分类', '小分类'],
+      sizerIndex: null,
       classify: {
-        list: ['大分类', '子分类', '小分类'],
         elIndex: null,
         nowList: []
-      },
-      postObj: {},
-      lists: ['酒具', '醒酒器', '餐具', '奶酪', '其他'],
-      lists2: ['葡萄酒杯', '香槟酒杯', '威士忌杯', '鸡尾酒杯', '烈酒杯'],
-      mybk: Imgs
+      }
     }
   },
   components: {
-    // uFooter,
     listOne
   },
+  mounted () {
+    window.addEventListener('scroll', () => {
+      let winH = document.documentElement.clientHeight || document.body.clientHeight
+      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
+      let _top = Math.abs(elemBound.top)
+      let _height = elemBound.height
+      let bottomH = _height - (_top + winH)
+      if (bottomH <= 100) {
+        if (this.loadOk && !this.moreData) {
+          this.loadOk = false
+          if (this.curPage < this.curTotalPage) {
+            this.curPage += 1
+            Object.assign(this.tansmit, { page: this.curPage })
+            this.scrollData()
+          } else {
+            this.moreData = false
+          }
+        }
+      }
+    })
+  },
   methods: {
+    async getPageData () {
+      // 筛选
+      this.moreData = true
+      this.loadOk = true
+      Object.assign(this.tansmit, { page: 1 })
+      const { code, data } = await wineApi.clientList(this.tansmit)
+      if (code === 200) {
+        let { array, page, totalPageNo } = data
+        this.curPage = page
+        this.curTotalPage = totalPageNo
+        this.goodsList = array
+      } else {
+        this.$toast(data)
+      }
+    },
+    async scrollData () {
+      // 滚动
+      this.moreData = true
+      this.loadOk = true
+      Object.assign(this.tansmit, { page: 1 })
+      const { code, data } = await wineApi.clientList(this.tansmit)
+      if (code === 200) {
+        let { array, page, totalPageNo } = data
+        this.curPage = page
+        this.curTotalPage = totalPageNo
+        this.goodsList.push(...array)
+        this.loadOk = true
+      } else {
+        this.$toast(data)
+        this.loadOk = true
+      }
+    },
+    elClassify (index) {
+      // 选择筛选器
+      if (index !== this.sizerIndex) {
+        this.isShow = true
+        this.sizerIndex = index
+      } else {
+        this.isShow = false
+        this.sizerIndex = null
+      }
+      if (this.isShow) {
+        let getObj = {}
+        switch (index) {
+          case 0:
+            getObj = {
+              nowList: this.firstList,
+              elIndex: this.firstIndex
+            }
+            break
+          case 1:
+            getObj = {
+              nowList: this.secondList,
+              elIndex: this.secondIndex
+            }
+            break
+          case 2:
+            getObj = {
+              nowList: this.thirdList,
+              elIndex: this.thirdIndex
+            }
+            break
+        }
+        Object.assign(this.classify, getObj)
+        console.log(this.classify, 'classify elClassify')
+      }
+    },
+    selectOk (event) {
+      console.log('event', event)
+      let clsIndex = this.sizerIndex
+      let { elIndex, id } = event
+      let objId = {}
+      console.log('clsIndex', clsIndex)
+      switch (clsIndex) {
+        case 0:
+          this.firstIndex = elIndex
+          objId = { firstCategoryid: id }
+          break
+        case 1:
+          this.secondIndex = elIndex
+          objId = { secondCategoryid: id }
+          break
+        case 2:
+          this.thirdIndex = elIndex
+          objId = { thirdCategoryid: id }
+          break
+      }
+      console.log(objId, 'objId')
+      Object.assign(this.tansmit, objId)
+      this.getPageData()
+      this.closeClassify()
+    },
+    closeClassify () {
+      this.isShow = false
+      this.sizerIndex = null
+    },
+    onRest () {
+      // 重置数据
+      this.firstIndex = null
+      this.secondIndex = null
+      this.thirdIndex = null
+    },
     toWinecenter () {
       window.location.href = '/winecenter'
     },
     toSearch () {
       window.location.href = '/search?id=others'
     },
-    elClassify (index) {
-      this.showList = !this.showList
-      if (index === 0) {
-        this.$set(this.postObj, 'list', this.lists)
-      } else {
-        this.$set(this.postObj, 'list', this.lists2)
-      }
-    },
-    closeClassify (val) {
-      this.showList = val
-      this.classify.elIndex = null
-      this.classify.nowList = []
+    customArray (arr) {
+      if (!Array.isArray(arr)) return false
+      return JSON.parse(arr)
     }
   }
 }
@@ -100,13 +248,15 @@ export default {
 <style lang="less" scoped>
 
 .others {
+  width: 100vw;
+  height: 100vh;
   background: #fff;
   line-height: 1;
   font-size: 12px;
 }
 
 .other-content {
-  padding-bottom: 50px;
+  // padding-bottom: 50px;
   .padlr20;
 
   .othList {

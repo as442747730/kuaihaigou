@@ -55,7 +55,7 @@
             </div>
             <div class="itemr-price">
               <span class="t_price">¥ {{good.actualPrice}}</span>
-              <del class="m_price">市场价：¥ 499</del>
+              <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
             </div>
           </div>
           <div class="item_r" v-else>
@@ -113,8 +113,8 @@
               </div>
             </div>
             <div class="itemr-price">
-              <span class="t_price">¥ 399</span>
-              <del class="m_price">市场价：¥ 499</del>
+              <span class="t_price">¥ {{good.actualPrice}}</span>
+              <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
             </div>
           </div>
         </div>
@@ -147,7 +147,6 @@
 <script>
 import countryCpm from '~/components/cpms/countryList'
 import listTwo from '~/components/cpms/listTwo'
-import api from '~/utils/request'
 import { wineApi } from '~/api/wine'
 
 export default {
@@ -172,8 +171,11 @@ export default {
     console.log(code)
     if (code === 200) {
       console.log(data)
-      let { array, extras } = data
+      let { array, extras, total, page, totalPageNo } = data
       return {
+        curTotal: total,
+        curPage: page,
+        curTotalPage: totalPageNo,
         goodsList: array,
         extras: extras
       }
@@ -200,6 +202,7 @@ export default {
       isCountry: false, // 是否国家产区
       isPrice: false, // 是否为价格类型
       goodsList: [], // 商品列表
+      reqList: [], // 滚动返回的数据
       extras: {}, // 其它属性类
       countryList: [], // 国家列表
       countryIndex: null, // 选中的国家索引
@@ -229,8 +232,11 @@ export default {
         count: 10,
         ifWine: true
       }, // 传递参数
+      curTotal: 0,
       curPage: 1,
-      loadOk: true // 加载是否完成
+      curTotalPage: 1,
+      loadOk: true, // 加载是否完成
+      moreData: true // 有更多数据
     }
   },
   components: {
@@ -247,13 +253,15 @@ export default {
       let _height = elemBound.height
       let bottomH = _height - (_top + winH)
       if (bottomH <= 100) {
-        if (this.loadOk) {
+        if (this.loadOk && this.moreData) {
           this.loadOk = false
-          this.curPage += 1
-          let baseCount = this.tansmit.count * this.curPage
-          let chObj = { count: baseCount }
-          Object.assign(this.tansmit, chObj)
-          this.getPageData()
+          if (this.curPage < this.curTotalPage) {
+            this.curPage += 1
+            Object.assign(this.tansmit, { page: this.curPage })
+            this.scrollList()
+          } else {
+            this.moreData = false
+          }
         }
       }
     })
@@ -359,10 +367,30 @@ export default {
       this.getPageData()
     },
     async getPageData () {
-      let params = this.tansmit
-      const { code, data } = await api.clientGet('/api/esGoods/paginate', params)
+      // 筛选器
+      this.moreData = true
+      this.loadOk = true
+      Object.assign(this.tansmit, { page: 1 })
+      const { code, data } = await wineApi.clientList(this.tansmit)
       if (code === 200) {
-        this.goodsList = data.array
+        let { array, page, totalPageNo } = data
+        this.curPage = page
+        this.curTotalPage = totalPageNo
+        this.goodsList = array
+        this.addBarwid()
+      } else {
+        this.$toast(data)
+      }
+    },
+    async scrollList () {
+      // 滚动
+      let params = this.tansmit
+      const { code, data } = await wineApi.clientList(params)
+      if (code === 200) {
+        let { array, page, totalPageNo } = data
+        this.goodsList.push(...array)
+        this.curPage = page
+        this.curTotalPage = totalPageNo
         this.addBarwid()
         this.loadOk = true
       } else {
@@ -569,7 +597,7 @@ export default {
       }
     },
     adjustProps (array) {
-      // ['1032464259549761537_白葡萄'] => [{name: '白葡萄', varietyid: '1032464259549761537'}]
+      // ['1032464259549761537_白葡萄'] => [{name: '白葡萄', id: '1032464259549761537'}]
       return array.map(v => {
         let arrs = v.split('_')
         return { id: arrs[0], name: arrs[1] }

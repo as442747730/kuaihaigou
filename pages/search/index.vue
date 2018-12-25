@@ -14,7 +14,7 @@
         <div class="navmdl-logo" :class="{active: ctrlLogo}" ref="navmdlLogo" @click="navLogo"></div>
       </nav>
     </div>
-    <list-one :showlist="showList" @closeFn="closeLogo"></list-one>
+    <list-one :isShow="isShow" :postObjs="classify" @closeFn="closeLogo"></list-one>
     <div class="search-result">
       <!-- 商品 -->
       <section class="goods" v-if="navData.elIndex === 0">
@@ -171,7 +171,7 @@ export default {
   data () {
     return {
       isRoll: false,
-      showList: false,
+      isShow: false,
       keywords: '',
       bkImg: bkImg,
       bkImg2: bkImg2,
@@ -185,7 +185,11 @@ export default {
         list: ['最新', '最热门', '评论最多', '点赞最多'],
         elIndex: 3
       },
-      listSearch: ['最新', '最热门', '评论最多', '点赞最多']
+      listSearch: ['最新', '最热门', '评论最多', '点赞最多'],
+      classify: {
+        elIndex: null,
+        nowList: []
+      }
     }
   },
   components: {
@@ -205,12 +209,12 @@ export default {
       this.navData.elIndex = index
     },
     navLogo () {
-      this.showList = true
+      this.isShow = true
       this.ctrlLogo = true
     },
     closeLogo (val) {
       console.log('val', val)
-      this.showList = val
+      this.isShow = val
       this.ctrlLogo = val
     }
   }
