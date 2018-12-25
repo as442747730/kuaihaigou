@@ -20,7 +20,7 @@
         <div class="icon-check"></div>
       </div>
     </div>
-    <van-button class='pay-submit' type="default" size='large' @click='paySubmit'>确认支付</van-button>
+    <van-button class='pay-submit' type="default" size='large' @click='paySubmit' :loading='payLoading'>确认支付</van-button>
     <div v-if='zfbHtml' class="fake" v-html='zfbHtml'></div>
   </van-actionsheet>
 </template>
@@ -56,6 +56,7 @@
         payMethod: 0,
         timeCount: '00小时00分00秒',
         zfbHtml: null,
+        payLoading: false,
 
         orderInfo: {}
       }
@@ -94,6 +95,7 @@
         }
       },
       async paySubmit () {
+        this.payLoading = true
         if (this.payMethod === 0) {
           let obj = {
             orderid: this.orderId,
@@ -107,6 +109,21 @@
               document.forms[0].submit()
             }, 500)
             console.log(data)
+          } else {
+            this.$toast(data)
+            this.payLoading = false
+          }
+        } else if (this.payMethod === 1) {
+          let obj = {
+            orderId: this.orderId
+          }
+          const { code, data } = await orderApi.wxReward(obj)
+          if (code === 200) {
+            console.log(data)
+            window.location.href = data
+          } else {
+            this.$toast(data)
+            this.payLoading = false
           }
         }
       }

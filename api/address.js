@@ -19,17 +19,15 @@ export const addressApi = {
     return request.clientGet('/api/shippingAddress/listAll')
   },
   setDefault (val) {
-    return request.clientPost(`/api/shippingAddress/setDefault/${val}`, { shippingAddressId: val })
+    return request.clientPost(`/api/shippingAddress/setDefault/` + val)
   },
   deleteAddress (val) {
     return request.clientPost(`/api/shippingAddress/delete/${val}`)
   },
   createAddress (obj) {
-    // return request.clientPost('/api/shippingAddress/create', obj)
     return request.clientPostJson('/api/shippingAddress/create', obj)
   },
   updateAddress (obj) {
-    // return request.clientPost('/api/shippingAddress/update', obj)
     return request.clientPostJson('/api/shippingAddress/update', obj)
   }
 }

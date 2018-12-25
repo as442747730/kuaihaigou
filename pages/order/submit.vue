@@ -131,8 +131,13 @@
     <div class="m-section-cell">
       <div class="m-section-cell-item more-link small" @click="openInvoice">
         <div class="label">发票信息</div>
-        <div class="content">{{ invoinceSelected.id ?  (invoinceSelected.invoiceType === 1 ? '纸质' : '电子') + (invoinceSelected.headType === 1 ? '个人' : '单位') + '发票' : '不开发票' }}</div>
+        <div class="content">{{ invoinceSelected.id ? (invoinceSelected.invoiceType === 1 ? '纸质' : '电子') + (invoinceSelected.headType === 1 ? '个人' : '单位') + '发票' : '不开发票' }}</div>
       </div>
+    </div>
+
+    <!-- 留言 -->
+    <div class="m-section-cell">
+      <h4>订单留言</h4>
     </div>
 
     <div class="m-section-bottom">
@@ -219,13 +224,13 @@ export default {
           b.push(...res2.data.goodsList.filter(n => !n.ifDistribute))
           b.push(...res2.data.packList.filter(n => !n.ifDistribute))
         }
-        // console.log(res1.data)
+        console.log('res1', res1.data)
         // console.log(res2.data)
-        console.log('res2', res2)
+        // console.log('res2', res2)
         // console.log(res4.data)
 
         // 获取默认收货地址
-        let defaultAdress = res1.data.find(v => v.ifDefault)
+        let defaultAdress = res1.data.find(v => v.ifDefault) || {}
         return {
           addressArray: res1.data, // 所有可选的收货地址
           addressSelected: defaultAdress,
@@ -307,6 +312,10 @@ export default {
         } else {
           window.location.href = '/order/cart'
         }
+      }, 1000)
+    } else if (code === 10026) {
+      setTimeout(() => {
+        window.location.href = '/address/manage'
       }, 1000)
     }
     console.log('reductionStrategy', this.reductionStrategy)
@@ -397,6 +406,9 @@ export default {
     async submitOrder () {
       if (!this.addressSelected.id) {
         return this.$toast('请选择收货地址')
+      }
+      if (this.goodsNoSend.length !== 0) {
+        return this.$toast('您的订单中含有不在配送范围内商品，请返回购物车修改')
       }
       let obj = {
         shippingAddressId: this.addressSelected.id, // 收货地址id

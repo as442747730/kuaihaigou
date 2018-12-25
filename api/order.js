@@ -39,6 +39,10 @@ export const orderApi = {
   alipay (obj) {
     return request.clientPostJson('/api/alipay/wap/build', obj)
   },
+  // 微信创建wap支付
+  wxReward (obj) {
+    return request.clientPostJson('/api/pay/wxReward', obj)
+  },
   // 检测支付状态
   getOrderPayOrNot (orderId) {
     return request.clientGet('/api/order/getOrderPayOrNot/' + orderId)
