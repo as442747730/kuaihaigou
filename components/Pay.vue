@@ -115,7 +115,8 @@
           }
         } else if (this.payMethod === 1) {
           let obj = {
-            orderId: this.orderId
+            orderId: this.orderId,
+            redirectUrl: 'http://' + window.location.host + '/order/result?orderId=' + this.orderId
           }
           const { code, data } = await orderApi.wxReward(obj)
           if (code === 200) {
