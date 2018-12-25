@@ -121,7 +121,7 @@
           const { code, data } = await orderApi.wxReward(obj)
           if (code === 200) {
             console.log(data)
-            // window.location.href = data
+            window.location.href = data
           } else {
             this.$toast(data)
             this.payLoading = false
