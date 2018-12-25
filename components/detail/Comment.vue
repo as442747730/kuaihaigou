@@ -57,7 +57,7 @@
               <div class="other">
                 <div class="time">{{ changeTime($v.createdAt) }}</div>
                 <div class="fr">
-                  <span @click='reply()'>回复({{ $v.replyNum }})</span>
+                  <span @click='reply($v.id)'>回复({{ $v.replyNum }})</span>
                   <span @click='zan($v, $v.id, $v.ifLiked)'>
                     <i class="ib-middle"></i>
                     <u class="ib-middle">{{ $v.likeNum }}</u>
@@ -82,15 +82,25 @@
           </ul>
         </div>
 
-        <!-- 回复框 -->
-        <div class="u-reply" v-if='replyShow' :class="{'show': replyShowDelay}">
-          <section class="u-detail_header">
+        <div class='more-loading' v-show='pageLoding'>
+          <van-loading type="spinner" />
+          <p>正在加载更多</p>
+        </div>
+
+        <div class="no-more" v-show='pageEmpty'>
+          <p>没有更多评价了！</p>
+        </div>
+
+        <!-- 回复 -->
+        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' />
+        <!-- <div class="u-reply" v-if='replyShow' :class="{'show': replyShowDelay}"> -->
+          <!-- <section class="u-detail_header">
             <van-nav-bar title="评论详情" left-arrow @click-left='onClickLeft'>
               <van-icon name="fenxiang" slot="right" @click='report' />
             </van-nav-bar>
-          </section>
+          </section> -->
 
-          <div class="u-reply-form" id="replay">
+          <!-- <div class="u-reply-form" id="replay">
             <van-field
               @focus="da"
               class="ib-middle"
@@ -102,15 +112,15 @@
               maxlength="40"
             />
             <button class="ib-middle">回复</button>
-          </div>
+          </div> -->
           <!-- 举报 -->
-          <van-actionsheet
+          <!-- <van-actionsheet
             class="report"
             v-model="showReport"
             :actions="actions"
             @select="onSelect"
           />
-        </div>
+        </div> -->
       </div>
     </transition>
     <!-- 提问 -->
@@ -121,6 +131,7 @@
 </template>
 <script>
 import uQuestion from './Question'
+import uReply from './Replylist'
 
 import { ImagePreview } from 'vant'
 
@@ -129,12 +140,6 @@ import { goodsApi } from '~/api/goods'
 import tools from '~/utils/tools'
 
 import uUsericon from '~/components/Usericon'
-
-// import Img1 from '~/assets/img/bk1.png'
-
-// import Img2 from '~/assets/img/green_wine.jpg'
-
-// import Img3 from '~/assets/img/home/img_home_335x180@2x.png'
 
 export default {
   name: 'u-comment',
@@ -145,7 +150,8 @@ export default {
   },
   components: {
     uQuestion,
-    uUsericon
+    uUsericon,
+    uReply
   },
 
   data () {
@@ -167,18 +173,19 @@ export default {
 
       // 默认头像
       defaulthead: this.defaulthead,
-      commentData: []
+      commentData: [],
+
+      page: 1,
+      pageLoding: true,
+      pageEmpty: false,
+
+      // 回复内容
+      replystr: []
     }
   },
 
   created () {
     this.getComment(1)
-    // window.addEventListener('scroll', this.handleScroll(function () {
-    //   let scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
-    //   console.log(scrollTop)
-    //   // 距离底部大约200像素
-    //   // let nowPosition = scrollTop + this.windowHeight
-    // }))
   },
 
   watch: {
@@ -189,24 +196,31 @@ export default {
       }
     },
     scrollbottom (val) {
-      console.log(val)
+      if (val && !this.pageEmpty) {
+        this.page = this.page + 1
+        this.getComment(this.page)
+      }
     }
   },
 
   methods: {
     // 获取评价数据
     async getComment (page, hasContent = false, hasImg = false) {
+      this.pageLoding = true
       let param = {
         page: page,
-        count: 1,
+        count: 5,
         hasContent: hasContent,
         hasImg: hasImg,
         goodsId: this.goodsid
       }
       const { code, data } = await goodsApi.getComment(param)
       if (code === 200) {
-        this.commentData = data.array
-        console.log(data)
+        if (data.array.length === 0) {
+          this.pageEmpty = true
+        }
+        this.commentData = this.commentData.concat(data.array)
+        this.pageLoding = false
       }
     },
     // 查看大图
@@ -219,13 +233,25 @@ export default {
       })
     },
     // 回复
-    reply () {
-      document.body.classList = 'hidden'
-      window.location.hash = 'replay'
-      this.replyShow = true
-      setTimeout(() => {
-        this.replyShowDelay = true
-      }, 60)
+    async reply (commentid) {
+      const toast1 = this.$toast.loading('回复信息加载中')
+      let param = {
+        page: 1,
+        count: 5,
+        commentid: commentid
+      }
+      const { code, data } = await goodsApi.getCommentReply(param)
+      if (code === 200) {
+        this.replystr = data.array
+        console.log(this.replystr)
+        document.body.classList = 'hidden'
+        window.location.hash = 'replay'
+        this.replyShow = true
+        toast1.clear()
+        setTimeout(() => {
+          this.replyShowDelay = true
+        }, 60)
+      }
     },
     // 点赞
     async zan (val, id, ifLike) {
@@ -396,6 +422,23 @@ export default {
         border-color: #000;
       }
     }
+  }
+  .more-loading {
+    padding:  15px 0;
+    .van-loading {
+      margin: 0 auto 10px;
+    }
+    text-align: center;
+    background: #f2f2f2;
+    font-size: 11px;
+    color: #999;
+  }
+  .no-more {
+    text-align: center;
+    padding: 18px 0 15px;
+    background: #f2f2f2;
+    font-size: 11px;
+    color: #999;
   }
 }
 .u_comment {
