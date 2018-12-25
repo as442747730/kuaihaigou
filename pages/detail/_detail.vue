@@ -131,7 +131,7 @@
 
     <!-- 内容模块 -->
     <transition name='slide-fade2' mode="out-in">
-      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom='scrollBottom'></component>
+      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom="scrollBottom"></component>
     </transition>
 
     <!-- 底栏 -->
@@ -260,13 +260,15 @@ export default {
   },
   async asyncData (req) {
     const goodsId = req.params.detail
+    console.log(goodsId)
     let id = goodsId
     let detailFn = goodsApi.getDetail(id, req)
     let topSaleFn = goodsApi.getTopSales(req)
-    let userInfoFn = userApi.serveUserDetail(req)
+    let userInfoFn = userApi.serverPostInfo(req)
     const {code: detCode, data: detData} = await detailFn
     const {code: hotCode, data: hotData} = await topSaleFn
     const {code: userCode} = await userInfoFn
+    console.log('detCode', detCode)
     if (detCode === 200) {
       let hotlist = []
       let isLogin = false
@@ -333,7 +335,7 @@ export default {
         goodsList: goodsList,
         wineParams: wineParams,
         commentParams: commentParams,
-        hotlist: hotlist,
+        hotlist: hotlist || [],
         singleObj: singleObj
       }
     }
@@ -492,12 +494,11 @@ export default {
       let scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
       let tabOffsetTop = document.querySelector('.u-detail_tab').offsetTop
       // 距离底部大约200像素
-      console.log(scrollTop)
+      // console.log(scrollTop)
       if (scrollTop + this.windowHeight === this.scrollHeight) {
-        console.log('到底部了')
-        this.scrollBottom = true
+        that.scrollBottom = true
       } else {
-        this.scrollBottom = false
+        that.scrollBottom = false
       }
       if (scrollTop >= tabOffsetTop) {
         that.tabFixed = true

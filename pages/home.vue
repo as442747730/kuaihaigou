@@ -51,15 +51,55 @@
         <div class="bg full"></div>
       </section>
 
-      <section class="commend_home margin-20">
-        <div class="title_home">
-          <h2>
-            美酒推荐
-            <p>达人体验</p>
-          </h2>
-          <div class="change-new">
-            <i></i>
-            换一批
+      <section class="commend_home">
+        <div class="margin-20">
+          <div class="title_home">
+            <h2>
+              美酒推荐
+              <p>达人体验</p>
+            </h2>
+            <div class="change-new">
+              <i></i>
+              换一批
+            </div>
+          </div>
+        </div>
+
+        <div class="commend_home-content">
+          <div class="bg" style="background: url('~/assets/img/home/img_tuijian_335x160@2x.png') no-repeat center"></div>
+          <div v-swiper:mySwiper4="swiperCommend">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide commend-list">
+                <div class="pro">
+                  <img src='~/assets/img/green_wine.jpg'>
+                </div>
+                <div class="desc">
+                  <h3 class="font_hight">拉菲珍宝红葡萄酒</h3>
+                  <p>750ml | 日常餐酒 | 紧致单宁</p>
+                  <em class="font_impact">¥199</em>
+                </div>
+              </div>
+              <div class="swiper-slide commend-list">
+                <div class="pro">
+                  <img src='~/assets/img/green_wine.jpg'>
+                </div>
+                <div class="desc">
+                  <h3 class="font_hight">拉菲珍宝红葡萄酒</h3>
+                  <p>750ml | 日常餐酒 | 紧致单宁</p>
+                  <em class="font_impact">¥199</em>
+                </div>
+              </div>
+              <div class="swiper-slide commend-list">
+                <div class="pro">
+                  <img src='~/assets/img/green_wine.jpg'>
+                </div>
+                <div class="desc">
+                  <h3 class="font_hight">拉菲珍宝红葡萄酒</h3>
+                  <p>750ml | 日常餐酒 | 紧致单宁</p>
+                  <em class="font_impact">¥199</em>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -93,7 +133,7 @@
                     <div class="bars">
                       <div class="bars-left">复杂：30分</div>
                       <div class="bars-right">
-                        <span class="bars-right_top w30"></span>
+                        <!-- <span class="bars-right_top w30"></span> -->
                       </div>
                     </div>
                   </div>
@@ -119,7 +159,7 @@
                     <div class="bars">
                       <div class="bars-left">复杂：30分</div>
                       <div class="bars-right">
-                        <span class="bars-right_top w30"></span>
+                        <!-- <span class="bars-right_top w30"></span> -->
                       </div>
                     </div>
                   </div>
@@ -145,7 +185,7 @@
                     <div class="bars">
                       <div class="bars-left">复杂：30分</div>
                       <div class="bars-right">
-                        <span class="bars-right_top w30"></span>
+                        <!-- <span class="bars-right_top w30"></span> -->
                       </div>
                     </div>
                   </div>
@@ -361,6 +401,11 @@ export default {
     return {
       bannerImg: bannerImg,
 
+      swiperCommend: {
+        speed: 800,
+        slidesPerView: 'auto'
+      },
+
       swiperOption: {
         speed: 800,
         slidesPerView: 'auto'
@@ -490,6 +535,55 @@ export default {
     width: 60px;
     height: 60px;
     background-image: url('../assets/img/home/ic_like_60x60@2x.png')
+  }
+}
+
+.commend_home {
+  &-content {
+    margin-left: 20px;
+    .bg {
+      width: 100%;
+      height: 160px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+  }
+  .commend-list {
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    width: 150px;
+    height: 244px;
+    box-sizing: border-box;
+    padding: 4px 12px 16px;
+    text-align: center;
+    margin-right: 15px;
+    .pro {
+      height: 148px;
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        height: auto;
+      }
+    }
+    .desc {
+      h3 {
+        font-size: 14px;
+        color: #333;
+      }
+      p {
+        margin: 10px 0 4px;
+        color: #999;
+        font-size: 10px;
+        line-height: 18px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      em {
+        color: #F99C00;
+        font-size: 18px;
+      }
+    }
   }
 }
 
@@ -726,7 +820,7 @@ export default {
 }
 
 .news_home {
-  margin-bottom: 64px;
+  margin-bottom: 47px;
   .news-list {
     width: 320px;
     margin-left: 15px;

@@ -141,9 +141,7 @@ export default {
   props: {
     goodsid: String,
     viewdata: Object,
-    scrollbottom: {
-      type: Boolean
-    }
+    scrollbottom: Boolean
   },
   components: {
     uQuestion,
@@ -174,7 +172,6 @@ export default {
   },
 
   created () {
-    console.log(this.scrollBottom)
     this.getComment(1)
     // window.addEventListener('scroll', this.handleScroll(function () {
     //   let scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
