@@ -1,9 +1,9 @@
 <template>
-  <div class="m-order-detail">
+  <div class="m-order-detail" :class="{'mb0': orderDetail.status === 2}">
 
     <div class="status-wrapper" :style="`background-image: url(${require(`@/assets/img/order/icon-status-${iconType}.png`)})`">{{ statusTxt[orderDetail.status - 1] }}</div>
 
-    <div class="notice-bar" v-if="orderDetail.status === 1">48分40秒后未支付，此订单将自动关闭</div>
+    <div class="notice-bar" v-if="orderDetail.status === 1">{{ timeCount }}后未支付，此订单将自动关闭</div>
 
     <div class="logi-wrapper" v-if="orderDetail.status === 4">
       <p class="title">您的订单已进入库房，准备出库<i></i></p>
@@ -80,15 +80,18 @@
         <p v-if="orderDetail.status !== 1">实付金额：{{ orderDetail.balanceAmount }}</p>
         <p v-if="orderDetail.status !== 1">付款时间：{{ orderDetail.paymentTime || '-' }}</p>
       </div>
-      <div class="cost-wrapper-total" v-if="orderDetail.status === 1">应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span></div>
+      <!-- <div class="cost-wrapper-total" v-if="orderDetail.status === 1">应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span></div> -->
     </div>
 
-    <div class="bottom-wrapper">
+    <div class="bottom-wrapper" v-if='orderDetail.status !== 2'>
+      <div class="cost-wrapper-total" v-if="orderDetail.status === 1">
+        应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span>
+      </div>
 
       <!-- status 1  代付款 -->
       <template v-if="orderDetail.status === 1">
         <div class="u-button small inline default" @click="cancelOrder">取消订单</div>
-        <div class="u-button small inline" @click="">马上支付</div>
+        <div class="u-button small inline" @click="toPay">马上支付</div>
       </template>
 
       <div class="u-button small inline default" v-if="orderDetail.status === 3 || orderDetail.status === 4" @click="">查看物流</div>
@@ -100,20 +103,26 @@
       <!-- 7 已关闭 -->
       <div class="u-button small inline default" v-if="orderDetail.status === 7" @click="">删除订单</div>
 
-
     </div>
+
+    <uPay :payMethodShow='payMethodShow' :orderId='orderId' @payClose='payClose'></uPay>
 
   </div>
 </template>
 
 <script>
 import { orderApi, afterSaleApi } from '~/api/order'
+import uPay from '~/components/Pay'
 import api from '~/utils/request'
 
 export default {
   name: '',
 
   layout: 'default',
+
+  components: {
+    uPay
+  },
 
   head () {
     return {
@@ -127,12 +136,14 @@ export default {
   async asyncData (req) {
     return api.all([
       orderApi.getOrderDetail(req.query.id, req),
-      afterSaleApi.getAlreadyComplate(req.query.id, req)
-    ]).then(api.spread(function (res1, res2) {
+      afterSaleApi.getAlreadyComplate(req.query.id, req),
+      orderApi.getPayMsgServer(req.query.id, req)
+    ]).then(api.spread(function (res1, res2, res3) {
       if (res1.code === 506 || res2.code === 506) {
         req.redirect('/account/login')
       }
       // console.log(res1.data, res2.data)
+      let payInfo = {}
       if (res1.code === 200 && res2.code === 200) {
         res1.data.orderItemList.forEach((n, i) => {
           if (!n.packName && res2.data.filter(m => m.orderItemId === n.orderItemId).length !== 0 && res2.data.filter(m => m.orderItemId === n.orderItemId)[0].num === n.num) {
@@ -152,8 +163,12 @@ export default {
             })
           }
         })
-        console.log(res1.data.orderItemList[0].goodsList)
-        return { orderDetail: res1.data, orderId: req.query.id }
+        if (res3.code === 200) {
+          payInfo = res3.data
+        }
+        console.log(payInfo)
+        // console.log(res1.data.orderItemList[0].goodsList)
+        return { orderDetail: res1.data, orderId: req.query.id, payInfo: payInfo }
       } else {
         req.redirect('/error')
       }
@@ -174,7 +189,19 @@ export default {
       statusIcon: ['clock', 'receive', 'receive', 'receive', 'comment', 'success', 'close'],
 
       orderStatus: null,
-      orderDetail: {}
+      timeCount: '00小时00分00秒',
+      orderDetail: {},
+      payInfo: {},
+
+      payMethodShow: false
+    }
+  },
+
+  mounted () {
+    if (this.orderDetail.status === 1) {
+      console.log('this.payInfo', this.payInfo)
+      this.countTime(parseInt(this.payInfo.timestamp / 1000) + 10)
+      // console.log(this.countTime(parseInt(1545645529000) + 10))
     }
   },
 
@@ -203,6 +230,40 @@ export default {
       })
     },
 
+    countTime (pt) {
+      var nt = new Date().getTime() / 1000
+      var t = nt
+      setInterval(() => {
+        t = t + 1
+        var hh = parseInt((pt - t) / 60 / 60)
+        var ii = parseInt((pt - t) / 60) - parseInt((pt - t) / 3600) * 60
+        var ss = parseInt((pt - t - (parseInt((pt - t) / 60) * 60)))
+        if ((pt - t) > 0) {
+          this.timeCount = zero(hh) + '小时' + zero(ii) + '分' + zero(ss) + '秒'
+        } else {
+          this.timeCount = '00小时00分00秒'
+          // window.location.reload()
+        }
+      }, 1 * 1000)
+      function zero (n) {
+        var m = ''
+        if (n < 10) {
+          m = '0' + n.toString()
+        } else {
+          m = n
+        }
+        return m
+      }
+    },
+
+    toPay () {
+      this.payMethodShow = true
+    },
+
+    payClose () {
+      this.payMethodShow = false
+    },
+
     goAftersale (val) {
       window.location.href = `/aftersale/application/${val}`
     },
@@ -219,6 +280,9 @@ export default {
   background: @cor_border;
   padding-bottom: 50px;
   min-height: 100vh;
+  &.mb0 {
+    padding-bottom: 0;
+  }
   .status-wrapper {
     background: white;
     height: 193px;
@@ -371,8 +435,9 @@ export default {
         width: 90px;
         height: 100px;
         background-position: center;
-        background-size: cover;
+        background-size: contain;
         box-sizing: border-box;
+        background-repeat: no-repeat;
         border: 1PX solid #F5F5F5;
         border-radius: 5px;
         margin-right: 15px;
@@ -420,12 +485,14 @@ export default {
       }
     }
     &-total {
-      text-align: right;
-      padding: 13px;
-      font-size: 15px;
+      // text-align: right;
+      // padding: 13px;
+      margin-top: 8px;
+      float: left;
+      font-size: 14px;
       color: @cor_333;
       span {
-        font-size: 23px;
+        font-size: 20px;
         color: #F99C00;
         font-family: Impact;
       }
@@ -446,6 +513,10 @@ export default {
     font-size: 0;
     .u-button {
       display: inline-block;
+      margin: 0 5px;
+      &:last-child {
+        margin-right: 0;
+      }
     }
   }
 

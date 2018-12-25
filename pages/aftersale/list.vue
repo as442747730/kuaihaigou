@@ -7,7 +7,7 @@
       <div class="filter-box" @click="showFilter">筛选</div>
     </div>
 
-    <van-pull-refresh class="van-pull" id="main-list" v-model="refershing" @refresh="refresh" >
+    <van-pull-refresh class="van-pull" id="main-list" v-model="refershing" @refresh="refresh" :loading-text="'刷新中'" >
       <div class="item-wrapper">
 
         <div class="item-li" v-for="item in list" :key="item.key">
