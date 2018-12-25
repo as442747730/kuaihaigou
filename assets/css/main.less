@@ -533,10 +533,10 @@ input[type="text"] {
 }
 
 // 适配 iphone X 
-.adapter-ipx {
-  padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
-  padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
-}
+// .adapter-ipx {
+  // padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
+  // padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
+// }
 
 @font-face {
   font-family: DINPro;
@@ -591,5 +591,16 @@ input[type="text"] {
       height: 210px;
       border-bottom: none!important;
     }
+  }
+}
+
+.content-wrapper {
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  video {
+    width: 100%;
+    height: auto;
   }
 }
