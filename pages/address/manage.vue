@@ -89,7 +89,7 @@ export default {
 
     async setDefault (val) {
       if (val.ifDefault) return
-      const { code, data } = await addressApi.setDefault({ id: val })
+      const { code, data } = await addressApi.setDefault(val)
       if (code === 200) {
         this.$toast('设置默认收货地址成功')
         this.getAddressList()
@@ -110,7 +110,7 @@ export default {
       this.$dialog.confirm({
         message: '确定删除该收货地址吗？'
       }).then(async () => {
-        const { code, data } = await addressApi.deleteAddress({ id: val })
+        const { code, data } = await addressApi.deleteAddress(val)
         if (code === 200) {
           this.$toast.success('删除成功')
           this.getAddressList()

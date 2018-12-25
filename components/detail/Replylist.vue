@@ -1,10 +1,42 @@
 <template>
-  <div class="u-reply" :class="{show: getStr === '2'}" :str="getStr">
+  <div class="u-reply">
     <section class="u-detail_header">
       <van-nav-bar title="评论详情" left-arrow @click-left='onClickLeft'>
         <van-icon name="fenxiang" slot="right" @click='report' />
       </van-nav-bar>
     </section>
+    <div class="u_comment">
+      <ul>
+        <li class="u_comment-list" v-for="($v, $k) in replystr">
+          <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + $v.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
+          <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
+          <div class="user-infor ib-middle">
+            <span class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</span>
+            <span class="ib-middle" v-else>匿名用户</span>
+            <br>
+            <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
+          </div>
+          <!-- <div v-if='$v.evaluationLevel >= 4' class="like_type type1">
+            <i></i>
+            <span>超爱</span>
+          </div> -->
+          <div class="user-">
+            <p class="desc">{{ $v.content || '此用户没有填写评论!' }}</p>
+
+            <div class="other">
+              <div class="time">{{ changeTime($v.createdAt) }}</div>
+              <div class="fr">
+                <span @click='reply($v.id)'>回复({{ $v.replyNum }})</span>
+                <span @click='zan($v, $v.id, $v.ifLiked)'>
+                  <i class="ib-middle"></i>
+                  <u class="ib-middle">{{ $v.likeNum }}</u>
+                </span>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
     <div class="u-reply-form" id="replay">
       <van-field @focus="da" class="ib-middle" v-model="replay" type="textarea" :placeholder="placeholder" rows="1" autosize maxlength="40" />
       <button class="ib-middle" @click="sayFn">回复</button>
@@ -14,13 +46,22 @@
   </div>
 </template>
 <script>
+import tools from '~/utils/tools'
+import uUsericon from '~/components/Usericon'
 export default {
+  components: {
+    uUsericon
+  },
   props: {
-    replystr: String
+    replystr: {
+      Type: Array,
+      default: []
+    }
   },
   data () {
     return {
-      getStr: this.replystr,
+      defaulthead: this.defaulthead,
+
       listshow: false,
       showReport: false,
       replay: '',
@@ -32,6 +73,11 @@ export default {
       }]
     }
   },
+  watch: {
+    replystr (val) {
+      console.log('val', val)
+    }
+  },
   methods: {
     onClickLeft () {
       document.body.classList = ''
@@ -40,8 +86,8 @@ export default {
       this.listshow = false
     },
     sayFn () {
-      this.getStr = '1'
-      console.log(this.getStr, 'getStr')
+      // this.getStr = '1'
+      // console.log(this.getStr, 'getStr')
     },
     da () {},
     report () {
@@ -58,6 +104,10 @@ export default {
       } else {
         this.showReport = false
       }
+    },
+    changeTime (time) {
+      time = new Date(time).getTime()
+      return tools.timeago(time)
     }
   }
 }

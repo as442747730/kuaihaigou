@@ -131,8 +131,13 @@
     <div class="m-section-cell">
       <div class="m-section-cell-item more-link small" @click="openInvoice">
         <div class="label">发票信息</div>
-        <div class="content">{{ invoinceSelected.id ?  (invoinceSelected.invoiceType === 1 ? '纸质' : '电子') + (invoinceSelected.headType === 1 ? '个人' : '单位') + '发票' : '不开发票' }}</div>
+        <div class="content">{{ invoinceSelected.id ? (invoinceSelected.invoiceType === 1 ? '纸质' : '电子') + (invoinceSelected.headType === 1 ? '个人' : '单位') + '发票' : '不开发票' }}</div>
       </div>
+    </div>
+
+    <!-- 留言 -->
+    <div class="m-section-cell">
+      <h4>订单留言</h4>
     </div>
 
     <div class="m-section-bottom">
@@ -219,13 +224,13 @@ export default {
           b.push(...res2.data.goodsList.filter(n => !n.ifDistribute))
           b.push(...res2.data.packList.filter(n => !n.ifDistribute))
         }
-        // console.log(res1.data)
+        console.log('res1', res1.data)
         // console.log(res2.data)
-        console.log('res2', res2)
+        // console.log('res2', res2)
         // console.log(res4.data)
 
         // 获取默认收货地址
-        let defaultAdress = res1.data.find(v => v.ifDefault)
+        let defaultAdress = res1.data.find(v => v.ifDefault) || {}
         return {
           addressArray: res1.data, // 所有可选的收货地址
           addressSelected: defaultAdress,
@@ -299,7 +304,7 @@ export default {
 
   async mounted () {
     const { code } = await api.clientGet('/api/order/calcFreight?time=' + new Date().getTime(), {})
-    if (code === 60004) {
+    if (code === 60004 || code === 506) {
       this.$toast('该商品已过期，请到购物车重新下单或者完成之前的订单')
       setTimeout(() => {
         if (this.orderId) {
@@ -307,6 +312,10 @@ export default {
         } else {
           window.location.href = '/order/cart'
         }
+      }, 1000)
+    } else if (code === 10026) {
+      setTimeout(() => {
+        window.location.href = '/address/manage'
       }, 1000)
     }
     console.log('reductionStrategy', this.reductionStrategy)
@@ -398,13 +407,17 @@ export default {
       if (!this.addressSelected.id) {
         return this.$toast('请选择收货地址')
       }
+      if (this.goodsNoSend.length !== 0) {
+        return this.$toast('您的订单中含有不在配送范围内商品，请返回购物车修改')
+      }
       let obj = {
         shippingAddressId: this.addressSelected.id, // 收货地址id
         // remark: this.remark, // 留言
         invoiceId: this.invoinceSelected.id, // 发票信息id
         promotionId: this.promotionId || '', // 优惠活动id
         couponId: this.couponSelected.couponId, // 优惠卷id
-        hiCoinReduction: this.rewardMoney // hi币抵扣
+        hiCoinReduction: this.rewardMoney, // hi币抵扣
+        totalFeight: this.totalFreight - this.reduceFreight // 实际运费
       }
       const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
       const { code, data } = await api.clientPostJson('/api/order/order', obj)
@@ -425,20 +438,6 @@ export default {
           window.location.href = '/order/detail?id=' + this.orderId
           toast3.clear()
         }, 1000)
-      }
-      this.payMethodShow = true
-      const toast2 = Toast.loading({ mask: true, message: '提交订单中', duration: 0 })
-      const { code, data } = await api.clientPostJson('/api/order/order', {
-        shippingAddressId: this.addressSelected.id,
-        // remark
-        invoiceId: this.invoinceSelected.id,
-        promotionId: '', // todo
-        couponId: this.couponSelected.couponId
-      })
-      if (code === 200) {
-        toast2.clear()
-      } else {
-        this.$toast(data)
       }
     },
 

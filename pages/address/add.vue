@@ -173,7 +173,7 @@ export default {
       // todo validate
       const req = {
         address: this.address,
-        // addressType:
+        addressType: 1,
         alternatePhone: this.alternatePhone,
         province: `${this.provinceTxt},${this.provinceId}`,
         city: `${this.cityTxt},${this.cityId}`,

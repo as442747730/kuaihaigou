@@ -7,7 +7,11 @@
             <div>拍照</div>
           </Upload>
         </div>
-        <div class="vant-item photos">从相册中选取</div>
+        <div class="vant-item photos">
+          <Upload @on-success="onSuccess">
+            <div>从相册中选取</div>
+          </Upload>
+        </div>
       </div>
       <div class="vant-items" @click="cancleFn">
         <div class="vant-item">取消</div>
