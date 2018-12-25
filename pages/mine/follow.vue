@@ -129,7 +129,7 @@
 </style>
 <template>
   <div class="follow">
-    <com-head :titleConfig="configtitle"></com-head>
+    <com-head :titleConfig="getTitle"></com-head>
     <div class="follow-items">
       <div class="follow-item" v-for="(list, index) in lists" :key="index">
         <div class="item-l" :style="{background: `url(${list.headimgurl}) no-repeat center/cover`}"></div>
@@ -180,6 +180,19 @@ export default {
       getNum: null
     }
   },
+
+  computed: {
+    getTitle: function () {
+      let contitle
+      if (this.getNum === '1') {
+        contitle = '我的关注'
+      } else {
+        contitle = '我的粉丝'
+      }
+      return contitle
+    }
+  },
+
   async mounted () {
     let quenum = this.$route.query.num
     this.getNum = quenum
