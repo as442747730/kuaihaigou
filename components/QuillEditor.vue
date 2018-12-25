@@ -81,6 +81,7 @@ export default {
           vm.addImgRange = vm.editor.getSelection()
           // value = value.indexOf('http') !== -1 ? value : 'http:' + value
           vm.editor.insertEmbed(vm.addImgRange !== null ? vm.addImgRange.index : 0, 'image', value, 'user')
+          vm.$emit('uploadSuccess', value)
         } else {
           Toast.fail('图片上传失败')
         }
@@ -122,8 +123,9 @@ export default {
     },
 
     onEditorChange ({ editor, html, text }) {
-      this.content = html
+      // this.content = html
       // console.log(html)
+      this.$emit('handleChange', html)
     },
     onEditorFocus () {},
     onEditorReady () {},

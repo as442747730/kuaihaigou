@@ -401,10 +401,6 @@ export default {
     bottom: 0;
     left: 0;
     background: white;
-    &.fit {
-      padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
-      padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
-    }
     .submit-btn {
       box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.08);
       width: 100%;

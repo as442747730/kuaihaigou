@@ -92,9 +92,11 @@
       handleTab (val) {
         this.tabActive = this.tabActive === val ? '' : val
         this.labelList = this[`${val}List`]
+        this.expanded = false
       },
       hide () {
         this.tabActive = ''
+        this.expanded = false
       },
 
       selectLabel (id) {
@@ -110,13 +112,21 @@
       },
 
       expanNew () {
-        this.expanded = true
+        this.expanded = !this.expanded
       },
       selectNew (type) {
         if (type === this.optionActive) return
         this.optionActive = type
         this.$emit('getFilterData', { channelId: this.channelActive, topicId: this.topicActive, typeId: this.typeActive, vareity: this.breedActive, order: this.optionActive })
         this.expanded = false
+      },
+
+      setSelect (obj) {
+        this.channelActive = obj.channelId
+        this.topicActive = obj.topicId
+        this.typeActive = obj.typeId
+        this.breedActive = obj.varietyId
+        this.optionActive = obj.order
       }
     }
   }
@@ -200,7 +210,7 @@
     top: 43px;
     .drop-wrapper-body {
       background: white;
-      padding: 20px 10px 30px 10px;
+      padding: 20px 10px 20px 10px;
       display: flex;
       flex-wrap: wrap;
       .label {
@@ -229,7 +239,7 @@
       }
     }
     .drop-wrapper-bottom {
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
       display: flex;
       .btn {
         flex: 1;
