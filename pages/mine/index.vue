@@ -1,5 +1,5 @@
 <template>
-  <div class="mine">
+  <div class="mine" ref="scrollElem">
     <header>
       <div class="hd-head">
         <div class="hd_l" data-val="123" @click="openMenu"></div>
@@ -24,7 +24,7 @@
       <div class="main-top">
         <div class="info">
           <div class="info-item">
-            <p><span>{{ userInfo.buyNumber }}</span> 瓶</p>
+            <p><span>{{ userInfo.buyNumberCount }}</span> 瓶</p>
             <p>已购(酒)</p>
           </div>
           <div class="info-item" @click="tofollow(1)">
@@ -109,16 +109,39 @@ export default {
       headactive: 0,
       userInfo: {
         nickname: '',
-        buyNumber: 0,
+        buyNumberCount: 0,
         signature: '',
         headimgurl: ''
       },
-      showmenu: false,
       artList: [],
-      poetrys: []
+      poetrys: [],
+      loadOk: true,
+      moreData: false, // 没有更多数据
+      showmenu: false // 是否显示菜单栏
     }
   },
   mounted () {
+    window.addEventListener('scroll', () => {
+      let winH = document.documentElement.clientHeight || document.body.clientHeight
+      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
+      let _top = Math.abs(elemBound.top)
+      let _height = elemBound.height
+      let bottomH = _height - (_top + winH)
+      if (bottomH <= 100) {
+        if (this.loadOk && !this.moreData) {
+          this.loadOk = false
+          this.curPage += 1
+          let baseCount = this.tansmit.count * this.curPage
+          if (baseCount >= this.curTotal) {
+            this.moreData = true
+            baseCount = this.curTotal
+          }
+          let chObj = { count: baseCount }
+          Object.assign(this.tansmit, chObj)
+          this.getPageData()
+        }
+      }
+    })
   },
   components: {
     // uFooter,

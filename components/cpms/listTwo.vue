@@ -1,65 +1,28 @@
 <template>
   <van-popup v-model="showtwo" position="top" @click-overlay="closeFn" :close-on-click-overlay="false">
     <div class="empty60" v-if="twotype"></div>
-    <section class="secs" :class="{secs_ok: posttype}" :data-val="posttype">
+    <section class="secs" :class="{secs_ok: posttype}">
       <slot name="headSild"></slot>
       <div class="type" v-for="(items, index) in postObj.list">
         <div class="type-head" v-if="items.title">{{items.title}}</div>
         <ul :class="items.clsType">
-          <li :class="changeCls(items.clsType)" v-for="(item, ind) in items.list" :key="ind">{{item}}</li>
+          <li
+            v-for="(item, ind) in items.list"
+            :class="[{active: items.elIndex === ind}, changeCls(items.clsType)]"
+            @click="liFn(item, index, ind)"
+            :key="ind">{{item.name}}</li>
           <li class="empty" :class="changeCls(items.clsType)" v-for="(item, $ind) in addEmpty(items.clsType, items.list.length)" :key="$ind + 10"></li>
         </ul>
       </div>
     </section>
     <slot name="foot">
       <footer class="footbtns">
-        <div class="btn">重置</div>
-        <div class="btn">确认</div>
+        <div class="btn" @click="restFn">重置</div>
+        <div class="btn btn_ok" @click="okFn">确认</div>
       </footer>
     </slot>
   </van-popup>
 </template>
-<style lang="less" scoped>
-.secs {
-  padding: 0 20px;
-  
-  .type {
-    &-head {
-      font-size: 15px;
-      font-family: PingFangSC-Semibold;
-      font-weight: 600;
-      padding-top: 10px;
-    }
-  }
-
-  .limitCls {
-    padding-bottom: 50px;
-    .padlr20;
-  }
-
-  .listone {
-    padding: 10px 0;
-    .ucpms-listone;
-  }
-
-}
-.secs_ok {
-  padding-bottom: 45px;
-  min-height: 40vh;
-}
-
-.footbtns {
-  .u-footbtns;
-}
-
-.van-popup--top {
-  top: 90px;
-}
-.empty60{
-  width: 100%;
-  height: 60px;
-}
-</style>
 <script>
 export default {
   props: {
@@ -93,7 +56,67 @@ export default {
       let num = cls.slice(-1)
       let qyNum = len % num
       return qyNum > 0 ? (num - qyNum) : 0
+    },
+    liFn (item, index, elIndex) {
+      let updobj = {
+        id: item.id,
+        name: item.name,
+        groupIndex: index,
+        elIndex: elIndex
+      }
+      this.$emit('updateList', updobj)
+    },
+    restFn () {
+      this.$emit('subRest')
+    },
+    okFn () {
+      this.$emit('subOk')
     }
   }
 }
 </script>
+<style lang="less" scoped>
+.secs {
+  padding: 0 20px;
+  
+  .type {
+    &-head {
+      font-size: 15px;
+      font-family: PingFangSC-Semibold;
+      font-weight: 600;
+      padding-top: 10px;
+    }
+  }
+
+  .limitCls {
+    padding-bottom: 50px;
+    .padlr20;
+  }
+
+  .listone {
+    padding: 10px 0;
+    .ucpms-listone;
+  }
+
+}
+.secs_ok {
+  padding-bottom: 45px;
+  min-height: 40vh;
+}
+
+.footbtns {
+  .u-footbtns;
+  .btn_ok {
+    background: #03A1CD;
+    color: #fff;
+  }
+}
+
+.van-popup--top {
+  top: 90px;
+}
+.empty60{
+  width: 100%;
+  height: 60px;
+}
+</style>
