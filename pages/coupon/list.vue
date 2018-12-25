@@ -1,5 +1,5 @@
 <template>
-  <div class="coupon">
+  <div class="coupon" ref="scrollElem">
     <com-head :titleConfig="configtitle"></com-head>
     <nav class="navs">
       <div class="navs-item" :class="{active: index === navIndex}" v-for="(nav, index) in navlist" @click="navFn(index)" :key="index">{{ nav }}</div>
@@ -52,6 +52,14 @@
 import comHead from '~/components/com-head'
 import { couponApi } from '~/api/coupon'
 export default {
+  head () {
+    return {
+      title: '我的优惠券',
+      meta: [
+        { hid: 'title', name: 'title', content: '我的优惠券' }
+      ]
+    }
+  },
   components: {
     comHead
   },
@@ -70,8 +78,25 @@ export default {
       navlist: ['未使用', '使用记录', '已过期'],
       navIndex: 0,
       wsylist: [],
-      recordlist: []
+      recordlist: [],
+      loadOk: false,
+      moreData: true
     }
+  },
+  mounted () {
+    window.addEventListener('scroll', () => {
+      let winH = document.documentElement.clientHeight || document.body.clientHeight
+      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
+      let _top = Math.abs(elemBound.top)
+      let _height = elemBound.height
+      let bottomH = _height - (_top + winH)
+      if (bottomH <= 100) {
+        if (this.loadOk && !this.moreData) {
+          this.loadOk = false
+          this.curPage += 1
+        }
+      }
+    })
   },
   methods: {
     navFn (index) {

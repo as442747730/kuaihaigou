@@ -155,5 +155,14 @@ export default {
     } else {
       console.log('该地址没有参数')
     }
+  },
+  /**
+   * ['1032464259549761537_白葡萄'] => [{name: '白葡萄', id: '1032464259549761537'}]
+  **/
+  adjustProps (array) {
+    return array.map(v => {
+      let arrs = v.split('_')
+      return { id: arrs[0], name: arrs[1] }
+    })
   }
 }

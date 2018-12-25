@@ -1,6 +1,7 @@
 import request from '~/utils/request'
 // 商品接口
 export const goodsApi = {
+  /* ----------------- server -------------- */
   // 获取商品详情
   getDetail (goodsId, req) {
     return request.serverGet('/api/goods/getDetail/' + goodsId, {}, req)
@@ -8,6 +9,11 @@ export const goodsApi = {
   // 获取热门商品
   getTopSales (req) {
     return request.serverGet('/api/goods/listTopSales', {}, req)
+  },
+  /** -------------- client ------------------- */
+  // 获取商品详情
+  clientDetail (goodsId) {
+    return request.clientGet('/api/goods/getDetail/' + goodsId)
   },
   // 检查是否可配送
   checkDistr (goodsId, areaId, req) {

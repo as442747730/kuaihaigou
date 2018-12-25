@@ -1,5 +1,5 @@
 <template>
-  <van-popup style="width: 100vw; height: 100vh;" overlay-class="active" v-model="showcountry" position="left">
+  <van-popup class="vpCountry" overlay-class="ovCls" v-model="showcountry" position="left">
     <div class="countrys">
       <header>
         <h1>
@@ -9,19 +9,20 @@
       <section>
         <div class="sec-l rollList">
           <ul class="countrylist">
-            <li :class="{active: index===1}" v-for="(country, index) in countries" :key="index">{{country}}</li>
+            <!-- <li>所有国家</li> -->
+            <li :class="{active: countryIndex === index}" v-for="(country, index) in countryList" :key="index" @click="elCounrty(country, index)"">{{country.name}}</li>
           </ul>
         </div>
         <div class="sec-r rollList">
           <ul class="areaList">
             <li class="one">所有产区</li>
-            <li v-for="(area, index) in produceAreas" :key="index">{{area}}</li>
+            <li :class="{one: areaIndex === index}" v-for="(area, index) in areaList" :key="index" @click="elArea(area, index)">{{area.name}}</li>
           </ul>
         </div>
       </section>
       <footer>
-        <div class="btn">重置</div>
-        <div class="btn active">确认</div>
+        <div class="btn" @click="btnRest">重置</div>
+        <div class="btn active" @click="btnOk">确认</div>
       </footer>
     </div>
   </van-popup>
@@ -32,22 +33,60 @@ export default {
     showcountry: {
       type: Boolean,
       default: false
-    }
-  },
-  data () {
-    return {
-      countries: ['所有国家', '法国', '德国', '西班牙', '葡萄牙', '澳大利亚', '阿根廷', '新西兰', '保加利亚', '意大利'],
-      produceAreas: ['阿尔萨斯（Alsace）', '卢瓦尔河谷（Loire Valley）', '波尔多（Bordeaux）', '普罗旺斯（Provence）', '阿尔萨斯（Alsace）']
+    },
+    countryIndex: {
+      type: Number,
+      default: 0
+    },
+    countryList: {
+      type: Array,
+      default: []
+    },
+    areaList: {
+      type: Array,
+      default: []
+    },
+    areaIndex: {
+      type: Number,
+      default: 0
     }
   },
   methods: {
     delCountry () {
+      // 关闭弹窗
       this.$emit('delCountry')
+    },
+    elCounrty (country, index) {
+      // 选择国家
+      let retdata = { elIndex: index }
+      Object.assign(retdata, country)
+      this.$emit('selectCountry', retdata)
+    },
+    elArea (area, index) {
+      // 选择地区
+      let retdata = { elIndex: index }
+      Object.assign(retdata, area)
+      this.$emit('selectArea', retdata)
+    },
+    btnRest () {
+      // 重置
+      console.log('123456')
+      this.$emit('countryRest')
+    },
+    btnOk () {
+      // 确认
+      console.log('456789')
+      this.$emit('countryOk')
     }
   }
 }
 </script>
 <style lang="less" scoped>
+.vpCountry {
+  width: 100vw;
+  height: 100vh;
+  z-index: 6000!important;
+}
 .countrys {
 
   position: fixed;
