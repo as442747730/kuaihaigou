@@ -78,9 +78,21 @@ export default {
       navlist: ['未使用', '使用记录', '已过期'],
       navIndex: 0,
       wsylist: [],
+      curWsy: {
+        page: 1,
+        count: 5
+      },
+      wsyTotalpage: 1,
+      wsyLoad: true,
+      wsyMore: true,
       recordlist: [],
-      loadOk: false,
-      moreData: true
+      curRecord: {
+        page: 1,
+        count: 5
+      },
+      recordTotalpage: 1,
+      recordLoad: true,
+      recordMore: true
     }
   },
   mounted () {
@@ -91,9 +103,26 @@ export default {
       let _height = elemBound.height
       let bottomH = _height - (_top + winH)
       if (bottomH <= 100) {
-        if (this.loadOk && !this.moreData) {
-          this.loadOk = false
-          this.curPage += 1
+        if (this.navIndex === 0) {
+          if (this.wsyLoad && this.wsyMore) {
+            if (this.wsyTotalpage > this.curWsy.page) {
+              this.wsyLoad = false
+              this.curWsy.page += 1
+              this.wsyFn()
+            } else {
+              this.wsyMore = false
+            }
+          }
+        } else if (this.navIndex === 1) {
+          if (this.recordLoad && this.recordMore) {
+            if (this.recordTotalpage > this.curRecord.page) {
+              this.recordLoad = false
+              this.curRecord.page += 1
+              this.recordFn()
+            } else {
+              this.recordMore = false
+            }
+          }
         }
       }
     })
@@ -109,25 +138,31 @@ export default {
     },
     async wsyFn () {
       let params = {
-        page: 1,
-        count: 5,
         ifUsed: false
       }
-      const { code, data } = await couponApi.couponlist(params)
+      Object.assign(this.curWsy, params)
+      const { code, data } = await couponApi.couponlist(this.curWsy)
       if (code === 200) {
         this.wsylist = data.array
+        let { array, totalPageNo } = data
+        this.wsylist = array
+        this.wsyTotalpage = totalPageNo
       }
+      this.wsyLoad = true
     },
     async recordFn () {
       let params = {
-        page: 1,
-        count: 10,
         ifUsed: true
       }
-      const { code, data } = await couponApi.couponlist(params)
+      Object.assign(this.curRecord, params)
+      const { code, data } = await couponApi.couponlist(this.curRecord)
       if (code === 200) {
         this.recordlist = data.array
+        let { array, totalPageNo } = data
+        this.wsyTotalpage = totalPageNo
+        this.recordlist = array
       }
+      this.recordLoad = true
     }
   }
 }

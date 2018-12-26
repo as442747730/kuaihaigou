@@ -44,6 +44,12 @@ export default {
         case '/coupon/explain':
           window.location.href = '/coupon/list'
           break
+        case '/encys':
+          window.location.href = '/home'
+          break
+        case '/noun':
+          window.location.href = '/encys'
+          break
         default:
           console.log('未知页面')
           break

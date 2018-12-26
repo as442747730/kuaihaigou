@@ -8,19 +8,19 @@
       </div>
       <div class="topnav">
         <div class="topnav-item">
-          <div class="item">
+          <div class="item" @click="toNoun(0)">
             <div class="item_bk bk1"></div>
             <div class="item_word">葡萄品种</div>
           </div>
         </div>
         <div class="topnav-item">
-          <div class="item">
+          <div class="item" @click="toNoun(1)">
             <div class="item_bk bk2"></div>
             <div class="item_word">产区</div>
           </div>
         </div>
         <div class="topnav-item">
-          <div class="item">
+          <div class="item" @click="toNoun(2)">
             <div class="item_bk bk3"></div>
             <div class="item_word">酒庄</div>
           </div>
@@ -37,13 +37,18 @@
 </template>
 <script>
 import comHead from '~/components/com-head'
-import shareStudy from './_share'
-import newsInfo from './_news'
+import shareStudy from '~/components/encys/Share'
+import newsInfo from '~/components/encys/News'
 export default {
   components: {
     comHead,
     shareStudy,
     newsInfo
+  },
+  methods: {
+    toNoun (index) {
+      window.location.href = '/noun?num=' + index
+    }
   }
 }
 </script>
