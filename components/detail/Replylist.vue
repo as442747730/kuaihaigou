@@ -5,7 +5,7 @@
         <van-icon name="fenxiang" slot="right" @click='report' />
       </van-nav-bar>
     </section>
-    <div class="u_comment" id="u_comment">
+    <div class="u_comment" :id="'u_comment_' + replyType">
       <ul>
         <!-- 楼主 -->
         <li class="u_comment-list">
@@ -21,7 +21,7 @@
             <i></i>
             <span>超爱</span>
           </div>
-          <p class="desc">{{ masterinfo.content || '此用户没有填写评论!' }}</p>
+          <p class="desc">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
         </li>
         <li class="u_comment-list" v-for="($v, $k) in (replyData.length === 0 ? replystr : replyData)">
           <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + $v.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
@@ -41,12 +41,12 @@
           </div>
 
           <div class="user-content">
-            <p class="desc">{{ $v.content || '此用户没有填写评论!' }}</p>
+            <p class="desc">{{ $v.content ? $v.content : $v.reply ? $v.reply : '此用户没有填写评论!' }}</p>
 
             <div class="other">
               <div class="time">{{ changeTime($v.createdAt) }}</div>
               <div class="fr">
-                <span @click='turnToEdit($v.replyid, $v.personalInfoResp.nickname)'>回复</span>
+                <span v-if="replyType === 'comment'" @click='turnToEdit($v.replyid, $v.personalInfoResp.nickname)'>回复</span>
                 <span @click='zan($v)'>
                   <i class="ib-middle"></i>
                   <u class="ib-middle">{{ $v.likeNum }}</u>
@@ -73,7 +73,7 @@
     <van-actionsheet class="report" v-model="showReport" :actions="actions" @select="onSelect" />
     <!-- 编辑框 -->
     <van-popup class='edit-wrap' v-model="editShow" position="right" :overlay="true">
-      <van-nav-bar title="回复评论" left-arrow right-text='发送' @click-left='editShow = false' @click-right="send(method, masterinfo.id)"></van-nav-bar>
+      <van-nav-bar title="回复评论" left-arrow right-text='发送' @click-left='editShow = false' @click-right="send(method, masterinfo.id || masterinfo.consultid, replyType)"></van-nav-bar>
       <textarea class="textarea" :placeholder="'回复:' + editPerson" v-model='editContent'></textarea>
     </van-popup>
   </div>
@@ -82,11 +82,16 @@
 import tools from '~/utils/tools'
 import uUsericon from '~/components/Usericon'
 import { goodsApi } from '~/api/goods'
+import { quizApi } from '~/api/quiz'
 export default {
   components: {
     uUsericon
   },
   props: {
+    replyType: {
+      Type: String,
+      default: ''
+    },
     masterinfo: {
       Type: Object,
       default: () => ({})
@@ -118,7 +123,7 @@ export default {
       method: 'one',
 
       page: 1,
-      pageLoding: true,
+      pageLoding: false,
       pageEmpty: false
     }
   },
@@ -144,7 +149,7 @@ export default {
     }
   },
   mounted () {
-    let ele = document.getElementById('u_comment')
+    let ele = document.getElementById('u_comment_' + this.replyType)
     ele.addEventListener('scroll', this.handleScroll(() => {
       this.eleHeight = ele.clientHeight
       this.scrollHeight = ele.scrollHeight
@@ -161,7 +166,6 @@ export default {
     onClickLeft () {
       document.body.classList = ''
       window.location.hash = ''
-      console.log('this is onClickLeft')
       this.listshow = false
     },
     turnToEdit (replyid, editPerson) {
@@ -180,14 +184,20 @@ export default {
       this.showReport = true
     },
     // 发送
-    async send (method, commentid) {
+    async send (method, id, replyType) {
+      /*
+        replyType -> 回复类型 疑问解答 / 商品评价
+        method -> 回复楼主/层主
+        commentid -> 根据replyType区分是 解答疑问 / 商品评价
+      */
       let obj = {}
-      console.log(method)
+      let fn = null
+      console.log(replyType)
       if (method === 'one') {
         console.log('回复楼主')
         // 回复楼主
         obj = {
-          commentid: commentid,
+          commentid: id,
           content: this.editContent
         }
       } else if (method === 'two') {
@@ -195,13 +205,23 @@ export default {
         // 回复层主
         obj = {
           parentid: this.replyid,
-          commentid: commentid,
+          commentid: id,
           content: this.editContent
         }
       }
-      const { code, data } = await goodsApi.reply(obj)
+      if (replyType === 'answer') {
+        let param = {
+          consultid: id,
+          answer: this.editContent
+        }
+        fn = quizApi.reply(param)
+      } else if (replyType === 'comment') {
+        fn = goodsApi.reply(obj)
+      }
+      const { code, data } = await fn
       if (code === 200) {
         this.$toast('回复成功')
+        this.editContent = ''
         this.renderData()
       } else {
         this.$toast(data)
@@ -229,12 +249,19 @@ export default {
     },
     // 重新加载数据
     async renderData () {
+      let fn = null
       let param = {
         page: 1,
-        count: 5,
-        commentid: this.masterinfo.id
+        count: 5
       }
-      const { code, data } = await goodsApi.getCommentReply(param)
+      if (this.replyType === 'comment') {
+        param.commentid = this.masterinfo.id
+        fn = goodsApi.getCommentReply(param)
+      } else if (this.replyType === 'answer') {
+        param.consultid = this.masterinfo.consultid
+        fn = quizApi.getReplylist(param)
+      }
+      const { code, data } = await fn
       if (code === 200) {
         this.replyData = data.array
         this.editShow = false
@@ -243,13 +270,20 @@ export default {
       }
     },
     async getData (page) {
+      let fn = null
       this.pageLoding = true
       let param = {
         page: page,
-        count: 5,
-        commentid: this.masterinfo.id
+        count: 5
       }
-      const { code, data } = await goodsApi.getCommentReply(param)
+      if (this.replyType === 'comment') {
+        param.commentid = this.masterinfo.id
+        fn = goodsApi.getCommentReply(param)
+      } else if (this.replyType === 'answer') {
+        param.consultid = this.masterinfo.consultid
+        fn = quizApi.getReplylist(param)
+      }
+      const { code, data } = await fn
       if (code === 200) {
         if (data.array.length === 0) {
           this.pageEmpty = true

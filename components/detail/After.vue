@@ -1,12 +1,15 @@
 <template>
-  <div class="u-after">
-    售后服务
+  <div class="u-after" v-html='viewdata.afterSaleServiceMobile'>
   </div>
 </template>
 <script>
 
 export default {
   name: 'u-after',
+
+  props: {
+    viewdata: Object
+  },
 
   data () {
     return {
@@ -21,6 +24,12 @@ export default {
 
 }
 </script>
-<style lang="less" scoped>
-
+<style lang="less">
+.u-after {
+  text-align: center;
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
 </style>

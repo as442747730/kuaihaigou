@@ -312,6 +312,12 @@ export default {
         satisfactionDegree: satisfactionDegree
       }
 
+      // 售后服务
+      let { afterSaleServiceMobile } = detData
+      let afterSale = {
+        afterSaleServiceMobile: afterSaleServiceMobile
+      }
+
       // 商品是否单品
       let { stock } = detData
       let isSingle = false
@@ -334,6 +340,7 @@ export default {
         packList: packList,
         goodsList: goodsList,
         wineParams: wineParams,
+        afterSale: afterSale,
         commentParams: commentParams,
         hotlist: hotlist || [],
         singleObj: singleObj
@@ -393,6 +400,7 @@ export default {
       listDetailMobile: '', // 包装清单
       goodsList: {}, // 商品清单
       wineParams: {}, // 酒评参数
+      afterSale: {}, // 售后服务
       viewData: {}, // 组件传递的参数
       active: 1,
       view: uGraphic,
@@ -527,9 +535,7 @@ export default {
           this.view = 'uComment'
           break
         case 4:
-          this.viewData = {
-            name: 'uAfter'
-          }
+          this.viewData = this.afterSale
           this.view = 'uAfter'
           break
       }

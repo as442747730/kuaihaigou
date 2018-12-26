@@ -27,9 +27,9 @@
 
         <div class="detail_comment-type">
           <ul>
-            <li class="cur">优先内容<span>(873)</span></li>
-            <li>带图片<span>(362)</span></li>
-            <li>全部<span>(3873)</span></li>
+            <li @click='filter(0)' :class="{'cur': checkActive === 0}">全部<span>(3873)</span></li>
+            <li @click='filter(1)' :class="{'cur': checkActive === 1}">优先内容<span>(873)</span></li>
+            <li @click='filter(2)' :class="{'cur': checkActive === 2}">带图片<span>(362)</span></li>
           </ul>
         </div>
 
@@ -92,13 +92,13 @@
         </div>
 
         <!-- 回复 -->
-        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' />
+        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='comment' />
 
       </div>
     </transition>
     <!-- 提问 -->
     <transition name='nav-fade' mode="out-in">
-      <u-question :goodsid="goodsid" v-show='!commentShow' />
+      <u-question :goodsid="goodsid" v-if='!commentShow' :scrollbottom="scrollbottom" />
     </transition>
   </article>
 </template>
@@ -129,7 +129,7 @@ export default {
 
   data () {
     return {
-      // TabIndex: 1,
+      checkActive: 0,
       commentShow: true,
 
       replyShow: false,
@@ -151,6 +151,8 @@ export default {
       page: 1,
       pageLoding: true,
       pageEmpty: false,
+      hasContent: false, // 优先内容
+      hasImg: false, // 优先图片
 
       // 回复内容
       replystr: [],
@@ -174,14 +176,14 @@ export default {
     scrollbottom (val) {
       if (val && !this.pageEmpty) {
         this.page = this.page + 1
-        this.getComment(this.page)
+        this.getComment(this.page, false, this.hasContent, this.hasImg)
       }
     }
   },
 
   methods: {
     // 获取评价数据
-    async getComment (page, hasContent = false, hasImg = false) {
+    async getComment (page, needRender = false, hasContent = false, hasImg = false) {
       this.pageLoding = true
       let param = {
         page: page,
@@ -194,8 +196,11 @@ export default {
       if (code === 200) {
         if (data.array.length === 0) {
           this.pageEmpty = true
+        } else {
+          this.pageEmpty = false
         }
-        this.commentData = this.commentData.concat(data.array)
+        // 是否需要重渲染数据
+        this.commentData = needRender ? data.array : this.commentData.concat(data.array)
         this.pageLoding = false
       }
     },
@@ -249,10 +254,28 @@ export default {
       window.location.hash = ''
       this.replyShowDelay = false
     },
-    da () {
-      // setTimeout(() => {
-      //   alert(document.body.clientHeight)
-      // }, 1000)
+    // 切换内容
+    filter (val) {
+      this.checkActive = val
+      this.pageEmpty = false
+      switch (val) {
+        case 0:
+          // 全部
+          this.hasImg = false
+          this.hasContent = false
+          this.getComment(1, true)
+          break
+        case 1:
+          // 优先内容
+          this.hasContent = true
+          this.getComment(1, true, true)
+          break
+        case 2:
+          // 带图片
+          this.hasImg = true
+          this.getComment(1, true, false, true)
+          break
+      }
     },
     report () {
       this.showReport = true
@@ -290,6 +313,23 @@ export default {
 <style lang="less">
 .u-goods-comment {
   font-size: 0;
+  .more-loading {
+    padding:  15px 0;
+    .van-loading {
+      margin: 0 auto 10px;
+    }
+    text-align: center;
+    background: #f2f2f2;
+    font-size: 11px;
+    color: #999;
+  }
+  .no-more {
+    text-align: center;
+    padding: 18px 0 15px;
+    background: #f2f2f2;
+    font-size: 11px;
+    color: #999;
+  }
 }
 .detail_comment {
   &-tab {
@@ -383,7 +423,7 @@ export default {
       line-height: 29px;
       border-radius: 4px;
       border: 1PX solid #eee;
-      margin-right: 10px;
+      margin: 0 5px;
       font-size: 13px;
       font-family: 'PingFang-SC-Medium';
       font-weight: bold;
@@ -401,23 +441,6 @@ export default {
         border-color: #000;
       }
     }
-  }
-  .more-loading {
-    padding:  15px 0;
-    .van-loading {
-      margin: 0 auto 10px;
-    }
-    text-align: center;
-    background: #f2f2f2;
-    font-size: 11px;
-    color: #999;
-  }
-  .no-more {
-    text-align: center;
-    padding: 18px 0 15px;
-    background: #f2f2f2;
-    font-size: 11px;
-    color: #999;
   }
 }
 .u_comment {
