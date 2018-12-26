@@ -5,16 +5,13 @@
     </com-head>
     <div class="top">
       <div class="topnav">
-        <div class="item active">
-          葡萄品种
-          <i class="ic_sj"></i>
-        </div>
-        <div class="item">
-          产区
-          <i class="ic_sj"></i>
-        </div>
-        <div class="item">
-          酒庄
+        <div
+          class="item"
+          v-for="(nav, index) in navList"
+          :class="{active: navIndex === index}"
+          @click="elNavs(index)"
+          :key="index">
+          <span>{{nav.name}}</span>
           <i class="ic_sj"></i>
         </div>
       </div>
@@ -75,6 +72,21 @@ import comHead from '~/components/com-head'
 export default {
   components: {
     comHead
+  },
+  data () {
+    return {
+      navList: [{name: '葡萄品种'}, {name: '产区'}, {name: '酒庄'}],
+      navIndex: null
+    }
+  },
+  methods: {
+    elNavs (index) {
+      if (this.navIndex === index) {
+        this.navIndex = null
+      } else {
+        this.navIndex = index
+      }
+    }
   }
 }
 </script>
@@ -111,18 +123,21 @@ export default {
       .flex_around;
 
       .item {
-        height: 13px;
         font-size: 13px;
         font-family: PingFangSC-Regular;
         font-weight: 400;
         color: rgba(153, 153, 153, 1);
-        padding: 10px 0;
+        height: 13px;
+        .flex_between;
 
         .ic_sj {
-          display: inline-block;
-          width: 12px;
-          height: 7.5px;
-          background-image: url('~/assets/img/Icons/ic_triangle_gu_12x12@2x.png');
+          margin-left: 5px;
+          width: 8px;
+          height: 5px;
+          opacity: .5;
+          transform: rotate(0);
+          transition: .2s;
+          background-image: url('~/assets/img/Icons/ic_triangle_bt_12x12@2x.png');
           .bg_cover;
         }
       }
@@ -133,6 +148,8 @@ export default {
         color: rgba(51, 51, 51, 1);
 
         .ic_sj {
+          opacity: 1;
+          transform: rotate(180deg);
           background-image: url('~/assets/img/Icons/ic_triangle_bt_12x12@2x.png');
         }
       }

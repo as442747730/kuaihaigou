@@ -71,7 +71,8 @@ export default {
       if (!(/^1[34578]{1}\d{9}$/).test(this.phone)) {
         return this.$toast.fail('请输入正确的手机号码')
       }
-      const { code, data } = await api.clientPost('/api/code', { phone: this.phone, use: 3 })
+      // use => 0：用于注册，1：用于找回密码，2用户修改手机号码，3手机验证码登陆
+      const { code, data } = await api.clientPost('/api/code', { phone: this.phone, use: 0 })
       if (code === 200) {
         this.$toast('已发送验证码')
         let t = null

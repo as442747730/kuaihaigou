@@ -1,6 +1,6 @@
 <template>
   <div class="jarsclub">
-    <div class="jars" v-for="(item, index) in poetrys" :key="index">
+    <div class="jars" v-for="(item, index) in poetryList" :key="index">
       <div class="jars-l">
         <p class="jars-l_d">{{ item.dd }}</p>
         <div class="jars-l_ym">{{ item.yymm }}</div>
@@ -15,6 +15,12 @@
 <script>
 import { userApi } from '~/api/users'
 export default {
+  props: {
+    poetryList: {
+      type: Array,
+      default: []
+    }
+  },
   data () {
     return {
       curInfo: {
@@ -25,7 +31,6 @@ export default {
     }
   },
   mounted () {
-    this.getpoetry()
   },
   methods: {
     async getpoetry () {

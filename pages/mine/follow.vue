@@ -1,3 +1,136 @@
+<template>
+  <div class="follow" ref="scrollElem">
+    <com-head :titleConfig="getTitle"></com-head>
+    <div class="follow-items">
+      <div class="follow-item" v-for="(list, index) in lists" :key="index">
+        <div class="item-l" :style="{background: `url(${list.headimgurl}) no-repeat center/cover`}"></div>
+        <div class="item-c">
+          <div class="item-c_name">
+            <p class="name-world">{{ list.nickname }}</p>
+            <p>
+              <i class="ic-name ic-member"></i>
+              <i class="ic-name ic-cms"></i>
+            </p>
+          </div>
+          <div class="item-c_sign">
+            <p>{{list.nickname }} </p>
+          </div>
+          <div class="item-c_count">
+            <span>创作 {{ list.worksNumber }}</span>
+            <span class="mar_l">粉丝 {{ list.fanNumber }}</span>
+          </div>
+        </div>
+        <div class="item-r">
+          <div class="item-gz item-xhgz" v-if="list.checkAttention && getNum === 2">相互关注</div>
+          <div class="item-gz item-ygz" v-else-if="list.checkAttention">
+            <div class="gz_level ygz_level"></div>
+            <p>已关注</p>
+          </div>
+          <div class="item-gz item-wgz" v-else @click="followFriend(list)">
+            <div class="gz_level wgz_level"></div>
+            <p>关注</p>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import comHead from '~/components/com-head'
+import { userApi } from '~/api/users'
+export default {
+  head () {
+    return {
+      title: '我的',
+      meta: [
+        { hid: 'title', name: 'title', content: '我的' }
+      ]
+    }
+  },
+  components: {
+    comHead
+  },
+  data () {
+    return {
+      configtitle: '我的',
+      lists: [],
+      getNum: null,
+      loadMore: true,
+      loadOk: true,
+      allPage: 1,
+      nowPage: 1
+    }
+  },
+
+  computed: {
+    getTitle: function () {
+      let contitle
+      if (this.getNum === '1') {
+        contitle = '我的关注'
+      } else {
+        contitle = '我的粉丝'
+      }
+      return contitle
+    }
+  },
+  created () {
+    this.getList()
+  },
+  async mounted () {
+    window.addEventListener('scroll', () => {
+      let winH = document.documentElement.clientHeight || document.body.clientHeight
+      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
+      let _top = Math.abs(elemBound.top)
+      let _height = elemBound.height
+      let bottomH = _height - (_top + winH)
+      if (bottomH <= 100) {
+        if (this.loadOk && this.loadMore) {
+          if (this.totalPageNo > this.nowPage) {
+            this.loadOk = false
+            this.curPoes.page += 1
+            this.getArts()
+          }
+        }
+      }
+    })
+  },
+  methods: {
+    async getList () {
+      let quenum = this.$route.query.num
+      this.getNum = quenum
+      let nums = parseInt(quenum)
+      let params = {
+        page: 1,
+        count: 10,
+        number: nums // number 1 好友， 2 粉丝
+      }
+      const { code, data } = await userApi.friendlist(params)
+      if (code === 200) {
+        let { array, totalPageNo, page } = data
+        this.lists = array
+        this.allPage = totalPageNo
+        this.nowPage = page
+      }
+      this.loadOk = true
+    },
+    headBack () {
+      window.location.href = '/mine'
+    },
+    async followFriend (person) {
+      console.log(person)
+      let params = { userId: person.id }
+      const { code, data } = await userApi.likeFriend(params)
+      if (code === 200) {
+        // console.log('data', data)
+        this.getList()
+      } else {
+        this.$toast(data)
+      }
+    }
+  }
+}
+</script>
 <style lang="less" scoped>
 .follow {
   font-size: 12px;
@@ -127,91 +260,4 @@
   }
 }
 </style>
-<template>
-  <div class="follow">
-    <com-head :titleConfig="getTitle"></com-head>
-    <div class="follow-items">
-      <div class="follow-item" v-for="(list, index) in lists" :key="index">
-        <div class="item-l" :style="{background: `url(${list.headimgurl}) no-repeat center/cover`}"></div>
-        <div class="item-c">
-          <div class="item-c_name">
-            <p class="name-world">{{ list.nickname }}</p>
-            <p>
-              <i class="ic-name ic-member"></i>
-              <i class="ic-name ic-cms"></i>
-            </p>
-          </div>
-          <div class="item-c_sign">
-            <p>{{list.nickname }} </p>
-          </div>
-          <div class="item-c_count">
-            <span>创作 {{ list.worksNumber }}</span>
-            <span class="mar_l">粉丝 {{ list.fanNumber }}</span>
-          </div>
-        </div>
-        <div class="item-r">
-          <div class="item-gz item-xhgz" v-if="list.checkAttention && getNum === 2">相互关注</div>
-          <div class="item-gz item-ygz" v-else-if="list.checkAttention">
-            <div class="gz_level ygz_level"></div>
-            <p>已关注</p>
-          </div>
-          <div class="item-gz item-wgz" v-else>
-            <div class="gz_level wgz_level"></div>
-            <p>关注</p>
-          </div>
-          
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-<script>
-import comHead from '~/components/com-head'
-import { userApi } from '~/api/users'
-export default {
-  components: {
-    comHead
-  },
-  data () {
-    return {
-      configtitle: '我的关注',
-      followStatus: 0,
-      lists: [],
-      getNum: null
-    }
-  },
 
-  computed: {
-    getTitle: function () {
-      let contitle
-      if (this.getNum === '1') {
-        contitle = '我的关注'
-      } else {
-        contitle = '我的粉丝'
-      }
-      return contitle
-    }
-  },
-
-  async mounted () {
-    let quenum = this.$route.query.num
-    this.getNum = quenum
-    let nums = parseInt(quenum)
-    let params = {
-      page: 1,
-      count: 10,
-      number: nums // number 1 好友， 2 粉丝
-    }
-    const { code, data } = await userApi.friendlist(params)
-    if (code === 200) {
-      console.log('data', data)
-      this.lists = data.array
-    }
-  },
-  methods: {
-    headBack () {
-      window.location.href = '/mine'
-    }
-  }
-}
-</script>

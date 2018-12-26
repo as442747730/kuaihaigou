@@ -11,5 +11,9 @@ export const wineApi = {
   },
   getAreaList (countried) {
     return request.clientGet('/api/esGoods/listAreaAndLevelByCountryId/' + countried)
+  },
+  // 获取商品属性
+  clientAttrs (params) {
+    return request.clientGet('/api/esGoods/listAttr', params)
   }
 }

@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class="screen">
-          <div class="screen-item" :class="{active: sizerIndex === index}" @click="elClassify(index)" v-for="(cls, index) in sortList" :key="index">{{cls}}</div>
+          <div class="screen-item" :class="{active: sizerIndex === index}" @click="elClassify(index)" v-for="(cls, index) in sortList" :key="index">{{cls.name}}</div>
         </div>
       </div>
     </div>
@@ -97,7 +97,7 @@ export default {
       thirdIndex: null, // 小分类选中索引
       postList: [],
       isShow: false,
-      sortList: ['大分类', '子分类', '小分类'],
+      sortList: [{name: '大分类', isCor: false}, {name: '子分类', isCor: false}, {name: '小分类', isCor: false}],
       sizerIndex: null,
       classify: {
         elIndex: null,
@@ -423,9 +423,18 @@ export default {
         margin-top: -2px;
         width: 8px;
         height: 5px;
-        background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
+        opacity: .5;
+        transform: rotate(0);
+        background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
+        transition: .2s;
         .bg_cover;
       }
+    }
+
+    .hasCor {
+      color: @cor_333;
+      font-family: PingFangSC-Medium;
+      font-weight: 500;
     }
 
     .active {
@@ -434,6 +443,8 @@ export default {
       font-weight: 500;
 
       &:after {
+        opacity: 1;
+        transform: rotate(180deg);
         background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
       }
     }
