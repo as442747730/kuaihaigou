@@ -103,15 +103,26 @@ export default {
   },
 
   mounted () {
-    document.querySelector('#main-list').addEventListener('scroll', (e) => {
-      // todo
+    function throttle (fn, interval = 300) {
+      let canRun = true
+      return function () {
+        if (!canRun) return
+        canRun = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          canRun = true
+        }, interval)
+      }
+    }
+
+    document.querySelector('#main-list').addEventListener('scroll', throttle(function (e) {
       const bodyHeight = document.body.offsetHeight
       const listHeight = document.querySelector('.item-wrapper').offsetHeight
       const scrollHeight = document.querySelector('#main-list').scrollTop
       if (listHeight - bodyHeight - scrollHeight > 60) return
       if (!this.hasMore) return
       this.getMore()
-    })
+    }))
   },
 
   methods: {
