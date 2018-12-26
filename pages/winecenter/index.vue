@@ -1,6 +1,6 @@
 <template>
   <div class="winecenter" ref="scrollElem">
-    <div class="winecenter-head" :class="{whZindex: twoType}">
+    <div class="winecenter-head">
       <div class="upper">
         <div class="top">
           <div class="top_l" @click="toOthers">
@@ -14,18 +14,36 @@
         </div>
         <div class="screen">
           <div class="screen-item" @click="elCountry">国家产区</div>
-          <div class="screen-item" :class="{active: sizerIndex == index}" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item}}</div>
+          <div class="screen-item" :class="[{active: sizerIndex == index}, {hascor: item.iscor}]" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item.name}}</div>
         </div>
       </div>
-      
-      <div class="elmdl">
-        <div class="elmdl-item" :class="{active: sizerIndex == index + 3}" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
-          <span>{{rank}}</span>
+      <div class="elmdl" :class="{elZindex: twoType}">
+        <div class="elmdl-item" :class="[{active: sizerIndex == index + 3}, {hascor: rank.iscor}]" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
+          <span>{{rank.name}}</span>
         </div>
         <div class="elmdl-item" :class="{active: sizerIndex == 6}" @click="elScreens(6)">
           <span>{{noviceMaster}}</span>
         </div>
       </div>
+      <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens" @updateList="onListFn" @subRest="subRest" @subOk="subOk">
+        <div class="slideall" slot="headSild" v-if="sizerIndex === 0">
+          <div class="slider">
+            <van-slider
+              v-model="stepvalue"
+              :step="stepOne"
+              @change="changeSlider"
+              bar-height="4px">
+            </van-slider>
+            <!-- <div class="slider_in" @click="halfStepFn"></div> -->
+            <div class="slider-items">
+              <span v-for="(price, index) in priceList" :key="index">
+                <i v-if="price !== '不限'">¥</i>{{price}}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6"></div>
+      </list-two>
     </div>
     <div class="winecenter-content">
       <section class="novice">
@@ -123,25 +141,7 @@
     <!-- 国家弹窗 start -->
     <country-cpm :showcountry="showCountry" :countryIndex="countryIndex" :countryList="countryList" :areaList="areaList" :areaIndex="areaIndex" @selectCountry="selectCountry" @selectArea="selectArea" @delCountry="delCountry" @countryRest="countryRest" @countryOk="countryOk"></country-cpm>
     <!-- 国家弹窗 end -->
-    <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens" @updateList="onListFn" @subRest="subRest" @subOk="subOk">
-      <div class="slideall" slot="headSild" v-if="sizerIndex === 0">
-        <div class="slider">
-          <van-slider
-            v-model="stepvalue"
-            :step="stepOne"
-            @change="changeSlider"
-            bar-height="4px">
-          </van-slider>
-          <!-- <div class="slider_in" @click="halfStepFn"></div> -->
-          <div class="slider-items">
-            <span v-for="(price, index) in priceList" :key="index">
-              <i v-if="price !== '不限'">¥</i>{{price}}
-            </span>
-          </div>
-        </div>
-      </div>
-      <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6"></div>
-    </list-two>
+   
   </div>
 </template>
 <script>
@@ -192,8 +192,8 @@ export default {
       isSlider: false, // 是否滑动滑块
       postObj: {},
       postType: true,
-      sizerOne: ['价格类型', '场景特色', '推荐排序'],
-      sizerTwo: ['等级', '葡萄品种', '其他筛选'],
+      sizerOne: [{name: '价格类型', iscor: false}, {name: '场景特色', iscor: false}, {name: '推荐排序', iscor: false}],
+      sizerTwo: [{name: '等级', iscor: false}, {name: '葡萄品种', iscor: false}, {name: '其他筛选', iscor: false}],
       sizerIndex: null,
       noviceMaster: '新手选酒',
       isCountry: false, // 是否国家产区
@@ -282,6 +282,12 @@ export default {
     onListFn (obj) {
       console.log('obj', obj)
       let { id, groupIndex, elIndex } = obj
+      // 筛选项有选中
+      if (this.sizerIndex <= 2) {
+        this.sizerOne[this.sizerIndex].iscor = !!id
+      } else if (this.sizerIndex <= 5) {
+        this.sizerTwo[this.sizerIndex - 3].iscor = !!id
+      }
       let subObj = {}
       switch (this.sizerIndex) {
         case 0:
@@ -327,12 +333,22 @@ export default {
           console.log('id', id)
           if (groupIndex === 0) {
             this.alcoholIndex = elIndex
-            subObj.minAlcoholDegree = id[0]
-            subObj.maxAlcoholDegree = id[1]
+            if (!id) {
+              delete subObj.minAlcoholDegree
+              delete subObj.maxAlcoholDegree
+            } else {
+              subObj.minAlcoholDegree = id[0]
+              subObj.maxAlcoholDegree = id[1]
+            }
           } else {
             this.netIndex = elIndex
-            subObj.minNetVolume = id[0]
-            subObj.maxNetVolume = id[1]
+            if (!id) {
+              delete subObj.minNetVolume
+              delete subObj.maxNetVolume
+            } else {
+              subObj.minNetVolume = id[0]
+              subObj.maxNetVolume = id[1]
+            }
           }
           break
         case 6:
@@ -351,7 +367,7 @@ export default {
       }
       this.postObj.list[groupIndex].elIndex = elIndex
       Object.assign(this.tansmit, subObj)
-      console.log(this.tansmit, 'tansmit')
+      // console.log(this.tansmit, 'tansmit')
     },
     subRest () {
       this.tansmit = { page: 1, count: 10, ifWine: true }
@@ -495,7 +511,7 @@ export default {
           getList = [
             {
               clsType: 'listone',
-              list: [{name: '默认', id: 1}, {name: '最新', id: 2}, {name: '最便宜', id: 3}, {name: '最贵', id: 4}, {name: '仅看往期', id: 666}],
+              list: [{name: '默认', id: 1}, {name: '最新', id: 2}, {name: '最贵', id: 3}, {name: '最便宜', id: 4}, {name: '仅看往期', id: 666}],
               elIndex: this.sortIndex
             }
           ]
@@ -672,6 +688,13 @@ export default {
       this.alcoholIndex = null
       this.netIndex = null
       this.playerIndex = null
+      // 重置选项中的包含选中样式
+      this.sizerOne = this.sizerOne.map(v => {
+        return { name: v.name, iscor: false }
+      })
+      this.sizerTwo = this.sizerTwo.map(v => {
+        return { name: v.name, iscor: false }
+      })
     },
     changeSlider (value) {
     }
@@ -679,32 +702,20 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.ovCls {
-  background: #ccc;
-  z-index: 6000!important;
-}
-
-.vps {
-  z-index: 20;
-}
-
-.stopwineScroll {
-  height: 100vh;
-  overflow: hidden;
-}
-
 .winecenter {
   background: #fff;
   line-height: 1;
   font-size: 12px;
+  padding-top: 140px;
   &-content {
     .padlr20;
   }
   &-head {
-    position: relative;
-  }
-  .whZindex {
-    z-index: 3000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 10;
   }
 }
 
@@ -796,6 +807,11 @@ export default {
       .bg_cover;
     }
   }
+  .hascor {
+    color: @cor_333;
+    font-family: PingFangSC-Medium;
+    font-weight: 500;
+  }
 
   .active {
     color: @cor_333;
@@ -851,6 +867,13 @@ export default {
         // background-image: url("~/assets/img/Icons/ic_xiala_g_line_12x12.png");
       }
     }
+    &.hascor {
+      &>span {
+        font-family: PingFangSC-Semibold;
+        font-weight: 600;
+        color: @cor_333;
+      }
+    }
     &.active {
       &>span {
         font-family: PingFangSC-Semibold;
@@ -864,6 +887,9 @@ export default {
       }
     }
   }
+}
+.elZindex {
+  z-index: 3000;
 }
 
 // 选酒公共

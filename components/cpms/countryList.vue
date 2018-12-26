@@ -15,7 +15,7 @@
         </div>
         <div class="sec-r rollList">
           <ul class="areaList">
-            <li class="one">所有产区</li>
+            <!-- <li class="one">所有产区</li> -->
             <li :class="{one: areaIndex === index}" v-for="(area, index) in areaList" :key="index" @click="elArea(area, index)">{{area.name}}</li>
           </ul>
         </div>

@@ -9,7 +9,7 @@
           <li
             v-for="(item, ind) in items.list"
             :class="[{active: items.elIndex === ind}, changeCls(items.clsType)]"
-            @click="liFn(item, index, ind)"
+            @click="liFn(item, index, ind, items.elIndex)"
             :key="ind">{{item.name}}</li>
           <li class="empty" :class="changeCls(items.clsType)" v-for="(item, key) in addEmpty(items.clsType, items.list.length)" :key="items.list.length + key"></li>
         </ul>
@@ -57,12 +57,18 @@ export default {
       let qyNum = len % num
       return qyNum > 0 ? (num - qyNum) : 0
     },
-    liFn (item, index, elIndex) {
+    liFn (item, index, elIndex, lastIndex) {
+      let upId = item.id
+      let upIndex = elIndex
+      if (elIndex === lastIndex) {
+        upId = null
+        upIndex = null
+      }
       let updobj = {
-        id: item.id,
-        name: item.name,
+        id: upId,
+        elIndex: upIndex,
         groupIndex: index,
-        elIndex: elIndex
+        name: item.name
       }
       this.$emit('updateList', updobj)
     },

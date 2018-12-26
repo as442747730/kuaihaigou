@@ -26,7 +26,7 @@
             <div class="gz_level ygz_level"></div>
             <p>已关注</p>
           </div>
-          <div class="item-gz item-wgz" v-else>
+          <div class="item-gz item-wgz" v-else @click="followFriend(list)">
             <div class="gz_level wgz_level"></div>
             <p>关注</p>
           </div>
@@ -116,6 +116,17 @@ export default {
     },
     headBack () {
       window.location.href = '/mine'
+    },
+    async followFriend (person) {
+      console.log(person)
+      let params = { userId: person.id }
+      const { code, data } = await userApi.likeFriend(params)
+      if (code === 200) {
+        // console.log('data', data)
+        this.getList()
+      } else {
+        this.$toast(data)
+      }
     }
   }
 }
