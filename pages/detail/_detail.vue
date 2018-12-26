@@ -449,6 +449,7 @@ export default {
   },
 
   async created (req) {
+    this.viewData = this.goodsList
     const {code, data} = await goodsApi.getProvince('86')
     if (code === 200) {
       this.provinceList = data.map(v => {
@@ -486,7 +487,6 @@ export default {
   },
 
   mounted () {
-    this.scrollTimer = null
     let that = this
     window.addEventListener('scroll', this.handleScroll(function () {
       this.windowHeight = document.documentElement.clientHeight || document.body.clientHeight

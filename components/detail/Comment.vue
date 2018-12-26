@@ -39,8 +39,8 @@
               <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + $v.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
               <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
               <div class="user-infor ib-middle">
-                <span class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</span>
-                <span class="ib-middle" v-else>匿名用户</span>
+                <a class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</a>
+                <a class="ib-middle" v-else>匿名用户</a>
                 <br>
                 <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
               </div>
@@ -57,7 +57,7 @@
               <div class="other">
                 <div class="time">{{ changeTime($v.createdAt) }}</div>
                 <div class="fr">
-                  <span @click='reply($v.id)'>回复({{ $v.replyNum }})</span>
+                  <span @click='reply($v.id, $v)'>回复({{ $v.replyNum }})</span>
                   <span @click='zan($v, $v.id, $v.ifLiked)'>
                     <i class="ib-middle"></i>
                     <u class="ib-middle">{{ $v.likeNum }}</u>
@@ -92,35 +92,8 @@
         </div>
 
         <!-- 回复 -->
-        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' />
-        <!-- <div class="u-reply" v-if='replyShow' :class="{'show': replyShowDelay}"> -->
-          <!-- <section class="u-detail_header">
-            <van-nav-bar title="评论详情" left-arrow @click-left='onClickLeft'>
-              <van-icon name="fenxiang" slot="right" @click='report' />
-            </van-nav-bar>
-          </section> -->
+        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' />
 
-          <!-- <div class="u-reply-form" id="replay">
-            <van-field
-              @focus="da"
-              class="ib-middle"
-              v-model="replay"
-              type="textarea"
-              :placeholder="placeholder"
-              rows="1"
-              autosize
-              maxlength="40"
-            />
-            <button class="ib-middle">回复</button>
-          </div> -->
-          <!-- 举报 -->
-          <!-- <van-actionsheet
-            class="report"
-            v-model="showReport"
-            :actions="actions"
-            @select="onSelect"
-          />
-        </div> -->
       </div>
     </transition>
     <!-- 提问 -->
@@ -180,7 +153,8 @@ export default {
       pageEmpty: false,
 
       // 回复内容
-      replystr: []
+      replystr: [],
+      masterInfo: {}
     }
   },
 
@@ -193,6 +167,8 @@ export default {
       if (to.hash === '') {
         this.replyShowDelay = false
         document.body.classList = ''
+      } else if (to.hash === '#replay') {
+        this.replyShowDelay = true
       }
     },
     scrollbottom (val) {
@@ -233,7 +209,7 @@ export default {
       })
     },
     // 回复
-    async reply (commentid) {
+    async reply (commentid, val) {
       const toast1 = this.$toast.loading('回复信息加载中')
       let param = {
         page: 1,
@@ -242,8 +218,9 @@ export default {
       }
       const { code, data } = await goodsApi.getCommentReply(param)
       if (code === 200) {
+        console.log(val)
         this.replystr = data.array
-        console.log(this.replystr)
+        this.masterInfo = val
         document.body.classList = 'hidden'
         window.location.hash = 'replay'
         this.replyShow = true
@@ -263,6 +240,8 @@ export default {
         this.$toast(msg)
         this.$set(val, 'likeNum', data)
         this.$set(val, 'ifLiked', !ifLike)
+      } else {
+        this.$toast(data)
       }
     },
     onClickLeft () {
@@ -457,7 +436,7 @@ export default {
       margin-right: 10px;
     }
     .user-infor {
-      span {
+      a {
         font-size: 15px;
         color: #333;
         font-family: 'PingFangSC-Semibold';
@@ -706,44 +685,6 @@ export default {
         }
       }
     }
-  }
-}
-.u-reply-form {
-  // position: fixed;
-  position: absolute;
-  z-index: 99;
-  background: #fff;
-  box-sizing: border-box;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  min-height: 60px;
-  padding: 13px 20px;
-  box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.08);
-  .van-field {
-    display: inline-block;
-    padding: 6px 10px 6px 15px;
-    width: 245px;
-    height: 35px;
-    margin-right: 15px;
-    box-sizing: border-box;
-    background: #f5f5f5;
-    border-radius: 4px;
-    font-size: 13px;
-  }
-  textarea {
-    color: #333;
-    // padding: 10px 0;
-  }
-  button {
-    width: 70px;
-    height: 35px;
-    line-height: 35px;
-    text-align: center;
-    background: #F99C00;
-    border-radius: 4px;
-    color: #fff;
-    font-size: 13px;
   }
 }
 .report {

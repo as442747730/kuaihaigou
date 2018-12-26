@@ -20,21 +20,18 @@
       <div class="u_comment u_answer">
         <ul>
           <li class="u_comment-list u_answer-list" v-for="(qest, index) in qestList" :key="index" :data-qest="qest">
-            <div class="header-img ib-middle" :style="{ background: `url(${qest.headimgurl}) no-repeat center/cover`}"></div>
+            <div class="header-img ib-middle" :style="{ background: `url(${qest.personalInfoResp.headimgurl}) no-repeat center/cover`}"></div>
             <div class="user-infor ib-middle">
-              <span class="ib-middle">{{ qest.username }}</span>
+              <a class="ib-middle">{{ qest.personalInfoResp.nickname }}</a>
               <br>
-              <div class="ib-middle">
-                <i class="level" style="background-color: #ff8888"></i>
-                <i class="prove" style="background-color: #f79dec"></i>
-              </div>
+              <u-usericon v-if='qest.personalInfoResp' :level='String(qest.personalInfoResp.userGradeNumber)' type='1' :profess='String(qest.personalInfoResp.category)' />
             </div>
             <div class="like_type type1" style="background-color: #7ce4ff"></div>
-            <p class="desc">{{ qest.desc }}</p>
+            <p class="desc">{{ qest.question }}</p>
 
-            <div class="pro" v-if ="qest.imgList">
+            <!-- <div class="pro" v-if ="qest.imgList">
               <div v-for="(qestimg, $k) in qest.imgList" :key="$k" class="pro-item" :style="'background: url(' + qestimg + ') no-repeat center/cover'" @click='showBigImg($k, qest.imgList)'></div>
-            </div>
+            </div> -->
 
             <div class="other">
               <div class="time">{{ qest.createdAt }}</div>
@@ -58,21 +55,18 @@
       </div>
     </div>
     <!-- 回复列表 -->
-    <reply-list :replystr="replystr"></reply-list>
+    <!-- <reply-list :replystr="replystr"></reply-list> -->
   </div>
 </template>
 <script>
+// import tools from '~/utils/tools'
 
 import { ImagePreview } from 'vant'
 
-import Img1 from '~/assets/img/bk1.png'
-
-import Img2 from '~/assets/img/green_wine.jpg'
-
-import Img3 from '~/assets/img/home/img_home_335x180@2x.png'
-
 import { quizApi } from '~/api/quiz'
-import replyList from './Replylist'
+
+import uUsericon from '~/components/Usericon'
+// import replyList from './Replylist'
 
 export default {
   name: 'u-question',
@@ -80,7 +74,8 @@ export default {
     goodsid: String
   },
   components: {
-    replyList: replyList
+    uUsericon
+    // replyList: replyList
   },
   data () {
     return {
@@ -90,12 +85,7 @@ export default {
       qestNum: 0,
       replyshow: false,
       postdata: false,
-      replystr: '1',
-      testData: [{
-        imgList: [Img1, Img2]
-      }, {
-        imgList: [Img3]
-      }]
+      replystr: '1'
     }
   },
   async mounted () {
@@ -129,13 +119,20 @@ export default {
     async fabulous (event) {
       // 点赞 / 取消点赞
       let { ifLiked, consultid } = event
+      let msg = !ifLiked ? '点赞成功' : '取消点赞成功'
       const { code, data } = !ifLiked ? await quizApi.consultLike(consultid) : await quizApi.consultDislike(consultid)
       if (code === 200) {
-        this.$toast(data)
+        this.$toast(msg)
+        event.ifLiked = !event.ifLiked
+        event.likeNum = data
       } else {
         this.$toast(data)
       }
     }
+    // changeTime (time) {
+    //   time = new Date(time).getTime()
+    //   return tools.timeago(time)
+    // }
   }
 }
 </script>

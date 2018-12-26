@@ -5,29 +5,49 @@
         <van-icon name="fenxiang" slot="right" @click='report' />
       </van-nav-bar>
     </section>
-    <div class="u_comment">
+    <div class="u_comment" id="u_comment">
       <ul>
-        <li class="u_comment-list" v-for="($v, $k) in replystr">
+        <!-- 楼主 -->
+        <li class="u_comment-list">
+          <div class="header-img ib-middle" v-if='masterinfo.personalInfoResp' :style="'background: url(' + masterinfo.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
+          <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
+          <div class="user-infor ib-middle">
+            <a class="ib-middle" v-if='masterinfo.personalInfoResp'>{{ masterinfo.personalInfoResp.nickname || '' }}</a>
+            <a class="ib-middle" v-else>匿名用户</a>
+            <br>
+            <u-usericon v-if='masterinfo.personalInfoResp' :level='String(masterinfo.personalInfoResp.userGradeNumber)' type='1' :profess='String(masterinfo.personalInfoResp.category)' />
+          </div>
+          <div v-if='masterinfo.evaluationLevel >= 4' class="like_type type1">
+            <i></i>
+            <span>超爱</span>
+          </div>
+          <p class="desc">{{ masterinfo.content || '此用户没有填写评论!' }}</p>
+        </li>
+        <li class="u_comment-list" v-for="($v, $k) in (replyData.length === 0 ? replystr : replyData)">
           <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + $v.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
           <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
           <div class="user-infor ib-middle">
-            <span class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</span>
-            <span class="ib-middle" v-else>匿名用户</span>
+            <template v-if='!$v.parentUsername'>
+              <a class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</a>
+              <a class="ib-middle" v-else>匿名用户</a>
+            </template>
+            <div v-else class="has-reply">
+              <a class="ib-middle">{{ $v.personalInfoResp.nickname }}</a>
+              <b class="ib-middle">回复</b>
+              <a class="ib-middle">{{ $v.parentUsername }}</a>
+            </div>
             <br>
             <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
           </div>
-          <!-- <div v-if='$v.evaluationLevel >= 4' class="like_type type1">
-            <i></i>
-            <span>超爱</span>
-          </div> -->
-          <div class="user-">
+
+          <div class="user-content">
             <p class="desc">{{ $v.content || '此用户没有填写评论!' }}</p>
 
             <div class="other">
               <div class="time">{{ changeTime($v.createdAt) }}</div>
               <div class="fr">
-                <span @click='reply($v.id)'>回复({{ $v.replyNum }})</span>
-                <span @click='zan($v, $v.id, $v.ifLiked)'>
+                <span @click='turnToEdit($v.replyid, $v.personalInfoResp.nickname)'>回复</span>
+                <span @click='zan($v)'>
                   <i class="ib-middle"></i>
                   <u class="ib-middle">{{ $v.likeNum }}</u>
                 </span>
@@ -36,23 +56,41 @@
           </div>
         </li>
       </ul>
+      <div class='more-loading' v-show='pageLoding'>
+        <van-loading type="spinner" />
+        <p>正在加载更多</p>
+      </div>
+
+      <div class="no-more" v-show='pageEmpty'>
+        <p>没有更多评论了！</p>
+      </div>
     </div>
     <div class="u-reply-form" id="replay">
-      <van-field @focus="da" class="ib-middle" v-model="replay" type="textarea" :placeholder="placeholder" rows="1" autosize maxlength="40" />
-      <button class="ib-middle" @click="sayFn">回复</button>
+      <van-field @focus="turnToEdit(null, masterinfo.personalInfoResp.nickname)" class="ib-middle" v-model="replay" type="textarea" :placeholder="'回复:' + (masterinfo.personalInfoResp ? masterinfo.personalInfoResp.nickname : '')" rows="1" autosize maxlength="40" />
+      <!-- <button class="ib-middle" @click="sayFn">回复</button> -->
     </div>
     <!-- 举报 -->
     <van-actionsheet class="report" v-model="showReport" :actions="actions" @select="onSelect" />
+    <!-- 编辑框 -->
+    <van-popup class='edit-wrap' v-model="editShow" position="right" :overlay="true">
+      <van-nav-bar title="回复评论" left-arrow right-text='发送' @click-left='editShow = false' @click-right="send(method, masterinfo.id)"></van-nav-bar>
+      <textarea class="textarea" :placeholder="'回复:' + editPerson" v-model='editContent'></textarea>
+    </van-popup>
   </div>
 </template>
 <script>
 import tools from '~/utils/tools'
 import uUsericon from '~/components/Usericon'
+import { goodsApi } from '~/api/goods'
 export default {
   components: {
     uUsericon
   },
   props: {
+    masterinfo: {
+      Type: Object,
+      default: () => ({})
+    },
     replystr: {
       Type: Array,
       default: []
@@ -62,21 +100,62 @@ export default {
     return {
       defaulthead: this.defaulthead,
 
+      replyData: this.replystr || [],
+
       listshow: false,
       showReport: false,
       replay: '',
-      placeholder: 'please tell me why.',
       actions: [{
         name: '举报'
       }, {
         name: '取消'
-      }]
+      }],
+
+      editShow: false, // 编辑层
+      editPerson: '',
+      editContent: '',
+      isBottom: false,
+      method: 'one',
+
+      page: 1,
+      pageLoding: true,
+      pageEmpty: false
     }
   },
   watch: {
+    $route (to, from) {
+      if (to.hash === '#replay') {
+        this.editShow = false
+      } else if (to.hash === '#replay_edit') {
+        this.editShow = true
+      }
+    },
     replystr (val) {
+      this.replyData = JSON.parse(JSON.stringify(this.replystr))
+      this.pageEmpty = false
+      this.page = 1
       console.log('val', val)
+    },
+    isBottom (val) {
+      if (val && !this.pageEmpty) {
+        this.page = this.page + 1
+        this.getData(this.page)
+      }
     }
+  },
+  mounted () {
+    let ele = document.getElementById('u_comment')
+    ele.addEventListener('scroll', this.handleScroll(() => {
+      this.eleHeight = ele.clientHeight
+      this.scrollHeight = ele.scrollHeight
+      let scrollTop = ele.scrollTop
+      // 距离底部大约200像素
+      if (scrollTop + this.eleHeight >= this.scrollHeight - 100) {
+        this.isBottom = true
+      } else {
+        this.isBottom = false
+      }
+    }))
   },
   methods: {
     onClickLeft () {
@@ -85,14 +164,103 @@ export default {
       console.log('this is onClickLeft')
       this.listshow = false
     },
-    sayFn () {
-      // this.getStr = '1'
-      // console.log(this.getStr, 'getStr')
+    turnToEdit (replyid, editPerson) {
+      console.log(replyid)
+      if (replyid) {
+        this.method = 'two'
+        this.replyid = replyid
+      } else {
+        this.method = 'one'
+      }
+      this.editShow = true
+      this.editPerson = editPerson
+      window.location.hash = 'replay_edit'
     },
-    da () {},
     report () {
       this.showReport = true
     },
+    // 发送
+    async send (method, commentid) {
+      let obj = {}
+      console.log(method)
+      if (method === 'one') {
+        console.log('回复楼主')
+        // 回复楼主
+        obj = {
+          commentid: commentid,
+          content: this.editContent
+        }
+      } else if (method === 'two') {
+        console.log('回复层主')
+        // 回复层主
+        obj = {
+          parentid: this.replyid,
+          commentid: commentid,
+          content: this.editContent
+        }
+      }
+      const { code, data } = await goodsApi.reply(obj)
+      if (code === 200) {
+        this.$toast('回复成功')
+        this.renderData()
+      } else {
+        this.$toast(data)
+      }
+    },
+    // 点赞
+    async zan (val) {
+      console.log(val)
+      let fn = null
+      let msg = ''
+      if (val.ifLiked) {
+        // 取消点赞
+        fn = goodsApi.unLikeComment(val.replyid)
+        msg = '取消点赞成功'
+      } else {
+        fn = goodsApi.likeComment(val.replyid)
+        msg = '点赞成功'
+      }
+      const { code, data } = await fn
+      if (code === 200) {
+        this.$toast(msg)
+        val.ifLiked = !val.ifLiked
+        val.likeNum = data
+      }
+    },
+    // 重新加载数据
+    async renderData () {
+      let param = {
+        page: 1,
+        count: 5,
+        commentid: this.masterinfo.id
+      }
+      const { code, data } = await goodsApi.getCommentReply(param)
+      if (code === 200) {
+        this.replyData = data.array
+        this.editShow = false
+        this.pageEmpty = false
+        this.page = 1
+      }
+    },
+    async getData (page) {
+      this.pageLoding = true
+      let param = {
+        page: page,
+        count: 5,
+        commentid: this.masterinfo.id
+      }
+      const { code, data } = await goodsApi.getCommentReply(param)
+      if (code === 200) {
+        if (data.array.length === 0) {
+          this.pageEmpty = true
+        } else {
+          this.replyData.push(...data.array)
+        }
+        this.pageLoding = false
+        this.editShow = false
+      }
+    },
+    // 举报
     onSelect (item) {
       if (item.name === '举报') {
         this.showReport = false
@@ -105,6 +273,17 @@ export default {
         this.showReport = false
       }
     },
+    handleScroll (fn) {
+      let Switch = true
+      return function () {
+        if (!Switch) return
+        Switch = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          Switch = true
+        }, 250)
+      }
+    },
     changeTime (time) {
       time = new Date(time).getTime()
       return tools.timeago(time)
@@ -112,7 +291,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .u-reply {
   position: fixed;
   z-index: 10000;
@@ -125,6 +304,13 @@ export default {
 
   &.show {
     transform: none;
+  }
+
+  .u_comment {
+    padding: 0;
+    ul {
+      padding: 0 20px;
+    }
   }
 
   &-wrap {
@@ -263,5 +449,109 @@ export default {
       }
     }
   }
+
+  &-form {
+    position: absolute;
+    z-index: 99;
+    background: #fff;
+    box-sizing: border-box;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    min-height: 60px;
+    padding: 13px 20px;
+    box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.08);
+    .van-field {
+      display: inline-block;
+      padding: 6px 10px 6px 15px;
+      width: 100%;
+      height: 35px;
+      // margin-right: 15px;
+      box-sizing: border-box;
+      background: #f5f5f5;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    textarea {
+      color: #333;
+    }
+    button {
+      width: 70px;
+      height: 35px;
+      line-height: 35px;
+      text-align: center;
+      background: #F99C00;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 13px;
+    }
+  }
+
+  .u_comment {
+    overflow: scroll;
+    height: calc(100vh - 108px)
+  }
+
+  .u_comment-list {
+    overflow: hidden;
+    &:first-child {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      .desc {
+        margin-bottom: 15px;
+      }
+    }
+    &:not(:first-child) {
+      .user-infor {
+        a {
+          font-weight: normal;
+          font-size: 13px;
+          font-family: 'PingFangSC-Regular';
+        }
+        .has-reply {
+          a {
+            width: auto;
+            max-width: 120px;
+          }
+          b {
+            font-size: 13px;
+            color: #333;
+            margin: -3px 8px 0;
+          }
+        }
+      }
+      .desc {
+        font-size: 13px;
+      }
+    }
+    .user-content {
+      padding-left: 54px;
+      .other {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  .edit-wrap {
+    width: 100%;
+    height: 100%;
+    .van-nav-bar__text {
+      color: #03A1CD!important;
+      font-size: 13px;
+      font-family: 'PingFangSC-Semibold';
+    }
+    .textarea {
+      width: 100%;
+      min-height: 40vh;
+      font-size: 14px;
+      color: #333;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+  }
+}
+.van-toast {
+  z-index: 10001!important
 }
 </style>
