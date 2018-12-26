@@ -420,7 +420,7 @@ export default {
     background: white;
     border-radius: 100%;
     position: fixed;
-    bottom: 80px;
+    bottom: 100px;
     right: 25px;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.1);
   }
