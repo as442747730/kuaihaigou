@@ -1,14 +1,14 @@
 import request from '~/utils/request'
 // 用户接口
 export const userApi = {
-  // serve
+  /* ----------------- serve ----------------- */
   serverPostInfo (req) {
     return request.serverPost('/api/user/detail', null, req)
   },
   serveGetAartical (params, req) {
     return request.serverGet('/api/sk/myCreation', params, req)
   },
-  // client
+  /* ------------------- lient ------------------- */
   // 获取用户详情
   userDetail () {
     return request.clientPost('/api/user/detail')

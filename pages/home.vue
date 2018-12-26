@@ -14,13 +14,13 @@
       </section>
 
       <section class="tab_home">
-        <span class="tab">
+        <span class="tab" @click="toWineCenter">
           <i class="tab-icon-xjzx"></i>
           <span class="tab-txt">
             选酒中心
           </span>
         </span>
-        <span class="tab">
+        <span class="tab" @click="toEncys">
           <i class="tab-icon-hjbk"></i>
           <span class="tab-txt">
             红酒百科
@@ -428,6 +428,14 @@ export default {
   },
 
   methods: {
+    toWineCenter () {
+      // 选酒中心
+      window.location.href = '/winecenter'
+    },
+    toEncys () {
+      // 红酒百科
+      window.location.href = '/encys'
+    }
   }
 
 }
