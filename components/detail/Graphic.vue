@@ -24,7 +24,7 @@
         <h3>费用／进口清单</h3>
       </div>
       <div class="customs-wrap">
-        <p>关税明细计算方法 ></p>
+        <!-- <p>关税明细计算方法 ></p> -->
 
         <div class="swiperCustoms" v-swiper:mySwiper2="swiperCustoms" ref="swiperTop">
           <div class="swiper-wrapper">
@@ -97,9 +97,8 @@ export default {
       const swiperThumbs = this.$refs.swiperThumbs.swiper
       swiperTop.controller.control = swiperThumbs
       swiperThumbs.controller.control = swiperTop
-
-      console.log(this.viewdata, 'viewdata')
     })
+    console.log(this.viewdata, 'viewdata')
   },
 
   methods: {
