@@ -74,13 +74,14 @@ export default {
       var vm = this
       var formData = new FormData(document.getElementById('uploadFormMulti'))
       try {
-        const url = await vm.uploadImgReq(formData)// 自定义的图片上传函数
+        const url = await vm.uploadImgReq(formData) // 自定义的图片上传函数
 
         if (url != null && url.length > 0) {
           var value = url
           vm.addImgRange = vm.editor.getSelection()
-          value = value.indexOf('http') !== -1 ? value : 'http:' + value
+          // value = value.indexOf('http') !== -1 ? value : 'http:' + value
           vm.editor.insertEmbed(vm.addImgRange !== null ? vm.addImgRange.index : 0, 'image', value, 'user')
+          vm.$emit('uploadSuccess', value)
         } else {
           Toast.fail('图片上传失败')
         }
@@ -122,8 +123,9 @@ export default {
     },
 
     onEditorChange ({ editor, html, text }) {
-      this.content = html
+      // this.content = html
       // console.log(html)
+      this.$emit('handleChange', html)
     },
     onEditorFocus () {},
     onEditorReady () {},

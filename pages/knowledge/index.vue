@@ -1,7 +1,7 @@
 <template>
   <div class="m-knowledge">
 
-    <tab-select :topicList="topicLs" :typeList="typeLs" :breedList="varietyLs" :total="total" @getFilterData="getFilterFetch"></tab-select>
+    <tab-select ref="tabSelect" :topicList="topicLs" :typeList="typeLs" :breedList="varietyLs" :total="total" @getFilterData="getFilterFetch"></tab-select>
 
     <van-pull-refresh class="van-pull" v-model="refreshing" @refresh="geRefresh" :loading-text="'刷新中'">
       <div class="article-ul">
@@ -17,7 +17,7 @@
               <p class="date">{{ item.userResp.createdAt }}</p>
             </div>
           </div>
-          <div class="content">
+          <div class="content" @click="gotodetail(item)">
             <p class="content-title" style="-webkit-box-orient: vertical;">{{ item.title }}</p>
             <p class="content-desc">
               <span>频道：{{ item.channelName }}</span>
@@ -28,12 +28,12 @@
               <!-- 文章 -->
               <p v-if="item.articleType === 1" class="content-article" style="-webkit-box-orient: vertical;" v-html="item.summary"></p>
               <div class="imgs" v-if="item.articleType === 1 && item.imgsPaht">
-                <div :class="['img', item.imgsPaht.length === 1 ? 'big' : '' , item.imgsPaht.length % 3 === 0 ? 'small' : '', (item.imgsPaht.length === 5 && index === 5) ? 'big' : '']" v-lazy:background-image="m" v-for="(m, index) in item.imgsPaht" :key="index"></div>
+                <div :class="['img', item.imgsPaht.length === 1 ? 'big' : '' , item.imgsPaht.length % 3 === 0 ? 'small' : '', item.imgsPaht.length === 8 ? 'small' : '', (item.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="m" v-for="(m, index) in item.imgsPaht" :key="index"></div>
+                <div class="img small" v-if="item.imgsPaht.length === 8"></div>
               </div>
               <!-- 视频 -->
-              <!-- !!! TODO !!! -->
               <div class="video-box" v-if="item.articleType === 2">
-                <video class="video-player" :src="item.videoPath"></video>
+                <video class="video-player" controls :src="item.videoPath"></video>
               </div>
             </div>
 
@@ -50,7 +50,14 @@
         </div>
 
       </div>
+
+      <div class="load-more">{{ hasMore ? loadTxt : '已无更多文章' }}</div>
+
     </van-pull-refresh>
+
+    <div class="to-top" v-if="showBtn">
+      <van-icon name="upgrade" color="#03A00C8" @click="backToTop"></van-icon>
+    </div>
 
   </div>
 </template>
@@ -77,30 +84,70 @@ export default {
     }
   },
 
+  mounted () {
+    this.$refs.tabSelect.setSelect({ channelId: this.channelId, topicId: this.topicId, typeId: this.typeId, varietyId: this.varietyId, order: this.order })
+
+    const v = this
+    const pullEl = document.querySelector('.van-pull')
+    const ulEl = document.querySelector('.article-ul')
+    const bt = document.querySelector('.load-more')
+
+    function throttle (fn, interval = 300) {
+      let canRun = true
+      return function () {
+        if (!canRun) return
+        canRun = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          canRun = true
+        }, interval)
+      }
+    }
+
+    pullEl.addEventListener('scroll', throttle(function (e) {
+      if (pullEl.scrollTop > pullEl.offsetHeight) {
+        v.showBtn = true
+      } else {
+        v.showBtn = false
+      }
+      if (bt.offsetHeight + ulEl.offsetHeight - (pullEl.scrollTop + pullEl.offsetHeight) < 100 && !v.getting && v.hasMore) {
+        v.fetchData(true)
+      }
+    }))
+  },
+
   async asyncData (req) {
     return api.all([
       knowApi.getTopicList(req),
       knowApi.getTypeList(req),
       knowApi.getVariety(req),
-      api.serverGet('/api/sk/paginate', { page: 1, count: 10, channelNumber: req.query.channel, topicId: req.query.topic, typeId: req.query.type, varietyId: req.query.variety }, req)
+      api.serverGet('/api/sk/paginate', { page: 1, count: 10, channelNumber: req.query.channelid || '', topicId: req.query.topicid || '', typeId: req.query.typeid || '', varietyId: req.query.varietyid || '', order: req.query.order }, req)
     ])
       .then(api.spread(function (res1, res2, res3, res4) {
         if (res1.code !== 200 || res2.code !== 200 || res3.code !== 200 || res4.code !== 200) {
           req.redirect('/error')
         }
-        console.log(res3.data)
+        console.log(res4.data.array)
         return {
+          channelId: req.query.channelid || null,
+          topicId: req.query.topicid || null,
+          typeId: req.query.typeid || null,
+          varietyId: req.query.varietyid || null,
+          order: +req.query.order || 1,
           topicLs: res1.data.map(n => { return { id: n.id, name: n.topicName } }),
           typeLs: res2.data.map(n => { return { id: n.id, name: n.typeName } }),
           varietyLs: res3.data.map(n => { return { id: n.id, name: n.varietyName } }),
           articleList: res4.data.array,
-          total: res4.data.total
+          total: res4.data.total,
+          hasMore: res4.data.total > 10
         }
       }))
   },
 
   data () {
     return {
+      loadTxt: '下拉加载更多',
+
       topicLs: [],
       typeLs: [],
       varietyLs: [],
@@ -116,12 +163,21 @@ export default {
 
       hasMore: false,
       currentPage: 1,
-      articleList: []
+      articleList: [],
+
+      getting: false,
+      showBtn: false
     }
   },
+
   methods: {
     async fetchData (getMore) {
       this.$toast.loading('加载中...')
+      this.getting = true
+      this.loadTxt = '加载中'
+      if (getMore) {
+        this.currentPage += 1
+      }
       const { code, data } = await knowApi.getKnowList({ page: this.currentPage, count: 10, channelNumber: this.channelId, topicId: this.topicId, typeId: this.typeId, varietyId: this.varietyId, order: this.order })
       if (code === 200) {
         if (getMore) {
@@ -130,8 +186,10 @@ export default {
           this.articleList = data.array
         }
         this.total = data.total
-        this.hasMore = this.currentPage * 10 > data.total
+        this.hasMore = this.currentPage * 10 < data.total
         this.$toast.clear()
+        this.getting = false
+        this.loadTxt = '下拉加载更多'
       }
     },
     getFilterFetch (val) {
@@ -140,6 +198,7 @@ export default {
       this.typeId = val.typeId
       this.varietyId = val.vareity
       this.order = val.order
+      window.location.search = `?order=${this.order}` + (this.channelId ? `&channelid=${this.channelId}` : '') + (this.topicId ? `&topicid=${this.topicId}` : '') + (this.typeId ? `&typeid=${this.typeId}` : '') + (this.varietyId ? `&varietyid=${this.varietyId}` : '')
       this.currentPage = 1
       this.fetchData(false)
     },
@@ -148,6 +207,22 @@ export default {
       this.currentPage = 1
       await this.fetchData(false)
       this.refreshing = false
+    },
+
+    gotodetail (val) {
+      window.location.href = `/knowledge/detail/${val.id}?type=${val.articleType}`
+    },
+
+    backToTop () {
+      const e = document.querySelector('.van-pull')
+      const step = (e.scrollTop / 500) * 15
+      let t = setInterval(() => {
+        if (e.scrollTop > 1) {
+          e.scrollTop = e.scrollTop - step
+        } else {
+          clearInterval(t)
+        }
+      }, 15)
     }
   }
 }
@@ -161,12 +236,12 @@ export default {
   .van-pull {
     height: calc(100vh - 76px);
     box-sizing: border-box;
-    margin-bottom: 50px;
     overflow: scroll;
+    transition: 0s ease;
     .article-ul {
       box-sizing: border-box;
       background: white;
-      padding: 20px 20px 70px 20px;
+      padding: 20px 20px 20px 20px;
       .article-item {
         border-radius: 8px;
         border: 1PX solid #EAEAEA;
@@ -251,9 +326,10 @@ export default {
             -webkit-box-orient: vertical;
           }
           .video-box {
+            position: relative;
             .video-player {
               width: 100%;
-              height: 150px;
+              height: auto;
               border-radius: 5px;
             }
           }
@@ -326,6 +402,27 @@ export default {
         }
       }
     }
+    .load-more {
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      font-size: 12px;
+      background: @cor_border;
+      color: @cor_666;
+      padding-bottom: 50px;
+    }
+  }
+  .to-top {
+    width: 36px;
+    height: 36px;
+    box-sizing: border-box;
+    background: white;
+    border-radius: 100%;
+    position: fixed;
+    bottom: 80px;
+    right: 25px;
+    box-shadow: 0px 0px 4px rgba(0,0,0,0.1);
   }
 }
 </style>
