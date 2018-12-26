@@ -5,9 +5,9 @@ html, body
   /* letter-spacing: 0.5px; */
   font-family: PingFang SC,Lantinghei SC,Helvetica Neue,Helvetica,Arial,Microsoft YaHei,\\5FAE\8F6F\96C5\9ED1,STHeitiSC-Light,simsun,\\5B8B\4F53,WenQuanYi Zen Hei,WenQuanYi Micro Hei,"sans-serif";
   /* font-family: PingFang SC, Arial, -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif; */
-  height: 100vh;
+  height: 100%;
   margin: 0;
-  // font-weight: 300; // 字重 light
+  -webkit-overflow-scrolling: touch;
   &.hidden {
     height: 100%;
     overflow: hidden;
@@ -533,10 +533,10 @@ input[type="text"] {
 }
 
 // 适配 iphone X 
-// .adapter-ipx {
-  // padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
-  // padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
-// }
+.adapter-ipx {
+  padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
+  padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
+}
 
 @font-face {
   font-family: DINPro;
@@ -603,4 +603,17 @@ input[type="text"] {
     width: 100%;
     height: auto;
   }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  overflow: hidden;
 }

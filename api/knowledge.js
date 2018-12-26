@@ -8,6 +8,17 @@ export const knowApi = {
   publishKnow (obj) {
     return request.clientPost('/api/sk/releaseArticle', obj)
   },
+  publishKnowVideo (obj) {
+    return request.clientPost('/api/sk/releaseVideo', obj)
+  },
+  // 关注/取消关注
+  subscribeUser (obj) {
+    return request.clientPost('/api/friend/followFriends', obj)
+  },
+  // 获取作者的信息
+  getAuthorInfo (obj) {
+    return request.clientGet('/api/sk/getUserContent', obj)
+  },
 
   getReplys (obj) {
     return request.clientGet('/api/articleComment/paginateReply', obj)
