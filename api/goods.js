@@ -57,5 +57,17 @@ export const goodsApi = {
   // 获取评价回复内容
   getCommentReply (obj) {
     return request.clientGet('/api/cmt/paginateCommentReply', obj)
+  },
+  // 回复层主
+  reply (data) {
+    return request.clientPostJson('/api/cmt/reply', data)
+  },
+  // 取消点赞层主
+  unLikeComment (id) {
+    return request.clientPost('/api/cmt/cancelLikeCommentReply/' + id)
+  },
+  // 点赞层主
+  likeComment (id) {
+    return request.clientPost('/api/cmt/likeCommentReply/' + id)
   }
 }

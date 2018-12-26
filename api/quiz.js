@@ -9,6 +9,10 @@ export const quizApi = {
   getReplylist (params) {
     return request.clientGet('/api/goodsConsult/paginateReply', params)
   },
+  // 咨询回复
+  reply (params) {
+    return request.clientPostJson('/api/goodsConsult/reply', params)
+  },
   // 咨询点赞
   consultLike (consultId) {
     return request.clientPost('/api/goodsConsult/likeConsult/' + consultId)

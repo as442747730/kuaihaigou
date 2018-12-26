@@ -15,126 +15,186 @@
 
     <div class="u-detail_line"></div>
 
-    <div class="answer margin-20">
-      <h2>疑问解答<span>（{{ qestNum }}条）</span></h2>
-      <div class="u_comment u_answer">
-        <ul>
-          <li class="u_comment-list u_answer-list" v-for="(qest, index) in qestList" :key="index" :data-qest="qest">
-            <div class="header-img ib-middle" :style="{ background: `url(${qest.headimgurl}) no-repeat center/cover`}"></div>
-            <div class="user-infor ib-middle">
-              <span class="ib-middle">{{ qest.username }}</span>
-              <br>
-              <div class="ib-middle">
-                <i class="level" style="background-color: #ff8888"></i>
-                <i class="prove" style="background-color: #f79dec"></i>
+    <div class="answer">
+      <div class="margin-20">
+        <h2>疑问解答<span>（{{ qestNum }}条）</span></h2>
+        <div class="u_comment u_answer">
+          <ul>
+            <li class="u_comment-list u_answer-list" v-for="(qest, index) in qestList" :key="index" :data-qest="qest">
+              <div class="header-img ib-middle" :style="{ background: `url(${qest.personalInfoResp.headimgurl}) no-repeat center/cover`}"></div>
+              <div class="user-infor ib-middle">
+                <a class="ib-middle">{{ qest.personalInfoResp.nickname }}</a>
+                <br>
+                <u-usericon v-if='qest.personalInfoResp' :level='String(qest.personalInfoResp.userGradeNumber)' type='1' :profess='String(qest.personalInfoResp.category)' />
               </div>
-            </div>
-            <div class="like_type type1" style="background-color: #7ce4ff"></div>
-            <p class="desc">{{ qest.desc }}</p>
+              <div class="like_type type1" style="background-color: #7ce4ff"></div>
+              <p class="desc">{{ qest.question }}</p>
 
-            <div class="pro" v-if ="qest.imgList">
-              <div v-for="(qestimg, $k) in qest.imgList" :key="$k" class="pro-item" :style="'background: url(' + qestimg + ') no-repeat center/cover'" @click='showBigImg($k, qest.imgList)'></div>
-            </div>
+              <!-- <div class="pro" v-if ="qest.imgList">
+                <div v-for="(qestimg, $k) in qest.imgList" :key="$k" class="pro-item" :style="'background: url(' + qestimg + ') no-repeat center/cover'" @click='showBigImg($k, qest.imgList)'></div>
+              </div> -->
 
-            <div class="other">
-              <div class="time">{{ qest.createdAt }}</div>
-              <div class="fr">
-                <span @click="replyFn(qest)">回复({{ qest.replyNum || 0}})</span>
-                <span @click="fabulous(qest)">
-                  <i class="ib-middle"></i>
-                  <u class="ib-middle">{{ qest.likeNum}}</u>
-                </span>
+              <div class="other">
+                <div class="time">{{ changeTime(qest.createdAt) }}</div>
+                <div class="fr">
+                  <span @click="replyFn(qest)">回复({{ qest.replyNum || 0}})</span>
+                  <span @click="fabulous(qest)">
+                    <i class="ib-middle"></i>
+                    <u class="ib-middle">{{ qest.likeNum}}</u>
+                  </span>
+                </div>
               </div>
-            </div>
-            <!-- 官方回复 -->
-            <div class="office-comment" v-if="qest.official">
-              <p>
-                <span>{{ qest.official.userName }}：</span>
-                {{ qest.official.desc }}
-              </p>
-            </div>
-          </li>
-        </ul>
+              <!-- 官方回复 -->
+              <div class="office-comment" v-if="qest.official">
+                <p>
+                  <span>{{ qest.official.userName }}：</span>
+                  {{ qest.official.desc }}
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
+
+      <div class='more-loading' v-show='pageLoding'>
+        <van-loading type="spinner" />
+        <p>正在加载更多</p>
+      </div>
+
+      <div class="no-more" v-show='pageEmpty'>
+        <p>没有更多疑问了！</p>
+      </div>
+
     </div>
     <!-- 回复列表 -->
-    <reply-list :replystr="replystr"></reply-list>
+    <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='answer' />
   </div>
 </template>
 <script>
+import tools from '~/utils/tools'
 
-import { ImagePreview } from 'vant'
-
-import Img1 from '~/assets/img/bk1.png'
-
-import Img2 from '~/assets/img/green_wine.jpg'
-
-import Img3 from '~/assets/img/home/img_home_335x180@2x.png'
+// import { ImagePreview } from 'vant'
 
 import { quizApi } from '~/api/quiz'
-import replyList from './Replylist'
+
+import uUsericon from '~/components/Usericon'
+import uReply from './Replylist'
 
 export default {
   name: 'u-question',
   props: {
-    goodsid: String
+    goodsid: String,
+    scrollbottom: Boolean
   },
   components: {
-    replyList: replyList
+    uUsericon,
+    uReply
   },
   data () {
     return {
       getGoodId: this.goodsid,
-      currentTotal: 3,
       qestList: [],
       qestNum: 0,
       replyshow: false,
       postdata: false,
-      replystr: '1',
-      testData: [{
-        imgList: [Img1, Img2]
-      }, {
-        imgList: [Img3]
-      }]
+      replystr: [],
+
+      replyShow: false,
+      replyShowDelay: false,
+      masterInfo: {},
+
+      // 分页
+      page: 1,
+      pageEmpty: false,
+      pageLoding: true
     }
   },
-  async mounted () {
-    let params = {
-      page: 1,
-      count: 3,
-      total: this.currentTotal,
-      goodsId: this.getGoodId
+  watch: {
+    $route (to, from) {
+      if (to.hash === '') {
+        this.replyShowDelay = false
+        document.body.classList = ''
+      } else if (to.hash === '#replay') {
+        this.replyShowDelay = true
+      }
+    },
+    scrollbottom (val) {
+      console.log(val)
+      if (val && !this.pageEmpty) {
+        this.page = this.page + 1
+        this.getData(this.page)
+      }
     }
-    const {code, data} = await quizApi.getQuizlist(params)
-    if (code === 200) {
-      console.log('data', data)
-      let { array, total } = data
-      this.qestList = array
-      this.qestNum = total
-    }
+  },
+  mounted () {
+    this.getData(1)
   },
   methods: {
-    showBigImg (index, val) {
-      ImagePreview({
-        images: val,
-        startPosition: index,
-        onClose () {
-        }
-      })
-    },
-    replyFn (event) {
-      this.replystr = '2'
+    // showBigImg (index, val) {
+    //   ImagePreview({
+    //     images: val,
+    //     startPosition: index,
+    //     onClose () {
+    //     }
+    //   })
+    // },
+    async replyFn (val) {
+      const toast1 = this.$toast.loading('回复信息加载中')
+      let param = {
+        page: 1,
+        count: 5,
+        consultid: val.consultid
+      }
+      const { code, data } = await quizApi.getReplylist(param)
+      if (code === 200) {
+        console.log(val)
+        this.replystr = data.array
+        this.masterInfo = val
+        document.body.classList = 'hidden'
+        window.location.hash = 'replay'
+        this.replyShow = true
+        toast1.clear()
+        setTimeout(() => {
+          this.replyShowDelay = true
+        }, 60)
+      }
+      // this.replystr = '2'
       console.log(this.replystr, 'replystr')
+    },
+    async getData (page) {
+      this.pageLoding = true
+      let params = {
+        page: page,
+        count: 5,
+        goodsId: this.getGoodId
+      }
+      const {code, data} = await quizApi.getQuizlist(params)
+      if (code === 200) {
+        let { array, total } = data
+        if (array.length === 0) {
+          this.pageEmpty = true
+        }
+        this.qestList.push(...array)
+        this.qestNum = total
+        this.pageLoding = false
+      }
     },
     async fabulous (event) {
       // 点赞 / 取消点赞
       let { ifLiked, consultid } = event
+      let msg = !ifLiked ? '点赞成功' : '取消点赞成功'
       const { code, data } = !ifLiked ? await quizApi.consultLike(consultid) : await quizApi.consultDislike(consultid)
       if (code === 200) {
-        this.$toast(data)
+        this.$toast(msg)
+        event.ifLiked = !event.ifLiked
+        event.likeNum = data
       } else {
         this.$toast(data)
       }
+    },
+    changeTime (time) {
+      time = new Date(time).getTime()
+      return tools.timeago(time)
     }
   }
 }
