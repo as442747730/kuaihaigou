@@ -1,5 +1,6 @@
-// // 头像上传插件
-// import Vue from 'vue'
-// import VueCoreImageUpload from 'vue-core-image-upload/dist/ssr'
+// 引入上传插件
+import Vue from 'vue'
+import { Upload } from 'element-ui'
+import 'element-ui/lib/theme-chalk/upload.css'
 
-// Vue.use(VueCoreImageUpload)
+Vue.use(Upload)

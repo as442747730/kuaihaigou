@@ -2,7 +2,7 @@
   <div class="m-konwledge-detail">
 
     <div class="author-section">
-      <div class="avatar" :style="'background-image: url(' + (detailObj.userResp.headimgurl ? detailObj.userResp.headimgurl : require('~/assets/img/defaultImg.png') ) + ')'"></div>
+      <div class="avatar" :style="'background-image: url(' + (detailObj.userResp.headimgurl ? detailObj.userResp.headimgurl : require('~/assets/img/defaultImg.png') ) + ')'" @click="showAuthorInfo"></div>
       <div class="info">
         <div class="nickname">
           <span>{{ detailObj.userResp.nickname }}</span>
@@ -10,7 +10,9 @@
         </div>
         <p class="signature">{{ signature }}</p>
       </div>
-      <div class="like">关注</div>
+      <div :class="['like', ifSubscribe ? 'dark' : '']" @click="clickSubscribe">
+        <i :class="['btn-icon', ifSubscribe ? 'tick' : 'plus']" ></i>
+        {{ ifSubscribe ? '已关注' : '关注'}}</div>
     </div>
 
     <div class="article-section">
@@ -98,6 +100,20 @@
       <div class="btn-item" @click="handleCollect"><img src="~/assets/img/knowledge/icon-star.png" :class="['icon-btn', ifCollect ? 'active' : '']" alt="">收藏</div>
     </div>
 
+    <van-actionsheet
+      v-model="tipShow"
+      :actions="actions"
+      cancel-text="取消"
+      @select="onSelect"
+    />
+
+    <transition name="fade">
+      <u-author v-if="showInfo" :user="authObj" @click="showInfo = false"></u-author>
+    </transition>
+    <transition name="fade">
+      <div class="modal" v-if="showInfo" @click="showInfo = false" @touchmove="prevenScroll"></div>
+    </transition>
+
   </div>
 </template>
 
@@ -105,13 +121,14 @@
 import api from '~/utils/request'
 import { knowApi } from '~/api/knowledge'
 import userLab from '@/components/Usericon.vue'
+import uAuthor from '@/components/knowledge/Author'
 
 export default {
   name: '',
 
   layout: 'default',
 
-  components: { userLab },
+  components: { userLab, uAuthor },
 
   head () {
     return {
@@ -129,7 +146,6 @@ export default {
       knowApi.getComments({ page: 1, count: 5, articleId: req.params.id, type: 1 }, req)
     ])
       .then(api.spread(function (res1, res2) {
-        console.log(res1.code, res2.code)
         if (res1.code === 200 && res2.code === 200) {
           console.log(res1.data)
           console.log(res2.data.array)
@@ -141,7 +157,8 @@ export default {
             ifCollect: res1.data.checkIfCollect,
             commentList: res2.data.array,
             commentTotal: res2.data.total,
-            signature: sgt
+            signature: sgt,
+            ifSubscribe: res1.data.userResp.checkAttention || false
           }
         }
       }))
@@ -150,16 +167,58 @@ export default {
   data () {
     return {
       id: null,
+      ifSubscribe: false, // 是否关注了作者
+
+      actions: [{ name: '确定不再关注此人？', disabled: true }, { name: '确定' }],
+      tipShow: false,
+
       signature: '',
       detailObj: {},
       commentList: [],
       commentTotal: 0,
       ifLike: false,
-      ifCollect: false
+      ifCollect: false,
+
+      showInfo: false,
+      authObj: {}
     }
   },
 
   methods: {
+    clickSubscribe () {
+      if (this.ifSubscribe) {
+        this.tipShow = true
+        return
+      }
+      this.handleSubscribe()
+    },
+    async handleSubscribe () {
+      const { code } = await knowApi.subscribeUser({ userId: this.detailObj.userResp.id })
+      if (code === 506) {
+        window.location.href = '/account/login'
+      } else if (code === 200) {
+        this.ifSubscribe = !this.ifSubscribe
+        this.$toast.success(this.ifSubscribe ? '关注成功' : '已取消关注')
+        this.tipShow = false
+      }
+    },
+    onSelect () {
+      this.handleSubscribe()
+    },
+
+    async showAuthorInfo () {
+      const { code, data } = await knowApi.getAuthorInfo({ id: this.detailObj.userResp.id })
+      if (code === 200) {
+        this.authObj = data
+        Object.assign(this.authObj, this.detailObj.userResp.personalInfoResp)
+        this.authObj.ifFollow = this.detailObj.userResp.checkAttention
+        this.showInfo = true
+      }
+    },
+    prevenScroll (e) {
+      e.preventDefault()
+    },
+
     async handleLike () {
       const { code } = await knowApi.toggleLike(this.id)
       if (code === 506) {
@@ -219,6 +278,9 @@ export default {
         color: @cor_333;
         display: flex;
         align-items: center;
+        span {
+          margin-right: 5px;
+        }
       }
       .signature {
         margin-top: 7px;
@@ -234,7 +296,27 @@ export default {
       color: white;
       background: #03A0CB;
       font-size: 13px;
-      border-radius: 4px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &.dark {
+        background: #CCCCCC;
+      }
+      .btn-icon {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        &.tick {
+          background-image: url('~/assets/img/knowledge/icon-tick.png');
+        }
+        &.plus {
+          background-image: url('~/assets/img/knowledge/icon-plus.png');
+        }
+      }
     }
   }
   .article-section {
@@ -490,6 +572,8 @@ export default {
     position: fixed;
     bottom: 0;
     left: 0;
+    padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
+    padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
     .btn-item {
       flex: 1;
       height: 18px;

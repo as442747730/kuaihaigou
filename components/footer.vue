@@ -1,5 +1,5 @@
 <template>
-  <footer>
+  <footer class="adapter-ipx">
     <span
       class="footer-icon"
       :class="{cur: postIndex === index}"

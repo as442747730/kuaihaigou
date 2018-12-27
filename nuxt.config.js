@@ -11,7 +11,7 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'keyword', content: '' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=contain' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
       { name: 'description', content: '' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
@@ -38,6 +38,7 @@ module.exports = {
     { src: './plugins/vue-bus.js', ssr: true },
     { src: './plugins/vconsole.js', ssr: false },
     { src: './plugins/filter.js', ssr: true },
+    { src: './plugins/upload.js', ssr: true },
     { src: './plugins/nuxt-quill.js' }
   ],
   css: [
