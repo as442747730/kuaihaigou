@@ -5,6 +5,9 @@ export const encyApi = {
   getInitials (req) {
     return request.serverGet('/api/baike/listVarietyCategory', null, req)
   },
+  serverVarietyList (id, req) {
+    return request.serverGet('/api/baike/getVarietyDetail/' + id, { varietyid: id }, req)
+  },
   /* ----------------- client  ------------------ */
   // 获取品种
   getVarietyList (obj) {

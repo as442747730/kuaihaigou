@@ -1,82 +1,66 @@
 <template>
-  <div class="noun">
-    <div class="noun-head">
-      <com-head titleConfig="名词解释">
-        <div class="search"></div>
-      </com-head>
-      <div class="topnav">
-        <div
-          class="item"
-          v-for="(nav, index) in navList"
-          :class="{active: navIndex === index}"
-          @click="elNavs(index)"
-          :key="index">
-          <span>{{nav.name}}</span>
-          <i class="ic_sj"></i>
+  <div class="nouns" :class="{overauto: isScorll}">
+    <div class="noun" ref="refNoun">
+      <div class="noun-head">
+        <com-head titleConfig="名词解释">
+          <div class="search"></div>
+        </com-head>
+        <div class="topnav">
+          <div
+            class="item"
+            v-for="(nav, index) in navList"
+            :class="{active: navIndex === index}"
+            @click="elNavs(index)"
+            :key="index">
+            <span>{{nav.name}}</span>
+            <i class="ic_sj"></i>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="top">
-      <div class="topinfo">
-        <h2>赤霞珠（Cabernet Sauvignon）</h2>
-        <p>作者：快海购运营团队</p>
-        <div class="btn">
-          <span>名词解释</span>
+      <div class="top">
+        <div class="topinfo">
+          <h2>{{objDetail.chineseName}}（{{objDetail.englishName}}）</h2>
+          <p>作者：{{objDetail.auth}}</p>
+          <div class="btn">
+            <span>名词解释</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="lynav">
-      <div class="lynav_item active">品种介绍</div>
-      <div class="lynav_item">品种图片（54）</div>
-    </div>
-    <section class="introduce">
-      <div class="introduce-item">
-        <span>品种名 :</span>
-        <p>
-          赤霞珠（Cabernet Sauvignon）
-        </p>
+      <div class="lynav">
+        <div class="lynav_item active">品种介绍</div>
+        <div class="lynav_item">品种图片
+          <span v-if="objDetail.imgs">（{{objDetail.imgs.length}}）</span>
+        </div>
       </div>
-      <div class="introduce-item">
-        <span>中文别名 :</span>
-        <p>
-          卡本内·苏维翁、解百纳
-        </p>
-      </div>
-      <div class="introduce-item">
-        <span>原产地:</span>
-        <p>
-          法国
-        </p>
-      </div>
-      <div class="introduce-item">
-        <span>种植区域 :</span>
-        <p>
-          法国、美国、意大利、西班牙、澳大利亚、智利、南非、新西兰、东欧、俄罗斯、中国
-        </p>
-      </div>
-      <div class="introduce-item">
-        <span>典型香气:</span>
-        <p>
-          黑加仑、黑醋栗、黑樱桃、青椒、薄荷；烟熏、香草、咖啡、雪松等橡木带来的风味；陈年树叶、动物皮毛和矿物的香气
-        </p>
-      </div>
-    </section>
-    <div class="foot">
-      <span class="tipword">名词简介</span>
-      <p>
+      <!-- 品种 start -->
+      <section>
+        <div class="introduce" v-if="objDetail.baikeMessageList">
+          <div class="introduce-item" v-for="(bakeMes, index) in objDetail.baikeMessageList" :key="index">
+            <span>{{bakeMes.name}}:</span>
+            <p>
+              {{bakeMes.content}}
+            </p>
+          </div>
+        </div>
+        <div class="featcontent" v-if="objDetail.content">
+          <div class="cont" v-html="objDetail.content"></div>
+        </div>
+      </section>
+      <!-- 品种 end -->
+      <div class="foot" @click="lookMoreFn" v-if="isMore">
         <span> 查看更多 ></span>
-      </p>
+      </div>
+      <cpmOne
+        :isShow="showone"
+        :letters="getLetter"
+        :varityIndex="varity"
+        :grapeList="grapeList"
+        @corsFn="clorsFn"
+        @enzhFn="enzhFn"
+        @letterFn="letterFn"
+        @btnRest="btnRest"
+        @btnOk="btnOk"></cpmOne>
     </div>
-    <cpmOne
-      :isShow="showone"
-      :letters="getLetter"
-      :varityIndex="varity"
-      :grapeList="grapeList"
-      @corsFn="clorsFn"
-      @enzhFn="enzhFn"
-      @letterFn="letterFn"
-      @btnRest="btnRest"
-      @btnOk="btnOk"></cpmOne>
   </div>
 </template>
 <script>
@@ -97,14 +81,21 @@ export default {
     CpmOne
   },
   async asyncData (req) {
-    const { code, data } = await encyApi.getInitials(req)
-    if (code === 200) {
-      console.log(data)
-      return {
-        letter: data,
-        letterList: data.redEnglishLetterList
-      }
+    // 红葡萄 1， 白葡萄 2
+    let varietyId = 1
+    let varietyFn = encyApi.serverVarietyList(varietyId, req)
+    let initFn = encyApi.getInitials(req)
+    const { code: varietyCode, data: varietyData } = await varietyFn
+    const { code: initCode, data: initData } = await initFn
+    let objInit = {}
+    let objVariety = {}
+    if (initCode === 200) {
+      objInit = initData
     }
+    if (varietyCode === 200) {
+      objVariety = varietyData
+    }
+    return { letter: objInit, objDetail: objVariety }
   },
   data () {
     return {
@@ -112,12 +103,14 @@ export default {
       navIndex: null,
       showone: false,
       letter: {}, // 葡萄首字母信息
-      letterList: [], // 选中葡萄首字母列表
       varity: {
         corIndex: 0,
         enzhIndex: 0
       },
-      grapeList: [] // 葡萄品种列表
+      grapeList: [], // 葡萄品种列表
+      objDetail: {}, // 页面详情
+      isScorll: false, // 页面是否可滚动
+      isMore: false // 是否显示 查看更多
     }
   },
   computed: {
@@ -130,8 +123,13 @@ export default {
         return this.letter.whiteEnglishLetterList
       } else if (this.varity.corIndex === 1 && this.varity.enzhIndex === 1) {
         return this.letter.whitePinyinLetterList
+      } else {
+        return []
       }
     }
+  },
+  mounted () {
+    this.getnounH()
   },
   methods: {
     elNavs (index) {
@@ -174,21 +172,53 @@ export default {
       this.varity.enzhIndex = 0
     },
     async btnOk (grape) {
-      const { code, data } = await encyApi.getVarietyDetail(grape.varietyid)
-      if (code === 200) {
-        console.log(data)
+      // 品种确认按钮
+      let _id
+      if (!grape.varietyid) {
+        _id = this.corIndex + 1
+      } else {
+        _id = grape.varietyid
       }
+      const { code, data } = await encyApi.getVarietyDetail(_id)
+      if (code === 200) {
+        this.showone = false
+        this.objDetail = data
+        this.getnounH()
+      }
+    },
+    lookMoreFn () {
+      this.isScorll = true
+      this.isMore = false
+    },
+    getnounH () {
+      // 查看更多 状态
+      this.$nextTick(() => {
+        let winH = document.documentElement.clientHeight || document.body.clientHeight
+        let elnoun = this.$refs.refNoun.getBoundingClientRect().height
+        console.log('elnoun > winH', elnoun > winH)
+        this.isMore = elnoun > winH
+      })
     }
   }
 }
 </script>
 </script>
 <style lang="less" scoped>
+@bgcor1: #fff;
+.nouns {
+  width: 100vw;
+  height: 100vh;
+  background: #F5F5F5;
+  overflow: hidden;
+}
+.nouns.overauto {
+  overflow: auto !important;
+}
 .noun {
   .noun-head {
     position: relative;
     z-index: 3000;
-    background: #fff;
+    background: @bgcor1;
   }
   // 搜索按钮
   .search {
@@ -249,7 +279,7 @@ export default {
   }
   // 上部
   .top {
-
+     background:  @bgcor1;
     .topinfo {
       .padlr20;
       padding-top: 20px;
@@ -290,7 +320,6 @@ export default {
   // 左右两栏切换
   .lynav {
     height: 40px;
-    background: #F5F5F5;
     .flex_between;
 
     &_item {
@@ -327,7 +356,8 @@ export default {
 
   // 介绍
   .introduce {
-    padding-top: 15px;
+    margin-bottom: 10px;
+    background: @bgcor1;
     .padlr20;
 
     &-item {
@@ -356,41 +386,58 @@ export default {
       }
     }
   }
+  .introduce:empty {
+    margin-bottom: 0;
+  }
+  .featcontent {
+    .cont {
+      padding: 20px;
+      background: @bgcor1;
+      font-size:14px;
+      font-family:PingFang-SC-Regular;
+      font-weight:400;
+      color:rgba(102,102,102,1);
+      line-height:28px;
+      img {
+        display: inline-block;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  // 图片集合
+  .pics {
+    &-ul {
+      display: flex;
+      margin-left: -10px;
+      .ul_item {
+        width: 30%;
+        padding-left: 10px;
+        box-sizing: border-box;
+        .item_img {
+          display: inline-block;
+          width: 100%;
+        }
+      }
+    }
+  }
 
   // 查看更多
   .foot {
-    padding-top: 10px;
-    background: #F5F5F5;
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 44px;
-
-    .tipword {
-      position: absolute;
-      left: 20px;
-      bottom: 3px;
-      font-size: 16px;
-      font-family: PingFangSC-Semibold;
-      font-weight: 600;
-      color: rgba(51, 51, 51, 1);
-      line-height: 16px;
-      height: 16px;
-      // background: linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%);
-      background-image: -webkit-linear-gradient(bottom, #c2c0c3, #e6e6e8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-    }
-
-    &>p {
-      background: #fff;
-      height: 44px;
+    // opacity: .5;
+    background: @bgcor1;
+    .flex_allCenter;
+    &>span {
       font-size: 13px;
       font-family: PingFang-SC-Medium;
       font-weight: 500;
       color: rgba(3, 161, 205, 1);
-      .flex_allCenter;
     }
   }
 }
