@@ -1,9 +1,9 @@
 <template>
   <div class="noun">
-    <com-head titleConfig="名词解释">
-      <div class="search"></div>
-    </com-head>
-    <div class="top">
+    <div class="noun-head">
+      <com-head titleConfig="名词解释">
+        <div class="search"></div>
+      </com-head>
       <div class="topnav">
         <div
           class="item"
@@ -15,6 +15,8 @@
           <i class="ic_sj"></i>
         </div>
       </div>
+    </div>
+    <div class="top">
       <div class="topinfo">
         <h2>赤霞珠（Cabernet Sauvignon）</h2>
         <p>作者：快海购运营团队</p>
@@ -65,26 +67,116 @@
         <span> 查看更多 ></span>
       </p>
     </div>
+    <cpmOne
+      :isShow="showone"
+      :letters="getLetter"
+      :varityIndex="varity"
+      :grapeList="grapeList"
+      @corsFn="clorsFn"
+      @enzhFn="enzhFn"
+      @letterFn="letterFn"
+      @btnRest="btnRest"
+      @btnOk="btnOk"></cpmOne>
   </div>
 </template>
 <script>
 import comHead from '~/components/com-head'
+import CpmOne from '~/components/noun/Cpmone'
+import { encyApi } from '~/api/encys'
 export default {
+  head () {
+    return {
+      title: '名词解释',
+      meta: [
+        { hid: 'title', name: 'title', content: '名词解释' }
+      ]
+    }
+  },
   components: {
-    comHead
+    comHead,
+    CpmOne
+  },
+  async asyncData (req) {
+    const { code, data } = await encyApi.getInitials(req)
+    if (code === 200) {
+      console.log(data)
+      return {
+        letter: data,
+        letterList: data.redEnglishLetterList
+      }
+    }
   },
   data () {
     return {
       navList: [{name: '葡萄品种'}, {name: '产区'}, {name: '酒庄'}],
-      navIndex: null
+      navIndex: null,
+      showone: false,
+      letter: {}, // 葡萄首字母信息
+      letterList: [], // 选中葡萄首字母列表
+      varity: {
+        corIndex: 0,
+        enzhIndex: 0
+      },
+      grapeList: [] // 葡萄品种列表
+    }
+  },
+  computed: {
+    getLetter () {
+      if (this.varity.corIndex === 0 && this.varity.enzhIndex === 0) {
+        return this.letter.redEnglishLetterList
+      } else if (this.varity.corIndex === 0 && this.varity.enzhIndex === 1) {
+        return this.letter.redPinyinLetterList
+      } else if (this.varity.corIndex === 1 && this.varity.enzhIndex === 0) {
+        return this.letter.whiteEnglishLetterList
+      } else if (this.varity.corIndex === 1 && this.varity.enzhIndex === 1) {
+        return this.letter.whitePinyinLetterList
+      }
     }
   },
   methods: {
     elNavs (index) {
       if (this.navIndex === index) {
         this.navIndex = null
+        this.showone = false
       } else {
         this.navIndex = index
+        this.showone = true
+      }
+    },
+    clorsFn (index) {
+      this.varity.corIndex = index
+    },
+    enzhFn (index) {
+      this.varity.enzhIndex = index
+    },
+    async letterFn (world) {
+      console.log('world', world)
+      // 品种列表
+      let { corIndex, enzhIndex } = this.varity
+      let varietyType = corIndex + 1
+      let langType = enzhIndex + 1
+      let params = {
+        varietyType: varietyType,
+        langType: langType,
+        firstWord: world
+      }
+      const { code, data } = await encyApi.getVarietyList(params)
+      if (code === 200) {
+        this.grapeList = data
+      }
+    },
+    async encyDetail () {
+    },
+    btnRest () {
+      this.showone = false
+      this.navIndex = null
+      this.varity.corIndex = 0
+      this.varity.enzhIndex = 0
+    },
+    async btnOk (grape) {
+      const { code, data } = await encyApi.getVarietyDetail(grape.varietyid)
+      if (code === 200) {
+        console.log(data)
       }
     }
   }
@@ -93,7 +185,11 @@ export default {
 </script>
 <style lang="less" scoped>
 .noun {
-
+  .noun-head {
+    position: relative;
+    z-index: 3000;
+    background: #fff;
+  }
   // 搜索按钮
   .search {
     position: absolute;
@@ -114,46 +210,45 @@ export default {
       .bg_cover;
     }
   }
+  .topnav {
+    height: 40px;
+    border-bottom: 1PX solid #F5F5F5;
+    .flex_around;
 
-  // 上部
-  .top {
-    .topnav {
-      height: 40px;
-      border-bottom: 1PX solid #F5F5F5;
-      .flex_around;
+    .item {
+      font-size: 13px;
+      font-family: PingFangSC-Regular;
+      font-weight: 400;
+      color: rgba(153, 153, 153, 1);
+      height: 13px;
+      .flex_between;
 
-      .item {
-        font-size: 13px;
-        font-family: PingFangSC-Regular;
-        font-weight: 400;
-        color: rgba(153, 153, 153, 1);
-        height: 13px;
-        .flex_between;
-
-        .ic_sj {
-          margin-left: 5px;
-          width: 8px;
-          height: 5px;
-          opacity: .5;
-          transform: rotate(0);
-          transition: .2s;
-          background-image: url('~/assets/img/Icons/ic_triangle_bt_12x12@2x.png');
-          .bg_cover;
-        }
-      }
-
-      .item.active {
-        font-family: PingFangSC-Semibold;
-        font-weight: 600;
-        color: rgba(51, 51, 51, 1);
-
-        .ic_sj {
-          opacity: 1;
-          transform: rotate(180deg);
-          background-image: url('~/assets/img/Icons/ic_triangle_bt_12x12@2x.png');
-        }
+      .ic_sj {
+        margin-left: 5px;
+        width: 8px;
+        height: 5px;
+        opacity: .5;
+        transform: rotate(0);
+        transition: .2s;
+        background-image: url('~/assets/img/Icons/ic_triangle_bt_12x12@2x.png');
+        .bg_cover;
       }
     }
+
+    .item.active {
+      font-family: PingFangSC-Semibold;
+      font-weight: 600;
+      color: rgba(51, 51, 51, 1);
+
+      .ic_sj {
+        opacity: 1;
+        transform: rotate(180deg);
+        background-image: url('~/assets/img/Icons/ic_triangle_bt_12x12@2x.png');
+      }
+    }
+  }
+  // 上部
+  .top {
 
     .topinfo {
       .padlr20;
