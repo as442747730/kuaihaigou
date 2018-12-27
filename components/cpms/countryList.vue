@@ -70,12 +70,10 @@ export default {
     },
     btnRest () {
       // 重置
-      console.log('123456')
       this.$emit('countryRest')
     },
     btnOk () {
       // 确认
-      console.log('456789')
       this.$emit('countryOk')
     }
   }
