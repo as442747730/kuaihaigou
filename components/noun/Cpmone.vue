@@ -69,12 +69,15 @@ export default {
     },
     letters: {
       type: Array,
-      default: []
+      default: () => []
     },
-    varityIndex: Object,
+    varityIndex: {
+      type: Object,
+      default: () => ({ corIndex: 0, enzhIndex: 0 })
+    },
     grapeList: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   data () {
