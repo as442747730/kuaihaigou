@@ -1,5 +1,5 @@
 <template>
-  <div class="m-layout adapter-ipx">
+  <div class="m-layout">
 
     <nuxt/>
   </div>
