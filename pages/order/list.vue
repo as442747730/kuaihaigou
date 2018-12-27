@@ -61,7 +61,7 @@
 
             <div v-if='item.status === 5 || item.status === 6' style="display:inline-block">
               <div class="u-button small inline" v-if="item.commentStatus === 1">评价</div>
-              <div class="u-button small inline green" v-else>去追评</div>
+              <div class="u-button small inline green" v-else @click="toComment(item.id)">去追评</div>
             </div>
 
             <div class="u-button small inline" v-if="item.status === 4" @click="confirmReceive(item.id)">确认收货</div>
@@ -191,6 +191,10 @@ export default {
 
     getDetail (val) {
       window.location.href = `/order/detail?id=${val}`
+    },
+
+    toComment (val) {
+      window.location.href = `/order/evaluation/${val}`
     }
   }
 }
@@ -247,10 +251,13 @@ export default {
       }
       .bottom {
         background: white;
-        padding: 15px 20px 15px 0;
+        padding: 15px 15px 15px 0;
         padding-right: 20px;
         text-align: right;
         font-size: 0;
+        &>div {
+          margin: 0 5px; 
+        }
         .u-button {
           &:not(:last-child) {
             margin-right: 10px;

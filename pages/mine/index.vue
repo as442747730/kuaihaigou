@@ -37,7 +37,7 @@
           </div>
         </div>
         <nav class="navlist">
-          <a class="navitem ic_gwc" href="#">购物车</a>
+          <a class="navitem ic_gwc" href="/order/cart">购物车</a>
           <a class="navitem ic_wdgz" href="/order/list">我的订单</a>
           <a class="navitem ic_wdhd" href="#">我的活动</a>
           <a class="navitem ic_wdsc" href="#">我的收藏</a>

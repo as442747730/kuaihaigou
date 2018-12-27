@@ -5,10 +5,11 @@
       <Upload @on-success="handleUploadSuccess" v-if="imgList.length !== maxNum" :max="maxNum">
         <div class="upload-box">添加图片</div>
       </Upload>
-      <div class="img-item" v-for="(item, index) in imgList" :key="index" v-lazy:background-image="item" @click="preview(index)">
+      <div class="img-item" v-for="(item, index) in imgList" :key="index" @click="preview(index)">
         <span class="img-close-btn" @click.stop="removeImg(index)">
           <van-icon size="20px" color="#03A0CB" name="clear" />
         </span>
+        <img v-lazy="item">
       </div>
       <!-- 用来占位的 -->
       <div class="holder" v-if="imgList.length === 1"></div>
@@ -81,6 +82,9 @@ export default {
       margin-bottom: 15px;
     }
     .img-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 70px;
       height: 70px;
       border-radius: 5px;
@@ -100,6 +104,10 @@ export default {
         border-radius: 100%;
         background: white;
         font-size: 0;
+      }
+      img {
+        width: 100%;
+        height: auto;
       }
     }
     .holder {
