@@ -1,15 +1,19 @@
 <template>
-  <footer class="adapter-ipx">
-    <span
-      class="footer-icon"
-      :class="{cur: postIndex === index}"
-      @click="toPage(index)"
-      v-for="(foot, index) in footList"
-      :key="index">
-      <i :class="clsList[index]"></i>
-      <span class="footer-txt" v-if="index !== 2">{{ foot }}</span>
-    </span>
-  </footer>
+  <div class="adapter-ipx">
+    <div  class="footer">
+      <span
+        class="footer-icon"
+        :class="{ cur: postIndex.includes(foot.path) }"
+        @click="toPage(foot.path)"
+        v-for="(foot, index) in footList"
+        :key="index">
+        <i :class="clsList[index]"></i>
+        <span class="footer-txt" v-if="index !== 2">{{ foot.name }}</span>
+      </span>
+
+    </div>
+
+  </div>
 </template>
 <script>
 export default {
@@ -18,27 +22,21 @@ export default {
   data () {
     return {
       clsList: ['footer-icon-index', 'footer-icon-xjzx', 'footer-icon-add', 'footer-icon-zsfx', 'footer-icon-my'],
-      footList: ['首页', '选酒中心', 'add', '知识分享', '我的']
+      footList: [
+        { name: '首页', path: '/home' },
+        { name: '选酒中心', path: '/winecenter' },
+        { name: 'add' },
+        { name: '知识分享', path: '/knowledge' },
+        { name: '我的', path: '/mine' }
+      ]
     }
   },
-  computed: {
-  },
   methods: {
-    toPage (index) {
-      let path = ''
-      switch (index) {
-        case 0:
-          path = '/home'
-          break
-        case 1:
-          path = '/winecenter'
-          break
-        case 4:
-          path = '/mine'
-          break
-        default:
-          path = '/home'
-          break
+    toPage (path) {
+      if (!path) {
+        // todo 发布文章入口
+        this.canvalToBGblur()
+        return
       }
       window.location.href = path
     }
@@ -46,7 +44,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-footer {
+.footer {
   font-size: 0;
   border-top: 1PX solid #eee;
   // box-sizing: border-box;

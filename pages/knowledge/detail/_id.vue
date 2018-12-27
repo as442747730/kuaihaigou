@@ -251,7 +251,6 @@ export default {
 
 <style lang="less" scoped>
 .m-konwledge-detail {
-  min-height: 100vh;
   background: white;
   padding-bottom: 50px;
   .author-section {

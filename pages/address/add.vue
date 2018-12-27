@@ -1,6 +1,5 @@
 <template>
   <div class="m-address-add">
-    <com-head :titleConfig="configtitle"></com-head>
     <div class="m-address-add-form">
       <div class="m-address-add-form-item">
         <div class="item-label">姓名</div>
@@ -39,7 +38,7 @@
       <van-picker ref="areaPicker" :columns="columns" show-toolbar @change="handleChange" @cancel="onCancel" @confirm="onConfirm" />
     </van-popup>
 
-    <div class="btn-wrapper fit">
+    <div class="btn-wrapper f-bottom-btn">
       <van-button class="submit-btn" @click="createInfo">保存</van-button>
     </div>
 
@@ -47,7 +46,6 @@
 </template>
 <script>
 import { addressApi } from '~/api/address'
-import comHead from '~/components/com-head'
 
 export default {
   name: 'addressAdd',
@@ -60,9 +58,6 @@ export default {
       ]
     }
   },
-  components: {
-    comHead
-  },
 
   async asyncData (req) {
     return addressApi.getAreaList(86, req).then((res) => {
@@ -74,7 +69,6 @@ export default {
 
   data () {
     return {
-      configtitle: '新增收货人',
       name: '',
       phone: '',
       alternatePhone: '',
