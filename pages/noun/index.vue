@@ -61,6 +61,16 @@
         @btnRest="btnRest"
         @btnOk="btnOk"></cpmOne>
     </div>
+    <cpmOne
+      :isShow="showone"
+      :letters="getLetter"
+      :varityIndex="varity"
+      :grapeList="grapeList"
+      @corsFn="clorsFn"
+      @enzhFn="enzhFn"
+      @letterFn="letterFn"
+      @btnRest="btnRest"
+      @btnOk="btnOk"></cpmOne>
   </div>
 </template>
 <script>
