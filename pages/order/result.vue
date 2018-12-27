@@ -1,3 +1,13 @@
+<!-- 
+   * 订单状态说明 orderStatus
+   1、 待支付
+   2、 支付成功,待发货
+   3、 发货中
+   4、 待收货
+   5、 待评价
+   6、 交易流程已完成
+   7、 已关闭（超时/取消订单）
+ -->
 <template>
   <div class="m-order-result">
 
@@ -91,7 +101,13 @@ export default {
   },
 
   created () {
-    this.checkOrder(false)
+    if (this.orderInfo.status === 1) {
+      this.checkOrder(false)
+    } else if (this.orderInfo.status === 7) {
+      this.orderStaus = 2
+    } else {
+      this.orderStaus = 1
+    }
     this.getAdv()
   },
 
