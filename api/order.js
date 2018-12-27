@@ -8,8 +8,8 @@ export const orderApi = {
   getOrderDetail (id, req) {
     return request.serverGet(`/api/order/getDetail/${id}`, {}, req)
   },
-  getEvaluationInfo (id, req) {
-    return request.serverGet(`/api/order/toComment/${id}`, {}, req)
+  getEvaluationInfo (orderId, req) {
+    return request.serverGet('/api/order/toComment/' + orderId, {}, req)
   },
   // 获取支付信息
   getPayMsgServer (id, req) {
@@ -46,6 +46,10 @@ export const orderApi = {
   // 检测支付状态
   getOrderPayOrNot (orderId) {
     return request.clientGet('/api/order/getOrderPayOrNot/' + orderId)
+  },
+  // 物流信息获取
+  queryTrack (logisticsCompany, logisticsBillIdentify) {
+    return request.clientGet('/api/order/queryTrack/' + logisticsCompany + '/' + logisticsBillIdentify)
   }
 }
 
