@@ -11,6 +11,10 @@ export const orderApi = {
   getEvaluationInfo (orderId, req) {
     return request.serverGet('/api/order/toComment/' + orderId, {}, req)
   },
+  // 物流信息获取
+  queryTrackServe (logisticsCompany, logisticsBillIdentify) {
+    return request.serverGet('/api/order/queryTrack/' + logisticsCompany + '/' + logisticsBillIdentify)
+  },
   // 获取支付信息
   getPayMsgServer (id, req) {
     return request.serverGet('/api/order/getPayMsg/' + id, {}, req)
@@ -28,8 +32,13 @@ export const orderApi = {
   deleteOrder (id) {
     return request.clientPost(`${id}`)
   },
+  // 去评价
   submitEvaluation (obj) {
-    return request.clientPost('/api/cmt/createComment', obj)
+    return request.clientPostJson('/api/cmt/createComment', obj)
+  },
+  // 追评
+  review (obj) {
+    return request.clientPostJson('/api/cmt/review', obj)
   },
   // 获取订单信息
   getPayMsg (orderId) {

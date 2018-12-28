@@ -313,23 +313,6 @@ export default {
 <style lang="less">
 .u-goods-comment {
   font-size: 0;
-  .more-loading {
-    padding:  15px 0;
-    .van-loading {
-      margin: 0 auto 10px;
-    }
-    text-align: center;
-    background: #f2f2f2;
-    font-size: 11px;
-    color: #999;
-  }
-  .no-more {
-    text-align: center;
-    padding: 18px 0 15px;
-    background: #f2f2f2;
-    font-size: 11px;
-    color: #999;
-  }
 }
 .detail_comment {
   &-tab {

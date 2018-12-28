@@ -22,16 +22,18 @@
         <ImageHandler v-model="item.imgList"></ImageHandler>
       </div>
 
-      <div class="rate-wrapper">
-        <span>商品评分</span>
-        <van-rate v-model="item.rate" :size="18" :color="rateColor[item.rate - 1]" void-color="#DFDFDF"></van-rate>
-        <b :style="{'color': rateColor[item.rate - 1]}">{{ rateTxt[item.rate - 1] }}</b>
-      </div>
-    </div>
+      <template v-if="type !== 'add'">
+        <div class="rate-wrapper">
+          <span>商品评分</span>
+          <van-rate v-model="item.rate" :size="18" :color="rateColor[item.rate - 1]" void-color="#DFDFDF"></van-rate>
+          <b :style="{'color': rateColor[item.rate - 1]}">{{ rateTxt[item.rate - 1] }}</b>
+        </div>
 
-
-    <div class="checkbox-wrapper">
-      <van-checkbox v-model="ifAnonymous">匿名提交</van-checkbox>
+        <div class="checkbox-wrapper">
+          <van-checkbox v-model="item.ifAnonymous">匿名提交</van-checkbox>
+        </div>        
+      </template>
+      
     </div>
 
     <div class="btn-wrapper fit">
@@ -70,8 +72,10 @@ export default {
         n.content = ''
         n.imgList = []
         n.rate = 5
+        n.ifAnonymous = false
       })
-      return { list: a, orderId: req.params.evaluation }
+      console.log(a)
+      return { list: a, orderId: req.params.evaluation, type: req.query.type || null }
     } else {
       req.redirect('/error')
     }
@@ -80,8 +84,8 @@ export default {
   data () {
     return {
       orderId: null,
+      type: null,
       list: [],
-      ifAnonymous: false,
 
       rateColor: ['#99a9bf', '#99a9bf', '#f7ba2a', '#FC6249', '#FC6249'],
       rateTxt: ['失望', '一般', '满意', '喜欢', '超爱']
@@ -90,17 +94,27 @@ export default {
 
   mounted () {
     console.log('this', this.list)
+    console.log(this.type)
   },
 
   methods: {
     async submitEvalua () {
       let reqObj = []
+      let evaluaFn
       const v = this
-      reqObj = this.list.map(n => { return { content: n.content, evaluationLevel: n.rate, goodsId: n.id, ifAnonymous: v.ifAnonymous, imgs: JSON.stringify(n.imgList), orderId: v.orderId } })
-      const { code } = await orderApi.submitEvaluation(reqObj)
+      if (this.type === 'add') {
+        reqObj = this.list.map(n => { return { review: n.content, goodsId: n.goodsid, reviewImgs: JSON.stringify(n.imgList), orderId: v.orderId } })
+        evaluaFn = orderApi.review(reqObj)
+      } else {
+        reqObj = this.list.map(n => { return { content: n.content, evaluationLevel: n.rate, goodsId: n.goodsid, ifAnonymous: n.ifAnonymous, imgs: JSON.stringify(n.imgList), orderId: v.orderId } })
+        evaluaFn = orderApi.submitEvaluation(reqObj)
+      }
+      const { code, data } = await evaluaFn
       if (code === 200) {
         this.$toast.success('提交成功')
         window.location.href = '/order/list'
+      } else {
+        this.$toast(data)
       }
     }
   }
@@ -262,10 +276,11 @@ export default {
     }
   }
   .checkbox-wrapper {
-    margin-bottom: 45px;
     font-size: 14px;
     padding: 0 20px;
     color: @cor_666;
+    background: #fff;
+    padding-bottom: 20px;
   }
   .btn-wrapper {
     width: 100%;

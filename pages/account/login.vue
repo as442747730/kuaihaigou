@@ -258,7 +258,12 @@ export default {
     }
   }
   &-bottom {
-    margin-top: 110px;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 50px;
+    padding: 0rem 0.8rem;
+    box-sizing: border-box;
     &-title {
       font-size: 14px;
       color: #cccccc;

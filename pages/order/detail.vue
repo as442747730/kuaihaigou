@@ -1,3 +1,13 @@
+<!-- 
+   * 订单状态说明 orderStatus
+   1、 待支付
+   2、 支付成功,待发货
+   3、 发货中
+   4、 待收货
+   5、 待评价
+   6、 交易流程已完成
+   7、 已关闭（超时/取消订单）
+ -->
 <template>
   <div class="m-order-detail" :class="{'mb0': orderDetail.status === 2 || orderDetail.status === 6}">
 
@@ -5,9 +15,15 @@
 
     <div class="notice-bar" v-if="orderDetail.status === 1">{{ timeCount }}后未支付，此订单将自动关闭</div>
 
-    <div class="logi-wrapper" v-if="orderDetail.status === 4" @click='logisHandle'>
-      <p class="title">您的订单已进入库房，准备出库<i></i></p>
-      <p class="date">2017-04-01 12:00:00 </p>
+    <div class="logi-wrapper" v-if="orderDetail.status >= 3 && orderDetail.status !== 7" @click='logisHandle'>
+      <template v-if='orderDetail.status === 3 || orderDetail.status === 4'>
+        <p class="title">您的订单已进入库房，准备出库<i></i></p>
+        <p class="date">{{ orderDetail.distributionTime }}</p>  
+      </template>
+      <template v-if='orderDetail.status === 5 || orderDetail.status === 6'>
+        <p class="title">感谢您在快海购购物，欢迎再次光临<i></i></p>
+        <p class="date">{{ orderDetail.transactionCompleteTime || orderDetail.outStorageTime }}</p>  
+      </template>
     </div>
 
     <div class="address-wrapper">
@@ -83,8 +99,8 @@
       <!-- <div class="cost-wrapper-total" v-if="orderDetail.status === 1">应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span></div> -->
     </div>
 
-    <div class="bottom-wrapper" v-if='orderDetail.status !== 2 && orderDetail.status !== 6'>
-      <div class="cost-wrapper-total" v-if="orderDetail.status === 1">
+    <div class="bottom-wrapper" v-if='orderDetail.status !== 6'>
+      <div class="cost-wrapper-total">
         应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span>
       </div>
 
@@ -109,14 +125,14 @@
     <uPay :payMethodShow='payMethodShow' :orderId='orderId' @payClose='payClose'></uPay>
 
     <!-- 物流 -->
-    <uLogis v-model='logisOpen' :logisData='orderDetail.deliverBillList'></uLogis>
+    <!-- <uLogis v-model='logisOpen' :logisData='orderDetail.deliverBillList'></uLogis> -->
   </div>
 </template>
 
 <script>
 import { orderApi, afterSaleApi } from '~/api/order'
 import uPay from '~/components/Pay'
-import uLogis from '~/components/order/Logistics'
+// import uLogis from '~/components/order/Logistics'
 import api from '~/utils/request'
 
 export default {
@@ -125,8 +141,8 @@ export default {
   layout: 'default',
 
   components: {
-    uPay,
-    uLogis
+    uPay
+    // uLogis
   },
 
   head () {
@@ -282,8 +298,9 @@ export default {
     },
     // 物流查看开关
     logisHandle () {
-      this.logisOpen = true
-      window.location.hash = 'logis'
+      // this.logisOpen = true
+      // window.location.hash = 'logis'
+      window.location.href = `/order/logistics/${this.orderId}`
     },
 
     goAftersale (val) {

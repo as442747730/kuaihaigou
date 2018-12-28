@@ -1,23 +1,19 @@
 <template>
-  <van-popup class="u-logistics" v-model="logisShow" position="right">
-    <section class="u-detail_header">
-      <van-nav-bar title="物流清单" left-arrow @click-left='turnBack'></van-nav-bar>
-    </section>
-    <ul class="u-logistics-item">
-      <li class="u-logistics-list" v-for='($v, $k) in logisData' :key='$k' @click='logisDetail($v)'>
-        <p>物流公司：<span>{{ $v.logisticsCompany }}</span></p>
-        <p>物流单号：<span>{{ $v.logisticsBillIdentify }}</span></p>
-        <p style="margin: 0">包含商品：<span>{{ $v.deliverBillItemResp.length }}件</span></p>
+  <div class="u-logistics" position="right">
+    <ul class="u-logistics-item" v-if='!logisDetailShow'>
+      <li class="u-logistics-list" v-for='($v, $k) in logisData.deliverBillList' :key='$k' @click='logisDetail($v)'>
+        <div class="box">
+          <p>物流公司：<span>{{ $v.logisticsCompany }}</span></p>
+          <p>物流单号：<span>{{ $v.logisticsBillIdentify || '暂未揽件' }}</span></p>
+          <p style="margin: 0">包含商品：<span>{{ $v.deliverBillItemResp.length }}件</span></p>
+        </div>
         <van-icon name="arrow" />
+        <div class="depart-line"></div>
       </li>
-      <div class="depart-line"></div>
     </ul>
     <van-popup class="u-logistics" v-model="logisDetailShow" position="right" :overlay='false'>
-      <section class="u-detail_header">
-        <van-nav-bar title="订单跟踪" left-arrow @click-left='backLast'></van-nav-bar>
-      </section>
       <div class="u-logistics-order">
-        <p>物流单号：{{ detailData.logisticsBillIdentify }}</p>
+        <p>物流单号：{{ detailData.logisticsBillIdentify || '暂无物流单号' }}</p>
       </div>
       <div class="depart-line"></div>
       <div class="u-logistics-goods">
@@ -39,53 +35,68 @@
         <div class="no-msg" v-if='tracesEmpty'>暂无物流信息！</div>
       </div>
     </van-popup>
-  </van-popup>
+  </div>
 </template>
-
 <script>
 import { orderApi } from '~/api/order'
 export default {
-  name: 'uLogistics',
+  name: '',
 
-  props: {
-    logisData: {
-      type: Array,
-      default: () => []
-    },
-    logisShow: {
-      type: Boolean,
-      default: false
+  layout: 'default',
+
+  head () {
+    return {
+      title: '订单跟踪',
+      meta: [
+        { hid: 'title', name: 'title', content: '订单跟踪' }
+      ]
     }
   },
 
-  model: {
-    prop: 'logisShow',
-    event: 'parent-event'
-  },
-
-  watch: {
-    $route (to, from) {
-      if (to.hash === '#logis') {
-        this.logisDetailShow = false
+  async asyncData (req) {
+    let logisDetailShow = false
+    let detailData = {}
+    const { code, data } = await orderApi.getOrderDetail(req.params.id, req)
+    if (code === 200) {
+      if (data.deliverBillList.length === 1) {
+        logisDetailShow = true
+        detailData = data.deliverBillList[0]
       }
     }
+    return { logisData: data, logisDetailShow: logisDetailShow, detailData: detailData }
   },
 
   data () {
     return {
-      logisDetailShow: false,
+      logisDetailShow: true,
       detailData: {}, // 物流详细
+      logisData: {},
       traces: [],
       tracesEmpty: false
     }
   },
 
+  watch: {
+    $route (to, from) {
+      if (to.hash === '') {
+        this.logisDetailShow = false
+      }
+    }
+  },
+
+  async created () {
+    if (this.logisDetailShow) {
+      const { code, data } = await orderApi.queryTrack(this.detailData.logisticsCompany, this.detailData.logisticsBillIdentify)
+      if (code === 200) {
+        this.traces = JSON.parse(data).Traces
+        if (this.traces.length === 0) this.tracesEmpty = true
+      }
+    }
+    // console.log(this.traces)
+    console.log(this.logisData)
+  },
+
   methods: {
-    turnBack () {
-      this.$emit('parent-event', false)
-      // location.href = 'javascript:history.go(-1)'
-      window.location.hash = '#'
-    },
     async logisDetail (val) {
       const Toast1 = this.$toast.loading('物流数据获取中')
       const { code, data } = await orderApi.queryTrack(val.logisticsCompany, val.logisticsBillIdentify)
@@ -104,24 +115,19 @@ export default {
         Toast1.clear()
         this.$toast(data)
       }
-    },
-    backLast () {
-      window.location.hash = 'logis'
     }
   }
 }
 </script>
-
 <style lang="less">
 .u-logistics {
   width: 100vw;
   height: 100vh;
-  &-item {
-
-  }
   &-list {
-    padding: 20px;
     position: relative;
+    .box {
+      padding: 20px;
+    }
     p {
       color: @cor_333;
       font-size: 13px;
