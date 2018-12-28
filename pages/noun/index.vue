@@ -26,9 +26,9 @@
           </div>
         </div>
       </div>
-      <div class="lynav">
-        <div class="lynav_item active">品种介绍</div>
-        <div class="lynav_item">品种图片
+      <div class="lynav" data-val="getType">
+        <div class="lynav_item active">{{getType}}介绍</div>
+        <div class="lynav_item">{{getType}}图片
           <span v-if="objDetail.imgs">（{{objDetail.imgs.length}}）</span>
         </div>
       </div>
@@ -52,25 +52,18 @@
       </div>
       <cpmOne
         :isShow="showone"
+        :navIndex="navIndex"
         :letters="getLetter"
         :varityIndex="varity"
         :grapeList="grapeList"
         @corsFn="clorsFn"
         @enzhFn="enzhFn"
         @letterFn="letterFn"
+        :areaContryList="countryList"
+        @areaWorldFn="areaWorldFn"
         @btnRest="btnRest"
         @btnOk="btnOk"></cpmOne>
     </div>
-    <cpmOne
-      :isShow="showone"
-      :letters="getLetter"
-      :varityIndex="varity"
-      :grapeList="grapeList"
-      @corsFn="clorsFn"
-      @enzhFn="enzhFn"
-      @letterFn="letterFn"
-      @btnRest="btnRest"
-      @btnOk="btnOk"></cpmOne>
   </div>
 </template>
 <script>
@@ -91,21 +84,41 @@ export default {
     CpmOne
   },
   async asyncData (req) {
-    // 红葡萄 1， 白葡萄 2
-    let varietyId = 1
-    let varietyFn = encyApi.serverVarietyList(varietyId, req)
-    let initFn = encyApi.getInitials(req)
-    const { code: varietyCode, data: varietyData } = await varietyFn
-    const { code: initCode, data: initData } = await initFn
-    let objInit = {}
-    let objVariety = {}
-    if (initCode === 200) {
-      objInit = initData
+    let queryNum = req.query.num
+    console.log('queryNum', queryNum, typeof queryNum)
+    if (queryNum === '0') {
+      // 红葡萄 1， 白葡萄 2
+      let varietyId = 1
+      let varietyFn = encyApi.serverVarietyList(varietyId, req)
+      let initFn = encyApi.getInitials(req)
+      const { code: varietyCode, data: varietyData } = await varietyFn
+      const { code: initCode, data: initData } = await initFn
+      let objInit = {}
+      let objVariety = {}
+      if (initCode === 200) {
+        objInit = initData
+      }
+      if (varietyCode === 200) {
+        objVariety = varietyData
+      }
+      return { letter: objInit, objDetail: objVariety }
+    } else if (queryNum === '1') {
+      let worldId = -1
+      const { code, data } = await encyApi.serverCountry(worldId, req)
+      if (code === 200) {
+        let countrys = data.baikeCountryCountRespList
+        return { countryList: countrys, navIndex: 1, showone: true }
+      }
+    } else if (queryNum === '2') {
+      let worldId = '-1'
+      const { code, data } = await encyApi.serverWineryCountry(worldId, req)
+      console.log('code', code)
+      console.log('data', data)
+      if (code === 200) {
+        let countrys = data.baikeCountryCountRespList
+        return { countryList: countrys, navIndex: 2, showone: true }
+      }
     }
-    if (varietyCode === 200) {
-      objVariety = varietyData
-    }
-    return { letter: objInit, objDetail: objVariety }
   },
   data () {
     return {
@@ -117,13 +130,29 @@ export default {
         corIndex: 0,
         enzhIndex: 0
       },
+      selectVarietyId: 1, // 品种id(红葡萄)
       grapeList: [], // 葡萄品种列表
       objDetail: {}, // 页面详情
       isScorll: false, // 页面是否可滚动
-      isMore: false // 是否显示 查看更多
+      isMore: false, // 是否显示 查看更多
+      countryList: [],
+      selectWorldId: -1, // 默认世界（全部）
+      selectAreaId: -1 // 产区id(全部)
     }
   },
   computed: {
+    getType () {
+      if (this.navIndex === 0) {
+        return '品种'
+      } else if (this.navIndex === 1) {
+        console.log('start getType')
+        return '产区'
+      } else if (this.navIndex === 2) {
+        return '酒庄'
+      } else {
+        return '品种'
+      }
+    },
     getLetter () {
       if (this.varity.corIndex === 0 && this.varity.enzhIndex === 0) {
         return this.letter.redEnglishLetterList
@@ -144,12 +173,12 @@ export default {
   methods: {
     elNavs (index) {
       if (this.navIndex === index) {
-        this.navIndex = null
         this.showone = false
-      } else {
-        this.navIndex = index
-        this.showone = true
       }
+      this.navIndex = index
+      this.showone = true
+      this.areaCountryFn()
+      console.log(this.navIndex, 'navIndex')
     },
     clorsFn (index) {
       this.varity.corIndex = index
@@ -173,27 +202,42 @@ export default {
         this.grapeList = data
       }
     },
-    async encyDetail () {
-    },
     btnRest () {
       this.showone = false
       this.navIndex = null
       this.varity.corIndex = 0
       this.varity.enzhIndex = 0
+      // 红葡萄
+      this.selectVarietyId = 1
     },
-    async btnOk (grape) {
-      // 品种确认按钮
-      let _id
-      if (!grape.varietyid) {
-        _id = this.corIndex + 1
-      } else {
-        _id = grape.varietyid
-      }
-      const { code, data } = await encyApi.getVarietyDetail(_id)
-      if (code === 200) {
-        this.showone = false
-        this.objDetail = data
-        this.getnounH()
+    btnOk (obj) {
+      // 品种确认按钮 0, 产区确认按钮 1
+      if (this.navIndex === 0) {
+        let _id
+        if (!obj.varietyid) {
+          _id = this.varity.corIndex + 1
+        } else {
+          _id = obj.varietyid
+        }
+        this.selectVarietyId = _id
+      } else if (this.navIndex === 1) {
+        console.log(obj)
+        let { worldId, countryId, bigId, districtId, subId, smallId } = obj
+        // let _areaId = !smallId ? (!subId ? (!districtId ? (!bigId ? (!countryId ? (!worldId ? 1 : worldId) : countryId) : bigId) : districtId) : subId) : smallId
+        let _areaId = (!smallId || smallId === -4) ? ((!subId || subId === -3) ? ((!districtId || districtId === -2) ? ((!bigId || bigId === -1) ? ((!countryId || countryId === -1) ? ((!worldId || worldId === -1) ? -1 : worldId) : countryId) : bigId) : districtId) : subId) : smallId
+        this.selectAreaId = _areaId
+      } else if (this.navIndex === 2) {
+        console.log('obj winery', obj)
+        let { worldId, countryId, bigId, districtId, subId, smallId } = obj
+        let params = {
+          classify: worldId,
+          countryid: countryId,
+          oneAreaId: bigId,
+          twoAreaId: districtId,
+          threeAreaId: subId,
+          fourAreaId: smallId
+        }
+        this.getWineryList(params)
       }
     },
     lookMoreFn () {
@@ -208,6 +252,58 @@ export default {
         console.log('elnoun > winH', elnoun > winH)
         this.isMore = elnoun > winH
       })
+    },
+    async getVarietyDetail () {
+      // 葡萄品种
+      const { code, data } = await encyApi.getVarietyDetail(this.selectVarietyId)
+      if (code === 200) {
+        this.showone = false
+        this.objDetail = data
+        this.getnounH()
+      }
+    },
+    areaWorldFn (wroldId) {
+      // console.log('worldId', wroldId)
+      this.selectWorldId = wroldId
+      this.areaCountryFn()
+    },
+    async areaCountryFn () {
+      // 世界的国家列表 1 => 产区； 2 => 酒庄
+      let id = this.selectWorldId
+      let countryFn
+      if (this.navIndex === 1) {
+        countryFn = encyApi.getAreaCountry(id)
+      } else if (this.navIndex === 2) {
+        countryFn = encyApi.getWineryCountry(id)
+      }
+      const { code, data } = await countryFn
+      if (code === 200) {
+        this.countryList = data.baikeCountryCountRespList
+      }
+    },
+    async getAreaDetail () {
+      // 产区详情
+      const { code, data } = await encyApi.getAreaDetail(this.selectAreaId)
+      if (code === 200) {
+        // console.log('data', data)
+        this.showone = false
+        this.objDetail = data
+        this.getnounH()
+      }
+    },
+    async getWineryList (params) {
+      const { code, data } = await encyApi.getWineryList(params)
+      if (code === 200) {
+        console.log(data)
+      }
+    }
+  },
+  watch: {
+    selectVarietyId: function () {
+      this.getVarietyDetail()
+    },
+    selectAreaId: function () {
+      this.getAreaDetail()
     }
   }
 }
