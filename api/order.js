@@ -8,8 +8,12 @@ export const orderApi = {
   getOrderDetail (id, req) {
     return request.serverGet(`/api/order/getDetail/${id}`, {}, req)
   },
-  getEvaluationInfo (id, req) {
-    return request.serverGet(`/api/order/toComment/${id}`, {}, req)
+  getEvaluationInfo (orderId, req) {
+    return request.serverGet('/api/order/toComment/' + orderId, {}, req)
+  },
+  // 物流信息获取
+  queryTrackServe (logisticsCompany, logisticsBillIdentify) {
+    return request.serverGet('/api/order/queryTrack/' + logisticsCompany + '/' + logisticsBillIdentify)
   },
   // 获取支付信息
   getPayMsgServer (id, req) {
@@ -28,8 +32,13 @@ export const orderApi = {
   deleteOrder (id) {
     return request.clientPost(`${id}`)
   },
+  // 去评价
   submitEvaluation (obj) {
-    return request.clientPost('/api/cmt/createComment', obj)
+    return request.clientPostJson('/api/cmt/createComment', obj)
+  },
+  // 追评
+  review (obj) {
+    return request.clientPostJson('/api/cmt/review', obj)
   },
   // 获取订单信息
   getPayMsg (orderId) {
@@ -46,6 +55,10 @@ export const orderApi = {
   // 检测支付状态
   getOrderPayOrNot (orderId) {
     return request.clientGet('/api/order/getOrderPayOrNot/' + orderId)
+  },
+  // 物流信息获取
+  queryTrack (logisticsCompany, logisticsBillIdentify) {
+    return request.clientGet('/api/order/queryTrack/' + logisticsCompany + '/' + logisticsBillIdentify)
   }
 }
 

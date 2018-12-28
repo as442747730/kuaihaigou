@@ -1,13 +1,29 @@
+<!-- 
+   * 订单状态说明 orderStatus
+   1、 待支付
+   2、 支付成功,待发货
+   3、 发货中
+   4、 待收货
+   5、 待评价
+   6、 交易流程已完成
+   7、 已关闭（超时/取消订单）
+ -->
 <template>
-  <div class="m-order-detail" :class="{'mb0': orderDetail.status === 2}">
+  <div class="m-order-detail" :class="{'mb0': orderDetail.status === 2 || orderDetail.status === 6}">
 
     <div class="status-wrapper" :style="`background-image: url(${require(`@/assets/img/order/icon-status-${iconType}.png`)})`">{{ statusTxt[orderDetail.status - 1] }}</div>
 
     <div class="notice-bar" v-if="orderDetail.status === 1">{{ timeCount }}后未支付，此订单将自动关闭</div>
 
-    <div class="logi-wrapper" v-if="orderDetail.status === 4">
-      <p class="title">您的订单已进入库房，准备出库<i></i></p>
-      <p class="date">2017-04-01 12:00:00 </p>
+    <div class="logi-wrapper" v-if="orderDetail.status >= 3 && orderDetail.status !== 7" @click='logisHandle'>
+      <template v-if='orderDetail.status === 3 || orderDetail.status === 4'>
+        <p class="title">您的订单已进入库房，准备出库<i></i></p>
+        <p class="date">{{ orderDetail.distributionTime }}</p>  
+      </template>
+      <template v-if='orderDetail.status === 5 || orderDetail.status === 6'>
+        <p class="title">感谢您在快海购购物，欢迎再次光临<i></i></p>
+        <p class="date">{{ orderDetail.transactionCompleteTime || orderDetail.outStorageTime }}</p>  
+      </template>
     </div>
 
     <div class="address-wrapper">
@@ -83,8 +99,8 @@
       <!-- <div class="cost-wrapper-total" v-if="orderDetail.status === 1">应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span></div> -->
     </div>
 
-    <div class="bottom-wrapper" v-if='orderDetail.status !== 2'>
-      <div class="cost-wrapper-total" v-if="orderDetail.status === 1">
+    <div class="bottom-wrapper" v-if='orderDetail.status !== 6'>
+      <div class="cost-wrapper-total">
         应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span>
       </div>
 
@@ -94,7 +110,7 @@
         <div class="u-button small inline" @click="toPay">马上支付</div>
       </template>
 
-      <div class="u-button small inline default" v-if="orderDetail.status === 3 || orderDetail.status === 4" @click="">查看物流</div>
+      <div class="u-button small inline default" v-if="orderDetail.status === 3 || orderDetail.status === 4" @click='logisHandle'>查看物流</div>
 
       <div class="u-button small inline" v-if="orderDetail.status === 4" @click="confirmReceive">确认收货</div>
 
@@ -105,14 +121,18 @@
 
     </div>
 
+    <!-- 支付 -->
     <uPay :payMethodShow='payMethodShow' :orderId='orderId' @payClose='payClose'></uPay>
 
+    <!-- 物流 -->
+    <!-- <uLogis v-model='logisOpen' :logisData='orderDetail.deliverBillList'></uLogis> -->
   </div>
 </template>
 
 <script>
 import { orderApi, afterSaleApi } from '~/api/order'
 import uPay from '~/components/Pay'
+// import uLogis from '~/components/order/Logistics'
 import api from '~/utils/request'
 
 export default {
@@ -122,6 +142,7 @@ export default {
 
   components: {
     uPay
+    // uLogis
   },
 
   head () {
@@ -181,6 +202,16 @@ export default {
     }
   },
 
+  watch: {
+    $route (to, from) {
+      if (to.hash === '') {
+        this.logisOpen = false
+      } else if (to.hash === '#logis') {
+        this.logisOpen = true
+      }
+    }
+  },
+
   data () {
     return {
       orderId: null,
@@ -193,15 +224,17 @@ export default {
       orderDetail: {},
       payInfo: {},
 
-      payMethodShow: false
+      payMethodShow: false,
+      // 物流
+      logisOpen: false
     }
   },
 
   mounted () {
+    console.log(this.orderDetail)
     if (this.orderDetail.status === 1) {
       console.log('this.payInfo', this.payInfo)
       this.countTime(parseInt(this.payInfo.timestamp / 1000) + 10)
-      // console.log(this.countTime(parseInt(1545645529000) + 10))
     }
   },
 
@@ -242,7 +275,7 @@ export default {
           this.timeCount = zero(hh) + '小时' + zero(ii) + '分' + zero(ss) + '秒'
         } else {
           this.timeCount = '00小时00分00秒'
-          // window.location.reload()
+          window.location.reload()
         }
       }, 1 * 1000)
       function zero (n) {
@@ -262,6 +295,12 @@ export default {
 
     payClose () {
       this.payMethodShow = false
+    },
+    // 物流查看开关
+    logisHandle () {
+      // this.logisOpen = true
+      // window.location.hash = 'logis'
+      window.location.href = `/order/logistics/${this.orderId}`
     },
 
     goAftersale (val) {

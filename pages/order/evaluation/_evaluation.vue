@@ -6,28 +6,13 @@
       <div class="product-wrapper">
         <!-- 普通商品 -->
         <div class="product" v-if="!item.packName">
-          <div class="cover" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
+          <div class="cover" v-lazy:background-image="item.cover"></div>
           <div class="info">
-            <p class="title">法国1982拉菲法国1982拉菲传奇Lafite</p>
+            <p class="title">{{ item.goodsName }}</p>
             <div class="desc">
-              <span>单瓶/普通装</span>
-              <span class="price">¥260.0</span>
+              <span>{{ item.skuName ? '规格：' + item.skuName : '' }}</span>
             </div>
             <p class="desc">x1</p>
-          </div>
-        </div>
-        <!-- 套餐 -->
-        <div class="package" v-else>
-          <div class="top">法国1982拉菲法国1982拉菲传奇套餐<span>￥233</span></div>
-          <div class="container">
-            <div class="item">
-              <div class="cover" style="background-image: url(~@/assets/img/img2.png)"></div>
-              <div class="info">
-                <p class="title">法国1982拉菲法国1982拉菲传奇Lafite</p>
-                <div class="desc">单瓶/普通装</div>
-                <p class="desc">x1</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -37,15 +22,18 @@
         <ImageHandler v-model="item.imgList"></ImageHandler>
       </div>
 
-      <div class="rate-wrapper">
-        <span>商品评分</span>
-        <van-rate v-model="item.rate" :size="18" color="#FC6249" void-color="#DFDFDF"></van-rate>
-      </div>
-    </div>
+      <template v-if="type !== 'add'">
+        <div class="rate-wrapper">
+          <span>商品评分</span>
+          <van-rate v-model="item.rate" :size="18" :color="rateColor[item.rate - 1]" void-color="#DFDFDF"></van-rate>
+          <b :style="{'color': rateColor[item.rate - 1]}">{{ rateTxt[item.rate - 1] }}</b>
+        </div>
 
-
-    <div class="checkbox-wrapper">
-      <van-checkbox v-model="ifAnonymous">匿名提交</van-checkbox>
+        <div class="checkbox-wrapper">
+          <van-checkbox v-model="item.ifAnonymous">匿名提交</van-checkbox>
+        </div>        
+      </template>
+      
     </div>
 
     <div class="btn-wrapper fit">
@@ -75,42 +63,58 @@ export default {
   },
 
   async asyncData (req) {
-    orderApi.getEvaluationInfo(req.params.evaluation, req).then(res => {
-      if (res.code === 506) {
-        req.redirect('/account/login')
-      }
-      if (res.code === 200) {
-        console.log(res.data)
-        const a = res.data.orderItemList
-        a.forEach(n => {
-          n.content = ''
-          n.imgList = []
-          n.rate = 0
-        })
-        return { list: a, orderId: res.data.id }
-      } else {
-        req.redirect('/error')
-      }
-    })
+    const { code, data } = await orderApi.getEvaluationInfo(req.params.evaluation, req)
+    if (code === 506) {
+      req.redirect('/account/login')
+    } else if (code === 200) {
+      const a = data
+      a.forEach(n => {
+        n.content = ''
+        n.imgList = []
+        n.rate = 5
+        n.ifAnonymous = false
+      })
+      console.log(a)
+      return { list: a, orderId: req.params.evaluation, type: req.query.type || null }
+    } else {
+      req.redirect('/error')
+    }
   },
 
   data () {
     return {
       orderId: null,
+      type: null,
       list: [],
-      ifAnonymous: false
+
+      rateColor: ['#99a9bf', '#99a9bf', '#f7ba2a', '#FC6249', '#FC6249'],
+      rateTxt: ['失望', '一般', '满意', '喜欢', '超爱']
     }
+  },
+
+  mounted () {
+    console.log('this', this.list)
+    console.log(this.type)
   },
 
   methods: {
     async submitEvalua () {
       let reqObj = []
+      let evaluaFn
       const v = this
-      reqObj = this.list.map(n => { return { content: n.content, evaluationLevel: n.rate, goodsId: n.id, ifAnonymous: v.ifAnonymous, imgs: JSON.stringify(n.imgList), orderId: v.orderId } })
-      const { code } = await orderApi.submitEvaluation(reqObj)
+      if (this.type === 'add') {
+        reqObj = this.list.map(n => { return { review: n.content, goodsId: n.goodsid, reviewImgs: JSON.stringify(n.imgList), orderId: v.orderId } })
+        evaluaFn = orderApi.review(reqObj)
+      } else {
+        reqObj = this.list.map(n => { return { content: n.content, evaluationLevel: n.rate, goodsId: n.goodsid, ifAnonymous: n.ifAnonymous, imgs: JSON.stringify(n.imgList), orderId: v.orderId } })
+        evaluaFn = orderApi.submitEvaluation(reqObj)
+      }
+      const { code, data } = await evaluaFn
       if (code === 200) {
         this.$toast.success('提交成功')
         window.location.href = '/order/list'
+      } else {
+        this.$toast(data)
       }
     }
   }
@@ -121,6 +125,7 @@ export default {
   background: @cor_border;
   min-height: 100vh;
   padding-bottom: 20px;
+  box-sizing: border-box;
   .eval-item {
     margin-bottom: 30px;
     .product-wrapper {
@@ -258,13 +263,24 @@ export default {
         font-size: 15px;
         margin-right: 13px;
       }
+      b {
+        font-size: 13px;
+        transition: .3s;
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 5px;
+      }
+      i {
+        transition: color .3s;
+      }
     }
   }
   .checkbox-wrapper {
-    margin-bottom: 45px;
     font-size: 14px;
     padding: 0 20px;
     color: @cor_666;
+    background: #fff;
+    padding-bottom: 20px;
   }
   .btn-wrapper {
     width: 100%;

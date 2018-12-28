@@ -1,9 +1,6 @@
 <template>
   <div class="m-address-list">
-    <com-head :titleConfig="configtitle" @headRigfn="goManage">
-      <div>管理</div>
-    </com-head>
-    <van-pull-refresh v-model="refresing" @refresh="getRefresh">
+    <van-pull-refresh class="van-pull" v-model="refresing" @refresh="getRefresh">
 
       <div class="address-ul">
         <div class="address-item" v-for="item in list" :key="item.id">
@@ -12,20 +9,21 @@
           </div>
           <p class="address">{{item.province | formatPlace }}{{item.city | formatPlace }}{{item.district | formatPlace }}{{item.street | formatPlace }}{{item.address}}</p>
         </div>
+
+        <div class="placeholder" v-if="list.length === 0">您尚未添加收货地址，点击管理按钮去添加</div>
       </div>
 
     </van-pull-refresh>
 
-    <!-- <div class="btn-section">
+    <div class="btn-section f-bottom-btn">
       <div class="btn-manage" @click="goManage">管理</div>
-    </div> -->
+    </div>
 
   </div>
 </template>
 
 <script>
 import { addressApi } from '~/api/address'
-import comHead from '~/components/com-head'
 
 export default {
   name: 'addressList',
@@ -40,9 +38,7 @@ export default {
       ]
     }
   },
-  components: {
-    comHead
-  },
+
   async asyncData (req) {
     return addressApi.getAddressList(req).then((res) => {
       console.log(res)
@@ -83,9 +79,21 @@ export default {
 
 <style lang="less" scoped>
 .m-address-list {
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  .van-pull {
+    flex: 1;
+  }
   .address-ul {
-    min-height: 100vh;
+  }
+  .placeholder {
+    font-size: 14px;
+    color: @cor_999;
+    text-align: center;
+    padding-top: 60px;
+    padding-bottom: 30px;
   }
   .address-item {
     padding: 25px 20px 15px 20px;
@@ -125,10 +133,7 @@ export default {
   .btn-section {
     width: 100%;
     box-sizing: border-box;
-    position: fixed;
-    bottom: 0;
     background: white;
-    left: 0;
     padding: 15px 20px;
     .btn-manage {
       height: 45px;
@@ -139,6 +144,7 @@ export default {
       line-height: 45px;
       font-size: 15px;
       color: @nice-blue;
+      margin-bottom: 15px;
       &:active {
         opacity: 0.8;
       }

@@ -129,7 +129,7 @@ export default {
         }
         const hasLogin = res4.code !== 506
         return {
-          addType: +req.query.type,
+          addType: +req.query.type || 1,
           topicList: res1.data.map(n => { return { id: n.id, text: n.topicName } }),
           typeList: res2.data.map(n => { return { id: n.id, name: n.typeName } }),
           varietyList: res3.data.map(n => { return { id: n.id, name: n.varietyName } }),
@@ -176,7 +176,7 @@ export default {
 
   created () {
     if (!this.ifLogin) {
-      this.$notify({ message: '你尚未登录，请先登录', duration: 8000 })
+      this.$notify({ message: '你尚未登录，请先登录', duration: 5000 })
     }
   },
 

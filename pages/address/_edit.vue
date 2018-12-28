@@ -39,7 +39,7 @@
       <van-picker ref="areaPicker" :columns="columns" show-toolbar @change="handleChange" @cancel="onCancel" @confirm="onConfirm" />
     </van-popup>
 
-    <div class="btn-wrapper fit">
+    <div class="btn-wrapper f-bottom-btn">
       <van-button class="submit-btn" @click="updateInfo">保存</van-button>
     </div>
 
@@ -233,7 +233,6 @@ export default {
         padding-right: 25px;
       }
       .item-content {
-        font-size: 15px;
         flex: 1;
         position: relative;
         input {
