@@ -5,7 +5,7 @@
       <div class="cover" v-lazy:background-image="detailObj.cover"></div>
       <div class="info">
         <p class="title">{{ detailObj.goodsName }}</p>
-        <p class="desc sku">{{ detailObj.skuName }}<span class="price">{{ detailObj.totalRefundAmount }}</span></p>
+        <p class="desc sku">{{ detailObj.skuName }}<span class="price">¥{{ detailObj.totalRefundAmount }}</span></p>
         <p class="desc">x{{ detailObj.remainNum }}</p>
       </div>
     </div>
@@ -136,7 +136,7 @@ export default {
       address: '',
 
       reasonShow: false,
-      reasonCol: ['买错商品', '商品质量', '其他'],
+      reasonCol: ['买错商品', '商品质量', '少件/漏发', '与商品描述不符', '包装/商品残破', '发票问题', '其他'],
 
       areaTxt: '',
 

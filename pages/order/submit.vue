@@ -417,7 +417,8 @@ export default {
         promotionId: this.promotionId || '', // 优惠活动id
         couponId: this.couponSelected.couponId, // 优惠卷id
         hiCoinReduction: this.rewardMoney, // hi币抵扣
-        totalFeight: this.totalFreight - this.reduceFreight // 实际运费
+        totalFeight: this.totalFreight - this.reduceFreight, // 实际运费
+        source: 2 // 来源: 1:PC 2:移动端 3:APP
       }
       const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
       const { code, data } = await api.clientPostJson('/api/order/order', obj)
