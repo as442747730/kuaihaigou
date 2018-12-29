@@ -11,11 +11,12 @@
    * 可申请售后状态 -> 5.6
    * 可申请退款状态 -> 2.3.4
 
-    commentStatus 评价状态
-    1、未评价
-    2、已评价
-    3、已追评
-    4、不允许评价
+   commentStatus 评价状态
+   1、未评价
+   2、已评价
+   3、已追评
+
+   canComment 不允许评价
  -->
 <template>
   <div class="m-order-list">
@@ -68,25 +69,25 @@
             </div>
           </div>
 
-          <div class="result">共{{ item.totalNum }}件商品 总额：￥{{ item.totalPrice }}</div>
+          <div class="result">共{{ item.totalNum }}件商品 总额：￥{{ item.balanceAmount }}</div>
 
           <div class="bottom">
 
             <div class="u-button small inline default" v-if="item.status >= 3 && item.status !== 7" @click="checkLogis(item.id)">查看物流</div>
 
-            <div class="u-button small inline default" v-if="item.status >= 2 && item.status < 7" @click='toAfterSale(item.id)'>{{ item.status === 2 || item.status === 3 || item.status === 4 ? '申请退款' : '申请售后'}}</div>
+            <!-- <div class="u-button small inline default" v-if="item.status >= 2 && item.status < 7" @click='toAfterSale(item.id)'>{{ item.status === 2 || item.status === 3 || item.status === 4 ? '申请退款' : '申请售后'}}</div> -->
             <div class="u-button small inline default" v-if="item.status === 7" @click="deleteOrder(item.id)">删除订单</div>
 
-            <div class="u-button small inline" v-if="item.status === 1" @click="cancelOrder(item.id)">取消订单</div>
+            <div class="u-button small inline default" v-if="item.status === 1" @click="cancelOrder(item.id)">取消订单</div>
 
-            <template v-if='item.status === 5 || item.status === 6' style="display:inline-block">
-              <div class="u-button small inline" v-if="item.commentStatus === 1" @click="toComment(item.id)">评价</div>
+            <template v-if='(item.status === 5 || item.status === 6) && item.canComment' style="display:inline-block">
+              <div class="u-button small inline" v-if="item.commentStatus === 1" @click="toComment(item.id)">评价商品</div>
               <div class="u-button small inline green" v-if='item.commentStatus === 2' @click="toAddComment(item.id)">去追评</div>
             </template>
 
             <div class="u-button small inline" v-if="item.status === 4" @click="confirmReceive(item.id)">确认收货</div>
 
-            <div class="u-button small inline red" v-if="item.status === 1">马上支付</div>
+            <div class="u-button small inline red" v-if="item.status === 1" @click="toPay(item.id)">马上支付</div>
 
             <div class="u-button small inline" @click="getDetail(item.id)">订单详情</div>
           </div>
@@ -292,12 +293,16 @@ export default {
       window.location.href = `/order/evaluation/${val}?type=add`
     },
     // 去售后
-    toAfterSale (val) {
-      window.location.href = `/order/aftersale/${val}`
-    },
+    // toAfterSale (val) {
+    //   window.location.href = `/order/aftersale/${val}`
+    // },
     // 查看物流
     checkLogis (val) {
       window.location.href = `/order/logistics/${val}`
+    },
+    // 去支付
+    toPay (val) {
+      window.location.href = `/order/detail?id=${val}&type=pay`
     }
   }
 }

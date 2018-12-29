@@ -36,8 +36,7 @@
         <div class="u_comment">
           <ul>
             <li class="u_comment-list" v-for="($v, $k) in commentData">
-              <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + $v.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
-              <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
+              <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
               <div class="user-infor ib-middle">
                 <a class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</a>
                 <a class="ib-middle" v-else>匿名用户</a>

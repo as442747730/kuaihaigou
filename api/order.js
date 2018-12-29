@@ -87,7 +87,7 @@ export const afterSaleApi = {
     return request.clientPost(`/api/afterSale/cancel/${id}`)
   },
   sendTransform (obj) {
-    return request.clientPost('/api/afterSale/submitShipMsg', obj)
+    return request.clientPostJson('/api/afterSale/submitShipMsg', obj)
   },
   getNegotiation (id) {
     return request.clientGet(`/api/afterSale/getNegotiation/${id}`, { afterSaleId: id })
