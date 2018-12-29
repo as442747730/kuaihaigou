@@ -1,5 +1,5 @@
 <template>
-  <van-popup v-model="isShow" position="top" overlay-class="vanmb" @click-overlay="closeFn" :close-on-click-overlay="false">
+  <van-popup v-model="isShow" position="top" overlay-class="vanmb" :close-on-click-overlay="false">
     <!-- 品种 start -->
     <section class="variety" v-if="navIndex === 0">
       <div class="secone">
@@ -70,6 +70,8 @@
       <div class="areas-country">
         <ul class="country-l" :class="[{lb_ok: elAreas.countryId}, {scrollCountry: elAreas.bigId}]">
           <li
+            :data-val="areaContryList.length"
+            v-if="areaContryList.length > 0"
             :class="{active: elAreas.countryId === -1}"
             @click="countryFn(-1)">全部国家</li>
           <li
@@ -237,7 +239,7 @@ export default {
       this.elGrape = event
     },
     worldFn (event) {
-      // 世界
+      // 世界 => 国家列表
       this.elAreas.worldId = event.id
       this.$emit('areaWorldFn', event.id)
       this.restAreaId('world')
@@ -331,12 +333,18 @@ export default {
         }
       }
     },
-    closeFn () {
-      this.$emit('closeFn')
+    restAll () {
+      // 重置为初始数据
+      if (this.navIndex === 0) {
+        this.restWorld()
+      } else {
+        this.elAreas.worldId = -1
+        this.restAreaId('world')
+      }
     },
     btnRest () {
       // 重置
-      this.restWorld()
+      this.restAll()
       this.$emit('btnRest')
     },
     btnOk () {

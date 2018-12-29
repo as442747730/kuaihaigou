@@ -2,7 +2,7 @@ import request from '~/utils/request'
 // 百科
 export const encyApi = {
   /* ----------------- server  ------------------ */
-  getInitials (req) {
+  serverInitials (req) {
     return request.serverGet('/api/baike/listVarietyCategory', null, req)
   },
   serverVarietyList (id, req) {
@@ -22,6 +22,10 @@ export const encyApi = {
   // 当品种为红葡萄 1，白葡萄 2, 其它 varietyid
   getVarietyDetail (id) {
     return request.clientGet('/api/baike/getVarietyDetail/' + id)
+  },
+  // 首字母
+  clientInitials () {
+    return request.clientGet('/api/baike/listVarietyCategory')
   },
   /**
    * 产区
