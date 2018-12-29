@@ -6,7 +6,7 @@
    4、 待收货
    5、 待评价
    6、 交易流程已完成
-   7、 已关闭（超时/取消订单）
+   7、 已关闭（超时/取消订单
  -->
 <template>
   <div class="m-order-detail" :class="{'mb0': orderDetail.status === 2 || orderDetail.status === 6}">
@@ -114,7 +114,10 @@
 
       <div class="u-button small inline" v-if="orderDetail.status === 4" @click="confirmReceive">确认收货</div>
 
-      <div class="u-button small inline" v-if="orderDetail.status === 5" @click="goEvaluation">评价商品</div>
+      <template v-if='(orderDetail.status === 5 || orderDetail.status === 6) && orderDetail.canComment'>
+        <div class="u-button small inline" v-if="orderDetail.status === 5" @click="goEvaluation">评价商品</div>
+        <div class="u-button small inline" v-if="orderDetail.status === 6" @click="goEvaluationAdd">去追评</div>
+      </template>
 
       <!-- 7 已关闭 -->
       <div class="u-button small inline default" v-if="orderDetail.status === 7" @click="">删除订单</div>
@@ -188,8 +191,11 @@ export default {
           payInfo = res3.data
         }
         console.log(payInfo)
-        // console.log(res1.data.orderItemList[0].goodsList)
-        return { orderDetail: res1.data, orderId: req.query.id, payInfo: payInfo }
+        // let payMethodShow = false
+        // if (req.query.type === 'pay') {
+        //   payMethodShow = true
+        // }
+        return { orderDetail: res1.data, orderId: req.query.id, payInfo: payInfo, type: req.query.type }
       } else {
         req.redirect('/error')
       }
@@ -225,6 +231,7 @@ export default {
       payInfo: {},
 
       payMethodShow: false,
+      type: null,
       // 物流
       logisOpen: false
     }
@@ -233,8 +240,8 @@ export default {
   mounted () {
     console.log(this.orderDetail)
     if (this.orderDetail.status === 1) {
-      console.log('this.payInfo', this.payInfo)
       this.countTime(parseInt(this.payInfo.timestamp / 1000) + 10)
+      if (this.type === 'pay') this.payMethodShow = true
     }
   },
 
@@ -247,7 +254,8 @@ export default {
         const { code } = await orderApi.cancelOrder(this.orderId)
         if (code === 200) {
           this.$toast.success('取消订单成功')
-          this.fetchData()
+          // this.fetchData()
+          window.location.reload()
         }
       }).catch(() => {})
     },
@@ -258,7 +266,8 @@ export default {
         const { code } = await orderApi.receiveOrder(this.orderId)
         if (code === 200) {
           this.$toast.success('确认收货成功')
-          this.fetchData()
+          // this.fetchData()
+          window.location.reload()
         }
       })
     },
@@ -309,6 +318,10 @@ export default {
 
     goEvaluation () {
       window.location.href = `/order/evaluation/${this.orderId}`
+    },
+
+    goEvaluationAdd () {
+      window.location.href = `/order/evaluation/${this.orderId}?type=add`
     }
   }
 }
