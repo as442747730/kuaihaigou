@@ -576,6 +576,7 @@ export default {
           color: white;
           margin-left: 45px;
           margin-right: 0;
+          max-width: 69%;
           img {
             width: 120px;
             height: auto;

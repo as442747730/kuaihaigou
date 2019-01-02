@@ -38,8 +38,8 @@
           去对比
         </div>
         <br>
-        <div class="active">
-          全场满88元免邮
+        <div class="active" v-if='topGoods.reductionStrategy'>
+          {{ topGoods.reductionStrategy }}
         </div>
         <!-- 单品时出现 -->
         <div class="single-sku-num" v-if='singleObj.isSingle'>
@@ -64,8 +64,7 @@
         <span class="limit_one">{{ areaTxt }}</span>
       </div>
       <div class="choose-txt">
-        <p class="ib-middle" v-if="ifsend">可配送</p>
-        <p class="ib-middle" v-else>不可配送</p>
+        <p class="ib-middle">{{ sendStatus }}</p>
         <i class="van-icon ib-middle van-icon-arrow"></i>
       </div>
     </div>
@@ -268,24 +267,25 @@ export default {
     const {code: detCode, data: detData} = await detailFn
     const {code: hotCode, data: hotData} = await topSaleFn
     const {code: userCode} = await userInfoFn
-    console.log('detCode', detCode)
+    let no = detData.ifWine ? 2 : 1
+    const {code: frequeCode, data: frequeData} = await goodsApi.frequently(no)
     if (detCode === 200) {
       let hotlist = []
       let isLogin = false
       if (hotCode === 200) {
         hotlist = hotData
       }
-      console.log(userCode)
       if (userCode === 200) {
         isLogin = true
       }
-      // console.log('detData', detData)
-      let { imgList, goodsName, actualPrice, introduce } = detData
+      console.log('detData', detData)
+      let { imgList, goodsName, actualPrice, introduce, reductionStrategy } = detData
       let topData = {
         imgList: imgList,
         goodsName: goodsName,
         actualPrice: actualPrice,
-        introduce: introduce
+        introduce: introduce,
+        reductionStrategy: reductionStrategy
       }
       let { skuAttrList, skuList, packList } = detData
 
@@ -307,9 +307,15 @@ export default {
 
       // 评价提问
       let { satisfactionNum, satisfactionDegree } = detData
+      let frequeList = []
+      if (frequeCode === 200) {
+        frequeList = frequeData
+      }
+      console.log('frequeList', frequeList)
       let commentParams = {
         satisfactionNum: satisfactionNum,
-        satisfactionDegree: satisfactionDegree
+        satisfactionDegree: satisfactionDegree,
+        frequeList: frequeList
       }
 
       // 售后服务
@@ -328,8 +334,6 @@ export default {
         actualPrice: actualPrice,
         allprice: actualPrice
       }
-
-      console.log(isLogin)
 
       return {
         goodsId: goodsId,
@@ -395,7 +399,7 @@ export default {
       }, // 选中套餐
       elpackId: '', // 选中套餐id
       singleObj: {}, // 单品信息
-      ifsend: false, // 是否可配送
+      sendStatus: '-', // 是否可配送
       goodsDetailMobile: '', // 商品详情
       listDetailMobile: '', // 包装清单
       goodsList: {}, // 商品清单
@@ -592,10 +596,16 @@ export default {
       let cityId = this.cityId
       const {code, data} = await goodsApi.checkDistr(goodsId, cityId)
       if (code === 200) {
-        if (data === 2) {
-          this.ifsend = false
-        } else {
-          this.ifsend = true
+        switch (data) {
+          case 1:
+            this.sendStatus = '可配送'
+            break
+          case 2:
+            this.sendStatus = '不可配送'
+            break
+          case 3:
+            this.sendStatus = '包邮'
+            break
         }
       }
       this.popupShow = false

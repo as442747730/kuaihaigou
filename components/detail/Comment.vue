@@ -27,9 +27,9 @@
 
         <div class="detail_comment-type">
           <ul>
-            <li @click='filter(0)' :class="{'cur': checkActive === 0}">全部<span>(3873)</span></li>
-            <li @click='filter(1)' :class="{'cur': checkActive === 1}">优先内容<span>(873)</span></li>
-            <li @click='filter(2)' :class="{'cur': checkActive === 2}">带图片<span>(362)</span></li>
+            <li @click='filter(0)' :class="{'cur': checkActive === 0}">全部<span>({{ commentNum.totalNum || 0 }})</span></li>
+            <li @click='filter(1)' :class="{'cur': checkActive === 1}">优先内容<span>({{ commentNum.hasContentNum || 0 }})</span></li>
+            <li @click='filter(2)' :class="{'cur': checkActive === 2}">带图片<span>({{ commentNum.hasImgNum || 0 }})</span></li>
           </ul>
         </div>
 
@@ -53,7 +53,7 @@
                 <div v-for="($v2, $k2) in getJSONArr($v.imgs)" class="pro-item" :style="'background: url(' + $v2 + ') no-repeat center/cover'" @click='showBigImg($k2, getJSONArr($v.imgs))'></div>
               </div>
 
-              <div class="other">
+              <div class="other" :class="{'bord-1': $v.review}">
                 <div class="time">{{ changeTime($v.createdAt) }}</div>
                 <div class="fr">
                   <span @click='reply($v.id, $v)'>回复({{ $v.replyNum }})</span>
@@ -68,6 +68,9 @@
               <div class="add-comment" v-if='$v.review'>
                 <h3>用户{{ countTimeAgo($v.reviewTime, $v.createdAt) }}追评</h3>
                 <p>{{ $v.review }}</p>
+                <div class="pro">
+                  <div v-for="($v3, $k3) in getJSONArr($v.reviewImgs)" class="pro-item" :style="'background: url(' + $v3 + ') no-repeat center/cover'" @click='showBigImg($k3, getJSONArr($v.reviewImgs))'></div>
+                </div>
               </div>
 
               <!-- 官方回复 -->
@@ -97,7 +100,7 @@
     </transition>
     <!-- 提问 -->
     <transition name='nav-fade' mode="out-in">
-      <u-question :goodsid="goodsid" v-if='!commentShow' :scrollbottom="scrollbottom" />
+      <u-question :goodsid="goodsid" :queslist="viewdata.frequeList" v-if='!commentShow' :scrollbottom="scrollbottom" />
     </transition>
   </article>
 </template>
@@ -146,6 +149,7 @@ export default {
       // 默认头像
       defaulthead: this.defaulthead,
       commentData: [],
+      commentNum: {},
 
       page: 1,
       pageLoding: true,
@@ -198,6 +202,7 @@ export default {
         } else {
           this.pageEmpty = false
         }
+        this.commentNum = data.extras
         // 是否需要重渲染数据
         this.commentData = needRender ? data.array : this.commentData.concat(data.array)
         this.pageLoding = false
@@ -257,6 +262,7 @@ export default {
     filter (val) {
       this.checkActive = val
       this.pageEmpty = false
+      this.page = 1
       switch (val) {
         case 0:
           // 全部
@@ -427,8 +433,17 @@ export default {
 }
 .u_comment {
   padding: 0 20px;
-  overflow: hidden;
+  // overflow: hidden;
   &-list {
+    position: relative;
+    &:after {
+      content: '';
+      position: absolute;
+      height: 1PX;
+      background: #eee;
+      width: 355px;
+      bottom: 0;
+    }
     &:first-child {
       margin-top: 30px;
     }
@@ -494,7 +509,9 @@ export default {
     }
     .other {
       padding-bottom: 22px;
-      border-bottom: 1PX solid #f1f1f1;
+      &.bord-1 {
+        border-bottom: 1PX solid #f1f1f1;
+      }
       .time {
         font-size: 12px;
         color: #999;
@@ -540,6 +557,7 @@ export default {
         color: #333;
         font-family: 'PingFang-SC-Medium';
         text-align: justify;
+        margin-bottom: 10px;
       }
     }
     .office-comment {

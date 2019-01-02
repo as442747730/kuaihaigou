@@ -160,7 +160,11 @@ export default {
       })
       if (code === 200) {
         this.$toast.success('添加成功')
-        window.location.href = '/invoice/list'
+        if (this.$route.query.from === 'submit') {
+          window.location.href = '/invoice/list?from=submit'
+        } else {
+          window.location.href = '/invoice/list'
+        }
       } else {
         this.$toast(data)
       }

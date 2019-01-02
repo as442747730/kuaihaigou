@@ -199,7 +199,11 @@ export default {
       const { code } = await addressApi.updateAddress(obj)
       if (code === 200) {
         this.$toast.success('保存成功')
-        window.location.href = '/address/manage'
+        if (this.$route.query.from === 'submit') {
+          window.location.href = '/address/manage?from=submit'
+        } else {
+          window.location.href = '/address/manage'
+        }
       }
     }
   }

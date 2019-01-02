@@ -1,5 +1,8 @@
 <template>
   <div class="m-invoice">
+    <com-head :titleConfig="configtitle">
+      <!-- <div>管理</div> -->
+    </com-head>
     <div class="m-invoice-ul">
 
       <div class="m-invoice-li" v-for="(item, index) in invoiceList">
@@ -63,6 +66,20 @@ export default {
         this.invoiceList = data
       }
     },
+    addInvoice () {
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/invoice/add?from=submit'
+      } else {
+        window.location.href = '/invoice/add'
+      }
+    },
+    editInvoice (val) {
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/invoice/' + val.id + '?from=submit'
+      } else {
+        window.location.href = '/invoice/' + val.id
+      }
+    }
     getManage () {
       window.location.href = '/invoice/manage'
     },

@@ -120,7 +120,7 @@
       </div>
       <div class="m-section-cell-item">
         <div class="label">优币抵扣</div>
-        <div class="content">-{{ rewardMoney }}</div>
+        <div class="content">{{ rewardMoney }}</div>
       </div>
       <div class="m-section-cell-item" v-if='fullSub !== 0'>
         <div class="label">活动优惠</div>
@@ -141,7 +141,7 @@
     </div>
 
     <div class="m-section-bottom">
-      <div class="m-section-bottom-left">应付金额：<span class="total">￥{{ payable }}</span></div>
+      <div class="m-section-bottom-left">应付金额：<span class="total">￥{{ formatMoney(payable) }}</span></div>
       <div class="m-section-bottom-right active-status" @click="submitOrder">提交订单</div>
     </div>
 
@@ -154,7 +154,7 @@
     </transition>
 
     <transition name="slide">
-      <uCoupon v-show="couponShow" :usableList="couponArray.filter(n => { return n.useThreshold <= this.totalPrice })" :unusableList="couponArray.filter(n => { return n.useThreshold >= this.totalPrice })" @handleSelectCoupon="handleSelectCoupon"></uCoupon>
+      <uCoupon v-show="couponShow" :amount="formatMoney(payable)" :usableList="couponArray.filter(n => { return n.useThreshold <= this.totalPrice })" :unusableList="couponArray.filter(n => { return n.useThreshold >= this.totalPrice })" @handleSelectCoupon="handleSelectCoupon" @changeCoupon='changeCoupon'></uCoupon>
     </transition>
 
     <uPay :payMethodShow='payMethodShow' :orderId='orderId' @payClose='payClose'></uPay>
@@ -194,19 +194,17 @@ export default {
     }
   },
 
-  // transition: {},
-
   async asyncData (req) {
     return api.all([
       api.serverGet('/api/shippingAddress/listAll', {}, req), // 地址
       api.serverGet('/api/order/calcFreight?time=' + new Date().getTime(), {}, req), // 运费
       api.serverGet('/api/promotion/get', null, req), // 活动
-      api.serverGet('/api/coupon/listForUsable', { amount: 100 }, req), // 优惠券
+      // api.serverGet('/api/coupon/listForUsable', {}, req), // 优惠券
       api.serverGet('/api/invoice/listAll', {}, req), // 发票信息
       api.serverGet('/api/reward/getTotalActualAmount/', null, req) // hi币总额
     ])
-      .then(api.spread(function (res1, res2, res3, res4, res5, res6) {
-        if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506 || res5.code === 506) {
+      .then(api.spread(function (res1, res2, res3, res4, res5) {
+        if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506) {
           return req.redirect('/account/login')
         }
         let a = []
@@ -227,7 +225,6 @@ export default {
         console.log('res1', res1.data)
         // console.log(res2.data)
         // console.log('res2', res2)
-        // console.log(res4.data)
 
         // 获取默认收货地址
         let defaultAdress = res1.data.find(v => v.ifDefault) || {}
@@ -241,10 +238,10 @@ export default {
           promotion: res3.data || {},
           productList: a,
           goodsNoSend: b,
-          usableCouponCount: res4.data.length, // 可用优惠券数量
-          couponArray: res4.data,
-          invoinceArray: res5.data,
-          rewardNow: res6.data // hi币总额
+          // usableCouponCount: s.length || 0, // 可用优惠券数量
+          // couponArray: s, // 优惠卷
+          invoinceArray: res4.data,
+          rewardNow: res5.data // hi币总额
         }
       }))
   },
@@ -302,6 +299,23 @@ export default {
     }
   },
 
+  watch: {
+    $route (to, from) {
+      if (to.hash === '') {
+        this.addressShow = false
+        this.couponShow = false
+        this.invoinceShow = false
+        this.fullScreen = false
+      } else if (to.hash === '#address') {
+        this.addressShow = true
+      } else if (to.hash === '#coupon') {
+        this.couponShow = true
+      } else if (to.hash === '#invoice') {
+        this.invoinceShow = true
+      }
+    }
+  },
+
   async mounted () {
     const { code } = await api.clientGet('/api/order/calcFreight?time=' + new Date().getTime(), {})
     if (code === 60004 || code === 506) {
@@ -315,9 +329,21 @@ export default {
       }, 1000)
     } else if (code === 10026) {
       setTimeout(() => {
-        window.location.href = '/address/manage'
+        this.$dialog.confirm({
+          message: '系统检测到您还没有默认收获地址，是否要去填写收货地址'
+        }).then(() => {
+          window.location.href = '/address/manage?from=submit'
+        }).catch(() => {
+          window.location.href = '/order/cart'
+        })
       }, 1000)
     }
+    await api.clientGet('/api/coupon/listForUsable', { amount: this.totalPrice }).then(response => {
+      if (response.code === 200) {
+        this.couponArray = response.data
+        this.usableCouponCount = response.data.length
+      }
+    })
     console.log('reductionStrategy', this.reductionStrategy)
     if (this.promotion.promotionName && this.totalPrice >= this.promotion.threshold) {
       this.fullSub = this.promotion.amount
@@ -336,6 +362,8 @@ export default {
       this.addressShow = true
       this.fullScreen = true
       this.navTitle = '选择地址'
+      this.navTxt = '管理'
+      window.location.hash = 'address'
     },
     async handleSelect (val) {
       this.addressSelected = val
@@ -367,7 +395,8 @@ export default {
       this.invoinceShow = true
       this.fullScreen = true
       this.navTitle = '选择发票信息'
-      this.navTxt = ''
+      this.navTxt = '管理'
+      window.location.hash = 'invoice'
     },
     handleSelectInvoice (val) {
       this.fullScreen = false
@@ -381,11 +410,17 @@ export default {
       this.invoinceShow = false
     },
 
+    changeCoupon (val) {
+      this.couponArray = val
+      this.usableCouponCount = val.length
+    },
+
     openCoupon () {
-      if (this.usableCouponCount === 0) return
+      // if (this.usableCouponCount === 0) return
       this.couponShow = true
       this.fullScreen = true
       this.navTitle = '选择优惠卷'
+      window.location.hash = 'coupon'
     },
     handleSelectCoupon (val) {
       this.couponShow = false
@@ -445,6 +480,7 @@ export default {
     historyBack () {
       this.fullScreen = false
       this.navTitle = ''
+      this.navTxt = ''
       if (this.addressShow) {
         this.addressShow = false
         return
@@ -469,6 +505,12 @@ export default {
     jump () {
       if (this.invoinceShow) {
         window.location.href = '/invoice/list'
+      }
+      if (this.addressShow) {
+        window.location.href = '/address/manage?from=submit'
+      }
+      if (this.invoinceShow) {
+        window.location.href = '/invoice/list?from=submit'
       }
     },
 

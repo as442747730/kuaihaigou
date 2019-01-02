@@ -3,12 +3,14 @@
     <div class="margin-20">
       <h2>常见问题</h2>
       <ul class="question-item">
-        <li class="question-list" v-for="i in 8">
-          <div class="pro ib-middle"></div>
-          <div class="desc ib-middle">
-            <p>查询订单</p>
-            <span>快速查看订单详情 配送进度、确认收货等</span>
-          </div>
+        <li class="question-list" v-for="i in queslist">
+          <a target="_blank" :href="i.url">
+            <div class="pro ib-middle" :style="'background:url(' + i.imgurl + ') no-repeat center/contain'"></div>
+            <div class="desc ib-middle">
+              <p>{{ i.title }}</p>
+              <span>{{ i.content }}</span>
+            </div>
+          </a>
         </li>
       </ul>
     </div>
@@ -17,11 +19,15 @@
 
     <div class="answer">
       <div class="margin-20">
-        <h2>疑问解答<span>（{{ qestNum }}条）</span></h2>
+        <h2>
+          疑问解答
+          <span>（{{ qestNum }}条）</span>
+          <i class="to-ask" :class="{'tp-5': qestList.length === 0}" @click='toAsk'></i>
+        </h2>
         <div class="u_comment u_answer">
           <ul>
-            <li class="u_comment-list u_answer-list" v-for="(qest, index) in qestList" :key="index" :data-qest="qest">
-              <div class="header-img ib-middle" :style="{ background: `url(${qest.personalInfoResp.headimgurl}) no-repeat center/cover`}"></div>
+            <li class="u_comment-list u_answer-list" v-for="(qest, index) in qestList" :key="index">
+              <div class="header-img ib-middle" :style="{ background: `url(${qest.personalInfoResp.headimgurl || defaulthead}) no-repeat center/cover`}"></div>
               <div class="user-infor ib-middle">
                 <a class="ib-middle">{{ qest.personalInfoResp.nickname }}</a>
                 <br>
@@ -68,6 +74,12 @@
     </div>
     <!-- 回复列表 -->
     <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='answer' />
+
+    <!-- 提问编辑框 -->
+    <van-popup class='ques-wrap' v-model="quesShow" position="right" :overlay="true">
+      <van-nav-bar title="提问疑问" left-arrow right-text='发送' @click-left='quesShow = false' @click-right="submitQues"></van-nav-bar>
+      <textarea class="textarea" placeholder="请提出您的疑问" v-model='quesContent'></textarea>
+    </van-popup>
   </div>
 </template>
 <script>
@@ -84,7 +96,8 @@ export default {
   name: 'u-question',
   props: {
     goodsid: String,
-    scrollbottom: Boolean
+    scrollbottom: Boolean,
+    queslist: Array
   },
   components: {
     uUsericon,
@@ -92,6 +105,8 @@ export default {
   },
   data () {
     return {
+      defaulthead: this.defaulthead,
+
       getGoodId: this.goodsid,
       qestList: [],
       qestNum: 0,
@@ -106,16 +121,23 @@ export default {
       // 分页
       page: 1,
       pageEmpty: false,
-      pageLoding: true
+      pageLoding: true,
+
+      // 疑问解答编辑
+      quesShow: false,
+      quesContent: ''
     }
   },
   watch: {
     $route (to, from) {
       if (to.hash === '') {
         this.replyShowDelay = false
+        this.quesShow = false
         document.body.classList = ''
       } else if (to.hash === '#replay') {
         this.replyShowDelay = true
+      } else if (to.hash === '#toQues') {
+        this.quesShow = true
       }
     },
     scrollbottom (val) {
@@ -138,6 +160,26 @@ export default {
     //     }
     //   })
     // },
+    // 去提问
+    toAsk () {
+      this.quesShow = true
+      window.location.hash = 'toQues'
+    },
+    async submitQues () {
+      let param = {
+        goodsid: this.getGoodId,
+        question: this.quesContent
+      }
+      const { code, data } = await quizApi.consult(param)
+      if (code === 200) {
+        this.$toast('提问成功')
+        this.getData(1, true)
+        this.quesShow = false
+        window.location.hash = ''
+      } else {
+        this.$toast(data)
+      }
+    },
     async replyFn (val) {
       const toast1 = this.$toast.loading('回复信息加载中')
       let param = {
@@ -161,7 +203,7 @@ export default {
       // this.replystr = '2'
       console.log(this.replystr, 'replystr')
     },
-    async getData (page) {
+    async getData (page, clear = false) {
       this.pageLoding = true
       let params = {
         page: page,
@@ -174,7 +216,11 @@ export default {
         if (array.length === 0) {
           this.pageEmpty = true
         }
-        this.qestList.push(...array)
+        if (clear) {
+          this.qestList = array
+        } else {
+          this.qestList.push(...array)
+        }
         this.qestNum = total
         this.pageLoding = false
       }
@@ -214,9 +260,21 @@ export default {
   }
   .answer {
     h2 {
+      position: relative;
       margin: 30px 0 22px;
       span {
         font-weight: normal;
+      }
+      i {
+        position: absolute;
+        right: 0;
+        top: -5px;
+        width: 45px;
+        height: 45px;
+        background: url('~/assets/img/detail/ic_wen_blue_45x45@2x.png') no-repeat center/contain;
+        &.tp-5 {
+          top: -18px;
+        }
       }
     }
   }
@@ -257,7 +315,6 @@ export default {
   padding: 0;
   &-list {
     padding-bottom: 20px;
-    border-bottom: 1px solid #f1f1f1;
     &:first-child {
       margin-top: 0;
     }
@@ -265,6 +322,25 @@ export default {
       padding-bottom: 0;
       border-bottom: 0;
     }
+  }
+}
+
+.ques-wrap {
+  width: 100%;
+  height: 100%;
+  z-index: 10000!important;
+  .van-nav-bar__text {
+    color: #03A1CD!important;
+    font-size: 13px;
+    font-family: 'PingFangSC-Semibold';
+  }
+  .textarea {
+    width: 100%;
+    min-height: 40vh;
+    font-size: 14px;
+    color: #333;
+    padding: 20px;
+    box-sizing: border-box;
   }
 }
 </style>

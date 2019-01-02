@@ -21,7 +21,7 @@
       <div :class="['u-checkbox', selectId === item.id ? 'active' : '']"></div>
     </div>
     <!-- 不可用 -->
-    <div class="u-coupon-tip" v-if="unusableList.length !== 0">不可用优惠券</div>
+    <!-- <div class="u-coupon-tip" v-if="unusableList.length !== 0">不可用优惠券</div>
     <div class="u-coupon-cell disabled" v-for="(item, index2) in unusableList" :key="index2">
       <div class="left">
         <div class="left-content">
@@ -35,22 +35,31 @@
         </div>
       </div>
       <div class="placeholder"></div>
-    </div>
+    </div> -->
+
+    <van-dialog v-model="transShow" :show-confirm-button="false" close-on-click-overlay>
+      <div class="dialog-title font_medium">兑换优惠卷</div>
+      <div class="dialog-body">
+        <van-field v-model="codeNum" placeholder="请输入优惠券兑换码"></van-field>
+        <div class="confirm-btn font_medium" @click="sendTransform">兑换</div>
+      </div>
+    </van-dialog>
 
     <div class="u-coupon-bottom">
-      <!-- todo 优惠券说明 -->
-      <nuxt-link to="" class="u-link">优惠券说明</nuxt-link>
+      <a href="/coupon/explain" class="u-link">优惠券说明</a>
+      <a @click='transShow = true'>兑换优惠卷</a>
     </div>
 
   </div>
 </template>
 <script>
+  import { couponApi } from '~/api/coupon'
   export default {
     name: 'uCoupon',
 
     props: {
       amount: {
-        type: Number
+        type: String
       },
       usableList: {
         type: Array
@@ -63,7 +72,10 @@
     data () {
       return {
         noUse: false,
-        selectId: null
+        selectId: null,
+
+        transShow: false, // 兑换弹窗
+        codeNum: '' // 兑换码
       }
     },
 
@@ -77,6 +89,23 @@
         this.noUse = false
         this.selectId = val.id
         this.$emit('handleSelectCoupon', val)
+      },
+      // 确认兑换
+      async sendTransform () {
+        const { code, data } = await couponApi.convertCoupon({ code: this.codeNum })
+        if (code === 200) {
+          this.$toast('兑换成功')
+          this.transShow = false
+          this.renderData()
+        } else {
+          this.$toast(data)
+        }
+      },
+      async renderData () {
+        const { code, data } = await couponApi.listForUsable(this.amount)
+        if (code === 200) {
+          this.$emit('changeCoupon', data)
+        }
       }
     }
   }
@@ -198,9 +227,50 @@
     }
   }
   &-bottom {
-    // width: 100%;
+    width: 100%;
+    height: 50px;
+    left: 0;
     text-align: center;
-    color: #03A1CD;
+    background: #fff;
+    position: fixed;
+    bottom: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    a {
+      font-size: 13px;
+      color: #666;
+      display: inline-block;
+      padding: 0 50px;
+    }
+    .u-link {
+      border-right: 1px solid #f1f1f1;
+    }
+  }
+  .dialog-title {
+    padding: 20px 0 35px;
+    text-align: center;
+    font-size: 17px;
+    color: @cor_333;
+    font-weight: bold;
+  }
+  .dialog-body {
+    padding: 0px 20px 20px 20px;
+    .van-field {
+      margin-bottom: 20px;
+    }
+    .confirm-btn {
+      border-radius: 4px;
+      width: 100%;
+      height: 50px;
+      background: @nice-blue;
+      line-height: 50px;
+      color: white;
+      text-align: center;
+      font-size: 15px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
   }
 }
 </style>

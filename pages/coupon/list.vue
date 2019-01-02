@@ -44,7 +44,7 @@
       </section>
     </div>
     <div class="explain" v-if="navIndex === 0">
-      <nuxt-link to="/coupon/explain">优惠券说明</nuxt-link>
+      <a href="/coupon/explain">优惠券说明</a>
     </div>
   </div>
 </template>

@@ -95,11 +95,19 @@ export default {
     },
 
     addAddress () {
-      window.location.href = '/address/add'
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/address/add?from=submit'
+      } else {
+        window.location.href = '/address/add'
+      }
     },
 
     editAddress (val) {
-      window.location.href = '/address/' + val.id
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/address/' + val.id + '?from=submit'
+      } else {
+        window.location.href = '/address/' + val.id
+      }
     },
 
     deleteAddress (val) {
@@ -116,6 +124,11 @@ export default {
       })
     },
     successFn () {
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/order/submit'
+      } else {
+        window.location.href = '/address/list'
+      }
     }
   }
 }
@@ -134,6 +147,7 @@ export default {
     flex: 1;
   }
   &-ul {
+    padding-bottom: 50px;
     box-sizing: border-box;
   }
   &-li {

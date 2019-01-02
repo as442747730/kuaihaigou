@@ -10,6 +10,10 @@ export const goodsApi = {
   getTopSales (req) {
     return request.serverGet('/api/goods/listTopSales', {}, req)
   },
+  // 获取常见问题
+  frequently (no) {
+    return request.serverGet('/api/acp/list?no=' + no)
+  },
   /** -------------- client ------------------- */
   // 获取商品详情
   clientDetail (goodsId) {

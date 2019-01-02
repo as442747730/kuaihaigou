@@ -9,8 +9,7 @@
       <ul>
         <!-- 楼主 -->
         <li class="u_comment-list">
-          <div class="header-img ib-middle" v-if='masterinfo.personalInfoResp' :style="'background: url(' + masterinfo.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
-          <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
+          <div class="header-img ib-middle" v-if='masterinfo.personalInfoResp' :style="'background: url(' + (masterinfo.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
           <div class="user-infor ib-middle">
             <a class="ib-middle" v-if='masterinfo.personalInfoResp'>{{ masterinfo.personalInfoResp.nickname || '' }}</a>
             <a class="ib-middle" v-else>匿名用户</a>
@@ -24,8 +23,7 @@
           <p class="desc">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
         </li>
         <li class="u_comment-list" v-for="($v, $k) in (replyData.length === 0 ? replystr : replyData)">
-          <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + $v.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
-          <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
+          <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
           <div class="user-infor ib-middle">
             <template v-if='!$v.parentUsername'>
               <a class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</a>
@@ -65,8 +63,8 @@
         <p>没有更多评论了！</p>
       </div>
     </div>
-    <div class="u-reply-form" id="replay">
-      <van-field @focus="turnToEdit(null, masterinfo.personalInfoResp.nickname)" class="ib-middle" v-model="replay" type="textarea" :placeholder="'回复:' + (masterinfo.personalInfoResp ? masterinfo.personalInfoResp.nickname : '')" rows="1" autosize maxlength="40" />
+    <div class="u-reply-form" id="replay" @click='turnToEdit(null, masterinfo.personalInfoResp.nickname)'>
+      <van-field class="ib-middle" v-model="replay" type="textarea" :placeholder="'回复:' + (masterinfo.personalInfoResp ? masterinfo.personalInfoResp.nickname : '')" rows="1" autosize maxlength="40" disabled />
       <!-- <button class="ib-middle" @click="sayFn">回复</button> -->
     </div>
     <!-- 举报 -->
@@ -527,15 +525,16 @@ export default {
   }
 
   .u_comment-list {
-    overflow: hidden;
     &:first-child {
       margin-bottom: 20px;
-      border-bottom: 1px solid #eee;
       .desc {
-        margin-bottom: 15px;
+        padding-bottom: 15px;
       }
     }
     &:not(:first-child) {
+      &:after {
+        display: none;
+      }
       .user-infor {
         a {
           font-weight: normal;
