@@ -1,9 +1,6 @@
 <template>
   <div class="m-address-add">
-<<<<<<< HEAD
     <!-- <com-head :titleConfig="configtitle"></com-head> -->
-=======
->>>>>>> 71c729ce579019e3d36ed16d6bb0a017f53379ad
     <div class="m-address-add-form">
       <div class="m-address-add-form-item">
         <div class="item-label">姓名</div>
