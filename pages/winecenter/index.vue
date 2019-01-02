@@ -1,40 +1,33 @@
 <template>
-  <div class="winecenter" ref="scrollElem">
-    <div class="winecenter-head">
-      <div class="upper">
-        <div class="top">
-          <div class="top_l" @click="toOthers">
-            <span class="icon_switch"></span>
-            <span class="world">其它商品</span>
-          </div>
-          <div class="top_r" @click="toSearch">
-            <i class="icon_search"></i>
-            <i class="icon_buy"></i>
-          </div>
-        </div>
-        <div class="screen">
-          <div class="screen-item" @click="elCountry">国家产区</div>
-          <div class="screen-item" :class="[{active: sizerIndex == index}, {hascor: item.iscor}]" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item.name}}</div>
-        </div>
+  <div class="winecenter">
+    <div class="top-one">
+      <div class="one_l" @click="toOthers">
+        <span class="icon_switch"></span>
+        <span class="world">其它商品</span>
       </div>
-      <div class="elmdl" :class="{elZindex: twoType}">
-        <div class="elmdl-item" :class="[{active: sizerIndex == index + 3}, {hascor: rank.iscor}]" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
-          <span>{{rank.name}}</span>
-        </div>
-        <div class="elmdl-item" :class="{active: sizerIndex == 6}" @click="elScreens(6)">
-          <span>{{noviceMaster}}</span>
-        </div>
+      <div class="one_r" @click="toSearch">
+        <i class="icon_search"></i>
+        <i class="icon_buy"></i>
       </div>
-      <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens" @updateList="onListFn" @subRest="subRest" @subOk="subOk">
-        <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6"></div>
-      </list-two>
     </div>
-    <div class="winecenter-content">
-      <section class="novice">
+    <div class="top-two">
+      <div class="two-item" @click="elCountry">国家产区</div>
+      <div class="two-item" :class="[{active: sizerIndex == index}, {hascor: item.iscor}]" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item.name}}</div>
+    </div>
+    <div class="top-three" :class="{threeZindex: twoType}">
+      <div class="three-item" :class="[{active: sizerIndex == index + 3}, {hascor: rank.iscor}]" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
+        <span>{{rank.name}}</span>
+      </div>
+      <div class="three-item" :class="{active: sizerIndex == 6}" @click="elScreens(6)">
+        <span>{{noviceMaster}}</span>
+      </div>
+    </div>
+    <div class="winecenter-content" ref="scrollElem">
+      <section class="novice" ref="scrollChild">
         <div class="com-item" v-for="(good, index) in goodsList" :key="index">
           <div class="item_l">
             <a :href="'/detail/' + good.id">
-              <div class="item_l_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
+              <div class="item_l_bk" v-lazy:background-image="good.imgUrl"></div>
             </a>
           </div>
           <div class="item_r" v-if="!isNovice">
@@ -125,6 +118,11 @@
     <!-- 国家弹窗 start -->
     <country-cpm :showcountry="showCountry" :countryIndex="countryIndex" :countryList="countryList" :areaList="areaList" :areaIndex="areaIndex" @selectCountry="selectCountry" @selectArea="selectArea" @delCountry="delCountry" @countryRest="countryRest" @countryOk="countryOk"></country-cpm>
     <!-- 国家弹窗 end -->
+    <!-- 刷选器 Start -->
+    <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens" @updateList="onListFn" @subRest="subRest" @subOk="subOk">
+      <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6"></div>
+    </list-two>
+    <!-- 刷选器 Start -->
    
   </div>
 </template>
@@ -234,12 +232,13 @@ export default {
   },
   mounted () {
     this.addBarwid()
-    window.addEventListener('scroll', () => {
-      let winH = document.documentElement.clientHeight || document.body.clientHeight
-      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
+    let scrollElem = this.$refs.scrollElem
+    scrollElem.addEventListener('scroll', () => {
+      let allH = scrollElem.clientHeight
+      let elemBound = this.$refs.scrollChild.getBoundingClientRect()
       let _top = Math.abs(elemBound.top)
       let _height = elemBound.height
-      let bottomH = _height - (_top + winH)
+      let bottomH = _height - (_top + allH)
       if (bottomH <= 100) {
         if (this.loadOk && this.moreData) {
           this.loadOk = false
@@ -689,30 +688,20 @@ export default {
   background: #fff;
   line-height: 1;
   font-size: 12px;
-  padding-top: 140px;
   &-content {
     .padlr20;
-  }
-  &-head {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    z-index: 10;
+    max-height: calc(100vh - 190px);
+    overflow: auto;
   }
 }
-
-.upper {
-  padding-top: 10px;
-  z-index: 3000;
-  position: relative;
+.top-one {
+  height: 40px;
   background: #fff;
+  position: relative;
+  z-index: 4000;
   .padlr20;
-}
-
-.top {
   .flex_between;
-  &_l {
+  .one_l {
     height: 28px;
     background: rgba(222, 243, 249, 1);
     border-radius: 14px;
@@ -739,8 +728,7 @@ export default {
       color: @nice-blue;
     }
   }
-
-  &_r {
+  .one_r {
     width: 70px;
     .flex_between;
 
@@ -760,12 +748,15 @@ export default {
     }
   }
 }
-
-.screen {
-  padding: 20px 0;
+.top-two {
+  height: 40px;
+  z-index: 9999;
+  background: #fff;
+  position: relative;
+  z-index: 4000;
+  .padlr20;
   .flex_between;
-
-  &-item {
+  .two-item {
     font-size: 13px;
     font-family: PingFangSC-Regular;
     font-weight: 400;
@@ -808,17 +799,14 @@ export default {
     }
   }
 }
-
-.elmdl {
-  position: relative;
-  z-index: 60;
-  padding-bottom: 15px;
+.top-three {
+  height: 40px;
   background: #fff;
-  border-bottom: 1PX solid #f5f5f5;
-  .padlr20;
+  position: relative;
+  border-bottom: 1PX solid @cor_border;
+  padding: 0 20px 10px;
   .flex_between;
-
-  &-item {
+  .three-item {
     .flex_allCenter;
     height: 30px;
     background: #f8f8f8;
@@ -871,12 +859,10 @@ export default {
     }
   }
 }
-.elZindex {
-  z-index: 3000;
+.threeZindex {
+  z-index: 4000 !important;
 }
-
 // 选酒公共
-
 .com-item {
 
   .flex_between;
@@ -884,27 +870,16 @@ export default {
   margin: 20px 0;
 
   .item_l {
-
     width: 120px;
-
-    height: 213px;
-
-    border-radius: 4px;
-
+    height: 210px;
+    border-radius: 8px;
     border: 1PX solid #eaeaea;
-
     &_bk {
-
       margin-top: 6px;
-
       width: 100%;
-
       height: 202px;
-
       .bg_cover;
-
     }
-
   }
 
   .item_r {
@@ -968,13 +943,9 @@ export default {
 // 新手选酒
 
 .novice {
-
-  padding-bottom: 50px;
-
   .itemr-info {
 
     margin-left: -7px;
-
     padding-bottom: 10px;
 
     &>span {

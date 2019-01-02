@@ -1,32 +1,66 @@
 <template>
   <div class="winecenter" ref="scrollElem">
-    <div class="top-one">
-      <div class="one_r" @click="toSearch">
-        <i class="icon_search"></i>
-        <i class="icon_buy"></i>
+    <div class="winecenter-head">
+      <div class="upper">
+        <div class="top">
+          <div class="top_l" @click="toOthers">
+            <span class="icon_switch"></span>
+            <span class="world">其它商品</span>
+          </div>
+          <div class="top_r" @click="toSearch">
+            <i class="icon_search"></i>
+            <i class="icon_buy"></i>
+          </div>
+        </div>
+        <div class="screen">
+          <div class="screen-item" @click="elCountry">国家产区</div>
+          <div class="screen-item" :class="[{active: sizerIndex == index}, {hascor: item.iscor}]" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item.name}}</div>
+        </div>
       </div>
-    </div>
-    <div class="top-two">
-      <div class="two-item" @click="elCountry">国家产区</div>
-      <div class="two-item" :class="[{active: sizerIndex == index}, {hascor: item.iscor}]" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item.name}}</div>
-    </div>
-    <div class="top-three">
-      <div class="three-item" :class="[{active: sizerIndex == index + 3}, {hascor: rank.iscor}]" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
-        <span>{{rank.name}}</span>
+      <div class="elmdl" :class="{elZindex: twoType}">
+        <div class="elmdl-item" :class="[{active: sizerIndex == index + 3}, {hascor: rank.iscor}]" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
+          <span>{{rank.name}}</span>
+        </div>
+        <div class="elmdl-item" :class="{active: sizerIndex == 6}" @click="elScreens(6)">
+          <span>{{noviceMaster}}</span>
+        </div>
       </div>
-      <div class="three-item" :class="{active: sizerIndex == 6}" @click="elScreens(6)">
-        <span>{{noviceMaster}}</span>
-      </div>
+      <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens" @updateList="onListFn" @subRest="subRest" @subOk="subOk">
+        <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6"></div>
+      </list-two>
     </div>
     <div class="winecenter-content">
       <section class="novice">
         <div class="com-item" v-for="(good, index) in goodsList" :key="index">
           <div class="item_l">
             <a :href="'/detail/' + good.id">
-              <div class="item_l_bk" v-lazy:background-image="good.imgUrl"></div>
+              <div class="item_l_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
             </a>
           </div>
-          <div class="item_r">
+          <div class="item_r" v-if="!isNovice">
+            <h3>{{good.goodsName}}</h3>
+            <p>
+              <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
+            </p>
+            <div class="itemr-info">
+              <span class="info_item icon_time">{{good.year}}</span>
+              <span class="info_item icon_address">{{good.country}}／{{good.area}}</span>
+              <span class="info_item icon_variety">{{good.variety}}</span>
+            </div>
+            <div class="u-bars">
+              <div class="bars">
+                <div class="bars-left">复杂：{{good.complexity}} <span v-if="good.complexity">分</span></div>
+                <div class="bars-right">
+                  <span class="bars-right_top" ref="ubars" :data-bar="good.complexity"></span>
+                </div>
+              </div>
+            </div>
+            <div class="itemr-price">
+              <span class="t_price">¥ {{good.actualPrice}}</span>
+              <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
+            </div>
+          </div>
+          <div class="item_r" v-else>
             <h3>{{good.goodsName}}</h3>
             <p>
               <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
@@ -91,11 +125,6 @@
     <!-- 国家弹窗 start -->
     <country-cpm :showcountry="showCountry" :countryIndex="countryIndex" :countryList="countryList" :areaList="areaList" :areaIndex="areaIndex" @selectCountry="selectCountry" @selectArea="selectArea" @delCountry="delCountry" @countryRest="countryRest" @countryOk="countryOk"></country-cpm>
     <!-- 国家弹窗 end -->
-    <!-- 刷选器 Start -->
-    <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens" @updateList="onListFn" @subRest="subRest" @subOk="subOk">
-      <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6"></div>
-    </list-two>
-    <!-- 刷选器 Start -->
    
   </div>
 </template>
@@ -120,11 +149,9 @@ export default {
     let params = {
       page: 1,
       count: 10,
-      ifWine: true,
-      ifExclusive: true
+      ifWine: true
     }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
-    console.log('goodCode', goodCode)
     if (goodCode === 200) {
       let { array, total, page, totalPageNo } = goodData
       return {
@@ -144,15 +171,12 @@ export default {
       isNovice: true, // 是否为新手
       stepvalue: 0, // 滑块的百分比
       sliderStep: 0, // 滑块步长
-      stepHalf: 0,
-      stepOne: 0,
-      isSlider: false, // 是否滑动滑块
       postObj: {},
       postType: true,
       sizerOne: [{name: '价格类型', iscor: false}, {name: '场景特色', iscor: false}, {name: '推荐排序', iscor: false}],
       sizerTwo: [{name: '等级', iscor: false}, {name: '葡萄品种', iscor: false}, {name: '其他筛选', iscor: false}],
       sizerIndex: null,
-      noviceMaster: '高手选酒',
+      noviceMaster: '新手选酒',
       isCountry: false, // 是否国家产区
       isPrice: false, // 是否为价格类型
       goodsList: [], // 商品列表
@@ -185,8 +209,7 @@ export default {
       tansmit: {
         page: 1,
         count: 10,
-        ifWine: true,
-        ifExclusive: true
+        ifWine: true
       }, // 传递参数
       curTotal: 0,
       curPage: 1,
@@ -307,8 +330,8 @@ export default {
               delete subObj.minAlcoholDegree
               delete subObj.maxAlcoholDegree
             } else {
-              subObj.minAlcoholDegree = id[0]
-              subObj.maxAlcoholDegree = id[1]
+              subObj.minAlcoholDegree = id.min
+              subObj.maxAlcoholDegree = id.max
             }
           } else {
             this.netIndex = elIndex
@@ -316,8 +339,8 @@ export default {
               delete subObj.minNetVolume
               delete subObj.maxNetVolume
             } else {
-              subObj.minNetVolume = id[0]
-              subObj.maxNetVolume = id[1]
+              subObj.minNetVolume = id.min
+              subObj.maxNetVolume = id.max
             }
           }
           break
@@ -340,7 +363,7 @@ export default {
       // console.log(this.tansmit, 'tansmit')
     },
     subRest () {
-      this.tansmit = { page: 1, count: 10, ifWine: true, ifExclusive: true }
+      this.tansmit = { page: 1, count: 10, ifWine: true }
       this.getPageData()
       this.closeScreens()
       this.clearIndex()
@@ -350,7 +373,7 @@ export default {
       this.getPageData()
     },
     countryRest () {
-      this.tansmit = { page: 1, count: 10, ifWine: true, ifExclusive: true }
+      this.tansmit = { page: 1, count: 10, ifWine: true }
       this.showCountry = false
       this.getPageData()
     },
@@ -394,10 +417,6 @@ export default {
       // 进度条
       this.$nextTick(() => {
         let ubars = this.$refs.ubars
-        console.log(ubars, 'ubars')
-        if (!ubars || ubars.length === 0) {
-          return
-        }
         ubars.map(v => {
           v.style.width = v.getAttribute('data-bar') + '%'
         })
@@ -441,7 +460,7 @@ export default {
         this.showtwo = false
         this.sizerIndex = null
       }
-      if (index === 2) {
+      if (index === 2 || index === 6) {
         this.postType = false
       } else {
         this.postType = true
@@ -614,7 +633,7 @@ export default {
     getInfos () {
       // 价格类型中的价格
       let priceArr = this.extras.priceRangeRespList
-      let truePirce = priceArr.map((v, index) => {
+      let truePirce = priceArr.map((v, index, array) => {
         if (v.max === 0) {
           v.name = v.min + '~' + '以上'
         } else {
@@ -623,7 +642,6 @@ export default {
         v.id = v
         return v
       })
-      // console.log(truePirce, 'truePirce')
       this.priceList = truePirce
     },
     combProps (array, mark) {
@@ -662,8 +680,6 @@ export default {
       this.sizerTwo = this.sizerTwo.map(v => {
         return { name: v.name, iscor: false }
       })
-    },
-    changeSlider (value) {
     }
   }
 }
@@ -673,21 +689,58 @@ export default {
   background: #fff;
   line-height: 1;
   font-size: 12px;
+  padding-top: 140px;
   &-content {
     .padlr20;
-    max-height: calc(100vh - 190px);
-    overflow: auto;
+  }
+  &-head {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 10;
   }
 }
-.top-one {
-  height: 40px;
-  background: #fff;
+
+.upper {
+  padding-top: 10px;
+  z-index: 3000;
   position: relative;
-  z-index: 4000;
-  display: flex;
-  justify-content: flex-end;
+  background: #fff;
   .padlr20;
-  .one_r {
+}
+
+.top {
+  .flex_between;
+  &_l {
+    height: 28px;
+    background: rgba(222, 243, 249, 1);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    padding-left: 3px;
+
+    &>span {
+      font-size: 11px;
+      font-family: PingFangSC-Semibold;
+      font-weight: 600;
+      color: rgba(3, 161, 205, 1);
+    }
+
+    .icon_switch {
+      width: 22px;
+      height: 22px;
+      background-image: url("~/assets/img/Icons/ic_qiehuan_blue_22x22.png");
+      .bg_cover;
+    }
+
+    .world {
+      padding: 0 10px 0 8px;
+      color: @nice-blue;
+    }
+  }
+
+  &_r {
     width: 70px;
     .flex_between;
 
@@ -707,15 +760,12 @@ export default {
     }
   }
 }
-.top-two {
-  height: 40px;
-  z-index: 9999;
-  background: #fff;
-  position: relative;
-  z-index: 4000;
-  .padlr20;
+
+.screen {
+  padding: 20px 0;
   .flex_between;
-  .two-item {
+
+  &-item {
     font-size: 13px;
     font-family: PingFangSC-Regular;
     font-weight: 400;
@@ -758,14 +808,17 @@ export default {
     }
   }
 }
-.top-three {
-  height: 40px;
-  background: #fff;
+
+.elmdl {
   position: relative;
-  border-bottom: 1PX solid @cor_border;
-  padding: 0 20px 10px;
+  z-index: 60;
+  padding-bottom: 15px;
+  background: #fff;
+  border-bottom: 1PX solid #f5f5f5;
+  .padlr20;
   .flex_between;
-  .three-item {
+
+  &-item {
     .flex_allCenter;
     height: 30px;
     background: #f8f8f8;
@@ -818,18 +871,28 @@ export default {
     }
   }
 }
-.threeZindex {
-  z-index: 4000 !important;
+.elZindex {
+  z-index: 3000;
 }
+
 // 选酒公共
+
 .com-item {
+
   .flex_between;
+
   margin: 20px 0;
+
   .item_l {
+
     width: 120px;
+
     height: 213px;
+
     border-radius: 4px;
+
     border: 1PX solid #eaeaea;
+
     &_bk {
 
       margin-top: 6px;
@@ -905,6 +968,9 @@ export default {
 // 新手选酒
 
 .novice {
+
+  padding-bottom: 50px;
+
   .itemr-info {
 
     margin-left: -7px;

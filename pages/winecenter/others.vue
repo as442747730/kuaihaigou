@@ -21,7 +21,7 @@
       <ul class="othList">
         <li class="othList-item" v-for="(good, index) in goodsList" :key="index">
           <div class="top">
-            <div class="top_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
+            <div class="top_bk" v-lazy:background-image="good.imgUrl"></div>
           </div>
           <div class="bottom">
             <div class="head">{{good.goodsName}}</div>
@@ -296,6 +296,7 @@ export default {
         &_bk {
           width: 152px;
           height: 155px;
+          .bg_cover;
         }
       }
 

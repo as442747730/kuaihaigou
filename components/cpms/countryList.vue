@@ -10,7 +10,7 @@
         <div class="sec-l rollList">
           <ul class="countrylist">
             <!-- <li>所有国家</li> -->
-            <li :class="{active: countryIndex === index}" v-for="(country, index) in countryList" :key="index" @click="elCounrty(country, index)"">{{country.name}}</li>
+            <li :class="{active: countryIndex === index}" v-for="(country, index) in countryList" :key="index" @click="elCounrty(country, index)">{{country.name}}</li>
           </ul>
         </div>
         <div class="sec-r rollList">
