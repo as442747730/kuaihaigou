@@ -26,6 +26,7 @@
 </template>
 <script>
 import api from '~/utils/request'
+import comHead from '~/components/com-head'
 
 export default {
   name: 'invoice',
@@ -38,6 +39,10 @@ export default {
         { hid: 'title', name: 'title', content: '发票信息管理' }
       ]
     }
+  },
+
+  components: {
+    comHead
   },
 
   async asyncData (req) {
@@ -55,7 +60,8 @@ export default {
 
   data () {
     return {
-      invoiceList: []
+      invoiceList: [],
+      configtitle: '发票信息'
     }
   },
 

@@ -510,7 +510,7 @@ export default {
         window.location.href = '/address/manage?from=submit'
       }
       if (this.invoinceShow) {
-        window.location.href = '/invoice/list?from=submit'
+        window.location.href = '/invoice/manage?from=submit'
       }
     },
 

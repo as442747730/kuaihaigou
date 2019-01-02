@@ -237,6 +237,7 @@ export default {
         padding-right: 25px;
       }
       .item-content {
+        font-size: 15px;
         flex: 1;
         position: relative;
         input {
