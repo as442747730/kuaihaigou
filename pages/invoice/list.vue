@@ -79,7 +79,7 @@ export default {
       } else {
         window.location.href = '/invoice/' + val.id
       }
-    }
+    },
     getManage () {
       window.location.href = '/invoice/manage'
     },
