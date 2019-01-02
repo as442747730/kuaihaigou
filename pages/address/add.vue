@@ -1,6 +1,6 @@
 <template>
   <div class="m-address-add">
-    <com-head :titleConfig="configtitle"></com-head>
+    <!-- <com-head :titleConfig="configtitle"></com-head> -->
     <div class="m-address-add-form">
       <div class="m-address-add-form-item">
         <div class="item-label">姓名</div>
@@ -47,7 +47,7 @@
 </template>
 <script>
 import { addressApi } from '~/api/address'
-import comHead from '~/components/com-head'
+// import comHead from '~/components/com-head'
 
 export default {
   name: 'addressAdd',
@@ -61,7 +61,7 @@ export default {
     }
   },
   components: {
-    comHead
+    // comHead
   },
 
   async asyncData (req) {
@@ -184,7 +184,11 @@ export default {
       const { code } = await addressApi.createAddress(req)
       if (code === 200) {
         this.$toast.success('新增成功')
-        window.location.href = '/address/manage'
+        if (this.$route.query.from === 'submit') {
+          window.location.href = '/address/manage?from=submit'
+        } else {
+          window.location.href = '/address/manage'
+        }
       }
     }
   }

@@ -23,7 +23,6 @@ export default {
       switch (path) {
         case '/mine/person':
         case '/mine/follow':
-        case '/invoice/list':
         case '/address/list':
         case '/coupon/list':
         case '/account/mgnumber':
@@ -33,10 +32,21 @@ export default {
           window.location.href = '/account/mgnumber'
           break
         case '/address/manage':
-          window.location.href = '/address/list'
+          if (this.$route.query.from === 'submit') {
+            window.location.href = '/order/submit'
+          } else {
+            window.location.href = '/address/list'
+          }
           break
         case '/address/add':
           window.location.href = '/address/manage'
+          break
+        case '/invoice/list':
+          if (this.$route.query.from === 'submit') {
+            window.location.href = '/order/submit'
+          } else {
+            window.location.href = '/mine'
+          }
           break
         case '/invoice/add':
           window.location.href = '/invoice/list'
