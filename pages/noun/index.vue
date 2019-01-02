@@ -77,13 +77,14 @@
           </div>
         </section>
         <section class="picture" v-if="lynavIndex === 1">
-          <ul class="picture-uls" v-if="imagesArr.length > 0">
+          <ul class="picture-uls">
             <li
               class="uls_li"
-              v-for="(image, index) in imagesArr"
+              ref="liImg"
+              v-for="(image, index) in imgsArray"
               @click="opImage(index)"
               :key="index">
-              <img v-lazy="image" />
+              <img :style="{'height': image._height + 'px'}" v-lazy="image.src" />
             </li>
           </ul>
         </section>
@@ -149,6 +150,7 @@ export default {
         objVariety = varietyData
         _imgArr = varietyData.imgs
       }
+      // _imgArr = ['http://public.kuaihaigou.com/FrWQ0eZd2oylIQh0gK8egK4oa713', 'https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=962a2223b4014a909e3e40bd99763971/21a4462309f79052101fdaaf01f3d7ca7bcbd51b.jpg', 'https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=e22d24982b9759ee555066cb82fa434e/0dd7912397dda14447e32c27bfb7d0a20df486b9.jpg', 'https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=2e94e5c1282dd42a400907ab333a5b2f/e4dde71190ef76c65e514b839016fdfaae516793.jpg', 'https://ss3.baidu.com/-fo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=5ed2cd93e424b899c13c7f385e071d59/d52a2834349b033b2d5f1b4918ce36d3d439bd4a.jpg', 'https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=afe49511adec08fa390015a769ef3d4d/b17eca8065380cd7c9c49343ac44ad3458828141.jpg', 'https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=c1c3a89e63061d95624631384bf50a5d/5ab5c9ea15ce36d3bdfb529637f33a87e850b19d.jpg', 'http://img0.imgtn.bdimg.com/it/u=3960337833,4234451047&fm=26&gp=0.jpg', 'https://f11.baidu.com/it/u=2465775762,1509670197&fm=72', 'http://img1.imgtn.bdimg.com/it/u=3390961998,1154407883&fm=200&gp=0.jpg', 'http://img5.imgtn.bdimg.com/it/u=639238630,2179659181&fm=26&gp=0.jpg']
       return { letter: objInit, objDetail: objVariety, imagesArr: _imgArr }
     } else if (queryNum === '1') {
       let worldId = -1
@@ -170,6 +172,7 @@ export default {
   data () {
     return {
       imagesArr: [],
+      imgsArray: [],
       lynavIndex: 0,
       navList: [{name: '葡萄品种'}, {name: '产区'}, {name: '酒庄'}],
       navIndex: null,
@@ -199,7 +202,6 @@ export default {
       if (this.navIndex === 0) {
         return '品种'
       } else if (this.navIndex === 1) {
-        console.log('start getType')
         return '产区'
       } else if (this.navIndex === 2) {
         return '酒庄'
@@ -222,14 +224,11 @@ export default {
       }
     },
     showWineryList () {
+      // 是否显示酒庄列表
       return this.navIndex === 2 && this.isWineryList
     }
   },
   mounted () {
-    let pics = tools.getImgInfos('http://public.kuaihaigou.com/Fhyr5i1aTQOYx5kJ5NpnpM_MxeYb', 100)
-    pics.then(res => {
-      console.log(res)
-    })
   },
   methods: {
     elNavs (index) {
@@ -252,6 +251,9 @@ export default {
       // 介绍 图片
       if (this.lynavIndex === 0 && this.isMore) {
         return
+      }
+      if (index === 1) {
+        this.adjustImage()
       }
       this.lynavIndex = index
     },
@@ -291,13 +293,14 @@ export default {
       this.showone = false
       this.varity.corIndex = 0
       this.varity.enzhIndex = 0
-      let firstCountry = this.countryList[0].countryid
       /** {品种 | 产区 | 酒庄} */
       if (this.navIndex === 0) {
         this.selectVarietyId = 1 // 红葡萄
       } else if (this.navIndex === 1) {
+        let firstCountry = this.countryList[0].countryid
         this.selectAreaId = firstCountry
       } else if (this.navIndex === 2) {
+        let firstCountry = this.countryList[0].countryid
         let params = {
           classify: -1,
           countryid: firstCountry
@@ -397,6 +400,7 @@ export default {
         // console.log('data', data)
         this.showone = false
         this.objDetail = data
+        this.imagesArr = !data.imgs ? [] : data.imgs
       }
     },
     async getWineryList () {
@@ -416,6 +420,7 @@ export default {
         console.log('data', data)
         this.isWineryList = false
         this.objDetail = data
+        this.imagesArr = !data.imgs ? [] : data.imgs
       }
     },
     opImage (position, timer) {
@@ -431,6 +436,21 @@ export default {
           instance.close()
         }, timer)
       }
+    },
+    adjustImage () {
+      // 图片高度
+      let _promises = this.imagesArr.map(path => {
+        return tools.getImgInfos(path, 105)
+      })
+      Promise.all(_promises).then(res => {
+        console.log('res', res)
+        this.imgsArray = res
+        this.$nextTick(() => {
+          tools.waterFall('.uls_li', '.picture-uls', 3)
+        })
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   watch: {
@@ -444,7 +464,7 @@ export default {
 }
 </script>
 </script>
-<style lang="less" scoped>
+<style lang="less">
 @bgcor1: #fff;
 .nouns {
   width: 100vw;
@@ -634,7 +654,10 @@ export default {
     margin-bottom: 0;
   }
   .featcontent {
+    width: 100vw;
     .cont {
+      width: 100%;
+      box-sizing: border-box;
       padding: 20px;
       background: @bgcor1;
       font-size:14px;
@@ -642,10 +665,12 @@ export default {
       font-weight:400;
       color:rgba(102,102,102,1);
       line-height:28px;
+      p {
+        width: 100%;
+      }
       img {
-        display: inline-block;
         max-width: 100%;
-        margin: 0 auto;
+        height: auto;
       }
     }
   }
@@ -655,13 +680,16 @@ export default {
     padding: 0 20px;
     background: #fff;
     &-uls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      align-content: center;
+      // display: flex;
+      // flex-wrap: wrap;
+      // align-items: center;
+      // align-content: top;
       margin-left: -10px;
       border-bottom: 20px solid transparent;
+      position: relative;
       .uls_li {
+        display: inline-block;
+        vertical-align: top;
         width: 33.3%;
         box-sizing: border-box;
         border-left: 10px solid transparent;

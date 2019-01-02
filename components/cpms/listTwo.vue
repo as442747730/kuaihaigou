@@ -106,8 +106,8 @@ export default {
 
 }
 .secs_ok {
-  padding-bottom: 45px;
-  min-height: 40vh;
+  // padding-bottom: 45px;
+  padding-bottom: 20px;
 }
 
 .footbtns {

@@ -246,7 +246,7 @@ export default {
 
     z-index: 100;
 
-    box-shadow: 3px 3px 5px #636262;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
 
     .flex_between;
 

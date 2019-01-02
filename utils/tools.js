@@ -16,6 +16,15 @@ const regexp = {
   password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$/ // 数字字母大小写 6-16位
 }
 
+const outerHeight = (el, includeMargin) => {
+  let height = el.offsetHeight
+  if (includeMargin) {
+    let style = el.currentStyle || getComputedStyle(el)
+    height += parseInt(style.marginTop) + parseInt(style.marginBottom)
+  }
+  return height
+}
+
 // 辅助通用方法
 export default {
   // 正则检测

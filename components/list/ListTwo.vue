@@ -5,7 +5,7 @@
       <span class="l_name">{{ l_two }}</span>
     </div>
     <div class="list-r">
-      <van-switch active-color="#03A1CD" size="24px" :value="vswch" @input="onInput" />
+      <van-switch active-color="#03A1CD" size="20px" :value="vswch" @input="onInput" />
     </div>
   </div>
 </template>

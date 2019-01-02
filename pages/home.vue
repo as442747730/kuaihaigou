@@ -32,7 +32,7 @@
             社区活动
           </span>
         </span>
-        <span class="tab">
+        <span class="tab" @click="toArrondi">
           <i class="tab-icon-sjzq"></i>
           <span class="tab-txt">
             商家专区
@@ -370,6 +370,7 @@
 </template>
 <script>
 // import api from '~/utils/request'
+import { userApi } from '~/api/users'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 
 export default {
@@ -435,9 +436,37 @@ export default {
     toEncys () {
       // 红酒百科
       window.location.href = '/encys'
+    },
+    async toArrondi () {
+      //  商家专区
+      const { code, data } = await userApi.userDetail()
+      if (code === 200) {
+        let { certCategory } = data
+        if (certCategory === 0) {
+          this.$dialog.confirm({
+            title: '提示',
+            message: '商家专区仅对认证用户开放，您的账号尚未认证，是否前往认证?',
+            confirmButtonText: '去认证',
+            cancelButtonText: '取消'
+          }).then(() => {
+            // window.location.href = '/account/login'
+          }).catch(() => {})
+        } else {
+          window.location.href = '/winecenter/arrondi'
+        }
+      } else if (code === 506) {
+        this.$dialog.confirm({
+          title: '提示',
+          message: '商家专区仅对认证用户开放，检测到您未登录，请先登录！',
+          confirmButtonText: '去登陆',
+          cancelButtonText: '取消'
+        }).then(() => {
+          console.log(123456)
+          window.location.href = '/account/login'
+        }).catch(() => {})
+      }
     }
   }
-
 }
 </script>
 <style lang="less">
