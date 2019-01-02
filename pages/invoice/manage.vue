@@ -1,25 +1,27 @@
 <template>
   <div class="m-invoice">
-    <com-head :titleConfig="configtitle">
-      <!-- <div>管理</div> -->
-    </com-head>
     <div class="m-invoice-ul">
 
       <div class="m-invoice-li" v-for="(item, index) in invoiceList">
         <div class="top">
-          <div class="top-title">{{ (item.invoiceType === 1 ? '纸质' : '电子') + (item.headType === 1 ? '个人' : '单位') + '发票' }}<span class="default" v-if="item.isDefault">默认</span></div>
+          <div class="top-title">{{ (item.invoiceType === 1 ? '纸质' : '电子') + (item.headType === 1 ? '个人' : '单位') + '发票' }}</div>
           <div class="top-desc">抬头：{{ item.head }}</div>
           <div class="top-desc" v-if="item.headType === 2">单位税号：{{ item.taxIdentify }}</div>
           <div class="top-desc">内容：{{ item.contentType === 1 ? '酒水/饮料' : '购物明细' }}</div>
           <div class="top-desc"  v-if="item.invoiceType === 2">收票邮箱：{{ item.email }}</div>
         </div>
+        <div class="bottom">
+          <div :class="['u-checkbox', item.ifDefault ? 'active' : '']" @click="setDefault(item)"></div>
+          <span>默认发票</span>
+          <div class="icon-label icon-edit active-status" @click="editInvoice(item)">编辑</div>
+          <div class="icon-label icon-delete active-status" @click="deleteInvoice(item)">删除</div>
+        </div>
       </div>
 
     </div>
 
-    <div class="bottom-section f-bottom-btn">
-      <p class="instruction" @click="gotoInstruction"><van-icon name="info-o" />发票说明</p>
-      <div class="m-invoice-btn active-status" @click="getManage">管理</div>
+    <div class="f-bottom-btn">
+      <div class="m-invoice-btn active-status" @click="addInvoice">添加发票信息</div>
     </div>
 
   </div>
@@ -67,24 +69,42 @@ export default {
       }
     },
     addInvoice () {
-      if (this.$route.query.from === 'submit') {
-        window.location.href = '/invoice/add?from=submit'
-      } else {
-        window.location.href = '/invoice/add'
-      }
+      window.location.href = '/invoice/add'
     },
     editInvoice (val) {
-      if (this.$route.query.from === 'submit') {
-        window.location.href = '/invoice/' + val.id + '?from=submit'
-      } else {
-        window.location.href = '/invoice/' + val.id
-      }
-    }
-    getManage () {
-      window.location.href = '/invoice/manage'
+      window.location.href = '/invoice/' + val.id
     },
-    gotoInstruction () {
-      window.location.href = '/invoice/instructions'
+
+    async setDefault (val) {
+      console.log(val)
+      if (val.ifDefault) return
+      const { code, data } = await api.clientPost('/api/invoice/setDefault/' + val.id, { shippingAddressId: val.id })
+      if (code === 506) {
+        window.location.href = '/account/login'
+      }
+      if (code === 200) {
+        this.$toast('设置默认发票成功')
+        this.getInvoiceList()
+      } else {
+        this.$toast(data)
+      }
+    },
+
+    deleteInvoice (val) {
+      this.$dialog.confirm({
+        message: '确定删除该发票信息吗？'
+      }).then(async () => {
+        const { code, data } = await api.clientPost('/api/invoice/delete/' + val.id)
+        if (code === 506) {
+          window.location.href = '/account/login'
+        }
+        if (code === 200) {
+          this.$toast.success('删除成功')
+          this.getInvoiceList()
+        } else {
+          this.$toast(data)
+        }
+      })
     }
   }
 }
@@ -95,6 +115,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: @cor_border;
   position: relative;
   box-sizing: border-box;
   &-ul {
@@ -113,21 +134,7 @@ export default {
         font-size: 17px;
         color: @cor_333;
         margin-bottom: 10px;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-      }
-      .default {
-        display: block;
-        height: 14px;
-        box-sizing: border-box;
-        font-size: 8px;
-        color: #FF5B1F;
-        border: 1PX solid #FF5B1F;
-        border-radius: 2px;
-        margin-left: 10px;
-        line-height: 14px;
-        padding: 0 3px;
+        font-weight: 500;
       }
       &-desc {
         font-size: 13px;
@@ -163,37 +170,14 @@ export default {
       }
     }
   }
-  .bottom-section {
-    border-top: 1PX solid @cor_border;
-    width: 100%;
-    box-sizing: border-box;
-    background: white;
-    padding: 15px 20px;
-    .instruction {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      font-size: 13px;
-      margin-bottom: 15px;
-      color: @nice-blue;
-      .van-icon {
-        margin-right: 6px;
-      }
-    }
-  }
   &-btn {
-    height: 45px;
-    border: 1PX solid @nice-blue;
-    border-radius: 6px;
-    box-sizing: border-box;
-    text-align: center;
-    line-height: 45px;
+    height: 50px;
+    width: 100%;
+    background: #03A1CD;
+    color: white;
     font-size: 15px;
-    color: @nice-blue;
-    margin-bottom: 15px;
-    &:active {
-      opacity: 0.8;
-    }
+    text-align: center;
+    line-height: 50px;
   }
 }
 </style>

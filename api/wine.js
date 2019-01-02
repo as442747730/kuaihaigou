@@ -5,6 +5,9 @@ export const wineApi = {
   goodList (params, req) {
     return request.serverGet('/api/esGoods/paginate', params, req)
   },
+  serverAttrs (params, req) {
+    return request.serverGet('/api/esGoods/listAttr', params, req)
+  },
   /* ----------------- client ----------------- */
   clientList (params) {
     return request.clientGet('/api/esGoods/paginate', params)

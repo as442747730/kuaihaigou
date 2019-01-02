@@ -10,44 +10,24 @@
         <div class="lists">
           <list-one  @rFn="editFn('nickname')" list_left="昵称" :list_right="infos.nickname"></list-one>
           <list-one @rFn="editSex(infos.sex)" list_left="性别" :list_right="infos.strSex"></list-one>
-           <list-one v-if="birshow" @rFn="changeBirhday" list_left="生日" :list_right="infos.birhday">
+           <list-one @rFn="changeBirhday" list_left="生日" :list_right="infos.birhday">
             <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('birst', birshow)" active-color="#03A1CD" size="24px" :value="birshow" />
+              <van-switch @input="switchOpen('birst', birshow)" active-color="#03A1CD" size="20px" :value="birshow" />
             </div>
           </list-one>
-          <list-one v-else list_left="生日">
+          <list-one @rFn="editSex('_dz')" list_left="居住地" :list_right="infos._dz">
             <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('birst', birshow)" active-color="#03A1CD" size="24px" :value="birshow" />
+              <van-switch @input="switchOpen('address', addrshow)" active-color="#03A1CD" size="20px" :value="addrshow" />
             </div>
           </list-one>
-          <list-one v-if="addrshow" @rFn="editSex('_dz')" list_left="居住地" :list_right="infos._dz">
+          <list-one @rFn="editFn('wechat')" list_left="微信号" :list_right="infos.wechat">
             <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('address', addrshow)" active-color="#03A1CD" size="24px" :value="addrshow" />
+              <van-switch @input="switchOpen('wechat', wxshow)" active-color="#03A1CD" size="20px" :value="wxshow" />
             </div>
           </list-one>
-          <list-one v-else list_left="居住地">
+          <list-one @rFn="editFn('qq')" list_left="QQ" :list_right="infos.qq">
             <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('address', addrshow)" active-color="#03A1CD" size="24px" :value="addrshow" />
-            </div>
-          </list-one>
-          <list-one v-if="wxshow" @rFn="editFn('wechat')" list_left="微信号" :list_right="infos.wechat">
-            <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('wechat', wxshow)" active-color="#03A1CD" size="24px" :value="wxshow" />
-            </div>
-          </list-one>
-          <list-one v-else list_left="微信号">
-            <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('wechat', wxshow)" active-color="#03A1CD" size="24px" :value="wxshow" />
-            </div>
-          </list-one>
-          <list-one v-if="qqshow" @rFn="editFn('qq')" list_left="QQ" :list_right="infos.qq">
-            <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('qq', qqshow)" active-color="#03A1CD" size="24px" :value="qqshow" />
-            </div>
-          </list-one>
-          <list-one v-else list_left="QQ">
-            <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('qq', qqshow)" active-color="#03A1CD" size="24px" :value="qqshow" />
+              <van-switch @input="switchOpen('qq', qqshow)" active-color="#03A1CD" size="20px" :value="qqshow" />
             </div>
           </list-one>
           <list-one @rFn="editFn('signature')" list_left="个性签名" :list_right="infos.signature"></list-one>

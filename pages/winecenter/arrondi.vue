@@ -3,10 +3,10 @@
     <div class="winecenter-head">
       <div class="upper">
         <div class="top">
-          <div class="top_l" @click="toOthers">
+          <!-- <div class="top_l" @click="toOthers">
             <span class="icon_switch"></span>
             <span class="world">其它商品</span>
-          </div>
+          </div> -->
           <div class="top_r" @click="toSearch">
             <i class="icon_search"></i>
             <i class="icon_buy"></i>
@@ -21,9 +21,6 @@
         <div class="elmdl-item" :class="[{active: sizerIndex == index + 3}, {hascor: rank.iscor}]" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
           <span>{{rank.name}}</span>
         </div>
-        <div class="elmdl-item" :class="{active: sizerIndex == 6}" @click="elScreens(6)">
-          <span>{{noviceMaster}}</span>
-        </div>
       </div>
       <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens" @updateList="onListFn" @subRest="subRest" @subOk="subOk">
         <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6"></div>
@@ -37,30 +34,7 @@
               <div class="item_l_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
             </a>
           </div>
-          <div class="item_r" v-if="!isNovice">
-            <h3>{{good.goodsName}}</h3>
-            <p>
-              <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
-            </p>
-            <div class="itemr-info">
-              <span class="info_item icon_time">{{good.year}}</span>
-              <span class="info_item icon_address">{{good.country}}／{{good.area}}</span>
-              <span class="info_item icon_variety">{{good.variety}}</span>
-            </div>
-            <div class="u-bars">
-              <div class="bars">
-                <div class="bars-left">复杂：{{good.complexity}} <span v-if="good.complexity">分</span></div>
-                <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar="good.complexity"></span>
-                </div>
-              </div>
-            </div>
-            <div class="itemr-price">
-              <span class="t_price">¥ {{good.actualPrice}}</span>
-              <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
-            </div>
-          </div>
-          <div class="item_r" v-else>
+          <div class="item_r">
             <h3>{{good.goodsName}}</h3>
             <p>
               <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
@@ -149,9 +123,11 @@ export default {
     let params = {
       page: 1,
       count: 10,
-      ifWine: true
+      ifWine: true,
+      ifExclusive: true
     }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
+    console.log('goodCode', goodCode)
     if (goodCode === 200) {
       let { array, total, page, totalPageNo } = goodData
       return {
@@ -171,12 +147,15 @@ export default {
       isNovice: true, // 是否为新手
       stepvalue: 0, // 滑块的百分比
       sliderStep: 0, // 滑块步长
+      stepHalf: 0,
+      stepOne: 0,
+      isSlider: false, // 是否滑动滑块
       postObj: {},
       postType: true,
       sizerOne: [{name: '价格类型', iscor: false}, {name: '场景特色', iscor: false}, {name: '推荐排序', iscor: false}],
       sizerTwo: [{name: '等级', iscor: false}, {name: '葡萄品种', iscor: false}, {name: '其他筛选', iscor: false}],
       sizerIndex: null,
-      noviceMaster: '新手选酒',
+      noviceMaster: '高手选酒',
       isCountry: false, // 是否国家产区
       isPrice: false, // 是否为价格类型
       goodsList: [], // 商品列表
@@ -209,7 +188,8 @@ export default {
       tansmit: {
         page: 1,
         count: 10,
-        ifWine: true
+        ifWine: true,
+        ifExclusive: true
       }, // 传递参数
       curTotal: 0,
       curPage: 1,
@@ -330,8 +310,8 @@ export default {
               delete subObj.minAlcoholDegree
               delete subObj.maxAlcoholDegree
             } else {
-              subObj.minAlcoholDegree = id.min
-              subObj.maxAlcoholDegree = id.max
+              subObj.minAlcoholDegree = id[0]
+              subObj.maxAlcoholDegree = id[1]
             }
           } else {
             this.netIndex = elIndex
@@ -339,8 +319,8 @@ export default {
               delete subObj.minNetVolume
               delete subObj.maxNetVolume
             } else {
-              subObj.minNetVolume = id.min
-              subObj.maxNetVolume = id.max
+              subObj.minNetVolume = id[0]
+              subObj.maxNetVolume = id[1]
             }
           }
           break
@@ -363,7 +343,7 @@ export default {
       // console.log(this.tansmit, 'tansmit')
     },
     subRest () {
-      this.tansmit = { page: 1, count: 10, ifWine: true }
+      this.tansmit = { page: 1, count: 10, ifWine: true, ifExclusive: true }
       this.getPageData()
       this.closeScreens()
       this.clearIndex()
@@ -373,7 +353,7 @@ export default {
       this.getPageData()
     },
     countryRest () {
-      this.tansmit = { page: 1, count: 10, ifWine: true }
+      this.tansmit = { page: 1, count: 10, ifWine: true, ifExclusive: true }
       this.showCountry = false
       this.getPageData()
     },
@@ -417,6 +397,10 @@ export default {
       // 进度条
       this.$nextTick(() => {
         let ubars = this.$refs.ubars
+        console.log(ubars, 'ubars')
+        if (!ubars || ubars.length === 0) {
+          return
+        }
         ubars.map(v => {
           v.style.width = v.getAttribute('data-bar') + '%'
         })
@@ -460,7 +444,7 @@ export default {
         this.showtwo = false
         this.sizerIndex = null
       }
-      if (index === 2 || index === 6) {
+      if (index === 2) {
         this.postType = false
       } else {
         this.postType = true
@@ -633,7 +617,7 @@ export default {
     getInfos () {
       // 价格类型中的价格
       let priceArr = this.extras.priceRangeRespList
-      let truePirce = priceArr.map((v, index, array) => {
+      let truePirce = priceArr.map((v, index) => {
         if (v.max === 0) {
           v.name = v.min + '~' + '以上'
         } else {
@@ -642,6 +626,7 @@ export default {
         v.id = v
         return v
       })
+      // console.log(truePirce, 'truePirce')
       this.priceList = truePirce
     },
     combProps (array, mark) {
@@ -680,6 +665,8 @@ export default {
       this.sizerTwo = this.sizerTwo.map(v => {
         return { name: v.name, iscor: false }
       })
+    },
+    changeSlider (value) {
     }
   }
 }
@@ -711,7 +698,8 @@ export default {
 }
 
 .top {
-  .flex_between;
+  display: flex;
+  justify-content: flex-end;
   &_l {
     height: 28px;
     background: rgba(222, 243, 249, 1);

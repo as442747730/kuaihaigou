@@ -1,9 +1,6 @@
 <template>
   <div class="m-address">
-    <com-head :titleConfig="configtitle" @headRigfn="successFn">
-      <div>完成</div>
-    </com-head>
-    <van-pull-refresh v-model="refresing" @refresh="getRefresh">
+    <van-pull-refresh class="van-pull" v-model="refresing" @refresh="getRefresh">
       <div class="m-address-ul">
 
         <div class="m-address-li" v-for="(item, index) in addressList" :key="item.id">
@@ -19,17 +16,20 @@
           </div>
         </div>
 
+        <div class="placeholder" v-if="addressList.length === 0">尚无收货地址</div>
+
       </div>
     </van-pull-refresh>
 
-    <div class="m-address-btn active-status" @click="addAddress">新增收货人</div>
+    <div class="f-bottom-btn">
+      <div class="m-address-btn active-status" @click="addAddress">新增收货地址</div>
+    </div>
 
   </div>
 </template>
 
 <script>
 import { addressApi } from '~/api/address'
-import comHead from '~/components/com-head'
 
 export default {
   name: 'addressList',
@@ -56,10 +56,6 @@ export default {
         { hid: 'title', name: 'title', content: '收货地址管理' }
       ]
     }
-  },
-
-  components: {
-    comHead
   },
 
   data () {
@@ -140,13 +136,19 @@ export default {
 
 <style lang="less" scoped>
 .m-address {
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background: @cor_border;
   position: relative;
   box-sizing: border-box;
-  padding-bottom: 50px;
+  .van-pull {
+    flex: 1;
+  }
   &-ul {
     padding-bottom: 50px;
+    box-sizing: border-box;
   }
   &-li {
     padding-top: 20px;
@@ -200,12 +202,16 @@ export default {
       }
     }
   }
+  .placeholder {
+    font-size: 14px;
+    color: @cor_999;
+    text-align: center;
+    padding-top: 60px;
+    padding-bottom: 30px;
+  }
   &-btn {
     height: 50px;
     width: 100%;
-    position: fixed;
-    bottom: 0;
-    left: 0;
     background: #03A1CD;
     color: white;
     font-size: 15px;

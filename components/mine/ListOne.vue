@@ -43,7 +43,12 @@ export default {
   }
 
   &-r {
-    .flex_between;
+    // .flex_between;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-width: 50%;
+    padding: 10px 0;
     &>p {
       font-size: 15px;
       font-family: PingFang-SC-Medium;

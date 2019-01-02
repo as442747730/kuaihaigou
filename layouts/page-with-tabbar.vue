@@ -1,7 +1,7 @@
 <template>
   <div class="m-layout">
     <nuxt />
-    <u-footer :postIndex="0"></u-footer>
+    <u-footer :postIndex="activePath"></u-footer>
   </div>
 </template>
 
@@ -11,16 +11,14 @@ import uFooter from '~/components/footer'
 export default {
   data () {
     return {
+      activePath: ''
     }
   },
-  computed: {
-    ufIndex: {
-      get: function () {
-        console.log(this)
-        console.log(this.$route)
-      }
-    }
+
+  mounted () {
+    this.activePath = this.$route.path
   },
+
   components: {
     uFooter
   }

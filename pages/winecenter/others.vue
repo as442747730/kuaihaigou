@@ -33,12 +33,15 @@
         </li>
       </ul>
     </section>
-    <list-one :isShow="isShow" :postObjs="classify" @selectOk="selectOk" @closeFn="closeClassify"></list-one>  
+    <list-one
+      :isShow="isShow"
+      :postObjs="classify"
+      @selectOk="selectOk"
+      @closeFn="closeClassify"></list-one>  
   </div>
 </template>
 <script>
 import listOne from '~/components/cpms/listOne'
-import tools from '~/utils/tools'
 import { wineApi } from '~/api/wine'
 
 export default {
@@ -59,21 +62,35 @@ export default {
       count: 10,
       ifWine: false
     }
-    const { code, data } = await wineApi.goodList(params, req)
-    console.log(code)
-    if (code === 200) {
-      console.log(data)
-      let { array, extras, total, page, totalPageNo } = data
-      let firstCategory = tools.adjustProps(extras.firstCategory)
-      let secondCategory = tools.adjustProps(extras.secondCategory)
-      let thirdCategory = tools.adjustProps(extras.thirdCategory)
+    let params2 = {
+      ifWine: false
+    }
+    let goodsFn = wineApi.goodList(params, req)
+    let attrsFn = wineApi.serverAttrs(params2, req)
+    const { code: goodCode, data: goodData } = await goodsFn
+    const { code: attrsCode, data: attrsData } = await attrsFn
+    if (goodCode === 200 && attrsCode === 200) {
+      let { array, total, page, totalPageNo } = goodData
+      let firstCategory = []
+      let secondCategory = []
+      let thirdCategory = []
+      firstCategory = attrsData.categoryTreeRespList
+      firstCategory.map(v => {
+        if (v.childrens.length > 0) {
+          secondCategory.push(...v.childrens)
+        }
+      })
+      secondCategory.map(v => {
+        if (v.childrens.length > 0) {
+          thirdCategory.push(...v.childrens)
+        }
+      })
       return {
         curTotal: total,
         curPage: page,
         curTotalPage: totalPageNo,
         tansmit: params,
         goodsList: array,
-        extras: extras,
         firstList: firstCategory,
         secondList: secondCategory,
         thirdList: thirdCategory
@@ -207,17 +224,19 @@ export default {
         case 0:
           this.firstIndex = elIndex
           objId = { firstCategoryid: id }
+          this.$delete(this.tansmit, 'secondCategoryid')
+          this.$delete(this.tansmit, 'thirdCategoryid')
           break
         case 1:
           this.secondIndex = elIndex
           objId = { secondCategoryid: id }
+          this.$delete(this.tansmit, 'thirdCategoryid')
           break
         case 2:
           this.thirdIndex = elIndex
           objId = { thirdCategoryid: id }
           break
       }
-      console.log(objId, 'objId')
       Object.assign(this.tansmit, objId)
       this.getPageData()
       this.closeClassify()
@@ -326,7 +345,6 @@ export default {
         }
 
         .price {
-          width: 34px;
           height: 15px;
           font-size: 15px;
           font-family: Impact;

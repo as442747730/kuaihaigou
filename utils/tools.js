@@ -16,6 +16,15 @@ const regexp = {
   password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$/ // 数字字母大小写 6-16位
 }
 
+const outerHeight = (el, includeMargin) => {
+  let height = el.offsetHeight
+  if (includeMargin) {
+    let style = el.currentStyle || getComputedStyle(el)
+    height += parseInt(style.marginTop) + parseInt(style.marginBottom)
+  }
+  return height
+}
+
 // 辅助通用方法
 export default {
   // 正则检测
@@ -163,6 +172,62 @@ export default {
     return array.map(v => {
       let arrs = v.split('_')
       return { id: arrs[0], name: arrs[1] }
+    })
+  },
+  /**
+   * 瀑布流（若有图片需先设置图片的高度）
+   * el {list => Element}
+   * parentList {el 父级，position: relative;}
+   * amount {一行数量}
+  */
+  waterFall (el, parentEl, amount) {
+    let els = document.querySelectorAll(el)
+    let elsParent = document.querySelector(parentEl)
+    if (els && els.length === 0) return
+    let colHeights = Array(amount).fill(0)
+    els.forEach((item, index) => {
+      if (index < amount) {
+        colHeights[index] = item.offsetTop + outerHeight(item, true) || 0
+      } else {
+        let minHeight = Math.min(...colHeights)
+        let minHeightIndex = colHeights.indexOf(minHeight)
+        item.style.position = 'absolute'
+        item.style.top = minHeight + 'px'
+        item.style.left = els[minHeightIndex].offsetLeft + 'px'
+        colHeights[minHeightIndex] += outerHeight(item, true)
+      }
+    })
+    elsParent.style.minHeight = Math.max(...colHeights) + 'px'
+  },
+  /**
+  * 根据路径和宽度获取图片对应的高度
+  * {path, wid} => {src: path, _height: _h}
+  **/
+  getImgInfos (path, wid) {
+    return new Promise((resolve) => {
+      let image = new Image()
+      // 图片加载成功
+      image.onload = function () {
+        let imgw = image.width
+        let imgh = image.height
+        let scale = wid / imgw
+        let _h = imgh * scale
+        let imgInfo = {
+          src: path,
+          _height: _h
+        }
+        resolve(imgInfo)
+      }
+      // 图片加载失败
+      image.onerror = function () {
+        let _h = 10
+        let imgInfo = {
+          src: path,
+          _height: _h
+        }
+        resolve(imgInfo)
+      }
+      image.src = path
     })
   }
 }
