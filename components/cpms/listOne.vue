@@ -39,7 +39,7 @@ export default {
 </script>
 <style lang="less" scope>
 .listsecs {
-  max-height: 60vh;
+  // max-height: 60vh;
   -webkit-overflow-scrolling: touch;
   overflow: auto;
 

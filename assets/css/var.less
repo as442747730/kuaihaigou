@@ -266,28 +266,22 @@
 
 // 重置， 取消按钮
 .u-footbtns {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background: #fff;
-  width: 100%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  display: flex;
   height: 50px;
-  z-index: 100;
-  box-shadow: 3px 3px 5px #636262;
-  .flex_between;
-
   .btn {
-    width: 50%;
-    height: 100%;
+    flex: 1;
+    height: 50px;
+    line-height: 50px;
     font-size: 15px;
-    font-family: PingFangSC-Medium;
-    font-weight: 500;
-    .flex_allCenter;
-    color: #03A1CD;
+    font-weight: bold;
+    color: @nice-blue;
+    background: white;
+    text-align: center;
   }
 
   .active {
-    background: #03A1CD;
-    color: #fff;
+    background: @nice-blue;
+    color: white;
   }
 }
