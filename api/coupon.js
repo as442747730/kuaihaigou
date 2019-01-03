@@ -7,5 +7,13 @@ export const couponApi = {
   /* ---------------- client ---------------------- */
   couponlist (params) {
     return request.clientGet('/api/coupon/', params)
+  },
+  // 兑换优惠卷
+  convertCoupon (params) {
+    return request.clientPost('/api/coupon/code', params)
+  },
+  // 获取可用优惠卷
+  listForUsable (params) {
+    return request.clientGet('/api/coupon/listForUsable', params)
   }
 }

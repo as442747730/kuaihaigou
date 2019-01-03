@@ -20,5 +20,9 @@ export const quizApi = {
   // 取消咨询点赞
   consultDislike (consultId) {
     return request.clientPost('/api/goodsConsult/cancelLikeConsult/' + consultId)
+  },
+  // 提问
+  consult (obj) {
+    return request.clientPostJson('/api/goodsConsult/consult', obj)
   }
 }

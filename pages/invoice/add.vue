@@ -1,6 +1,6 @@
 <template>
   <div class="m-invoice-add">
-    <com-head :titleConfig="configtitle"></com-head>
+    <!-- <com-head :titleConfig="configtitle"></com-head> -->
     <div class="m-invoice-add-cell">
       <div class="title">发票类型</div>
       <div class="checkbox-wrapper">
@@ -71,7 +71,7 @@
 </template>
 <script>
 import api from '~/utils/request'
-import comHead from '~/components/com-head'
+// import comHead from '~/components/com-head'
 
 export default {
   name: 'addInvoice',
@@ -84,7 +84,7 @@ export default {
     }
   },
   components: {
-    comHead
+    // comHead
   },
   data () {
     return {
@@ -160,7 +160,11 @@ export default {
       })
       if (code === 200) {
         this.$toast.success('添加成功')
-        window.location.href = '/invoice/list'
+        if (this.$route.query.from === 'submit') {
+          window.location.href = '/invoice/list?from=submit'
+        } else {
+          window.location.href = '/invoice/list'
+        }
       } else {
         this.$toast(data)
       }
