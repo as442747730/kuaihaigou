@@ -137,7 +137,11 @@
 
     <!-- 留言 -->
     <div class="m-section-cell">
-      <h4>订单留言</h4>
+      <div class="msg">
+        <h4>订单留言</h4>
+        <textarea v-model="msg" class="reason-content" :maxlength="150" rows="5" placeholder="请输入留言内容"></textarea>
+        <span class="words">{{ msg.length }}/150</span>
+      </div>
     </div>
 
     <div class="m-section-bottom">
@@ -288,6 +292,7 @@ export default {
       maxReward: 0, // 最大hi币额度
       // 活动优惠 全场满减
       fullSub: 0,
+      msg: '', // 留言信息
       payMethodShow: false, // 支付弹框
       // 支付方式
       payMethod: 0,
@@ -447,7 +452,7 @@ export default {
       }
       let obj = {
         shippingAddressId: this.addressSelected.id, // 收货地址id
-        // remark: this.remark, // 留言
+        remark: this.msg, // 留言
         invoiceId: this.invoinceSelected.id, // 发票信息id
         promotionId: this.promotionId || '', // 优惠活动id
         couponId: this.couponSelected.couponId, // 优惠卷id
@@ -623,6 +628,28 @@ export default {
       }
       .van-stepper {
         padding-right: 10px;
+      }
+    }
+    .msg {
+      position: relative;
+      padding: 20px 0 20px 0;
+      h4 {
+        font-size: 15px;
+        color: #333;
+        font-weight: normal;
+      }
+      textarea {
+        width: 100%;
+        margin: 0.4rem 0 0.53333rem 0;
+        font-size: 0.4rem;
+        line-height: 1.5;
+      }
+      span {
+        color: #C7C7C7;
+        font-size: 0.37333rem;
+        position: absolute;
+        right: 0;
+        bottom: 26px;
       }
     }
   }

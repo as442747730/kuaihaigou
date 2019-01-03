@@ -1,6 +1,6 @@
 <template>
   <div class="m-invoice-add">
-    <com-head :titleConfig="configtitle"></com-head>
+    <!-- <com-head :titleConfig="configtitle"></com-head> -->
     <div class="m-invoice-add-cell">
       <div class="title">发票类型</div>
       <div class="checkbox-wrapper">
@@ -71,7 +71,7 @@
 </template>
 <script>
 import api from '~/utils/request'
-import comHead from '~/components/com-head'
+// import comHead from '~/components/com-head'
 
 export default {
   name: 'addInvoice',
@@ -84,7 +84,7 @@ export default {
     }
   },
   components: {
-    comHead
+    // comHead
   },
   data () {
     return {
