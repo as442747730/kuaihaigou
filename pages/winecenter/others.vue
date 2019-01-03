@@ -1,5 +1,5 @@
 <template>
-  <div class="others" ref="scrollElem">
+  <div class="others">
     <div class="others-head">
       <div class="upper upzindex">
         <div class="top">
@@ -17,21 +17,24 @@
         </div>
       </div>
     </div>
-    <section class="other-content">
-      <ul class="othList">
-        <li class="othList-item" v-for="(good, index) in goodsList" :key="index">
-          <div class="top">
-            <div class="top_bk" v-lazy:background-image="good.imgUrl"></div>
-          </div>
-          <div class="bottom">
-            <div class="head">{{good.goodsName}}</div>
-            <p>
-              <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
-            </p>
-            <div class="price">¥ {{good.actualPrice}}</div>
-          </div>
-        </li>
-      </ul>
+    <section class="other-content" ref="scrollElem">
+      <div class="box" ref="scrollChild">
+        <ul class="othList">
+          <li class="othList-item" v-for="(good, index) in goodsList" :key="index">
+            <div class="top">
+              <div class="top_bk" v-lazy:background-image="good.imgUrl"></div>
+            </div>
+            <div class="bottom">
+              <div class="head">{{good.goodsName}}</div>
+              <p>
+                <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
+              </p>
+              <div class="price">¥ {{good.actualPrice}}</div>
+            </div>
+          </li>
+        </ul>
+        <div class="load-more" v-if="goodsList.length > 4">{{moreData ? loadTxt : '已无更多商品'}}</div>
+      </div>
     </section>
     <list-one
       :isShow="isShow"
@@ -59,8 +62,8 @@ export default {
   async asyncData (req) {
     let params = {
       page: 1,
-      count: 10,
-      ifWine: false
+      count: 5,
+      ifWine: true
     }
     let params2 = {
       ifWine: false
@@ -70,7 +73,7 @@ export default {
     const { code: goodCode, data: goodData } = await goodsFn
     const { code: attrsCode, data: attrsData } = await attrsFn
     if (goodCode === 200 && attrsCode === 200) {
-      let { array, total, page, totalPageNo } = goodData
+      let { array, total, page } = goodData
       let firstCategory = []
       let secondCategory = []
       let thirdCategory = []
@@ -88,7 +91,6 @@ export default {
       return {
         curTotal: total,
         curPage: page,
-        curTotalPage: totalPageNo,
         tansmit: params,
         goodsList: array,
         firstList: firstCategory,
@@ -103,9 +105,9 @@ export default {
       tansmit: {}, // 传递参数
       curPage: 1,
       curTotal: 0,
-      curTotalPage: 1,
       loadOk: true, // 加载是否完成
       moreData: false, // 没有更多数据
+      loadTxt: '加载更多',
       firstList: [], // 大分类
       firstIndex: null, // 大分类选中索引
       secondList: [], // 子分类
@@ -126,56 +128,52 @@ export default {
     listOne
   },
   mounted () {
-    window.addEventListener('scroll', () => {
-      let winH = document.documentElement.clientHeight || document.body.clientHeight
-      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
-      let _top = Math.abs(elemBound.top)
-      let _height = elemBound.height
-      let bottomH = _height - (_top + winH)
-      if (bottomH <= 100) {
-        if (this.loadOk && !this.moreData) {
-          this.loadOk = false
-          if (this.curPage < this.curTotalPage) {
-            this.curPage += 1
-            Object.assign(this.tansmit, { page: this.curPage })
-            this.scrollData()
-          } else {
-            this.moreData = false
-          }
-        }
+    let scrollElem = this.$refs.scrollElem
+    let scrollChild = this.$refs.scrollChild
+    let allH = scrollElem.clientHeight
+    let sctop = scrollElem.offsetTop
+    function throttel (fn, interval = 300) {
+      let canRun = true
+      return function () {
+        if (!canRun) return
+        canRun = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          canRun = true
+        }, interval)
       }
-    })
+    }
+    scrollElem.addEventListener('scroll', throttel(() => {
+      let { height, top } = scrollChild.getBoundingClientRect()
+      let _top = Math.abs(top)
+      let bottomH = height - (_top + sctop + allH)
+      // console.log('bottomH', bottomH)
+      if (bottomH <= 100 && this.loadOk && this.moreData) {
+        this.loadOk = false
+        this.fetchData(true)
+      }
+    }))
   },
   methods: {
-    async getPageData () {
-      // 筛选
-      this.moreData = true
-      this.loadOk = true
-      Object.assign(this.tansmit, { page: 1 })
-      const { code, data } = await wineApi.clientList(this.tansmit)
-      if (code === 200) {
-        let { array, page, totalPageNo } = data
-        this.curPage = page
-        this.curTotalPage = totalPageNo
-        this.goodsList = array
+    async fetchData (getMore) {
+      this.$toast.loading('加载中...')
+      this.loadTxt = '加载中'
+      if (getMore) {
+        this.curPage += 1
       } else {
-        this.$toast(data)
+        this.curPage = 1
       }
-    },
-    async scrollData () {
-      // 滚动
-      this.moreData = true
-      this.loadOk = true
-      Object.assign(this.tansmit, { page: 1 })
+      Object.assign(this.tansmit, { page: this.curPage })
       const { code, data } = await wineApi.clientList(this.tansmit)
       if (code === 200) {
         let { array, page, totalPageNo } = data
         this.curPage = page
-        this.curTotalPage = totalPageNo
-        this.goodsList.push(...array)
-        this.loadOk = true
-      } else {
-        this.$toast(data)
+        this.moreData = this.curPage < totalPageNo
+        if (getMore) {
+          this.goodsList.push(...array)
+        } else {
+          this.goodsList = array
+        }
         this.loadOk = true
       }
     },
@@ -238,7 +236,7 @@ export default {
           break
       }
       Object.assign(this.tansmit, objId)
-      this.getPageData()
+      this.fetchData(false)
       this.closeClassify()
     },
     closeClassify () {
@@ -275,11 +273,10 @@ export default {
 }
 
 .other-content {
-  // padding-bottom: 50px;
-  .padlr20;
-
+  max-height: calc(100vh - 140px);
+  overflow: auto;
   .othList {
-    padding-bottom: 20px;
+    padding: 0 20px 20px;
     flex-wrap: wrap;
     .flex_between;
 
@@ -355,9 +352,7 @@ export default {
       }
     }
   }
-
 }
-
 
 .upper {
   padding-top: 10px;
@@ -472,5 +467,13 @@ export default {
 }
 .upper.upzindex {
   z-index: 3000;
+}
+.load-more {
+  line-height: 50px;
+  background: #F5F5F5;
+  text-align: center;
+  font-size: 12px;
+  background: #F5F5F5;
+  color: #666;
 }
 </style>

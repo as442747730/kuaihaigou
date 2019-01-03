@@ -29,8 +29,8 @@
     </div>
     <div class="main">
       <div class="main-in">
-        <share-study></share-study>
-        <news-info></news-info>
+        <share-study :shareList="shareList"></share-study>
+        <news-info :newList="homeList"></news-info>
       </div>
     </div>
   </div>
@@ -39,11 +39,42 @@
 import comHead from '~/components/com-head'
 import shareStudy from '~/components/encys/Share'
 import newsInfo from '~/components/encys/News'
+// import api from '~/utils/request'
+import { encyApi } from '~/api/encys'
 export default {
   components: {
     comHead,
     shareStudy,
     newsInfo
+  },
+  asyncData (req) {
+    let par1 = { page: 1, count: 10 }
+    let sharefn = encyApi.encyclopediaHomePage(par1, req)
+    let homefn = encyApi.paginate(par1, req)
+    // 需要 return 才能为 data 绑上数据
+    return Promise.all([sharefn, homefn]).then(([share, home]) => {
+      if (home.code !== 200 || share.code !== 200) {
+        req.redirect('/error')
+      }
+      return {
+        shareList: share.data.array,
+        homeList: home.data.array
+      }
+    })
+  },
+  data () {
+    return {
+      homeList: [],
+      shareList: []
+    }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      let homeList = this.homeList
+      let shareList = this.shareList
+      console.log(homeList)
+      console.log(shareList)
+    })
   },
   methods: {
     toNoun (index) {
@@ -63,6 +94,7 @@ export default {
   &-in {
     background: #fff;
     padding-left: 20px;
+    box-sizing: border-box;
     padding-bottom: 40px;
   }
 }

@@ -3,29 +3,16 @@
     <div class="title_home">
       <h2> 新闻资讯</h2>
       <a class="to-channel">
-          进入频道
-          <i class="van-icon van-icon-arrow"></i>  
-         </a>
+        进入频道
+        <i class="van-icon van-icon-arrow"></i>  
+      </a>
     </div>
     <div v-swiper:mySwiper3="swiperNews">
       <div class="swiper-wrapper">
-        <div class="swiper-slide news-list">
-          <div class="news-list-box">
-            <h3>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</h3>
-            <div class="tips">
-              <span>国际资讯</span>
-              <span>作者：拉菲尼斯</span>
-              <span>来源：红酒网</span>
-            </div>
-            <div class="pro">
-              <div class="bg full" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
-            </div>
-            <div class="desc">
-              红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…
-            </div>
-          </div>
-        </div>
-        <div class="swiper-slide news-list">
+        <div
+          class="swiper-slide news-list"
+          v-for="(newitem, index) in newList"
+          :key="index">
           <div class="news-list-box">
             <h3>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</h3>
             <div class="tips">
@@ -48,6 +35,12 @@
 <script>
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 export default {
+  props: {
+    newList: {
+      type: Array,
+      default: () => []
+    }
+  },
   data () {
     return {
       bannerImg: bannerImg,

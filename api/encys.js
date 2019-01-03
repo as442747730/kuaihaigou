@@ -2,6 +2,14 @@ import request from '~/utils/request'
 // 百科
 export const encyApi = {
   /* ----------------- server  ------------------ */
+  // 红酒百科主页
+  encyclopediaHomePage (parame, req) {
+    return request.serverGet('/api/sk/encyclopediaHomePage/', parame, req)
+  },
+  // 行业热点主页
+  paginate (parame, req) {
+    return request.serverGet('/api/news/paginateClassificationNews/', parame, req)
+  },
   serverInitials (req) {
     return request.serverGet('/api/baike/listVarietyCategory', null, req)
   },

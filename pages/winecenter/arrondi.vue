@@ -1,5 +1,5 @@
 <template>
-  <div class="winecenter" ref="scrollElem">
+  <div class="winecenter">
     <div class="top-one">
       <div class="one_r" @click="toSearch">
         <i class="icon_search"></i>
@@ -10,16 +10,13 @@
       <div class="two-item" @click="elCountry">国家产区</div>
       <div class="two-item" :class="[{active: sizerIndex == index}, {hascor: item.iscor}]" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item.name}}</div>
     </div>
-    <div class="top-three">
+    <div class="top-three" :class="{threeZindex: twoType}">
       <div class="three-item" :class="[{active: sizerIndex == index + 3}, {hascor: rank.iscor}]" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
         <span>{{rank.name}}</span>
       </div>
-      <div class="three-item" :class="{active: sizerIndex == 6}" @click="elScreens(6)">
-        <span>{{noviceMaster}}</span>
-      </div>
     </div>
-    <div class="winecenter-content">
-      <section class="novice">
+    <div class="winecenter-content" ref="scrollElem">
+      <section class="novice" ref="scrollChild">
         <div class="com-item" v-for="(good, index) in goodsList" :key="index">
           <div class="item_l">
             <a :href="'/detail/' + good.id">
@@ -86,6 +83,7 @@
             </div>
           </div>
         </div>
+        <div class="load-more">{{moreData ? loadTxt : '已无更多商品'}}</div>
       </section>
     </div>
     <!-- 国家弹窗 start -->
@@ -119,18 +117,17 @@ export default {
   async asyncData (req) {
     let params = {
       page: 1,
-      count: 10,
-      ifWine: true,
-      ifExclusive: true
+      count: 5,
+      ifWine: true
     }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
-    console.log('goodCode', goodCode)
     if (goodCode === 200) {
-      let { array, total, page, totalPageNo } = goodData
+      let { array, total, page } = goodData
       return {
+        tansmit: params,
+        defaultTansmit: params,
         curTotal: total,
         curPage: page,
-        curTotalPage: totalPageNo,
         goodsList: array
       }
     }
@@ -144,15 +141,12 @@ export default {
       isNovice: true, // 是否为新手
       stepvalue: 0, // 滑块的百分比
       sliderStep: 0, // 滑块步长
-      stepHalf: 0,
-      stepOne: 0,
-      isSlider: false, // 是否滑动滑块
       postObj: {},
       postType: true,
       sizerOne: [{name: '价格类型', iscor: false}, {name: '场景特色', iscor: false}, {name: '推荐排序', iscor: false}],
       sizerTwo: [{name: '等级', iscor: false}, {name: '葡萄品种', iscor: false}, {name: '其他筛选', iscor: false}],
       sizerIndex: null,
-      noviceMaster: '高手选酒',
+      noviceMaster: '新手选酒',
       isCountry: false, // 是否国家产区
       isPrice: false, // 是否为价格类型
       goodsList: [], // 商品列表
@@ -182,17 +176,13 @@ export default {
       netList: [], // 净含量列表
       netIndex: null,
       playerIndex: 0,
-      tansmit: {
-        page: 1,
-        count: 10,
-        ifWine: true,
-        ifExclusive: true
-      }, // 传递参数
+      tansmit: {}, // 传递参数
+      defaultTansmit: {}, // 默认参数
       curTotal: 0,
       curPage: 1,
-      curTotalPage: 1,
       loadOk: true, // 加载是否完成
-      moreData: true // 有更多数据
+      moreData: true, // 有更多数据
+      loadTxt: '下拉加载更多'
     }
   },
   components: {
@@ -211,25 +201,35 @@ export default {
   },
   mounted () {
     this.addBarwid()
-    window.addEventListener('scroll', () => {
-      let winH = document.documentElement.clientHeight || document.body.clientHeight
-      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
-      let _top = Math.abs(elemBound.top)
-      let _height = elemBound.height
-      let bottomH = _height - (_top + winH)
-      if (bottomH <= 100) {
-        if (this.loadOk && this.moreData) {
-          this.loadOk = false
-          if (this.curPage < this.curTotalPage) {
-            this.curPage += 1
-            Object.assign(this.tansmit, { page: this.curPage })
-            this.scrollList()
-          } else {
-            this.moreData = false
-          }
-        }
+    let scrollElem = this.$refs.scrollElem
+    let scrollChild = this.$refs.scrollChild
+    let allH = scrollElem.clientHeight
+    let sctop = scrollElem.offsetTop
+    /**
+     * allH + sctop + top = height
+     * @throttel 300ms 滚一次
+    */
+    function throttel (fn, interval = 300) {
+      let canRun = true
+      return function () {
+        if (!canRun) return
+        canRun = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          canRun = true
+        }, interval)
       }
-    })
+    }
+    scrollElem.addEventListener('scroll', throttel(() => {
+      let { height, top } = scrollChild.getBoundingClientRect()
+      let _top = Math.abs(top)
+      let bottomH = height - (_top + sctop + allH)
+      // console.log('bottomH', bottomH)
+      if (bottomH <= 100 && this.loadOk && this.moreData) {
+        this.loadOk = false
+        this.fetchData(true)
+      }
+    }))
   },
   methods: {
     toOthers () {
@@ -238,166 +238,54 @@ export default {
     toSearch () {
       window.location.href = '/search?id=winecenter'
     },
-    onListFn (obj) {
-      console.log('obj', obj)
-      let { id, groupIndex, elIndex } = obj
-      // 筛选项有选中
-      if (this.sizerIndex <= 2) {
-        this.sizerOne[this.sizerIndex].iscor = !!id
-      } else if (this.sizerIndex <= 5) {
-        this.sizerTwo[this.sizerIndex - 3].iscor = !!id
-      }
-      let subObj = {}
-      switch (this.sizerIndex) {
-        case 0:
-          if (groupIndex === 0) {
-            this.priceIndex = elIndex
-            if (!id) {
-              delete subObj.minActualPrice
-              delete subObj.maxActualPrice
-            } else {
-              subObj.minActualPrice = id.min
-              subObj.maxActualPrice = id.max
-            }
-          } else {
-            subObj.typeid = id
-            this.varietyIndex = elIndex
-          }
-          break
-        case 1:
-          if (groupIndex === 0) {
-            subObj.sceneid = id
-            this.sceneIndex = elIndex
-          } else {
-            subObj.charactid = id
-            this.featureIndex = elIndex
-          }
-          break
-        case 2:
-          if (id === 666) {
-            subObj.sortedBy = 1
-            subObj.ifSellOut = true
-          } else {
-            subObj.sortedBy = id
-            subObj.ifSellOut = false
-          }
-          this.sortIndex = elIndex
-          this.getPageData()
-          this.showtwo = false
-          this.sizerIndex = null
-          break
-        case 3:
-          if (groupIndex === 0) {
-            subObj.instatlevelid = id
-            this.stationIndex = elIndex
-          } else {
-            subObj.internationalLevelid = id
-            this.internationIndex = elIndex
-          }
-          break
-        case 4:
-          this.grapeIndex = elIndex
-          subObj.varietyid = id
-          break
-        case 5:
-          console.log('id', id)
-          if (groupIndex === 0) {
-            this.alcoholIndex = elIndex
-            if (!id) {
-              delete subObj.minAlcoholDegree
-              delete subObj.maxAlcoholDegree
-            } else {
-              subObj.minAlcoholDegree = id[0]
-              subObj.maxAlcoholDegree = id[1]
-            }
-          } else {
-            this.netIndex = elIndex
-            if (!id) {
-              delete subObj.minNetVolume
-              delete subObj.maxNetVolume
-            } else {
-              subObj.minNetVolume = id[0]
-              subObj.maxNetVolume = id[1]
-            }
-          }
-          break
-        case 6:
-          this.playerIndex = elIndex
-          if (id === 1) {
-            this.isNovice = true
-            this.noviceMaster = '新手选酒'
-          } else {
-            this.isNovice = false
-            this.noviceMaster = '高手选酒'
-          }
-          this.getPageData()
-          this.showtwo = false
-          this.sizerIndex = null
-          break
-      }
-      this.postObj.list[groupIndex].elIndex = elIndex
-      Object.assign(this.tansmit, subObj)
-      // console.log(this.tansmit, 'tansmit')
-    },
     subRest () {
-      this.tansmit = { page: 1, count: 10, ifWine: true, ifExclusive: true }
-      this.getPageData()
+      this.tansmit = this.defaultTansmit
+      this.fetchData()
       this.closeScreens()
       this.clearIndex()
     },
     subOk () {
       this.closeScreens()
-      this.getPageData()
+      this.fetchData()
     },
     countryRest () {
-      this.tansmit = { page: 1, count: 10, ifWine: true, ifExclusive: true }
+      this.tansmit = this.defaultTansmit
       this.showCountry = false
-      this.getPageData()
+      this.fetchData()
     },
     countryOk () {
       this.showCountry = false
-      this.getPageData()
+      this.fetchData()
     },
-    async getPageData () {
-      // 筛选器
-      this.moreData = true
-      this.loadOk = true
-      Object.assign(this.tansmit, { page: 1 })
+    async fetchData (getMore) {
+      // 滚动
+      this.$toast.loading('加载中...')
+      this.loadTxt = '加载中'
+      if (getMore) {
+        this.curPage += 1
+      } else {
+        this.curPage = 1
+      }
+      Object.assign(this.tansmit, { page: this.curPage })
       const { code, data } = await wineApi.clientList(this.tansmit)
       if (code === 200) {
         let { array, page, totalPageNo } = data
         this.curPage = page
-        this.curTotalPage = totalPageNo
-        this.goodsList = array
+        this.moreData = this.curPage < totalPageNo
+        if (getMore) {
+          this.goodsList.push(...array)
+        } else {
+          this.goodsList = array
+        }
         this.addBarwid()
-      } else {
-        this.$toast(data)
+        this.loadTxt = '下拉加载更多'
       }
-    },
-    async scrollList () {
-      // 滚动
-      let params = this.tansmit
-      const { code, data } = await wineApi.clientList(params)
-      if (code === 200) {
-        let { array, page, totalPageNo } = data
-        this.goodsList.push(...array)
-        this.curPage = page
-        this.curTotalPage = totalPageNo
-        this.addBarwid()
-        this.loadOk = true
-      } else {
-        this.$toast(data)
-        this.loadOk = true
-      }
+      this.loadOk = true
     },
     addBarwid () {
       // 进度条
       this.$nextTick(() => {
         let ubars = this.$refs.ubars
-        console.log(ubars, 'ubars')
-        if (!ubars || ubars.length === 0) {
-          return
-        }
         ubars.map(v => {
           v.style.width = v.getAttribute('data-bar') + '%'
         })
@@ -432,6 +320,90 @@ export default {
       // 关闭国家筛选项
       this.showCountry = !this.showCountry
     },
+    onListFn (obj) {
+      let { id, groupIndex, elIndex } = obj
+      // 筛选项有选中
+      if (this.sizerIndex <= 2) {
+        this.sizerOne[this.sizerIndex].iscor = !!id
+      } else if (this.sizerIndex <= 5) {
+        this.sizerTwo[this.sizerIndex - 3].iscor = !!id
+      }
+      let subObj = {}
+      switch (this.sizerIndex) {
+        case 0:
+          if (groupIndex === 0) {
+            this.priceIndex = elIndex
+            subObj.minActualPrice = id ? id.min : null
+            subObj.maxActualPrice = id ? id.max : null
+          } else {
+            subObj.typeid = id
+            this.varietyIndex = elIndex
+          }
+          break
+        case 1:
+          if (groupIndex === 0) {
+            subObj.sceneid = id
+            this.sceneIndex = elIndex
+          } else {
+            subObj.charactid = id
+            this.featureIndex = elIndex
+          }
+          break
+        case 2:
+          if (id === 666) {
+            subObj.sortedBy = 1
+            subObj.ifSellOut = true
+          } else {
+            subObj.sortedBy = id
+            subObj.ifSellOut = false
+          }
+          this.sortIndex = elIndex
+          this.fetchData()
+          this.showtwo = false
+          this.sizerIndex = null
+          break
+        case 3:
+          if (groupIndex === 0) {
+            subObj.instatlevelid = id
+            this.stationIndex = elIndex
+          } else {
+            subObj.internationalLevelid = id
+            this.internationIndex = elIndex
+          }
+          break
+        case 4:
+          this.grapeIndex = elIndex
+          subObj.varietyid = id
+          break
+        case 5:
+          if (groupIndex === 0) {
+            this.alcoholIndex = elIndex
+            subObj.minAlcoholDegree = id ? id.min : null
+            subObj.maxAlcoholDegree = id ? id.max : null
+          } else {
+            this.netIndex = elIndex
+            subObj.minNetVolume = id ? id.min : null
+            subObj.maxNetVolume = id ? id.max : null
+          }
+          break
+        case 6:
+          this.playerIndex = elIndex
+          if (id === 1) {
+            this.isNovice = true
+            this.noviceMaster = '新手选酒'
+          } else {
+            this.isNovice = false
+            this.noviceMaster = '高手选酒'
+          }
+          this.fetchData()
+          this.showtwo = false
+          this.sizerIndex = null
+          break
+      }
+      this.postObj.list[groupIndex].elIndex = elIndex
+      Object.assign(this.tansmit, subObj)
+      console.log(this.tansmit, 'tansmit')
+    },
     elScreens (index) {
       // 控制筛选器
       if (this.sizerIndex !== index) {
@@ -441,7 +413,7 @@ export default {
         this.showtwo = false
         this.sizerIndex = null
       }
-      if (index === 2) {
+      if (index === 2 || index === 6) {
         this.postType = false
       } else {
         this.postType = true
@@ -614,7 +586,7 @@ export default {
     getInfos () {
       // 价格类型中的价格
       let priceArr = this.extras.priceRangeRespList
-      let truePirce = priceArr.map((v, index) => {
+      let truePirce = priceArr.map((v, index, array) => {
         if (v.max === 0) {
           v.name = v.min + '~' + '以上'
         } else {
@@ -623,7 +595,6 @@ export default {
         v.id = v
         return v
       })
-      // console.log(truePirce, 'truePirce')
       this.priceList = truePirce
     },
     combProps (array, mark) {
@@ -662,8 +633,6 @@ export default {
       this.sizerTwo = this.sizerTwo.map(v => {
         return { name: v.name, iscor: false }
       })
-    },
-    changeSlider (value) {
     }
   }
 }
@@ -674,8 +643,7 @@ export default {
   line-height: 1;
   font-size: 12px;
   &-content {
-    .padlr20;
-    max-height: calc(100vh - 190px);
+    max-height: calc(100vh - 180px);
     overflow: auto;
   }
 }
@@ -687,6 +655,33 @@ export default {
   display: flex;
   justify-content: flex-end;
   .padlr20;
+  .one_l {
+    height: 28px;
+    background: rgba(222, 243, 249, 1);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    padding-left: 3px;
+
+    &>span {
+      font-size: 11px;
+      font-family: PingFangSC-Semibold;
+      font-weight: 600;
+      color: rgba(3, 161, 205, 1);
+    }
+
+    .icon_switch {
+      width: 22px;
+      height: 22px;
+      background-image: url("~/assets/img/Icons/ic_qiehuan_blue_22x22.png");
+      .bg_cover;
+    }
+
+    .world {
+      padding: 0 10px 0 8px;
+      color: @nice-blue;
+    }
+  }
   .one_r {
     width: 70px;
     .flex_between;
@@ -823,25 +818,22 @@ export default {
 }
 // 选酒公共
 .com-item {
+
   .flex_between;
+  .padlr20;
   margin: 20px 0;
+
   .item_l {
     width: 120px;
-    height: 213px;
-    border-radius: 4px;
+    height: 210px;
+    border-radius: 8px;
     border: 1PX solid #eaeaea;
     &_bk {
-
       margin-top: 6px;
-
       width: 100%;
-
       height: 202px;
-
       .bg_cover;
-
     }
-
   }
 
   .item_r {
@@ -901,14 +893,11 @@ export default {
   }
 
 }
-
 // 新手选酒
-
 .novice {
   .itemr-info {
 
     margin-left: -7px;
-
     padding-bottom: 10px;
 
     &>span {
@@ -1004,37 +993,13 @@ export default {
   }
 
 }
-
-.slideall {
-  .headprice {
-    font-size: 19px;
-    font-family: PingFangSC-Semibold;
-    font-weight: 600;
-    text-align: center;
-    .padtb20;
-  }
-  .slider {
-    padding-top: 50px;
-    position: relative;
-    &_in  {
-      width: 33.3%;
-      height: 30px;
-      position: absolute;
-      top: 35px;
-      left: 0;
-      background: rgba(0, 0, 0, .3);
-    }
-    &-items {
-      .padtb20;
-      .flex_between;
-      &>span {
-        font-size: 12px;
-        font-family: PingFang-SC-Medium;
-        font-weight: 500;
-        color: @cor_666;
-      }
-    }
-  }
+.load-more {
+  line-height: 50px;
+  background: #F5F5F5;
+  text-align: center;
+  font-size: 12px;
+  background: #F5F5F5;
+  color: #666;
 }
 
 </style>

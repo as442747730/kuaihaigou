@@ -1,82 +1,63 @@
 <template>
   <section class="share_home">
     <div class="title_home">
-      <h2>
-            知识分享
-          </h2>
+      <h2>知识分享</h2>
       <a class="to-channel">
-            进入频道
-            <i class="van-icon van-icon-arrow"></i>  
-          </a>
+        进入频道
+        <i class="van-icon van-icon-arrow"></i>  
+      </a>
     </div>
     <div v-swiper:mySwiper2="shareSwiper">
       <div class="swiper-wrapper">
-        <div class="swiper-slide share-list">
+        <div
+          class="swiper-slide share-list"
+          v-for="(item, index) in shareList"
+          :key="index">
           <div class="share-list-box">
             <div class="share_home-user">
-              <u class="ib-middle"></u>
-              <div class="ib-middle">
-                <span>一朵小粒欣</span>
-                <p>2018-08-23</p>
+              <div class="avatar" :style="'background-image: url('+ (item.userResp.headimgurl ? item.userResp.headimgurl : require('~/assets/img/defaultImg.png'))+')'"></div>
+              <div class="info">
+                <span>{{ item.userResp.nickname }}</span>
+                <p>{{ item.createdAt }}</p>
               </div>
             </div>
-            <div class="share_home-content">
-              <h3>2017雄狮，Decanter 97分好评，帕克眼中实力一级庄</h3>
+            <div class="content">
+              <h3>{{ item.title }}</h3>
               <div class="tips">
-                <span>频道：经验 | 心得 | 美食</span>
-                <span>话题：红酒</span>
+                <span>频道：{{ item.channelName }}</span>
+                <span>话题：{{ item.topicName }}</span>
               </div>
-              <p>红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…</p>
-              <div class="pro">
-                <img src="~/assets/img/home/img_home_335x180@2x.png">
-                  </div>
-                <div class="u-other">
-                  <span class="zan"><i></i>100</span>
-                  <span class="chat"><i></i>98</span>
-                  <span class="watch"><i></i>27456</span>
-                  <div class="more_share">
-                    <i class="point"></i>
-                  </div>
-                </div>
+              <p class="content-article" v-if="item.articleType === 1"  style="-webkit-box-orient: vertical;" v-html="item.summary"></p>
+              <div class="imgs" v-if="item.articleType === 1 && item.imgsPaht">
+                <div :class="['img', 'big' ]" v-lazy:background-image="m" v-for="(m, index) in item.imgsPaht" v-if="index < 1" :key="index"></div>
               </div>
-            </div>
-          </div>
-          <div class="swiper-slide share-list">
-            <div class="share-list-box">
-              <div class="share_home-user">
-                <u class="ib-middle"></u>
-                <div class="ib-middle">
-                  <span>一朵小粒欣</span>
-                  <p>2018-08-23</p>
-                </div>
+             <!--  <div class="imgs" v-if="item.articleType === 1 && item.imgsPaht">
+                <div :class="['img', item.imgsPaht.length === 1 ? 'big' : '' , item.imgsPaht.length  >= 3 ? 'small' : '']" v-lazy:background-image="m" v-for="(m, index) in item.imgsPaht" v-if="index < 3" :key="index"></div>
+              </div> -->
+              <!-- 视频 -->
+              <div class="video-box" v-if="item.articleType === 2">
+                <video class="video-player" controls :src="item.videoPath"></video>
               </div>
-              <div class="share_home-content">
-                <h3>2017雄狮，Decanter 97分好评，帕克眼中实力一级庄</h3>
-                <div class="tips">
-                  <span>频道：经验 | 心得 | 美食</span>
-                  <span>话题：红酒</span>
-                </div>
-                <p>红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…</p>
-                <div class="pro">
-                  <img src="~/assets/img/home/img_home_335x180@2x.png">
-                  </div>
-                  <div class="u-other">
-                    <span class="zan"><i></i>100</span>
-                    <span class="chat"><i></i>98</span>
-                    <span class="watch"><i></i>27456</span>
-                    <div class="more_share">
-                      <i class="point"></i>
-                    </div>
-                  </div>
+              <div class="u-other">
+                <span class="zan"><i></i>{{ item.likeNumber }}</span>
+                <span class="chat"><i></i>{{ item.commentNumber }}</span>
+                <span class="watch"><i></i>{{ item.readNumber }}</span>
+                <div class="more_share">
+                  <i class="point"></i>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
   </section>
 </template>
 <script>
 export default {
+  props: {
+    shareList: Array
+  },
   data () {
     return {
       shareSwiper: {
@@ -89,11 +70,12 @@ export default {
 </script>
 <style lang="less" scoped>
 .share_home {
-
+  // width: 100vw;
   .share-list {
     font-size: 0;
-    width: 320px;
     margin-left: 15px;
+    width: 320px;
+    box-sizing: border-box;
     &:first-child {
     	margin-left: 0;
     }
@@ -106,22 +88,24 @@ export default {
       border-radius: 8px;
       border: 1px solid #eaeaea;
       box-sizing: border-box;
-      width: 320px;
-      height: 514px;
     }
   }
 
   &-user {
-    border-bottom: 1px solid #f5f5f5;
-    padding: 20px;
-
-    u {
+    height: 80px;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+    border-bottom: 1PX solid #f5f5f5;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .avatar {
       width: 40px;
       height: 40px;
-      border-radius: 50%;
-      overflow: hidden;
+      border-radius: 20px;
       margin-right: 17px;
-      background: #ff6c6c;
+      .bg_cover;
     }
 
     span {
@@ -149,9 +133,9 @@ export default {
     }
   }
 
-  &-content {
+  .content {
     padding: 15px 20px;
-
+    padding-right: 20px;
     h3 {
       font-size: 16px;
       color: #333;
@@ -169,27 +153,71 @@ export default {
         margin-right: 20px;
       }
     }
-
-    p {
-      max-height: 120px;
-      overflow: hidden;
-      text-align: justify;
-      font-size: 14px;
-      color: #999;
-      line-height: 24px;
+    .article {
+      display: flex;
+      align-items: center;
+      height: 70px;
+      .article_p {
+        font-size: 14px;
+        color: @cor_999;
+        line-height: 24px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+      }
     }
-
-    .pro {
-      margin: 10px 0 20px;
-
-      img {
+    &-article {
+      font-size: 14px;
+      color: @cor_999;
+      line-height: 24px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    .video-box {
+      position: relative;
+      margin-bottom: 15px;
+      .video-player {
         width: 100%;
-        height: auto;
+        // height: auto;
+        height: 130px;
+        border-radius: 5px;
+      }
+    }
+    .imgs {
+      margin-top: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      .img {
+        // 默认130px
+        width: 130px;
+        height: 130px;
+        border-radius: 5px;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        &.big {
+          width: 100%;
+          height: 130px;
+        }
+        &.small {
+          width: 88px;
+          height: 88px;
+        }
       }
     }
   }
 }
 
+.u-other {
+  margin-top: 15px;
+}
 // 通用
 .title_home {
   position: relative;

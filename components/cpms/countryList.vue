@@ -9,13 +9,13 @@
       <section>
         <div class="sec-l rollList">
           <ul class="countrylist">
-            <!-- <li>所有国家</li> -->
+            <li>所有国家</li>
             <li :class="{active: countryIndex === index}" v-for="(country, index) in countryList" :key="index" @click="elCounrty(country, index)">{{country.name}}</li>
           </ul>
         </div>
         <div class="sec-r rollList">
           <ul class="areaList">
-            <!-- <li class="one">所有产区</li> -->
+            <li class="one">所有产区</li>
             <li :class="{one: areaIndex === index}" v-for="(area, index) in areaList" :key="index" @click="elArea(area, index)">{{area.name}}</li>
           </ul>
         </div>
@@ -159,51 +159,32 @@ export default {
     .sec-l,
 
     .sec-r {
-
       float: left;
-
     }
 
     .sec-l {
-
       width: 128px;
-
       background: #F5F5F5;
-
       .countrylist {
 
         &>li {
-
           height: 45px;
-
           line-height: 45px;
-
           overflow: hidden;
-
           text-align: center;
-
           font-size: 13px;
-
           font-family: PingFang-SC-Medium;
-
           font-weight: 500;
-
           color: #999999;
-
         }
 
         .active {
-
           font-family: PingFangSC-Semibold;
-
           font-weight: 600;
-
           background: #fff;
-
+          color: #333333;
         }
-
       }
-
     }
 
     .sec-r {
