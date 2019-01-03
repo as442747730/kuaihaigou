@@ -18,7 +18,7 @@
     &-title {
       font-size: 13px;
       font-family: PingFang-SC-Medium;
-      font-weight: bold;
+      // font-weight: bold;
       color: rgba(153, 153, 153, 1);
     }
     .ic_arrow {

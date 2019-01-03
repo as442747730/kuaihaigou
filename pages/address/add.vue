@@ -33,6 +33,19 @@
           <input v-model="address" placeholder="请输入详细地址"></input>
         </div>
       </div>
+      <div class="m-address-add-form-item">
+        <div class="item-label">地址分类</div>
+        <div class="item-type">
+          <span @click='addressType = 1' :class="{'cur': addressType === 1}">家</span>
+          <span @click='addressType = 2' :class="{'cur': addressType === 2}">公司</span>
+          <span @click='addressType = 3' :class="{'cur': addressType === 3}">其他</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="set-default">
+      <span>设为默认地址</span>
+      <van-switch v-model="ifDefault" size="19px" active-color="#03A1CD" />
     </div>
 
     <van-popup v-model="popupShow" position="bottom">
@@ -97,6 +110,9 @@ export default {
       provinceList: [],
       cityList: [],
       districtList: [],
+
+      addressType: 1,
+      ifDefault: false,
 
       popupShow: false,
       columns: [{ values: [] }, { values: [] }, { values: [] }]
@@ -247,6 +263,37 @@ export default {
           transform: translate(0, -50%);
         }
       }
+    }
+    .item-type {
+      span {
+        display: inline-block;
+        vertical-align: middle;
+        width: 54px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        border-radius: 12px;
+        border: 1px solid #f1f1f1;
+        margin-right: 10px;
+        font-size: 13px;
+        color: #333;
+        background: #FCFCFC;
+        &.cur {
+          border-color: #03A1CD;
+          color: #03A1CD;
+        }
+      }
+    }
+  }
+  .set-default {
+    padding: 0 20px;
+    span {
+      font-size: 13px;
+      color: #999;
+    }
+    .van-switch {
+      float: right;
+      margin-top: 14px;
     }
   }
   .btn-wrapper {

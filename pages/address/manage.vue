@@ -1,11 +1,12 @@
 <template>
   <div class="m-address">
+    <com-head :titleConfig="configtitle"></com-head>
     <van-pull-refresh class="van-pull" v-model="refresing" @refresh="getRefresh">
       <div class="m-address-ul">
 
         <div class="m-address-li" v-for="(item, index) in addressList" :key="item.id">
           <div class="top">
-            <div class="top-title">{{ item.name }} <span>{{ item.phone }}</span></div>
+            <div class="top-title">{{ item.name }} <span>{{ item.phone }}</span><span class="default" v-if="item.ifDefault">默认</span><span class="type">{{ item.addressType === 1 ? '家' : item.addressType === 2 ? '公司' : '其他' }}</span></div>
             <div class="top-desc">{{item.province | formatPlace }}{{item.city | formatPlace }}{{item.district | formatPlace }}{{item.street | formatPlace }}{{item.address}}</div>
           </div>
           <div class="bottom">
@@ -30,6 +31,7 @@
 
 <script>
 import { addressApi } from '~/api/address'
+import comHead from '~/components/com-head'
 
 export default {
   name: 'addressList',
@@ -56,6 +58,10 @@ export default {
         { hid: 'title', name: 'title', content: '收货地址管理' }
       ]
     }
+  },
+
+  components: {
+    comHead
   },
 
   data () {
@@ -165,7 +171,37 @@ export default {
         margin-bottom: 10px;
         font-weight: 500;
         span {
+          vertical-align: middle;
           padding-left: 15px;
+          &:nth-child(2) {
+            margin-left: 10px;
+          }
+        }
+        .default {
+          display: inline-block;
+          font-size: 9px;
+          font-weight: 400;
+          color: #FF5B1F;
+          border: 1PX solid #FF5B1F;
+          border-radius: 2px;
+          height: 14px;
+          box-sizing: border-box;
+          line-height: 14px;
+          padding: 0 3px;
+        }
+        .type {
+          margin-left: 5px;
+          display: inline-block;
+          font-size: 0.24rem;
+          font-weight: 400;
+          color: #59C3E1;
+          border: 1PX solid #59C3E1;
+          border-radius: 0.05333rem;
+          height: 0.37333rem;
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          line-height: 0.37333rem;
+          padding: 0 0.08rem;
         }
       }
       &-desc {
