@@ -93,6 +93,8 @@ export default {
     flex: 1;
   }
   .address-ul {
+    height: 82vh;
+    overflow: scroll;
   }
   .placeholder {
     font-size: 14px;

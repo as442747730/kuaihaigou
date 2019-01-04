@@ -5,7 +5,7 @@
         <div class="box">
           <p>物流公司：<span>{{ $v.logisticsCompany }}</span></p>
           <p>物流单号：<span>{{ $v.logisticsBillIdentify || '暂未揽件' }}</span></p>
-          <p style="margin: 0">包含商品：<span>{{ $v.deliverBillItemResp.length }}件</span></p>
+          <p style="margin: 0">包含商品：<span>{{ countNum($v.deliverBillItemResp) }}件</span></p>
         </div>
         <van-icon name="arrow" />
         <div class="depart-line"></div>
@@ -14,11 +14,12 @@
     <van-popup class="u-logistics" v-model="logisDetailShow" position="right" :overlay='false'>
       <div class="u-logistics-order">
         <p>物流单号：{{ detailData.logisticsBillIdentify || '暂无物流单号' }}</p>
+        <p>物流公司：{{ detailData.logisticsCompany || '暂无' }}</p>
       </div>
       <div class="depart-line"></div>
       <div class="u-logistics-goods">
         <h3 class="font_medium">商品详情</h3>
-        <p v-for='($v2, $k2) in detailData.deliverBillItemResp' :key='$k2'>· {{ $v2.goodsName }}</p>
+        <p v-for='($v2, $k2) in detailData.deliverBillItemResp' :key='$k2'><i>·</i> {{ $v2.goodsName }} &nbsp; x {{ $v2.deliverNum }}</p>
       </div>
       <div class="depart-line"></div>
       <div class="u-logistics-detail">
@@ -80,6 +81,7 @@ export default {
     $route (to, from) {
       if (to.hash === '') {
         this.logisDetailShow = false
+        this.tracesEmpty = false
       }
     }
   },
@@ -98,7 +100,10 @@ export default {
 
   methods: {
     async logisDetail (val) {
-      const Toast1 = this.$toast.loading('物流数据获取中')
+      const Toast1 = this.$toast.loading({
+        duration: 0,
+        message: '物流数据获取中'
+      })
       const { code, data } = await orderApi.queryTrack(val.logisticsCompany, val.logisticsBillIdentify)
       if (code === 200) {
         this.detailData = val
@@ -115,6 +120,13 @@ export default {
         Toast1.clear()
         this.$toast(data)
       }
+    },
+    countNum (array) {
+      let total = 0
+      array.forEach(v => {
+        total += v.deliverNum
+      })
+      return total
     }
   }
 }
@@ -160,7 +172,14 @@ export default {
     p {
       color: #666;
       font-size: 13px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
+      line-height: 18px;
+      padding-left: 7px;
+      position: relative;
+      i {
+        position: absolute;
+        left: 0;
+      }
       &:last-child {
         margin-bottom: 0;
       }
@@ -175,6 +194,9 @@ export default {
     span {
       font-weight: normal;
       color: @cor_666;
+    }
+    p {
+      line-height: 24px;
     }
   }
   &-detail {

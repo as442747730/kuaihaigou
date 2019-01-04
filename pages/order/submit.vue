@@ -116,11 +116,11 @@
       </div>
       <div class="m-section-cell-item">
         <div class="label">优惠券</div>
-        <div class="content">￥-{{ couponSelected.faceValue || 0 }}</div>
+        <div class="content">￥{{ couponSelected.faceValue ? '-' + couponSelected.faceValue : 0 }}</div>
       </div>
       <div class="m-section-cell-item">
         <div class="label">优币抵扣</div>
-        <div class="content">{{ rewardMoney }}</div>
+        <div class="content">{{ rewardMoney !== 0 ? '-' + rewardMoney : rewardMoney }}</div>
       </div>
       <div class="m-section-cell-item" v-if='fullSub !== 0'>
         <div class="label">活动优惠</div>

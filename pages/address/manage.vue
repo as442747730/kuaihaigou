@@ -155,6 +155,8 @@ export default {
   &-ul {
     padding-bottom: 50px;
     box-sizing: border-box;
+    overflow: scroll;
+    height: ~'calc(100vh - 46px)'
   }
   &-li {
     padding-top: 20px;

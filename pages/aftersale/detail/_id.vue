@@ -105,7 +105,7 @@
 
           <div :class="['msg-item', item.userid === 0 ? 'js' : '']" v-for="(item, index) in recordList" :key="index">
             <div class="time" v-if="index === 0 || getRecordTime(item.createdAt) - getRecordTime(recordList[index - 1].createdAt) > 120000">{{ item.createdAt }}</div>
-            <div class="left avatar" v-if="item.userid === 0" style="background-image: url('~/assets/img/foot/ic_home_ele@2x.png')"></div>
+            <div class="left avatar" v-if="item.userid === '0'" style="background-image: url('~/assets/img/foot/ic_home_ele@2x.png')"></div>
             <div class="center">
               <span v-if="!item.ifImg">{{ item.content }}</span>
               <img v-else :src="item.content" alt="" @click="viewPhoto(item.content)">
@@ -276,7 +276,9 @@ export default {
       const { code } = await afterSaleApi.sendMessage({ content: this.content, id: this.id, ifImg: false })
       if (code === 200) {
         this.$toast.success('发送成功')
+        this.content = ''
         this.getRecord()
+        document.querySelectorAll('.input-select')[0].blur()
       }
     },
     async sendImageRecord (val) {

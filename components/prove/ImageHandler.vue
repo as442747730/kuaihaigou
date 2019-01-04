@@ -1,15 +1,15 @@
 <template>
   <div class="u-eva-img-handler">
-    <!-- 商品评价 售后申请 页面的 图片上传 组件 -->
+    <!-- 认证模块  多图上传 组件 -->
     <div class="image-wrapper">
       <Upload @on-success="handleUploadSuccess" v-if="imgList.length !== maxNum" :max="maxNum">
-        <div class="upload-box">添加图片</div>
+        <div class="upload-box">点击上传</div>
       </Upload>
-      <div class="img-item" v-for="(item, index) in imgList" :key="index" @click="preview(index)" v-lazy:background-image='item'>
+      <div class="img-item" v-for="(item, index) in imgList" :key="index" @click="preview(index)">
         <span class="img-close-btn" @click.stop="removeImg(index)">
           <van-icon size="20px" color="#03A0CB" name="clear" />
         </span>
-        <!-- <img v-lazy="item"> -->
+        <img v-lazy="item.url">
       </div>
       <!-- 用来占位的 -->
       <div class="holder" v-if="imgList.length === 1"></div>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import Upload from '~/components/Upload'
+import Upload from '~/components/UploadProve'
 import { ImagePreview } from 'vant'
 
 export default {
@@ -59,7 +59,7 @@ export default {
     },
     preview (index) {
       ImagePreview({
-        images: this.imgList,
+        images: this.imgList.url,
         startPosition: index
       })
     },
@@ -78,15 +78,12 @@ export default {
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    .u-upload {
-      margin-bottom: 15px;
-    }
     .img-item {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 70px;
-      height: 70px;
+      width: 160px;
+      height: 110px;
       border-radius: 5px;
       background-position: center;
       background-size: cover;
@@ -94,8 +91,11 @@ export default {
       position: relative;
       transition: 0.2s;
       margin-bottom: 15px;
+      border: 1PX solid #eee;
+      box-sizing: border-box;
       .img-close-btn {
         position: absolute;
+        z-index: 10;
         left: -7px;
         top: -5px;
         width: 20px;
@@ -110,22 +110,25 @@ export default {
         max-height: 100%;
       }
     }
+    .u-upload {
+      margin-bottom: 15px;
+    }
     .holder {
-      width: 70px;
+      width: 160px;
     }
     .upload-box {
-      width: 70px;
-      height: 70px;
+      width: 160px;
+      height: 110px;
       box-sizing: border-box;
       border-radius: 5px;
       background: @cor_border;
-      padding-top: 42px;
+      padding-top: 65px;
       text-align: center;
       font-size: 11px;
-      color: #C7C7C7;
-      background-image: url('~/assets/img/order/icon-add.png');
-      background-size: 16px 16px;
-      background-position: center 18px;
+      color: #666;
+      background-image: url('~/assets/img/prove/ic_upload.png');
+      background-size: 34px 26px;
+      background-position: center 30px;
       background-repeat: no-repeat;
     }
   }
