@@ -1,37 +1,31 @@
 <template>
-  <div class="winecenter" ref="scrollElem">
-    <div class="winecenter-head">
-      <div class="upper">
-        <div class="top">
-          <!-- <div class="top_l" @click="toOthers">
-            <span class="icon_switch"></span>
-            <span class="world">其它商品</span>
-          </div> -->
-          <div class="top_r" @click="toSearch">
-            <i class="icon_search"></i>
-            <i class="icon_buy"></i>
-          </div>
+  <div class="winecenter">
+    <div class="top-one">
+      <div class="one_r">
+        <div class="searchbox">
+          <i class="search_icon"></i>
+          <form action="javascript:return true;">
+            <input class="inpbox" v-model="searchGoodname" placeholder="请输入想要查找的内容" type="search" @keyup.13="toSearch" />
+          </form>
         </div>
-        <div class="screen">
-          <div class="screen-item" @click="elCountry">国家产区</div>
-          <div class="screen-item" :class="[{active: sizerIndex == index}, {hascor: item.iscor}]" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item.name}}</div>
-        </div>
+        <i class="icon_buy"></i>
       </div>
-      <div class="elmdl" :class="{elZindex: twoType}">
-        <div class="elmdl-item" :class="[{active: sizerIndex == index + 3}, {hascor: rank.iscor}]" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
-          <span>{{rank.name}}</span>
-        </div>
-      </div>
-      <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens" @updateList="onListFn" @subRest="subRest" @subOk="subOk">
-        <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6"></div>
-      </list-two>
     </div>
-    <div class="winecenter-content">
-      <section class="novice">
+    <div class="top-two">
+      <div class="two-item" :class="{hascor: countryIndex !== null}" @click="elCountry">国家产区</div>
+      <div class="two-item" :class="[{active: sizerIndex == index}, {hascor: item.iscor}]" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item.name}}</div>
+    </div>
+    <div class="top-three" :class="{threeZindex: twoType}">
+      <div class="three-item" :class="[{active: sizerIndex == index + 3}, {hascor: rank.iscor}]" @click="elScreens(index + 3)" v-for="(rank, index) in sizerTwo" :key="index">
+        <span>{{rank.name}}</span>
+      </div>
+    </div>
+    <div class="winecenter-content" ref="scrollElem">
+      <section class="novice" ref="scrollChild">
         <div class="com-item" v-for="(good, index) in goodsList" :key="index">
           <div class="item_l">
             <a :href="'/detail/' + good.id">
-              <div class="item_l_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
+              <div class="item_l_bk" v-lazy:background-image="good.imgUrl"></div>
             </a>
           </div>
           <div class="item_r">
@@ -94,17 +88,25 @@
             </div>
           </div>
         </div>
+        <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多商品'}}</div>
+        <null-data v-if="goodsList.length === 0"></null-data>
       </section>
     </div>
     <!-- 国家弹窗 start -->
     <country-cpm :showcountry="showCountry" :countryIndex="countryIndex" :countryList="countryList" :areaList="areaList" :areaIndex="areaIndex" @selectCountry="selectCountry" @selectArea="selectArea" @delCountry="delCountry" @countryRest="countryRest" @countryOk="countryOk"></country-cpm>
     <!-- 国家弹窗 end -->
+    <!-- 刷选器 Start -->
+    <list-two :posttype="postType" :twotype="twoType" :postObj="postObj" :showtwo="showtwo" @closeFn="closeScreens" @updateList="onListFn" @subRest="subRest" @subOk="subOk">
+      <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6"></div>
+    </list-two>
+    <!-- 刷选器 Start -->
    
   </div>
 </template>
 <script>
 import countryCpm from '~/components/cpms/countryList'
 import listTwo from '~/components/cpms/listTwo'
+import nullData from '~/components/nullData'
 import { wineApi } from '~/api/wine'
 
 export default {
@@ -122,18 +124,17 @@ export default {
   async asyncData (req) {
     let params = {
       page: 1,
-      count: 10,
-      ifWine: true,
-      ifExclusive: true
+      count: 5,
+      ifWine: true
     }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
-    console.log('goodCode', goodCode)
     if (goodCode === 200) {
-      let { array, total, page, totalPageNo } = goodData
+      let { array, total, page } = goodData
       return {
+        tansmit: params,
+        defaultTansmit: params,
         curTotal: total,
         curPage: page,
-        curTotalPage: totalPageNo,
         goodsList: array
       }
     }
@@ -147,15 +148,12 @@ export default {
       isNovice: true, // 是否为新手
       stepvalue: 0, // 滑块的百分比
       sliderStep: 0, // 滑块步长
-      stepHalf: 0,
-      stepOne: 0,
-      isSlider: false, // 是否滑动滑块
       postObj: {},
       postType: true,
       sizerOne: [{name: '价格类型', iscor: false}, {name: '场景特色', iscor: false}, {name: '推荐排序', iscor: false}],
       sizerTwo: [{name: '等级', iscor: false}, {name: '葡萄品种', iscor: false}, {name: '其他筛选', iscor: false}],
       sizerIndex: null,
-      noviceMaster: '高手选酒',
+      noviceMaster: '新手选酒',
       isCountry: false, // 是否国家产区
       isPrice: false, // 是否为价格类型
       goodsList: [], // 商品列表
@@ -185,22 +183,21 @@ export default {
       netList: [], // 净含量列表
       netIndex: null,
       playerIndex: 0,
-      tansmit: {
-        page: 1,
-        count: 10,
-        ifWine: true,
-        ifExclusive: true
-      }, // 传递参数
+      tansmit: {}, // 传递参数
+      defaultTansmit: {}, // 默认参数
       curTotal: 0,
       curPage: 1,
-      curTotalPage: 1,
       loadOk: true, // 加载是否完成
-      moreData: true // 有更多数据
+      moreData: true, // 有更多数据
+      loadTxt: '下拉加载更多',
+      hasScroll: false,
+      searchGoodname: '' // 搜索商品名字
     }
   },
   components: {
     countryCpm,
-    listTwo
+    listTwo,
+    nullData
   },
   async created () {
     let params = { ifWine: true }
@@ -214,35 +211,134 @@ export default {
   },
   mounted () {
     this.addBarwid()
-    window.addEventListener('scroll', () => {
-      let winH = document.documentElement.clientHeight || document.body.clientHeight
-      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
-      let _top = Math.abs(elemBound.top)
-      let _height = elemBound.height
-      let bottomH = _height - (_top + winH)
-      if (bottomH <= 100) {
-        if (this.loadOk && this.moreData) {
-          this.loadOk = false
-          if (this.curPage < this.curTotalPage) {
-            this.curPage += 1
-            Object.assign(this.tansmit, { page: this.curPage })
-            this.scrollList()
-          } else {
-            this.moreData = false
-          }
-        }
+    let scrollElem = this.$refs.scrollElem
+    let scrollChild = this.$refs.scrollChild
+    let allH = scrollElem.clientHeight
+    let sctop = scrollElem.offsetTop
+    /**
+     * allH + sctop + top = height
+     * @throttel 300ms 滚一次
+    */
+    function throttel (fn, interval = 300) {
+      let canRun = true
+      return function () {
+        if (!canRun) return
+        canRun = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          canRun = true
+        }, interval)
       }
-    })
+    }
+    scrollElem.addEventListener('scroll', throttel(() => {
+      let { height, top } = scrollChild.getBoundingClientRect()
+      let _top = Math.abs(top)
+      let bottomH = height - (_top + sctop + allH)
+      // console.log('bottomH', bottomH)
+      if (bottomH <= 100 && this.loadOk && this.moreData) {
+        this.loadOk = false
+        this.fetchData(true)
+      }
+    }))
   },
   methods: {
     toOthers () {
       window.location.href = '/winecenter/others'
     },
     toSearch () {
-      window.location.href = '/search?id=winecenter'
+      let objGoodname = { goodsName: this.searchGoodname }
+      Object.assign(this.tansmit, objGoodname)
+      this.fetchData()
+    },
+    subRest () {
+      this.tansmit = this.defaultTansmit
+      this.fetchData()
+      this.closeScreens()
+      this.clearIndex()
+    },
+    subOk () {
+      this.closeScreens()
+      this.fetchData()
+    },
+    countryRest () {
+      this.tansmit = this.defaultTansmit
+      this.showCountry = false
+      this.fetchData()
+    },
+    countryOk () {
+      this.showCountry = false
+      this.fetchData()
+    },
+    async fetchData (getMore) {
+      // 滚动
+      this.$toast.loading('加载中...')
+      this.loadTxt = '加载中'
+      if (getMore) {
+        this.curPage += 1
+        this.hasScroll = true
+      } else {
+        this.curPage = 1
+        this.hasScroll = false
+      }
+      Object.assign(this.tansmit, { page: this.curPage })
+      const { code, data } = await wineApi.clientList(this.tansmit)
+      if (code === 200) {
+        let { array, page, totalPageNo } = data
+        this.curPage = page
+        this.moreData = this.curPage < totalPageNo
+        if (getMore) {
+          this.goodsList.push(...array)
+        } else {
+          this.goodsList = array
+        }
+        this.addBarwid()
+        this.loadTxt = '下拉加载更多'
+      }
+      this.loadOk = true
+    },
+    addBarwid () {
+      // 进度条
+      this.$nextTick(() => {
+        let ubars = this.$refs.ubars
+        ubars.map(v => {
+          v.style.width = v.getAttribute('data-bar') + '%'
+        })
+      })
+    },
+    selectCountry (info) {
+      // 选择国家
+      // console.log('info', info)
+      let {elIndex, id} = info
+      this.countryIndex = elIndex
+      // 重置产区
+      this.areaIndex = 0
+      let subObj = { countryid: id }
+      Object.assign(this.tansmit, subObj)
+      if (info.id === null && info.elIndex === null) {
+        this.areaList = []
+        this.internationList = []
+      } else {
+        this.getAreaList(info.id)
+      }
+    },
+    selectArea (info) {
+      console.log('info', info)
+      this.areaIndex = info.elIndex
+      let subObj = { areaid: info.id }
+      Object.assign(this.tansmit, subObj)
+    },
+    elCountry () {
+      // 点击 国家/地区
+      this.showCountry = !this.showCountry
+      if (this.showCountry) {
+        this.closeScreens()
+      }
+    },
+    delCountry () {
+      // 关闭国家筛选项
+      this.showCountry = !this.showCountry
     },
     onListFn (obj) {
-      console.log('obj', obj)
       let { id, groupIndex, elIndex } = obj
       // 筛选项有选中
       if (this.sizerIndex <= 2) {
@@ -255,13 +351,8 @@ export default {
         case 0:
           if (groupIndex === 0) {
             this.priceIndex = elIndex
-            if (!id) {
-              delete subObj.minActualPrice
-              delete subObj.maxActualPrice
-            } else {
-              subObj.minActualPrice = id.min
-              subObj.maxActualPrice = id.max
-            }
+            subObj.minActualPrice = id ? id.min : null
+            subObj.maxActualPrice = id ? id.max : null
           } else {
             subObj.typeid = id
             this.varietyIndex = elIndex
@@ -285,7 +376,7 @@ export default {
             subObj.ifSellOut = false
           }
           this.sortIndex = elIndex
-          this.getPageData()
+          this.fetchData()
           this.showtwo = false
           this.sizerIndex = null
           break
@@ -303,25 +394,14 @@ export default {
           subObj.varietyid = id
           break
         case 5:
-          console.log('id', id)
           if (groupIndex === 0) {
             this.alcoholIndex = elIndex
-            if (!id) {
-              delete subObj.minAlcoholDegree
-              delete subObj.maxAlcoholDegree
-            } else {
-              subObj.minAlcoholDegree = id[0]
-              subObj.maxAlcoholDegree = id[1]
-            }
+            subObj.minAlcoholDegree = id ? id.min : null
+            subObj.maxAlcoholDegree = id ? id.max : null
           } else {
             this.netIndex = elIndex
-            if (!id) {
-              delete subObj.minNetVolume
-              delete subObj.maxNetVolume
-            } else {
-              subObj.minNetVolume = id[0]
-              subObj.maxNetVolume = id[1]
-            }
+            subObj.minNetVolume = id ? id.min : null
+            subObj.maxNetVolume = id ? id.max : null
           }
           break
         case 6:
@@ -333,107 +413,14 @@ export default {
             this.isNovice = false
             this.noviceMaster = '高手选酒'
           }
-          this.getPageData()
+          this.fetchData()
           this.showtwo = false
           this.sizerIndex = null
           break
       }
       this.postObj.list[groupIndex].elIndex = elIndex
       Object.assign(this.tansmit, subObj)
-      // console.log(this.tansmit, 'tansmit')
-    },
-    subRest () {
-      this.tansmit = { page: 1, count: 10, ifWine: true, ifExclusive: true }
-      this.getPageData()
-      this.closeScreens()
-      this.clearIndex()
-    },
-    subOk () {
-      this.closeScreens()
-      this.getPageData()
-    },
-    countryRest () {
-      this.tansmit = { page: 1, count: 10, ifWine: true, ifExclusive: true }
-      this.showCountry = false
-      this.getPageData()
-    },
-    countryOk () {
-      this.showCountry = false
-      this.getPageData()
-    },
-    async getPageData () {
-      // 筛选器
-      this.moreData = true
-      this.loadOk = true
-      Object.assign(this.tansmit, { page: 1 })
-      const { code, data } = await wineApi.clientList(this.tansmit)
-      if (code === 200) {
-        let { array, page, totalPageNo } = data
-        this.curPage = page
-        this.curTotalPage = totalPageNo
-        this.goodsList = array
-        this.addBarwid()
-      } else {
-        this.$toast(data)
-      }
-    },
-    async scrollList () {
-      // 滚动
-      let params = this.tansmit
-      const { code, data } = await wineApi.clientList(params)
-      if (code === 200) {
-        let { array, page, totalPageNo } = data
-        this.goodsList.push(...array)
-        this.curPage = page
-        this.curTotalPage = totalPageNo
-        this.addBarwid()
-        this.loadOk = true
-      } else {
-        this.$toast(data)
-        this.loadOk = true
-      }
-    },
-    addBarwid () {
-      // 进度条
-      this.$nextTick(() => {
-        let ubars = this.$refs.ubars
-        console.log(ubars, 'ubars')
-        if (!ubars || ubars.length === 0) {
-          return
-        }
-        ubars.map(v => {
-          v.style.width = v.getAttribute('data-bar') + '%'
-        })
-      })
-    },
-    selectCountry (info) {
-      // 选择国家
-      // console.log('info', info)
-      let {elIndex, id} = info
-      this.countryIndex = elIndex
-      // 重置产区
-      this.areaIndex = 0
-      let subObj = { countryid: id }
-      Object.assign(this.tansmit, subObj)
-      this.getAreaList(id)
-    },
-    selectArea (info) {
-      console.log('info', info)
-      let {elIndex, id} = info
-      this.areaIndex = elIndex
-      let subObj = { areaid: id }
-      Object.assign(this.tansmit, subObj)
-    },
-    elCountry () {
-      // 点击 国家/地区
-      this.showCountry = !this.showCountry
-      if (this.showCountry) {
-        this.closeScreens()
-      }
-    },
-    delCountry () {
-      // 关闭国家筛选项
-      this.showCountry = !this.showCountry
+      console.log(this.tansmit, 'tansmit')
     },
     elScreens (index) {
       // 控制筛选器
@@ -444,7 +431,7 @@ export default {
         this.showtwo = false
         this.sizerIndex = null
       }
-      if (index === 2) {
+      if (index === 2 || index === 6) {
         this.postType = false
       } else {
         this.postType = true
@@ -617,7 +604,7 @@ export default {
     getInfos () {
       // 价格类型中的价格
       let priceArr = this.extras.priceRangeRespList
-      let truePirce = priceArr.map((v, index) => {
+      let truePirce = priceArr.map((v, index, array) => {
         if (v.max === 0) {
           v.name = v.min + '~' + '以上'
         } else {
@@ -626,7 +613,6 @@ export default {
         v.id = v
         return v
       })
-      // console.log(truePirce, 'truePirce')
       this.priceList = truePirce
     },
     combProps (array, mark) {
@@ -647,7 +633,9 @@ export default {
     },
     clearIndex () {
       // 清空所有选中筛选项
+      this.searchGoodname = ''
       this.countryIndex = null
+      this.areaIndex = null
       this.priceIndex = null
       this.varietyIndex = null
       this.sceneIndex = null
@@ -655,6 +643,7 @@ export default {
       this.sortIndex = null
       this.stationIndex = null
       this.internationIndex = null
+      this.grapeIndex = null
       this.alcoholIndex = null
       this.netIndex = null
       this.playerIndex = null
@@ -665,8 +654,6 @@ export default {
       this.sizerTwo = this.sizerTwo.map(v => {
         return { name: v.name, iscor: false }
       })
-    },
-    changeSlider (value) {
     }
   }
 }
@@ -676,31 +663,20 @@ export default {
   background: #fff;
   line-height: 1;
   font-size: 12px;
-  padding-top: 140px;
   &-content {
-    .padlr20;
-  }
-  &-head {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    z-index: 10;
+    max-height: calc(100vh - 180px);
+    overflow: auto;
   }
 }
-
-.upper {
-  padding-top: 10px;
-  z-index: 3000;
-  position: relative;
+.top-one {
+  height: 40px;
   background: #fff;
-  .padlr20;
-}
-
-.top {
+  position: relative;
+  z-index: 4000;
   display: flex;
   justify-content: flex-end;
-  &_l {
+  .padlr20;
+  .one_l {
     height: 28px;
     background: rgba(222, 243, 249, 1);
     border-radius: 14px;
@@ -727,33 +703,55 @@ export default {
       color: @nice-blue;
     }
   }
-
-  &_r {
-    width: 70px;
-    .flex_between;
-
-    &>i {
+  .one_r {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .searchbox {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 204px;
+      margin-right: 5px;
+      height: 28px;
+      background:rgba(250,250,250,1);
+      border-radius:14px;
+      padding: 0 20px;
+      box-sizing: border-box;
+      .search_icon {
+        width: 16px;
+        height: 16px;
+        background-image: url('~/assets/img/Icons/ic_search_g_16x16@2x.png');
+        .bg_cover;
+      }
+      .inpbox {
+        width: 135px;
+        height: 13px;
+        padding: 5px 0;
+        background: transparent;
+        box-sizing: content-box;
+      }
+      input::-webkit-search-cancel-button{
+        display: none;
+      }
+    }
+    .icon_buy {
       width: 30px;
       height: 30px;
-    }
-
-    .icon_search {
-      .bg_cover;
-      background-image: url("~/assets/img/Icons/ic_search_b_30x30.png");
-    }
-
-    .icon_buy {
-      .bg_cover;
       background-image: url("~/assets/img/Icons/ic_shop_b_30x30.png");
+      .bg_cover;
     }
   }
 }
-
-.screen {
-  padding: 20px 0;
+.top-two {
+  height: 40px;
+  z-index: 9999;
+  background: #fff;
+  position: relative;
+  z-index: 4000;
+  .padlr20;
   .flex_between;
-
-  &-item {
+  .two-item {
     font-size: 13px;
     font-family: PingFangSC-Regular;
     font-weight: 400;
@@ -796,17 +794,14 @@ export default {
     }
   }
 }
-
-.elmdl {
-  position: relative;
-  z-index: 60;
-  padding-bottom: 15px;
+.top-three {
+  height: 40px;
   background: #fff;
-  border-bottom: 1PX solid #f5f5f5;
-  .padlr20;
+  position: relative;
+  border-bottom: 1PX solid @cor_border;
+  padding: 0 20px 10px;
   .flex_between;
-
-  &-item {
+  .three-item {
     .flex_allCenter;
     height: 30px;
     background: #f8f8f8;
@@ -859,40 +854,27 @@ export default {
     }
   }
 }
-.elZindex {
-  z-index: 3000;
+.threeZindex {
+  z-index: 4000 !important;
 }
-
 // 选酒公共
-
 .com-item {
 
   .flex_between;
-
+  .padlr20;
   margin: 20px 0;
 
   .item_l {
-
     width: 120px;
-
-    height: 213px;
-
-    border-radius: 4px;
-
+    height: 210px;
+    border-radius: 8px;
     border: 1PX solid #eaeaea;
-
     &_bk {
-
       margin-top: 6px;
-
       width: 100%;
-
       height: 202px;
-
       .bg_cover;
-
     }
-
   }
 
   .item_r {
@@ -952,17 +934,11 @@ export default {
   }
 
 }
-
 // 新手选酒
-
 .novice {
-
-  padding-bottom: 50px;
-
   .itemr-info {
 
     margin-left: -7px;
-
     padding-bottom: 10px;
 
     &>span {
@@ -1058,37 +1034,13 @@ export default {
   }
 
 }
-
-.slideall {
-  .headprice {
-    font-size: 19px;
-    font-family: PingFangSC-Semibold;
-    font-weight: 600;
-    text-align: center;
-    .padtb20;
-  }
-  .slider {
-    padding-top: 50px;
-    position: relative;
-    &_in  {
-      width: 33.3%;
-      height: 30px;
-      position: absolute;
-      top: 35px;
-      left: 0;
-      background: rgba(0, 0, 0, .3);
-    }
-    &-items {
-      .padtb20;
-      .flex_between;
-      &>span {
-        font-size: 12px;
-        font-family: PingFang-SC-Medium;
-        font-weight: 500;
-        color: @cor_666;
-      }
-    }
-  }
+.load-more {
+  line-height: 50px;
+  background: #F5F5F5;
+  text-align: center;
+  font-size: 12px;
+  background: #F5F5F5;
+  color: #666;
 }
 
 </style>

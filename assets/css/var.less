@@ -222,21 +222,24 @@
 
 // 列表base
 .listbase(@w, @h) {
-  margin-right: -10px;
   flex-wrap: wrap;
   .flex_between;
 
   &_item {
     width: @w;
     height: @h;
+    line-height: @h;
     border-radius: 4px;
     border: 1PX solid;
     border-color: #EEEEEE;
     color: @cor_666;
-    margin-right: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
-    .flex_allCenter;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
   }
 
   .empty {
@@ -246,6 +249,7 @@
   .active {
     border-color: @cor_333;
     color: @cor_333;
+    font-weight: bold;
   }
 }
 
