@@ -461,7 +461,7 @@ export default {
       &.cur {
         filter: grayscale(0%);
         &:before {
-          content: "\F060";
+          content: "\F0AF";
           position: absolute;
           display: inline-block;
           width: 16px;
