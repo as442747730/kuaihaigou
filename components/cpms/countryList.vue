@@ -3,19 +3,20 @@
     <div class="countrys">
       <header>
         <h1>
-        <span class="icon_del" @click="delCountry"></span> 国家产区
-      </h1>
+          <span class="icon_del" @click="delCountry"></span>
+          国家产区
+        </h1>
       </header>
       <section>
         <div class="sec-l rollList">
           <ul class="countrylist">
-            <!-- <li>所有国家</li> -->
-            <li :class="{active: countryIndex === index}" v-for="(country, index) in countryList" :key="index" @click="elCounrty(country, index)"">{{country.name}}</li>
+            <li :class="{active: countryIndex === null}" @click="countryAll">所有国家</li>
+            <li :class="{active: countryIndex === index}" v-for="(country, index) in countryList" :key="index" @click="elCounrty(country, index)">{{country.name}}</li>
           </ul>
         </div>
         <div class="sec-r rollList">
           <ul class="areaList">
-            <!-- <li class="one">所有产区</li> -->
+            <li :class="{one: areaIndex === null}" @click="areaAll">全部产区</li>
             <li :class="{one: areaIndex === index}" v-for="(area, index) in areaList" :key="index" @click="elArea(area, index)">{{area.name}}</li>
           </ul>
         </div>
@@ -62,10 +63,20 @@ export default {
       Object.assign(retdata, country)
       this.$emit('selectCountry', retdata)
     },
+    countryAll () {
+      // 所有国家
+      let retdata = { elIndex: null, id: null }
+      this.$emit('selectCountry', retdata)
+    },
     elArea (area, index) {
       // 选择地区
       let retdata = { elIndex: index }
       Object.assign(retdata, area)
+      this.$emit('selectArea', retdata)
+    },
+    areaAll () {
+      // 全部产区
+      let retdata = { elIndex: null, id: null }
       this.$emit('selectArea', retdata)
     },
     btnRest () {
@@ -159,51 +170,32 @@ export default {
     .sec-l,
 
     .sec-r {
-
       float: left;
-
     }
 
     .sec-l {
-
       width: 128px;
-
       background: #F5F5F5;
-
       .countrylist {
 
         &>li {
-
           height: 45px;
-
           line-height: 45px;
-
           overflow: hidden;
-
           text-align: center;
-
           font-size: 13px;
-
           font-family: PingFang-SC-Medium;
-
           font-weight: 500;
-
           color: #999999;
-
         }
 
         .active {
-
           font-family: PingFangSC-Semibold;
-
           font-weight: 600;
-
           background: #fff;
-
+          color: #333333;
         }
-
       }
-
     }
 
     .sec-r {

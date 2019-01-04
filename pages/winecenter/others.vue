@@ -1,5 +1,5 @@
 <template>
-  <div class="others" ref="scrollElem">
+  <div class="others">
     <div class="others-head">
       <div class="upper upzindex">
         <div class="top">
@@ -8,7 +8,12 @@
             <span class="top_l-span world">红酒商品</span>
           </div>
           <div class="top_r">
-            <i class="icon_search" @click="toSearch"></i>
+            <div class="searchbox">
+              <i class="search_icon"></i>
+              <form action="javascript:return true;">
+                <input class="inpbox" v-model="searchGoodname" placeholder="请输入想要查找的内容" type="search" @keyup.13="toSearch" />
+              </form>
+            </div>
             <i class="icon_buy"></i>
           </div>
         </div>
@@ -17,21 +22,25 @@
         </div>
       </div>
     </div>
-    <section class="other-content">
-      <ul class="othList">
-        <li class="othList-item" v-for="(good, index) in goodsList" :key="index">
-          <div class="top">
-            <div class="top_bk" :style="'background: url(' + good.imgUrl + ') no-repeat center/contain'"></div>
-          </div>
-          <div class="bottom">
-            <div class="head">{{good.goodsName}}</div>
-            <p>
-              <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
-            </p>
-            <div class="price">¥ {{good.actualPrice}}</div>
-          </div>
-        </li>
-      </ul>
+    <section class="other-content" ref="scrollElem">
+      <div class="box" ref="scrollChild">
+        <ul class="othList">
+          <li class="othList-item" v-for="(good, index) in goodsList" :key="index">
+            <div class="top">
+              <div class="top_bk" v-lazy:background-image="good.imgUrl"></div>
+            </div>
+            <div class="bottom">
+              <div class="head">{{good.goodsName}}</div>
+              <p>
+                <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
+              </p>
+              <div class="price">¥ {{good.actualPrice}}</div>
+            </div>
+          </li>
+        </ul>
+        <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多商品'}}</div>
+        <null-data v-if="goodsList.length === 0"></null-data>
+      </div>
     </section>
     <list-one
       :isShow="isShow"
@@ -43,6 +52,7 @@
 <script>
 import listOne from '~/components/cpms/listOne'
 import { wineApi } from '~/api/wine'
+import nullData from '~/components/nullData'
 
 export default {
   head () {
@@ -59,7 +69,7 @@ export default {
   async asyncData (req) {
     let params = {
       page: 1,
-      count: 10,
+      count: 5,
       ifWine: false
     }
     let params2 = {
@@ -70,7 +80,7 @@ export default {
     const { code: goodCode, data: goodData } = await goodsFn
     const { code: attrsCode, data: attrsData } = await attrsFn
     if (goodCode === 200 && attrsCode === 200) {
-      let { array, total, page, totalPageNo } = goodData
+      let { array, total, page } = goodData
       let firstCategory = []
       let secondCategory = []
       let thirdCategory = []
@@ -88,7 +98,6 @@ export default {
       return {
         curTotal: total,
         curPage: page,
-        curTotalPage: totalPageNo,
         tansmit: params,
         goodsList: array,
         firstList: firstCategory,
@@ -103,9 +112,11 @@ export default {
       tansmit: {}, // 传递参数
       curPage: 1,
       curTotal: 0,
-      curTotalPage: 1,
       loadOk: true, // 加载是否完成
       moreData: false, // 没有更多数据
+      loadTxt: '加载更多',
+      hasScroll: false,
+      searchGoodname: '',
       firstList: [], // 大分类
       firstIndex: null, // 大分类选中索引
       secondList: [], // 子分类
@@ -123,59 +134,58 @@ export default {
     }
   },
   components: {
-    listOne
+    listOne,
+    nullData
   },
   mounted () {
-    window.addEventListener('scroll', () => {
-      let winH = document.documentElement.clientHeight || document.body.clientHeight
-      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
-      let _top = Math.abs(elemBound.top)
-      let _height = elemBound.height
-      let bottomH = _height - (_top + winH)
-      if (bottomH <= 100) {
-        if (this.loadOk && !this.moreData) {
-          this.loadOk = false
-          if (this.curPage < this.curTotalPage) {
-            this.curPage += 1
-            Object.assign(this.tansmit, { page: this.curPage })
-            this.scrollData()
-          } else {
-            this.moreData = false
-          }
-        }
+    let scrollElem = this.$refs.scrollElem
+    let scrollChild = this.$refs.scrollChild
+    let allH = scrollElem.clientHeight
+    let sctop = scrollElem.offsetTop
+    function throttel (fn, interval = 300) {
+      let canRun = true
+      return function () {
+        if (!canRun) return
+        canRun = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          canRun = true
+        }, interval)
       }
-    })
+    }
+    scrollElem.addEventListener('scroll', throttel(() => {
+      let { height, top } = scrollChild.getBoundingClientRect()
+      let _top = Math.abs(top)
+      let bottomH = height - (_top + sctop + allH)
+      // console.log('bottomH', bottomH)
+      if (bottomH <= 100 && this.loadOk && this.moreData) {
+        this.loadOk = false
+        this.fetchData(true)
+      }
+    }))
   },
   methods: {
-    async getPageData () {
-      // 筛选
-      this.moreData = true
-      this.loadOk = true
-      Object.assign(this.tansmit, { page: 1 })
-      const { code, data } = await wineApi.clientList(this.tansmit)
-      if (code === 200) {
-        let { array, page, totalPageNo } = data
-        this.curPage = page
-        this.curTotalPage = totalPageNo
-        this.goodsList = array
+    async fetchData (getMore) {
+      this.$toast.loading('加载中...')
+      this.loadTxt = '加载中'
+      if (getMore) {
+        this.curPage += 1
+        this.hasScroll = true
       } else {
-        this.$toast(data)
+        this.curPage = 1
+        this.hasScroll = false
       }
-    },
-    async scrollData () {
-      // 滚动
-      this.moreData = true
-      this.loadOk = true
-      Object.assign(this.tansmit, { page: 1 })
+      Object.assign(this.tansmit, { page: this.curPage })
       const { code, data } = await wineApi.clientList(this.tansmit)
       if (code === 200) {
         let { array, page, totalPageNo } = data
         this.curPage = page
-        this.curTotalPage = totalPageNo
-        this.goodsList.push(...array)
-        this.loadOk = true
-      } else {
-        this.$toast(data)
+        this.moreData = this.curPage < totalPageNo
+        if (getMore) {
+          this.goodsList.push(...array)
+        } else {
+          this.goodsList = array
+        }
         this.loadOk = true
       }
     },
@@ -238,7 +248,7 @@ export default {
           break
       }
       Object.assign(this.tansmit, objId)
-      this.getPageData()
+      this.fetchData(false)
       this.closeClassify()
     },
     closeClassify () {
@@ -250,12 +260,15 @@ export default {
       this.firstIndex = null
       this.secondIndex = null
       this.thirdIndex = null
+      this.searchGoodname = ''
     },
     toWinecenter () {
       window.location.href = '/winecenter'
     },
     toSearch () {
-      window.location.href = '/search?id=others'
+      let objGoodname = { goodsName: this.searchGoodname }
+      Object.assign(this.tansmit, objGoodname)
+      this.fetchData()
     },
     customArray (arr) {
       if (!Array.isArray(arr)) return false
@@ -275,11 +288,10 @@ export default {
 }
 
 .other-content {
-  // padding-bottom: 50px;
-  .padlr20;
-
+  max-height: calc(100vh - 140px);
+  overflow: auto;
   .othList {
-    padding-bottom: 20px;
+    padding: 0 20px 20px;
     flex-wrap: wrap;
     .flex_between;
 
@@ -296,6 +308,7 @@ export default {
         &_bk {
           width: 152px;
           height: 155px;
+          .bg_cover;
         }
       }
 
@@ -354,9 +367,7 @@ export default {
       }
     }
   }
-
 }
-
 
 .upper {
   padding-top: 10px;
@@ -397,26 +408,44 @@ export default {
     }
 
     &_r {
-      width: 70px;
-      .flex_between;
-
-      &>i {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .searchbox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 204px;
+        margin-right: 5px;
+        height: 28px;
+        background:rgba(250,250,250,1);
+        border-radius:14px;
+        padding: 0 20px;
+        box-sizing: border-box;
+        .search_icon {
+          width: 16px;
+          height: 16px;
+          background-image: url('~/assets/img/Icons/ic_search_g_16x16@2x.png');
+          .bg_cover;
+        }
+        .inpbox {
+          width: 135px;
+          height: 13px;
+          padding: 5px 0;
+          background: transparent;
+          box-sizing: content-box;
+        }
+        input::-webkit-search-cancel-button{
+          display: none;
+        }
+      }
+      .icon_buy {
         width: 30px;
         height: 30px;
-      }
-
-      .icon_search {
+        background-image: url("~/assets/img/Icons/ic_shop_b_30x30.png");
         .bg_cover;
-        background-image: url("../../assets/img/Icons/ic_search_b_30x30.png");
       }
-
-      .icon_buy {
-        .bg_cover;
-        background-image: url("../../assets/img/Icons/ic_shop_b_30x30.png");
-      }
-
     }
-
   }
 
   .screen {
@@ -471,5 +500,13 @@ export default {
 }
 .upper.upzindex {
   z-index: 3000;
+}
+.load-more {
+  line-height: 50px;
+  background: #F5F5F5;
+  text-align: center;
+  font-size: 12px;
+  background: #F5F5F5;
+  color: #666;
 }
 </style>
