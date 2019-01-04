@@ -7,6 +7,8 @@
 <style lang="less" scoped>
 	.nulldata {
     padding-top: 80px;
+    height: calc(100vh - 180px);
+    box-sizing: border-box;
 		.null-logo {
 			display: block;
 			width: 160px;

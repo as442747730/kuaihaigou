@@ -8,7 +8,12 @@
             <span class="top_l-span world">红酒商品</span>
           </div>
           <div class="top_r">
-            <i class="icon_search" @click="toSearch"></i>
+            <div class="searchbox">
+              <i class="search_icon"></i>
+              <form action="javascript:return true;">
+                <input class="inpbox" v-model="searchGoodname" placeholder="请输入想要查找的内容" type="search" @keyup.13="toSearch" />
+              </form>
+            </div>
             <i class="icon_buy"></i>
           </div>
         </div>
@@ -33,7 +38,8 @@
             </div>
           </li>
         </ul>
-        <div class="load-more" v-if="goodsList.length > 4">{{moreData ? loadTxt : '已无更多商品'}}</div>
+        <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多商品'}}</div>
+        <null-data v-if="goodsList.length === 0"></null-data>
       </div>
     </section>
     <list-one
@@ -46,6 +52,7 @@
 <script>
 import listOne from '~/components/cpms/listOne'
 import { wineApi } from '~/api/wine'
+import nullData from '~/components/nullData'
 
 export default {
   head () {
@@ -63,7 +70,7 @@ export default {
     let params = {
       page: 1,
       count: 5,
-      ifWine: true
+      ifWine: false
     }
     let params2 = {
       ifWine: false
@@ -108,6 +115,8 @@ export default {
       loadOk: true, // 加载是否完成
       moreData: false, // 没有更多数据
       loadTxt: '加载更多',
+      hasScroll: false,
+      searchGoodname: '',
       firstList: [], // 大分类
       firstIndex: null, // 大分类选中索引
       secondList: [], // 子分类
@@ -125,7 +134,8 @@ export default {
     }
   },
   components: {
-    listOne
+    listOne,
+    nullData
   },
   mounted () {
     let scrollElem = this.$refs.scrollElem
@@ -160,8 +170,10 @@ export default {
       this.loadTxt = '加载中'
       if (getMore) {
         this.curPage += 1
+        this.hasScroll = true
       } else {
         this.curPage = 1
+        this.hasScroll = false
       }
       Object.assign(this.tansmit, { page: this.curPage })
       const { code, data } = await wineApi.clientList(this.tansmit)
@@ -248,12 +260,15 @@ export default {
       this.firstIndex = null
       this.secondIndex = null
       this.thirdIndex = null
+      this.searchGoodname = ''
     },
     toWinecenter () {
       window.location.href = '/winecenter'
     },
     toSearch () {
-      window.location.href = '/search?id=others'
+      let objGoodname = { goodsName: this.searchGoodname }
+      Object.assign(this.tansmit, objGoodname)
+      this.fetchData()
     },
     customArray (arr) {
       if (!Array.isArray(arr)) return false
@@ -393,26 +408,44 @@ export default {
     }
 
     &_r {
-      width: 70px;
-      .flex_between;
-
-      &>i {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .searchbox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 204px;
+        margin-right: 5px;
+        height: 28px;
+        background:rgba(250,250,250,1);
+        border-radius:14px;
+        padding: 0 20px;
+        box-sizing: border-box;
+        .search_icon {
+          width: 16px;
+          height: 16px;
+          background-image: url('~/assets/img/Icons/ic_search_g_16x16@2x.png');
+          .bg_cover;
+        }
+        .inpbox {
+          width: 135px;
+          height: 13px;
+          padding: 5px 0;
+          background: transparent;
+          box-sizing: content-box;
+        }
+        input::-webkit-search-cancel-button{
+          display: none;
+        }
+      }
+      .icon_buy {
         width: 30px;
         height: 30px;
-      }
-
-      .icon_search {
+        background-image: url("~/assets/img/Icons/ic_shop_b_30x30.png");
         .bg_cover;
-        background-image: url("../../assets/img/Icons/ic_search_b_30x30.png");
       }
-
-      .icon_buy {
-        .bg_cover;
-        background-image: url("../../assets/img/Icons/ic_shop_b_30x30.png");
-      }
-
     }
-
   }
 
   .screen {

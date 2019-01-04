@@ -1,13 +1,18 @@
 <template>
   <div class="winecenter">
     <div class="top-one">
-      <div class="one_r" @click="toSearch">
-        <i class="icon_search"></i>
+      <div class="one_r">
+        <div class="searchbox">
+          <i class="search_icon"></i>
+          <form action="javascript:return true;">
+            <input class="inpbox" v-model="searchGoodname" placeholder="请输入想要查找的内容" type="search" @keyup.13="toSearch" />
+          </form>
+        </div>
         <i class="icon_buy"></i>
       </div>
     </div>
     <div class="top-two">
-      <div class="two-item" @click="elCountry">国家产区</div>
+      <div class="two-item" :class="{hascor: countryIndex !== null}" @click="elCountry">国家产区</div>
       <div class="two-item" :class="[{active: sizerIndex == index}, {hascor: item.iscor}]" @click="elScreens(index)" v-for="(item, index) in sizerOne" :key="index">{{item.name}}</div>
     </div>
     <div class="top-three" :class="{threeZindex: twoType}">
@@ -83,7 +88,8 @@
             </div>
           </div>
         </div>
-        <div class="load-more">{{moreData ? loadTxt : '已无更多商品'}}</div>
+        <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多商品'}}</div>
+        <null-data v-if="goodsList.length === 0"></null-data>
       </section>
     </div>
     <!-- 国家弹窗 start -->
@@ -100,6 +106,7 @@
 <script>
 import countryCpm from '~/components/cpms/countryList'
 import listTwo from '~/components/cpms/listTwo'
+import nullData from '~/components/nullData'
 import { wineApi } from '~/api/wine'
 
 export default {
@@ -182,12 +189,15 @@ export default {
       curPage: 1,
       loadOk: true, // 加载是否完成
       moreData: true, // 有更多数据
-      loadTxt: '下拉加载更多'
+      loadTxt: '下拉加载更多',
+      hasScroll: false,
+      searchGoodname: '' // 搜索商品名字
     }
   },
   components: {
     countryCpm,
-    listTwo
+    listTwo,
+    nullData
   },
   async created () {
     let params = { ifWine: true }
@@ -236,7 +246,9 @@ export default {
       window.location.href = '/winecenter/others'
     },
     toSearch () {
-      window.location.href = '/search?id=winecenter'
+      let objGoodname = { goodsName: this.searchGoodname }
+      Object.assign(this.tansmit, objGoodname)
+      this.fetchData()
     },
     subRest () {
       this.tansmit = this.defaultTansmit
@@ -263,8 +275,10 @@ export default {
       this.loadTxt = '加载中'
       if (getMore) {
         this.curPage += 1
+        this.hasScroll = true
       } else {
         this.curPage = 1
+        this.hasScroll = false
       }
       Object.assign(this.tansmit, { page: this.curPage })
       const { code, data } = await wineApi.clientList(this.tansmit)
@@ -300,13 +314,17 @@ export default {
       this.areaIndex = 0
       let subObj = { countryid: id }
       Object.assign(this.tansmit, subObj)
-      this.getAreaList(id)
+      if (info.id === null && info.elIndex === null) {
+        this.areaList = []
+        this.internationList = []
+      } else {
+        this.getAreaList(info.id)
+      }
     },
     selectArea (info) {
       console.log('info', info)
-      let {elIndex, id} = info
-      this.areaIndex = elIndex
-      let subObj = { areaid: id }
+      this.areaIndex = info.elIndex
+      let subObj = { areaid: info.id }
       Object.assign(this.tansmit, subObj)
     },
     elCountry () {
@@ -615,7 +633,9 @@ export default {
     },
     clearIndex () {
       // 清空所有选中筛选项
+      this.searchGoodname = ''
       this.countryIndex = null
+      this.areaIndex = null
       this.priceIndex = null
       this.varietyIndex = null
       this.sceneIndex = null
@@ -623,6 +643,7 @@ export default {
       this.sortIndex = null
       this.stationIndex = null
       this.internationIndex = null
+      this.grapeIndex = null
       this.alcoholIndex = null
       this.netIndex = null
       this.playerIndex = null
@@ -683,22 +704,42 @@ export default {
     }
   }
   .one_r {
-    width: 70px;
-    .flex_between;
-
-    &>i {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .searchbox {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 204px;
+      margin-right: 5px;
+      height: 28px;
+      background:rgba(250,250,250,1);
+      border-radius:14px;
+      padding: 0 20px;
+      box-sizing: border-box;
+      .search_icon {
+        width: 16px;
+        height: 16px;
+        background-image: url('~/assets/img/Icons/ic_search_g_16x16@2x.png');
+        .bg_cover;
+      }
+      .inpbox {
+        width: 135px;
+        height: 13px;
+        padding: 5px 0;
+        background: transparent;
+        box-sizing: content-box;
+      }
+      input::-webkit-search-cancel-button{
+        display: none;
+      }
+    }
+    .icon_buy {
       width: 30px;
       height: 30px;
-    }
-
-    .icon_search {
-      .bg_cover;
-      background-image: url("~/assets/img/Icons/ic_search_b_30x30.png");
-    }
-
-    .icon_buy {
-      .bg_cover;
       background-image: url("~/assets/img/Icons/ic_shop_b_30x30.png");
+      .bg_cover;
     }
   }
 }
