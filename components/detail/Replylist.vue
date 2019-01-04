@@ -122,7 +122,8 @@ export default {
 
       page: 1,
       pageLoding: false,
-      pageEmpty: false
+      pageEmpty: false,
+      sendLoading: false
     }
   },
   watch: {
@@ -188,41 +189,48 @@ export default {
         method -> 回复楼主/层主
         commentid -> 根据replyType区分是 解答疑问 / 商品评价
       */
-      let obj = {}
-      let fn = null
-      console.log(replyType)
-      if (method === 'one') {
-        console.log('回复楼主')
-        // 回复楼主
-        obj = {
-          commentid: id,
-          content: this.editContent
+      if (!this.sendLoading) {
+        this.sendLoading = true
+        let obj = {}
+        let fn = null
+        console.log(replyType)
+        if (method === 'one') {
+          console.log('回复楼主')
+          // 回复楼主
+          obj = {
+            commentid: id,
+            content: this.editContent
+          }
+        } else if (method === 'two') {
+          console.log('回复层主')
+          // 回复层主
+          obj = {
+            parentid: this.replyid,
+            commentid: id,
+            content: this.editContent
+          }
         }
-      } else if (method === 'two') {
-        console.log('回复层主')
-        // 回复层主
-        obj = {
-          parentid: this.replyid,
-          commentid: id,
-          content: this.editContent
+        if (replyType === 'answer') {
+          let param = {
+            consultid: id,
+            answer: this.editContent
+          }
+          fn = quizApi.reply(param)
+        } else if (replyType === 'comment') {
+          fn = goodsApi.reply(obj)
         }
-      }
-      if (replyType === 'answer') {
-        let param = {
-          consultid: id,
-          answer: this.editContent
-        }
-        fn = quizApi.reply(param)
-      } else if (replyType === 'comment') {
-        fn = goodsApi.reply(obj)
-      }
-      const { code, data } = await fn
-      if (code === 200) {
-        this.$toast('回复成功')
-        this.editContent = ''
-        this.renderData()
-      } else {
-        this.$toast(data)
+        const { code, data } = await fn
+        setTimeout(() => {
+          if (code === 200) {
+            this.$toast('回复成功')
+            this.editContent = ''
+            this.renderData()
+            this.sendLoading = false
+          } else {
+            this.$toast(data)
+            this.sendLoading = false
+          }
+        }, 500)
       }
     },
     // 点赞
