@@ -17,8 +17,9 @@
             <i class="icon_buy"></i>
           </div>
         </div>
-        <div class="screen">
-          <div class="screen-item" :class="{active: sizerIndex === index}" @click="elClassify(index)" v-for="(cls, index) in sortList" :key="index">{{cls.name}}</div>
+        <div class="filter">
+          <div class="filter-item">共218374件</div>
+          <div class="filter-item filter-btn">分类筛选</div>
         </div>
       </div>
     </div>
@@ -70,7 +71,9 @@ export default {
     let params = {
       page: 1,
       count: 5,
-      ifWine: false
+      ifWine: false,
+      ifSellOut: false,
+      ifExclusive: false
     }
     let params2 = {
       ifWine: false
@@ -372,10 +375,10 @@ export default {
 .upper {
   padding-top: 10px;
   border-bottom: 1PX solid #F5F5F5;
-  .padlr20;
   .cpmzIndex;
 
   .top {
+    padding: 5px 20px;
     .flex_between;
 
     &_l {
@@ -447,7 +450,7 @@ export default {
       }
     }
   }
-
+  
   .screen {
     padding: 0 20px;
     height: 49px;
@@ -494,6 +497,28 @@ export default {
         transform: rotate(180deg);
         background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
       }
+    }
+  }
+
+  .filter {
+    background: #F5F5F5;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    &-item {
+      padding: 10px 0;
+      font-size:13px;
+      font-family:PingFang-SC-Medium;
+      font-weight:500;
+      color:rgba(153,153,153,1);
+      line-height:13px;
+    }
+    &-btn {
+      padding-right: 16px;
+      background-image: url('~/assets/img/Icons/ic_xiala_g_line_12x12@2x.png');
+      background-size: 12px 12px;
+      background-repeat: no-repeat;
+      background-position: right center;
     }
   }
 

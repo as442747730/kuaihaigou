@@ -125,7 +125,9 @@ export default {
     let params = {
       page: 1,
       count: 5,
-      ifWine: true
+      ifWine: true,
+      ifSellOut: false,
+      ifExclusive: true
     }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
     if (goodCode === 200) {
@@ -375,7 +377,10 @@ export default {
             subObj.sortedBy = id
             subObj.ifSellOut = false
           }
-          this.sortIndex = elIndex
+          // 选择相同选项
+          if (id !== null) {
+            this.sortIndex = elIndex
+          }
           this.fetchData()
           this.showtwo = false
           this.sizerIndex = null
@@ -405,13 +410,16 @@ export default {
           }
           break
         case 6:
-          this.playerIndex = elIndex
           if (id === 1) {
             this.isNovice = true
             this.noviceMaster = '新手选酒'
           } else {
             this.isNovice = false
             this.noviceMaster = '高手选酒'
+          }
+          // 选择相同选项
+          if (id !== null) {
+            this.playerIndex = elIndex
           }
           this.fetchData()
           this.showtwo = false
