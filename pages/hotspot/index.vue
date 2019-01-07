@@ -1,59 +1,56 @@
 <template>
-  <div class="homelist">
+  <div class="homelist" ref="scrollElem">
     <div class="hothead">
-      <div class="headitem active">本周最热</div>
-      <div class="headitem">本月最热</div>
+      <div class="headitem" :class="{active: hotweek}" @click="myhotFn(0)">本周最热</div>
+      <div class="headitem" :class="{active: !hotweek}" @click="myhotFn(1)">本月最热</div>
     </div>
     <div class="hotbox">
       <div class="box-item" v-for="(item, index) in hotList" :key="index">
-        <div class="box-left"></div>
+        <div class="box-left" v-lazy:background-image="item.imgPath"></div>
         <div class="box-right">
-          <h3 class="r_head">英国米其林星级名厨国米其林</h3>
-          <div class="r_time">2018-08-12</div>
-          <p class="r_summary">红酒早前并不都是用玻璃瓶来装的，较早开始都是用橡木桶…</p>
+          <h3 class="r_head">{{item.title}}</h3>
+          <div class="r_time">{{item.createdAt}}</div>
+          <p class="r_summary">{{item.summary}}</p>
         </div>
       </div>
     </div>
     <div class="hotcircle">
       <div class="navs items">
-        <span class="item active">这些圈子都在看</span>
-        <span class="item">国内资讯</span>
-        <span class="item">国际资讯</span>
-        <span class="item">展会信息</span>
+        <span class="item" :class="{active: circleIndex === index}" v-for="(nav, index) in circlenavList" :key="index" @click="circleFn(index)">{{nav}}</span>
       </div>
       <div class="banners">
         <div v-swiper:mySwiper1="bannerSwiper">
           <div class="bannerlist swiper-wrapper">
-            <div class="banneritem swiper-slide" v-lazy:background-image="require('~/assets/img/001.jpg')"></div>
-            <div class="banneritem swiper-slide" v-lazy:background-image="require('~/assets/img/banner-home@2x.png')"></div>
-            <div class="banneritem swiper-slide" v-lazy:background-image="require('~/assets/img/001.jpg')"></div>
-            <div class="banneritem swiper-slide" v-lazy:background-image="require('~/assets/img/banner-home@2x.png')"></div>
+            <div class="banneritem swiper-slide" v-for="(item, index) in bannerList" :key="index"  v-lazy:background-image="item.bannerPath"></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="list-box">
-      <div class="list">
+    <div class="list-box" v-if="newList.length !== 0">
+      <div class="list" v-for="(item, index) in newList" :key="index">
         <div class="content">
           <div class="content-head">
-            <p>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</p>
+            <p>{{item.title}}</p>
           </div>
-          <div class="content-time">2018-08-23 14:24:87</div>
+          <div class="content-time">{{item.createdAt}}</div>
           <div class="content-other">
-            <span>作者：拉菲尼斯</span>
-            <span>来源：红酒网</span>
+            <span>作者：{{item.author || '佚名'}}</span>
+            <span v-if="item.sourceAddress">来源：{{item.sourceAddress}}</span>
           </div>
           <div class="imgs">
-            <div class="imgone" v-lazy:background-image="require('~/assets/img/001.jpg')"></div>
+            <div class="imgone" v-lazy:background-image="item.imgPath"></div>
           </div>
-          <div class="article">红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…</div>
+          <div class="article">{{item.summary}}</div>
         </div>
       </div>
+      <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多商品'}}</div>
     </div>
+    <null-data v-else></null-data>
   </div>
 </template>
 <script>
-  // import { newApi } from '~/api/news'
+  import { newApi } from '~/api/news'
+  import nullData from '~/components/nullData'
   export default {
     head () {
       return {
@@ -63,19 +60,142 @@
         ]
       }
     },
+    components: {
+      nullData
+    },
+    async asyncData (req) {
+      const hottest = true
+      const classificationId = 0
+      const firstpage = 1
+      const params = {
+        count: 1,
+        page: firstpage,
+        classificationId: classificationId
+      }
+      const hotFn = newApi.serverHot(hottest, req)
+      const banFn = newApi.serverBanner(classificationId, req)
+      const listFn = newApi.serverPage(params, req)
+      return Promise.all([hotFn, banFn, listFn]).then(([hotReq, banReq, listReq]) => {
+        if (hotReq.code !== 200 || banReq.code !== 200 || listReq.code !== 200) {
+          req.redirect('/error')
+        } else {
+          let { totalPageNo, array } = listReq.data
+          const moreData = firstpage < totalPageNo
+          return {
+            hotList: hotReq.data,
+            bannerList: banReq.data,
+            newList: array,
+            totalPage: totalPageNo,
+            curPage: firstpage,
+            moreData: moreData,
+            circleIndex: classificationId,
+            transmit: params
+          }
+        }
+      }).catch(err => {
+        console.log('err', err)
+      })
+    },
     data () {
       return {
+        hotweek: true,
         hotList: [],
-        bannerList: []
+        bannerList: [],
+        newList: [],
+        circlenavList: ['这些圈子都在看', '行业热点', '培训讲座', '企业招商'],
+        circleIndex: 0,
+        curPage: 1,
+        totalPage: 1,
+        transmit: {},
+        loadOk: true,
+        moreData: true, // 有更多数据
+        hasScroll: false, // 是否有滚动
+        loadTxt: '下拉加载更多',
+        bannerSwiper: {
+          speed: 800,
+          slidesPerView: 'auto'
+        }
       }
     },
-    created () {
-      console.log('123456')
-    },
     mounted () {
-      console.log('---------------------------------')
-      console.log('mounted')
-      console.log('---------------------------------')
+      // 滚动
+      const throttel = (fn, interval = 300) => {
+        let canRun = true
+        return function () {
+          if (!canRun) return
+          canRun = false
+          setTimeout(() => {
+            fn.apply(this, arguments)
+            canRun = true
+          }, interval)
+        }
+      }
+      window.addEventListener('scroll', throttel(() => {
+        let winH = document.documentElement.clientHeight || document.body.clientHeight
+        let elemBound = this.$refs.scrollElem.getBoundingClientRect()
+        let _height = elemBound.height
+        let _top = Math.abs(elemBound.top)
+        let bottomH = _height - (_top + winH)
+        if (bottomH <= 100 && this.loadOk && this.moreData) {
+          this.loadOk = false
+          this.fetchData(true)
+        }
+      }))
+    },
+    methods: {
+      async fetchData (isMore) {
+        // banner newList
+        this.$toast.loading('加载中...')
+        this.loadTxt = '加载中'
+        if (isMore) {
+          this.curPage += 1
+          this.hasScroll = true
+        } else {
+          this.curPage = 1
+          this.hasScroll = false
+        }
+        Object.assign(this.transmit, { page: this.curPage })
+        const banFn = newApi.clientBanner(this.circleIndex)
+        const listFn = newApi.clientPage(this.transmit)
+        Promise.all([banFn, listFn]).then(([banReq, listReq]) => {
+          if (banReq.code === 200 && listReq.code === 200) {
+            this.bannerList = banReq.data
+            let { page, array, totalPageNo } = listReq.data
+            this.curPage = page
+            this.moreData = this.curPage < totalPageNo
+            if (isMore) {
+              this.newList.push(...array)
+            } else {
+              this.newList = array
+            }
+            this.loadTxt = '下拉加载更多'
+          }
+          this.loadOk = true
+        })
+      },
+      async hotData () {
+        // 最热
+        const { code, data } = await newApi.clientHot(this.hotweek)
+        if (code === 200) {
+          this.hotList = data
+        }
+      },
+      myhotFn (num) {
+        if (num === 0) {
+          this.hotweek = true
+        } else if (num === 1) {
+          this.hotweek = false
+        }
+        this.hotData()
+      },
+      circleFn (index) {
+        this.circleIndex = index
+        let objCir = {
+          classificationId: this.circleIndex
+        }
+        Object.assign(this.transmit, objCir)
+        this.fetchData()
+      }
     }
   }
 </script>
@@ -105,6 +225,8 @@
           left: 0;
           color: #ccc;
           transform: translateY(-50%);
+          font-family: PingFangSC-Semibold;
+          font-weight: 600;
         }
       }
 
@@ -125,17 +247,18 @@
     .box-item {
       margin: 20px 0;
       display: flex;
+      justify-content: flex-start;
 
       .box-left {
         width: 110px;
         height: 80px;
         border-radius: 6px;
         margin-right: 10px;
-        background-image: url('~/assets/img/img_cebian01_110x80@2x.png');
         .bg_cover;
       }
 
       .box-right {
+        width: calc(100% - 110px);
         .r_head {
           font-size: 14px;
           font-family: PingFangSC-Semibold;
@@ -231,13 +354,11 @@
 
   }
   .list-box {
-    padding-left: 20px;
-    padding-right: 20px;
     .list {
       border-radius: 8px;
       border: 1PX solid #eaeaea;
+      margin: 30px 20px;
       box-sizing: border-box;
-      margin: 30px 0;
       .users {
         padding: 0 20px;
         height: 80px;
@@ -377,23 +498,14 @@
     }
 
   }
-}
-</style>
-<script>
-import TemList from '~/components/encys/template'
-export default {
-  data () {
-    return {
-      bannerSwiper: {
-        speed: 800,
-        slidesPerView: 'auto'
-      },
-      hotList: [],
-      bannerList: []
-    }
-  },
-  components: {
-    TemList
+
+  .load-more {
+    line-height: 50px;
+    background: #F5F5F5;
+    text-align: center;
+    font-size: 12px;
+    background: #F5F5F5;
+    color: #666;
   }
 }
-</script>
+</style>
