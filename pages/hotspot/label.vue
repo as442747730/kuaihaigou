@@ -23,6 +23,24 @@
     </div>
   </div>
 </template>
+<script>
+  export default {
+    head () {
+      return {
+        title: '行业热点',
+        meta: [
+          { hid: 'title', name: 'title', content: '行业热点' }
+        ]
+      }
+    },
+    asyncData (req) {
+      console.log('我是商品详情')
+    },
+    mounted () {
+      console.log('我是label')
+    }
+  }
+</script>
 <style lang="less" scoped>
 .hotlabel {
   .label-top {

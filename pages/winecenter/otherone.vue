@@ -158,88 +158,90 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-  .otherone {
-  	padding-top: 70px;
+.otherone {
+  padding-top: 70px;
+}
+
+.other-content {
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+
+  .othList {
+    padding: 0 20px 20px;
+    flex-wrap: wrap;
+    .flex_between;
+
+    &-item {
+      margin-top: 20px;
+      width: 160px;
+
+      .top {
+        height: 160px;
+        border-radius: 4px;
+        border: 1PX solid #EAEAEA;
+        .flex_allCenter;
+
+        &_bk {
+          width: 152px;
+          height: 155px;
+          .bg_cover;
+        }
+      }
+
+      .bottom {
+        padding-top: 10px;
+
+        .head {
+          height: 36px;
+          font-size: 13px;
+          font-family: PingFangSC-Medium;
+          font-weight: 500;
+          color: @cor_333;
+          line-height: 18px;
+          overflow: hidden;
+        }
+
+        &>p {
+          padding: 5px 0;
+          font-size: 12px;
+          font-family: PingFang-SC-Regular;
+          font-weight: 400;
+          color: rgba(153, 153, 153, 1);
+          line-height: 12px;
+          overflow: hidden;
+
+          &>span {
+            position: relative;
+            margin-right: 14px;
+
+            &:after {
+              content: '|';
+              position: absolute;
+              top: 0;
+              right: -8px;
+              height: 12px;
+            }
+          }
+
+          span:last-child {
+            margin-right: 0;
+
+            &:after {
+              content: '';
+            }
+          }
+
+        }
+
+        .price {
+          height: 15px;
+          font-size: 15px;
+          font-family: Impact;
+          color: rgba(249, 156, 0, 1);
+          line-height: 15px;
+        }
+      }
+    }
   }
-	.other-content {
-	  max-height: calc(100vh - 120px);
-	  overflow: auto;
-	  .othList {
-	    padding: 0 20px 20px;
-	    flex-wrap: wrap;
-	    .flex_between;
-
-	    &-item {
-	      margin-top: 20px;
-	      width: 160px;
-
-	      .top {
-	        height: 160px;
-	        border-radius: 4px;
-	        border: 1PX solid #EAEAEA;
-	        .flex_allCenter;
-
-	        &_bk {
-	          width: 152px;
-	          height: 155px;
-	          .bg_cover;
-	        }
-	      }
-
-	      .bottom {
-	        padding-top: 10px;
-
-	        .head {
-	          height: 36px;
-	          font-size: 13px;
-	          font-family: PingFangSC-Medium;
-	          font-weight: 500;
-	          color: @cor_333;
-	          line-height: 18px;
-	          overflow: hidden;
-	        }
-
-	        &>p {
-	          padding: 5px 0;
-	          font-size: 12px;
-	          font-family: PingFang-SC-Regular;
-	          font-weight: 400;
-	          color: rgba(153, 153, 153, 1);
-	          line-height: 12px;
-	          overflow: hidden;
-
-	          &>span {
-	            position: relative;
-	            margin-right: 14px;
-
-	            &:after {
-	              content: '|';
-	              position: absolute;
-	              top: 0;
-	              right: -8px;
-	              height: 12px;
-	            }
-	          }
-
-	          span:last-child {
-	            margin-right: 0;
-
-	            &:after {
-	              content: '';
-	            }
-	          }
-
-	        }
-
-	        .price {
-	          height: 15px;
-	          font-size: 15px;
-	          font-family: Impact;
-	          color: rgba(249, 156, 0, 1);
-	          line-height: 15px;
-	        }
-	      }
-	    }
-	  }
-	}
+}
 </style>

@@ -287,27 +287,27 @@ export default {
       overflow: auto;
       box-sizing: border-box;
       .items {
-      	overflow: auto;
+        overflow: auto;
       }
       .ones {
-      	background: #fff;
-				width: 100%;
+        background: #fff;
+        width: 100%;
       }
       .twos {
-      	width: 66.6%;
-      	background: #fff;
+        width: 66.6%;
+        background: #fff;
       }
       .threes {
-      	width: 33.3%;
-      	background: #fff;
+        width: 33.3%;
+        background: #fff;
       }
       .ones_three {
-      	width: 33.3%;
-      	background: #F5F5F5;
+        width: 33.3%;
+        background: #F5F5F5;
       }
       .twos_three {
-      	width: 33.3%;
-      	background: #F9F9F9;
+        width: 33.3%;
+        background: #F9F9F9;
       }
       .item {
         width: 100%;
@@ -318,15 +318,16 @@ export default {
         color: rgba(153, 153, 153, 1);
         text-align: center;
         &.active {
-					color:rgba(51,51,51,1);
-					background: #fff;
+          color:rgba(51,51,51,1);
+          background: #fff;
         }
       }
     }
 
     .drop-wrapper-bottom {
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      box-shadow: 0 0 20px rgba(0,0,0,.1);
       display: flex;
+      position: relative;
 
       .btn {
         flex: 1;
