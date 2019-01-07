@@ -5,7 +5,7 @@
       <div class="headitem">本月最热</div>
     </div>
     <div class="hotbox">
-      <div class="box-item" v-for="n in 3">
+      <div class="box-item" v-for="(item, index) in hotList" :key="index">
         <div class="box-left"></div>
         <div class="box-right">
           <h3 class="r_head">英国米其林星级名厨国米其林</h3>
@@ -52,6 +52,33 @@
     </div>
   </div>
 </template>
+<script>
+  // import { newApi } from '~/api/news'
+  export default {
+    head () {
+      return {
+        title: '行业热点',
+        meta: [
+          { hid: 'title', name: 'title', content: '行业热点' }
+        ]
+      }
+    },
+    data () {
+      return {
+        hotList: [],
+        bannerList: []
+      }
+    },
+    created () {
+      console.log('123456')
+    },
+    mounted () {
+      console.log('---------------------------------')
+      console.log('mounted')
+      console.log('---------------------------------')
+    }
+  }
+</script>
 <style lang="less" scoped>
 .homelist {
   .hothead {
@@ -360,7 +387,9 @@ export default {
       bannerSwiper: {
         speed: 800,
         slidesPerView: 'auto'
-      }
+      },
+      hotList: [],
+      bannerList: []
     }
   },
   components: {
