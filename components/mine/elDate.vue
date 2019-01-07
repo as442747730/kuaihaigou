@@ -4,6 +4,8 @@
       show-toolbar
       v-model="currentDate"
       type="date"
+      :min-date="minDate"
+      :max-date="maxDate"
       @confirm="onConfirm"
       @cancel="onCancle" />
   </van-popup>
@@ -16,7 +18,8 @@ export default {
     return {
       getName: '',
       isshow: false,
-      minDate: new Date(),
+      minDate: new Date('1949-01-01'),
+      maxDate: new Date(),
       currentDate: new Date()
     }
   },

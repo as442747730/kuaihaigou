@@ -11,8 +11,8 @@
           <form action="javascript:return true;">
             <input class="inpbox" v-model="searchGoodname" placeholder="请输入想要查找的内容" type="search" @keyup.13="toSearch" />
           </form>
+          <i class="delete_icon" @click="clearSearch"></i>
         </div>
-        <!-- <i class="icon_buy" @click="toSearch"></i> -->
         <i class="icon_buy"></i>
       </div>
     </div>
@@ -157,7 +157,8 @@ export default {
       page: 1,
       count: 5,
       ifWine: true,
-      sortedBy: 3
+      ifSellOut: false,
+      ifExclusive: false
     }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
     if (goodCode === 200) {
@@ -201,7 +202,7 @@ export default {
       sceneIndex: null,
       featureList: [],
       featureIndex: null,
-      sortIndex: null,
+      sortIndex: 0,
       stationList: [],
       stationIndex: null,
       internationList: [],
@@ -273,13 +274,16 @@ export default {
   },
   methods: {
     toOthers () {
-      window.location.href = '/winecenter/others'
+      window.location.href = '/winecenter/otherone'
     },
     toSearch () {
       let objGoodname = { goodsName: this.searchGoodname }
       Object.assign(this.tansmit, objGoodname)
-      // console.log(this.tansmit)
       this.fetchData()
+    },
+    clearSearch () {
+      this.searchGoodname = ''
+      this.toSearch()
     },
     subRest () {
       this.tansmit = this.defaultTansmit
@@ -405,7 +409,10 @@ export default {
             subObj.sortedBy = id
             subObj.ifSellOut = false
           }
-          this.sortIndex = elIndex
+          // 选择相同选项
+          if (id !== null) {
+            this.sortIndex = elIndex
+          }
           this.showtwo = false
           this.fetchData()
           this.sizerIndex = null
@@ -435,13 +442,16 @@ export default {
           }
           break
         case 6:
-          this.playerIndex = elIndex
-          if (id === 1) {
-            this.isNovice = true
-            this.noviceMaster = '新手选酒'
-          } else {
+          if (id === 2) {
             this.isNovice = false
             this.noviceMaster = '高手选酒'
+          } else if (id === 1) {
+            this.isNovice = true
+            this.noviceMaster = '新手选酒'
+          }
+          // 选择相同选项
+          if (id !== null) {
+            this.playerIndex = elIndex
           }
           this.fetchData()
           this.showtwo = false
@@ -670,13 +680,13 @@ export default {
       this.varietyIndex = null
       this.sceneIndex = null
       this.featureIndex = null
-      this.sortIndex = null
+      this.sortIndex = 0
       this.stationIndex = null
       this.internationIndex = null
       this.grapeIndex = null
       this.alcoholIndex = null
       this.netIndex = null
-      this.playerIndex = null
+      this.playerIndex = 0
       // 重置选项中的包含选中样式
       this.sizerOne = this.sizerOne.map(v => {
         return { name: v.name, iscor: false }
@@ -745,7 +755,7 @@ export default {
       height: 28px;
       background:rgba(250,250,250,1);
       border-radius:14px;
-      padding: 0 20px;
+      padding: 0 15px;
       box-sizing: border-box;
       .search_icon {
         width: 16px;
@@ -753,8 +763,17 @@ export default {
         background-image: url('~/assets/img/Icons/ic_search_g_16x16@2x.png');
         .bg_cover;
       }
+      .delete_icon {
+        padding: 6px 0;
+        width: 14px;
+        height: 14px;
+        background-repeat: no-repeat;
+        background-size: 14px 14px;
+        background-position: center center;
+        background-image: url('~/assets/img/Icons/ic_shanchu_g_14x14@2x.png');
+      }
       .inpbox {
-        width: 135px;
+        width: 130px;
         height: 13px;
         padding: 5px 0;
         background: transparent;
