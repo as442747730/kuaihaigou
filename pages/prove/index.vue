@@ -26,12 +26,14 @@
       </template>
       <!-- 未认证 -->
       <div class="pro" v-if='proveMethod === 0'>
-        <h3 class="font_hight">您还没有被认证哦</h3>
-        <p>请选择以下1个身份快速认证</p>
-        <span class="font_hight">未认证</span>
+        <div class="pro-box">
+          <h3 class="font_hight">您还没有被认证哦</h3>
+          <p>请选择以下1个身份快速认证</p>
+          <span class="font_hight">未认证</span>
+        </div>
       </div>
       <!-- 审核中 -->
-      <div class="pro auditing" v-if='proveMethod === 11'>
+      <div class="pro auditing" v-if='isAudit'>
         <div class="pro-box">
           <h3 class="font_hight">您申请的【{{ referTxt }}】</h3>
           <p>正在审核，2个工作日以内回复</p>
@@ -40,12 +42,14 @@
       </div>
       <!-- 被拒绝 -->
       <div class="pro refuse" v-if='proveMethod === 5'>
-        <h3 class="font_hight">您的申请认证</h3>
-        <p>抱歉，您的认证审核未通过</p>
-        <span class="font_hight">
-          未通过
-          <i @click='failIntro = true'>查看失败原因 ></i>
-        </span>
+        <div class="pro-box">
+          <h3 class="font_hight">您的申请认证</h3>
+          <p>抱歉，您的认证审核未通过</p>
+          <span class="font_hight">
+            未通过
+            <i @click='failIntro = true'>查看失败原因 ></i>
+          </span>
+        </div>
       </div>
       <div class="desc" v-if='!provePass'>
         <h4>选择认证身份，立即获得荣耀</h4>
@@ -90,7 +94,12 @@
 
     <!-- 专业认证 -->
     <transition name="slide">
-      <major v-if='showMajor' :professionTypeResps='userInfo.professionTypeResps'></major>
+      <major v-if='showMajor' :professionTypeResps='userInfo.professionTypeResps || []'></major>
+    </transition>
+
+    <!-- 媒体认证 -->
+    <transition name="slide">
+      <media v-if='showMedia'></media>
     </transition>
 
     <!-- 说明弹窗 -->
@@ -113,15 +122,13 @@
 
     <!-- 认证失败文案 -->
     <van-dialog v-model="failIntro" :show-confirm-button="false" :closeOnClickOverlay='false' >
-      <div class="prove-intro">
+      <div class="prove-intro faild">
         <div class="intro-title font_hight">
-          您的认证未通过
-          <van-icon name='cross' @click='closeFail' />
+          {{ userInfo.latestCertificationFailureReason || '' }}
         </div>
-        <div class="intro-content">
-          <p style="text-align: center">失败原因：{{ userInfo.latestCertificationFailureReason || '' }}</p>
+        <div class="i-known font_medium" @click='failIntro = false'>
+          知道了
         </div>
-        <div class="u-button noradius" @click='failIntro = false'>知道了</div>
       </div>
     </van-dialog>
 
@@ -134,6 +141,7 @@ import { proveApi } from '~/api/prove'
 
 import comHead from '~/components/com-head'
 import major from '~/components/prove/Major'
+import media from '~/components/prove/Media'
 
 export default {
   head () {
@@ -147,7 +155,8 @@ export default {
 
   components: {
     comHead,
-    major
+    major,
+    media
   },
 
   async asyncData (req) {
@@ -162,19 +171,21 @@ export default {
       let powerList = []
       let proveMethod = 0
       let referTxt = ''
-      let majorAudit = false
+      let isAudit = false
       let provePass = false
+      let mediaPass = false
       let honorActive = null
       let majorId = null
       if (res1.code === 200 && res2.code === 200) {
         userInfo = res1.data
         powerList = res2.data
         let { certCategory, certStage, professionTypeResps } = res1.data
+        //  --- 专业认证 ---
         if (certCategory === 1 && certStage === 1) {
           // 专业认证审核中
           proveMethod = 11
           referTxt = '专业认证'
-          majorAudit = true
+          isAudit = true
         }
         if (certCategory === 1 && certStage === 2) {
           // 专业认证通过
@@ -184,7 +195,7 @@ export default {
         if (certCategory === 1 && certStage === 3) {
           // 专业认证二次提交审核中
           proveMethod = 11
-          majorAudit = true
+          isAudit = true
           referTxt = '专业认证'
           provePass = true
         }
@@ -193,6 +204,18 @@ export default {
           proveMethod = 14
           referTxt = '专业认证'
           provePass = true
+        }
+        //  --- 自媒体认证 ---
+        if (certCategory === 2 && certStage === 1) {
+          // 自媒体认证审核中
+          proveMethod = 21
+          referTxt = '媒体认证'
+          isAudit = true
+        }
+        if (certCategory === 2 && certStage === 2) {
+          // 自媒体认证审核中
+          proveMethod = 22
+          mediaPass = true
         }
         if (certStage === 5) {
           // 申请未通过
@@ -213,8 +236,10 @@ export default {
           proveMethod: proveMethod,
           referTxt: referTxt,
           certCategory: certCategory,
-          majorAudit: majorAudit,
+          isAudit: isAudit,
+          // mediaAudit: mediaAudit,
           provePass: provePass,
+          mediaPass: mediaPass,
           honorActive: honorActive,
           majorId: majorId
         }
@@ -230,7 +255,8 @@ export default {
       proveIntro: false, // 认证说明弹窗
       failIntro: false, // 认证失败说明
 
-      showMajor: false,
+      showMajor: false, // 显示专业认证
+      showMedia: false, // 显示媒体认证
 
       userInfo: {},
       powerList: [],
@@ -239,8 +265,9 @@ export default {
       certCategory: 0, // 当前认证类型
       proveMethod: 0, // 认证类型以及状态
       referTxt: '',
-      majorAudit: false, // 专业认证审核中
-      provePass: false, // 认证是否通过
+      isAudit: false, // xx认证审核中
+      provePass: false, // 专业认证是否通过
+      mediaPass: false, // 自媒体认证是否通过
 
       honorActive: null,
       majorId: null
@@ -253,14 +280,17 @@ export default {
         this.$dialog.confirm({
           message: '你的认证资料还未提交<br>确定退出吗？'
         }).then(() => {
-          this.showMajor = false
+          window.location.replace('/prove')
         }).catch(() => {
-          window.location.hash = '#major'
+          let hash = ''
+          if (this.showMajor) hash = '#major'
+          if (this.showMeida) hash = '#media'
+          window.location.hash = hash
         })
       } else if (to.hash === '#major') {
         this.showMajor = true
-      }
-      if (to.hash === '#major') {
+      } else if (to.hash === '#media') {
+        this.showMedia = true
       }
     }
   },
@@ -271,13 +301,14 @@ export default {
 
   methods: {
     majorClick () {
-      if ((this.certCategory !== 1 && this.certCategory !== 0) || this.majorAudit) return
+      if ((this.certCategory !== 1 && this.certCategory !== 0) || this.isAudit) return
       this.showMajor = true
       window.location.hash = 'major'
     },
     mediaClick () {
-      if ((this.certCategory !== 2 && this.certCategory !== 0)) return
-      console.log(2)
+      if ((this.certCategory !== 2 && this.certCategory !== 0) || this.isAudit) return
+      this.showMedia = true
+      window.location.hash = 'media'
     },
     professClick () {
       if ((this.certCategory !== 3 && this.certCategory !== 0)) return
@@ -298,6 +329,7 @@ export default {
       }
     },
     cancel (type, id) {
+      if (this.proveMethod === 11) return this.$toast('当前正处于认证审核状态，请等待审核完毕后再执行相关操作')
       let fn = null
       this.$dialog.confirm({
         message: '确定解除当前选中认证吗？'
@@ -402,10 +434,7 @@ export default {
         span {
           color: #FFF3DF;
           background: #EDC37F;
-        }
-        .pro-box {
-          padding: 0 20px;
-        }
+        }  
       }
       &.refuse {
         background: url('~/assets/img/prove/bg_glory_weitongguo@2x.png') no-repeat center/contain;
@@ -427,6 +456,9 @@ export default {
             top: -16px;
           }
         }
+      }
+      .pro-box {
+        padding: 0 20px;
       }
       h3 {
         font-size: 15px;
@@ -601,6 +633,22 @@ export default {
 }
 .prove-intro {
   padding: 30px 20px;
+  &.faild {
+    padding: 0px;
+    .intro-title {
+      padding: 20px 0;
+      margin-bottom: 0;
+      font-size: 17px;
+      line-height: 24px;
+    }
+    .i-known {
+      font-size: 17px;
+      color: #03A1CD;
+      padding: 15px 0;
+      text-align: center;
+      border-top: 1px solid #CDCED2;
+    }
+  }
   .intro-title {
     text-align: center;
     color: #333;
@@ -632,23 +680,135 @@ export default {
       line-height: 22px;
     }
   }
-  .u-button {
-    margin: 0 auto;
-    margin-top: 25px;
-    width: 190px;
-    height: 42px;
-  }
-}
-.mb-15 {
-  margin-bottom: 15px;
 }
 </style>
 <style lang='less'>
+  .u-prove-common {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow: scroll;
+   .title {
+      font-size: 15px;
+      color: #333;
+      padding: 20px 0;
+    }
+    .step {
+      padding: 0 20px;
+      font-size: 0;
+    }
+    .van-radio-group {
+      text-align: left;
+      margin-bottom: 25px;
+    }
+    .van-radio {
+      display: inline-block;
+      &.checked {
+        .van-radio__label {
+          background: #03A1CD;
+          color: #fff;
+          border-color: #03A1CD;
+        }
+      }
+      &:nth-child(2n) {
+        margin-right: 0;
+      }
+      .van-radio__input {
+        display: none;
+      }
+      .van-radio__label {
+        margin-left: 0;
+        margin-right: 15px;
+        width: 160px;
+        line-height: 40px;
+        height: 40px;
+        text-align: center;
+        color: #999;
+        border-radius: 3px;
+        box-sizing: border-box;
+        border: 1px solid #F1F1F1;
+        background: #FCFCFC;
+        font-size: 13px;
+      }
+    }
+    .upload-box {
+      width: 160px;
+      height: 110px;
+      text-align: center;
+      padding-top: 30px;
+      box-sizing: border-box;
+      position: relative;
+      margin-bottom: 20px;
+      &.success {
+        &:after {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          top: 0;
+          background: rgba(0,0,0,.2);
+          z-index: -1
+        }
+        i {
+          background: url('~/assets/img/prove/ic_recamera_blue_30x30@2x.png') no-repeat center/contain;
+        }
+        p {
+          color: #fff
+        }
+      }
+      i {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        background: url('~/assets/img/prove/ic_camera_blue_30x30@2x.png') no-repeat center/contain;
+      }
+      p {
+        margin-top: 10px;
+        color: #333;
+        font-size: 13px;
+      }
+    }
+    .textarea-item {
+      textarea {
+        font-size: 15px;
+        width: 100%;
+        line-height: 25px;
+        color: #666;
+      }
+      .words {
+        font-size: 15px;
+        color: #C7C7C7;
+        display: block;
+        text-align: right;
+        padding: 20px 0 25px;
+      }
+    }
+    .prove-submit {
+      margin-top: 42px;
+      text-align: center;
+      background: #03A1CD;
+      color: #fff;
+      line-height: 48px;
+      height: 48px;
+      font-size: 15px;
+    }
+  }
   .van-dialog__message {
     font-size: 17px;
     color: #333;
     text-align: center;
     font-family: 'PingFangSC-Semibold';
     font-weight: bold;
+  }
+  .mb-15 {
+    margin-bottom: 15px;
+  }
+  .mt-20 {
+    margin-top: 20px;
   }
 </style>

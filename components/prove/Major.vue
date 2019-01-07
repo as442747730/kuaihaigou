@@ -1,5 +1,5 @@
 <template>
-  <div class="u-major">
+  <div class="u-major u-prove-common">
     <div class="step step-1">
       <h3 class="title font_hight">请选择要认证的专业类型（可多选）：</h3>
       <div class="major-item">
@@ -157,15 +157,7 @@ export default {
     }
   },
 
-  watch: {
-    $route (to, from) {
-      if (to.hash === '') {
-      }
-    }
-  },
-
   created () {
-    console.log(this.professionTypeResps)
     this.cmsOptions.forEach(v => {
       if (this.professionTypeResps.find(item => item.code === v.val)) {
         v.disabled = true
@@ -255,23 +247,6 @@ export default {
 
 <style lang='less'>
 .u-major {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: #fff;
-  height: 100vh;
-  box-sizing: border-box;
-  overflow: scroll;
-  .step {
-    padding: 0 20px;
-    font-size: 0;
-  }
-  .title {
-    font-size: 15px;
-    color: #333;
-    padding: 20px 0;
-  }
   .major-item {
     &:not(:first-child) {
       margin-top: 10px;
@@ -280,44 +255,6 @@ export default {
       font-size: 12px;
       color: #666;
       margin-bottom: 15px;
-    }
-  }
-  .upload-box {
-    width: 160px;
-    height: 110px;
-    text-align: center;
-    padding-top: 30px;
-    box-sizing: border-box;
-    position: relative;
-    margin-bottom: 20px;
-    &.success {
-      &:after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        left: 0;
-        top: 0;
-        background: rgba(0,0,0,.2);
-        z-index: -1
-      }
-      i {
-        background: url('~/assets/img/prove/ic_recamera_blue_30x30@2x.png') no-repeat center/contain;
-      }
-      p {
-        color: #fff
-      }
-    }
-    i {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      background: url('~/assets/img/prove/ic_camera_blue_30x30@2x.png') no-repeat center/contain;
-    }
-    p {
-      margin-top: 10px;
-      color: #333;
-      font-size: 13px;
     }
   }
   .step-2 {
@@ -378,14 +315,5 @@ export default {
     font-size: 13px;
     color: #999;
   }
-}
-.prove-submit {
-  margin-top: 42px;
-  text-align: center;
-  background: #03A1CD;
-  color: #fff;
-  line-height: 48px;
-  height: 48px;
-  font-size: 15px;
 }
 </style>

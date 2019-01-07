@@ -10,6 +10,10 @@ export const proveApi = {
   certMajor (obj) {
     return request.clientPostJson('/api/user/cert/pro', obj)
   },
+  // 媒体认证
+  certMedia (obj) {
+    return request.clientPostJson('/api/user/cert/self_media', obj)
+  },
   // 专业认证设置默认
   certDefault (id) {
     return request.clientPost('/api/user/cert/default/' + id)
