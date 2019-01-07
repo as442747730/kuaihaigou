@@ -131,6 +131,7 @@ export default {
     let homefn = encyApi.paginate(par2, req)
     // 需要 return 才能为 data 绑上数据
     return Promise.all([sharefn, homefn]).then(([share, home]) => {
+      console.log(share)
       if (home.code !== 200 || share.code !== 200) {
         req.redirect('/error')
       }
