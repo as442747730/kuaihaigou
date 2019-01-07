@@ -10,7 +10,7 @@
         <div class="title">
           <h2>
             我的荣誉
-            <span>解除认证</span>
+            <span @click="cancel('major', majorId)">解除认证</span>
           </h2>
           <p>选择1个展示在头像的右侧</p>
         </div>
@@ -32,9 +32,11 @@
       </div>
       <!-- 审核中 -->
       <div class="pro auditing" v-if='proveMethod === 11'>
-        <h3 class="font_hight">您申请的【{{ referTxt }}】</h3>
-        <p>正在审核，2个工作日以内回复</p>
-        <span class="font_hight">审核中</span>
+        <div class="pro-box">
+          <h3 class="font_hight">您申请的【{{ referTxt }}】</h3>
+          <p>正在审核，2个工作日以内回复</p>
+          <span class="font_hight">审核中</span>
+        </div>
       </div>
       <!-- 被拒绝 -->
       <div class="pro refuse" v-if='proveMethod === 5'>
@@ -88,7 +90,7 @@
 
     <!-- 专业认证 -->
     <transition name="slide">
-      <major v-if='showMajor'></major>
+      <major v-if='showMajor' :professionTypeResps='userInfo.professionTypeResps'></major>
     </transition>
 
     <!-- 说明弹窗 -->
@@ -163,6 +165,7 @@ export default {
       let majorAudit = false
       let provePass = false
       let honorActive = null
+      let majorId = null
       if (res1.code === 200 && res2.code === 200) {
         userInfo = res1.data
         powerList = res2.data
@@ -177,17 +180,12 @@ export default {
           // 专业认证通过
           proveMethod = 12
           provePass = true
-          // 获取默认认证
-          professionTypeResps.find((v, index) => {
-            if (v.code === res1.data.professionTypeCode) {
-              honorActive = index
-            }
-          })
         }
         if (certCategory === 1 && certStage === 3) {
           // 专业认证二次提交审核中
-          proveMethod = 13
+          proveMethod = 11
           majorAudit = true
+          referTxt = '专业认证'
           provePass = true
         }
         if (certCategory === 1 && certStage === 4) {
@@ -200,6 +198,15 @@ export default {
           // 申请未通过
           proveMethod = 5
         }
+        if (provePass) {
+          // 获取默认认证
+          professionTypeResps.find((v, index) => {
+            if (v.code === res1.data.professionTypeCode) {
+              honorActive = index
+              majorId = v.id
+            }
+          })
+        }
         return {
           userInfo: userInfo,
           powerList: powerList,
@@ -208,7 +215,8 @@ export default {
           certCategory: certCategory,
           majorAudit: majorAudit,
           provePass: provePass,
-          honorActive: honorActive
+          honorActive: honorActive,
+          majorId: majorId
         }
       } else {
         req.redirect('/error')
@@ -234,7 +242,8 @@ export default {
       majorAudit: false, // 专业认证审核中
       provePass: false, // 认证是否通过
 
-      honorActive: null
+      honorActive: null,
+      majorId: null
     }
   },
 
@@ -275,6 +284,7 @@ export default {
       console.log(3)
     },
     async chooseIcon (id, index) {
+      this.majorId = id
       if (this.honorActive === index) return
       this.honorActive = index
       const { code, data } = await proveApi.certDefault(id)
@@ -286,6 +296,23 @@ export default {
       } else {
         this.$toast(data)
       }
+    },
+    cancel (type, id) {
+      let fn = null
+      this.$dialog.confirm({
+        message: '确定解除当前选中认证吗？'
+      }).then(async () => {
+        if (type === 'major') {
+          fn = proveApi.cancelMajor(id)
+        }
+        const { code, data } = await fn
+        if (code === 200) {
+          this.$toast('解绑成功')
+          window.location.reload()
+        } else {
+          this.$toast(data)
+        }
+      })
     },
     close () {
       this.proveIntro = false
@@ -374,7 +401,10 @@ export default {
         background: url('~/assets/img/prove/bg_glory_shenhezhong@2x.png') no-repeat center/contain;
         span {
           color: #FFF3DF;
-          background: #EDC37F
+          background: #EDC37F;
+        }
+        .pro-box {
+          padding: 0 20px;
         }
       }
       &.refuse {
@@ -461,12 +491,18 @@ export default {
       &.cur {
         filter: grayscale(0%);
         &:before {
-          content: "\F0AF";
+          content: "\F014";
           position: absolute;
           display: inline-block;
+          font: 0.37333rem/1 "vant-icon";
+          font-size: inherit;
+          text-rendering: auto;
           width: 16px;
           height: 16px;
-          font-family: "vant-icon";
+          font-size: 16px;
+          color: #03a1cd;
+          right: 10px;
+          top: 10px;
         }
       }
       .icon {

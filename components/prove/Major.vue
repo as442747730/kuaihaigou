@@ -9,6 +9,7 @@
             v-for="($v, $k) in cmsOptions"
             :key="$k"
             :name="$v.val"
+            :disabled="$v.disabled"
           >
             {{ $v.title }}
           </van-checkbox>
@@ -21,6 +22,7 @@
             v-for="($v, $k) in wsetOption"
             :key="$k"
             :name="$v.val"
+            :disabled="$v.disabled"
           >
             {{ $v.title }}
           </van-checkbox>
@@ -33,6 +35,7 @@
             v-for="($v, $k) in sameOption"
             :key="$k"
             :name="$v.val"
+            :disabled="$v.disabled"
           >
             {{ $v.title }}
           </van-checkbox>
@@ -45,6 +48,7 @@
             v-for="($v, $k) in chinaOption"
             :key="$k"
             :name="$v.val"
+            :disabled="$v.disabled"
           >
             {{ $v.title }}
           </van-checkbox>
@@ -57,6 +61,7 @@
             v-for="($v, $k) in otherOption"
             :key="$k"
             :name="$v.val"
+            :disabled="$v.disabled"
           >
             {{ $v.title }}
           </van-checkbox>
@@ -99,6 +104,13 @@ import frontDefault from '~/assets/img/prove/pic_id_card_positive_200x138@2x.png
 import backDefault from '~/assets/img/prove/pic_id_card_back_200x138@2x.png'
 export default {
   name: 'm-major',
+
+  props: {
+    professionTypeResps: {
+      type: Array,
+      default: []
+    }
+  },
 
   components: { Upload, uImghandler },
 
@@ -150,6 +162,35 @@ export default {
       if (to.hash === '') {
       }
     }
+  },
+
+  created () {
+    console.log(this.professionTypeResps)
+    this.cmsOptions.forEach(v => {
+      if (this.professionTypeResps.find(item => item.code === v.val)) {
+        v.disabled = true
+      }
+    })
+    this.wsetOption.forEach(v => {
+      if (this.professionTypeResps.find(item => item.code === v.val)) {
+        v.disabled = true
+      }
+    })
+    this.sameOption.forEach(v => {
+      if (this.professionTypeResps.find(item => item.code === v.val)) {
+        v.disabled = true
+      }
+    })
+    this.chinaOption.forEach(v => {
+      if (this.professionTypeResps.find(item => item.code === v.val)) {
+        v.disabled = true
+      }
+    })
+    this.otherOption.forEach(v => {
+      if (this.professionTypeResps.find(item => item.code === v.val)) {
+        v.disabled = true
+      }
+    })
   },
 
   methods: {

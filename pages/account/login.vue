@@ -170,9 +170,11 @@ export default {
 <style lang="less" scoped>
 .m-login {
   background: white;
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 550px;
   padding: 60px 30px 20px 30px;
   box-sizing: border-box;
+  position: relative;
   &-title {
     font-size: 26px;
     position: relative;
