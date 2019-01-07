@@ -1,6 +1,6 @@
 <template>
   <div class="otherone">
-    <top-select></top-select>
+    <top-select :totalGoods="curTotal" :selectList="sortList" @okFn="submitFn" @restFn="cancleFn" @searchFn="searchFn"></top-select>
     <section class="other-content" ref="scrollElem">
       <div class="box" ref="scrollChild">
         <ul class="othList">
@@ -51,15 +51,23 @@ export default {
       ifSellOut: false,
       ifExclusive: false
     }
+    let params2 = { ifWine: false }
+
     let goodsFn = wineApi.goodList(params, req)
+    let attrsFn = wineApi.serverAttrs(params2, req)
     const { code: goodCode, data: goodData } = await goodsFn
-    if (goodCode === 200) {
+    const { code: attrsCode, data: attrsData } = await attrsFn
+    console.log('attrsCode', attrsCode)
+    if (goodCode === 200 && attrsCode === 200) {
       let { array, total, page } = goodData
+      let { categoryTreeRespList } = attrsData
       return {
         curTotal: total,
         curPage: page,
         tansmit: params,
-        goodsList: array
+        defaultTansmit: params,
+        goodsList: array,
+        sortList: categoryTreeRespList
       }
     }
   },
@@ -69,6 +77,7 @@ export default {
       curPage: 1,
       curTotal: 0,
       goodsList: [],
+      sortList: [],
       loadOk: true, // 加载是否完成
       moreData: false, // 没有更多数据
       loadTxt: '加载更多',
@@ -76,7 +85,71 @@ export default {
       searchGoodname: ''
     }
   },
+  mounted () {
+    // 滚动
+    let scrollElem = this.$refs.scrollElem
+    let scrollChild = this.$refs.scrollChild
+    let allH = scrollElem.clientHeight
+    let sctop = scrollElem.offsetTop
+    const throttel = (fn, interval = 300) => {
+      let canRun = true
+      return function () {
+        if (!canRun) return
+        canRun = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          canRun = true
+        }, interval)
+      }
+    }
+    scrollElem.addEventListener('scroll', throttel(() => {
+      let { height, top } = scrollChild.getBoundingClientRect()
+      let _top = Math.abs(top)
+      let bottomH = height - (_top + sctop + allH)
+      // console.log('bottomH', bottomH)
+      if (bottomH <= 100 && this.loadOk && this.moreData) {
+        this.loadOk = false
+        this.fetchData(true)
+      }
+    }))
+  },
   methods: {
+    async fetchData (getMore) {
+      this.$toast.loading('加载中...')
+      this.loadTxt = '加载中'
+      if (getMore) {
+        this.curPage += 1
+        this.hasScroll = true
+      } else {
+        this.curPage = 1
+        this.hasScroll = false
+      }
+      Object.assign(this.tansmit, { page: this.curPage })
+      const { code, data } = await wineApi.clientList(this.tansmit)
+      if (code === 200) {
+        let { array, page, totalPageNo } = data
+        this.curPage = page
+        this.moreData = this.curPage < totalPageNo
+        if (getMore) {
+          this.goodsList.push(...array)
+        } else {
+          this.goodsList = array
+        }
+        this.loadOk = true
+      }
+    },
+    submitFn (postobj) {
+      Object.assign(this.tansmit, postobj)
+      this.fetchData()
+    },
+    cancleFn () {
+      this.tansmit = this.defaultTansmit
+      this.fetchData()
+    },
+    searchFn (objch) {
+      Object.assign(this.tansmit, objch)
+      this.fetchData()
+    },
     customArray (arr) {
       if (!Array.isArray(arr)) return false
       return JSON.parse(arr)
