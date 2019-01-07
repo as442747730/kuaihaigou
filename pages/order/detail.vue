@@ -90,7 +90,7 @@
         <p v-if="orderDetail.invoiceType === 1">收票邮箱：{{ orderDetail.email }}</p>
       </div>
       <div class="cost-wrapper-item">
-        <p>订单编号：{{ orderDetail.orderIdentify }} <span @click="">复制</span></p>
+        <p>订单编号：{{ orderDetail.orderIdentify }} <!-- <span @click="">复制</span> --></p>
         <p>下单时间：{{ orderDetail.submitOrderTime }}</p>
         <p v-if="orderDetail.status !== 1">支付方式：{{ orderDetail.payMethod | getPayment() }}</p>
         <p v-if="orderDetail.status !== 1">实付金额：{{ orderDetail.balanceAmount }}</p>
@@ -99,9 +99,9 @@
       <!-- <div class="cost-wrapper-total" v-if="orderDetail.status === 1">应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span></div> -->
     </div>
 
-    <div class="bottom-wrapper" v-if='orderDetail.status !== 6'>
-      <div class="cost-wrapper-total">
-        应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span>
+    <div class="bottom-wrapper" v-if='orderDetail.status !== 6 && orderDetail.status !== 2'>
+      <div class="cost-wrapper-total" v-if='orderDetail.status !==7'>
+        {{ orderDetail.status === 1 ? '应付金额' : '实付金额' }}：<span>￥ {{ orderDetail.balanceAmount }}</span>
       </div>
 
       <!-- status 1  代付款 -->
