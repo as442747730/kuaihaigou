@@ -20,7 +20,10 @@
             <i></i>
             <span>超爱</span>
           </div>
-          <p class="desc">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
+          <p class="desc" :class="{'mb-0': masterinfo.imgs}">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
+          <div class="pro" v-if='masterinfo.imgs'>
+            <div v-for="(item, index) in getJSONArr(masterinfo.imgs)" class="pro-item" :style="'background: url(' + item + ') no-repeat center/cover'" @click='showBigImg(index, getJSONArr(masterinfo.imgs))'></div>            
+          </div>
         </li>
         <li class="u_comment-list" v-for="($v, $k) in (replyData.length === 0 ? replystr : replyData)">
           <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
@@ -81,6 +84,7 @@ import tools from '~/utils/tools'
 import uUsericon from '~/components/Usericon'
 import { goodsApi } from '~/api/goods'
 import { quizApi } from '~/api/quiz'
+import { ImagePreview } from 'vant'
 export default {
   components: {
     uUsericon
@@ -138,7 +142,6 @@ export default {
       this.replyData = JSON.parse(JSON.stringify(this.replystr))
       this.pageEmpty = false
       this.page = 1
-      console.log('val', val)
     },
     isBottom (val) {
       if (val && !this.pageEmpty) {
@@ -327,6 +330,18 @@ export default {
     changeTime (time) {
       time = new Date(time).getTime()
       return tools.timeago(time)
+    },
+    getJSONArr (strArr) {
+      return JSON.parse(strArr)
+    },
+    // 查看大图
+    showBigImg (index, val) {
+      ImagePreview({
+        images: val,
+        startPosition: index,
+        onClose () {
+        }
+      })
     }
   }
 }
@@ -594,5 +609,8 @@ export default {
 }
 .van-toast {
   z-index: 10001!important
+}
+.mb-0 {
+  margin-bottom: 0!important;
 }
 </style>

@@ -55,7 +55,7 @@
 
     </van-pull-refresh>
 
-    <div class="to-top" v-if="showBtn">
+    <div class="to-top" :class="{'show': showBtn}">
       <van-icon name="upgrade" color="#03A00C8" @click="backToTop"></van-icon>
     </div>
 
@@ -417,12 +417,20 @@ export default {
     width: 36px;
     height: 36px;
     box-sizing: border-box;
-    background: white;
     border-radius: 100%;
     position: fixed;
     bottom: 100px;
     right: 25px;
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.1);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: ease .6s;
+    &.show {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+    }
+    // box-shadow: 0px 0px 4px rgba(0,0,0,0.1);
   }
 }
 </style>

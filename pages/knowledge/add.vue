@@ -9,7 +9,7 @@
       <Queditor @handleChange="getContent" @uploadSuccess="getUpload"></Queditor>
     </div>
 
-    <div class="item-cell">
+    <div class="item-cell" v-if="addType === 2">
       <div class="video-box">
         <el-upload
           v-if="!videoUrl"

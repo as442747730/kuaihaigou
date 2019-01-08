@@ -1,6 +1,6 @@
 <template>
   <div class="m-layout">
-    <nuxt />
+    <nuxt :class="{'blur': $store.state.blurOpen}" />
     <u-footer :postIndex="activePath"></u-footer>
   </div>
 </template>
@@ -15,12 +15,41 @@ export default {
     }
   },
 
+  computed: {
+    blurState () {
+      return this.$store.state.blurOpen
+    }
+  },
+
+  watch: {
+    blurState (val) {
+      console.log(val)
+      if (val) {
+        this.touchAble()
+      } else {
+        this.touchEnable()
+      }
+    }
+  },
+
   mounted () {
     this.activePath = this.$route.path
   },
 
   components: {
     uFooter
+  },
+
+  methods: {
+    touchAble () {
+      document.body.addEventListener('touchmove', this.bodyScroll, { passive: false })
+    },
+    touchEnable () {
+      document.body.removeEventListener('touchmove', this.bodyScroll, { passive: false })
+    },
+    bodyScroll (event) {
+      event.preventDefault()
+    }
   }
 }
 </script>

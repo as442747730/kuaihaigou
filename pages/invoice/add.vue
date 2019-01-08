@@ -161,9 +161,9 @@ export default {
       if (code === 200) {
         this.$toast.success('添加成功')
         if (this.$route.query.from === 'submit') {
-          window.location.href = '/invoice/list?from=submit'
+          window.location.href = '/invoice/manage?from=submit'
         } else {
-          window.location.href = '/invoice/list'
+          window.location.href = '/invoice/manage'
         }
       } else {
         this.$toast(data)

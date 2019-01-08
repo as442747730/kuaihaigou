@@ -27,9 +27,9 @@
       </div>
 
       <div class="u-detail_info-desc margin-30">
-        <h2 class="limit_one">{{topGoods.goodsName}}</h2>
+        <h2>{{topGoods.goodsName}}</h2>
         <p>
-          <span v-for="(tag, index) in topGoods.topList" :key="index">{{tag}}</span>
+          <span v-for="(tag, index) in topGoods.topList" :key="index">{{ tag }}</span>
         </p>
         <em class="price">
           ¥ {{ showPrice }}
@@ -38,8 +38,9 @@
           去对比
         </div>
         <br>
-        <div class="active" v-if='topGoods.reductionStrategy'>
-          {{ topGoods.reductionStrategy }}
+        <div class="active" v-if='topGoods.promotionResp'>
+          <!-- {{ topGoods.reductionStrategy }} -->
+          {{ '满' + topGoods.promotionResp.threshold + '减' + topGoods.promotionResp.amount }}
         </div>
         <!-- 单品时出现 -->
         <div class="single-sku-num" v-if='singleObj.isSingle'>
@@ -279,13 +280,14 @@ export default {
         isLogin = true
       }
       console.log('detData', detData)
-      let { imgList, goodsName, actualPrice, introduce, reductionStrategy } = detData
+      let { imgList, goodsName, actualPrice, introduce, promotionResp } = detData
       let topData = {
         imgList: imgList,
         goodsName: goodsName,
         actualPrice: actualPrice,
         introduce: introduce,
-        reductionStrategy: reductionStrategy
+        // reductionStrategy: reductionStrategy
+        promotionResp: promotionResp
       }
       let { skuAttrList, skuList, packList } = detData
 
@@ -956,6 +958,9 @@ export default {
       h2 {
         font-size: 17px;
         color: #333;
+        line-height: 22px;
+        max-height: 48px;
+        overflow: hidden;
       }
       p {
         font-size: 14px;

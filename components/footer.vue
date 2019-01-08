@@ -1,6 +1,6 @@
 <template>
   <div class="adapter-ipx">
-    <div  class="footer">
+    <div class="footer" :class="{'blur': $store.state.blurOpen}">
       <span
         class="footer-icon"
         :class="{ cur: postIndex.includes(foot.path) }"
@@ -13,6 +13,23 @@
 
     </div>
 
+    <div class="u-publish" :class="{'show': $store.state.blurOpen}">
+      <div class="u-publish-box">
+        <div class="u-publish-item" @click='jumpArticel()'>
+          <i></i>
+          <span>发文章</span>
+        </div>
+        <div class="u-publish-item" @click='jumpMedia()'>
+          <i></i>
+          <span>短视频</span>
+        </div>
+        <div class="u-publish-item" @click='jumpDrink()'>
+          <i></i>
+          <span>酒坛诗社</span>
+        </div>
+      </div>
+      <div class="icon-close" @click='closeBlur'></div>
+    </div>
   </div>
 </template>
 <script>
@@ -28,7 +45,9 @@ export default {
         { name: 'add' },
         { name: '知识分享', path: '/knowledge' },
         { name: '我的', path: '/mine' }
-      ]
+      ],
+
+      publishShow: false // 发布文章界面
     }
   },
   methods: {
@@ -39,6 +58,20 @@ export default {
         return
       }
       window.location.href = path
+    },
+    canvalToBGblur () {
+      this.publishShow = !this.publishShow
+      this.$store.commit('SET_BLUR', this.publishShow)
+    },
+    closeBlur () {
+      this.publishShow = false
+      this.$store.commit('SET_BLUR', this.publishShow)
+    },
+    jumpArticel () {
+      window.location.href = '/knowledge/add?type=1'
+    },
+    jumpMedia () {
+      window.location.href = '/knowledge/add?type=2'
     }
   }
 }
@@ -115,6 +148,81 @@ export default {
     font-size: 10px;
     line-height: 1;
     color: #C7CCD7;
+  }
+}
+.u-publish {
+  z-index: 22;
+  display: flex;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  padding: 0 45px;
+  top: 0vh;
+  left: 0;
+  visibility: hidden;
+  opacity: 0;
+  transition: ease .4s;
+  background: rgba(255, 255, 255, 0.5);
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    .u-publish-item {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  &-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-self: flex-end;
+    width: 100%;
+    padding-bottom: 90px;
+  }
+  &-item {
+    transform: translateY(60px);
+    opacity: 0;
+    transition: opacity .2s, transform ease .4s;
+    &:first-child {
+      transition-delay: 100ms;
+      i {
+        background: url('~/assets/img/knowledge/icon-article.png') no-repeat center/contain;
+      }
+    }
+    &:nth-child(2) {
+      transition-delay: 200ms;
+      i {
+        background: url('~/assets/img/knowledge/icon-video.png') no-repeat center/contain;
+      }
+    }
+    &:nth-child(3) {
+      transition-delay: 300ms;
+      i {
+        background: url('~/assets/img/knowledge/icon-club.png') no-repeat center/contain;
+      }
+    }
+    i {
+      display: inline-block;
+      width: 55px;
+      height: 55px;
+    }
+    span {
+     color: #666;
+     font-size: 14px;
+     display: block;
+     text-align: center;
+     margin-top: 10px;
+    }
+  }
+  .icon-close {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%;);
+    background: url('~/assets/img/knowledge/icon-close-single.png') no-repeat center/contain;
   }
 }
 </style>
