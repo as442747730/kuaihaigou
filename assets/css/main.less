@@ -381,6 +381,17 @@ input[type="text"] {
   }
 }
 
+// 毛玻璃效果
+.m-layout {
+  &>div:first-child {
+    transition: ease .5s;
+    transform: translateZ(0);
+  }
+}
+.m-layout .blur {
+  filter: blur(11PX);
+}
+
 // 列表页下的icon
 .u-other {
   span {
@@ -564,6 +575,7 @@ input[type="text"] {
 .adapter-ipx {
   padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
   padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
+  transition: ease .5s;
 }
 
 @font-face {

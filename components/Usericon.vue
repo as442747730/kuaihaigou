@@ -95,6 +95,9 @@ export default {
       height: 22px;
       display: inline-block;
       vertical-align: middle;
+      &:first-child {
+        margin-right: 5px;
+      }
     }
   }
   .u-icon-type2 {
