@@ -10,11 +10,12 @@
         <div class="title">
           <h2>
             我的荣誉
-            <span @click="cancel('major', majorId)">解除认证</span>
+            <span @click="cancel()">解除认证</span>
           </h2>
           <p>选择1个展示在头像的右侧</p>
         </div>
-        <ul class="honor-item">
+        <!-- 专业认证的icon显示 -->
+        <ul class="honor-item" v-if='userInfo.professionTypeResps'>
           <li class="honor-list" v-for='($v, $k) in userInfo.professionTypeResps' :class="{'cur': honorActive === $k}">
             <div class="icon u-profess" :class='$v.code' @click='chooseIcon($v.id, $k)'></div>
             <p>
@@ -22,6 +23,24 @@
             </p>
           </li>
         </ul>
+        <!-- 媒体认证的icon显示 -->
+        <div v-if='userInfo.selfMediaPlatformResps' class="media-item">
+          <div :class="'icon u-self_' + userInfo.selfMediaType"></div>
+          <span>{{ userInfo.selfMediaType === 0 ? '企业媒体' : '个人自媒体' }}</span>
+          <div class="media-item-list" v-for='($v, $k) in userInfo.selfMediaPlatformResps'>
+            <p @click="cancelMedia($v.id)">
+              {{ $v.platformName }}
+              <i v-if='deletEnable'></i>
+            </p>
+          </div>
+        </div>
+        <!-- 官方认证的icon显示 -->
+        <div v-if='userInfo.officialTypeName' class="office-item">
+          <div class="icon u-office"></div>
+          <span>官方认证</span>
+          <p>{{ userInfo.officialTypeName }}</p>
+        </div>
+
         <div class="depart-line"></div>
       </template>
       <!-- 未认证 -->
@@ -102,6 +121,11 @@
       <media v-if='showMedia'></media>
     </transition>
 
+    <!-- 企业认证 -->
+    <transition name="slide">
+      <office v-if='showOffice'></office>
+    </transition>
+
     <!-- 说明弹窗 -->
     <van-dialog v-model="proveIntro" :show-confirm-button="false" :closeOnClickOverlay='false' >
       <div class="prove-intro">
@@ -142,6 +166,7 @@ import { proveApi } from '~/api/prove'
 import comHead from '~/components/com-head'
 import major from '~/components/prove/Major'
 import media from '~/components/prove/Media'
+import office from '~/components/prove/Office'
 
 export default {
   head () {
@@ -156,7 +181,8 @@ export default {
   components: {
     comHead,
     major,
-    media
+    media,
+    office
   },
 
   async asyncData (req) {
@@ -213,15 +239,40 @@ export default {
           isAudit = true
         }
         if (certCategory === 2 && certStage === 2) {
-          // 自媒体认证审核中
+          // 自媒体认证通过
           proveMethod = 22
-          mediaPass = true
+          provePass = true
+        }
+        if (certCategory === 2 && certStage === 3) {
+          // 自媒体认证二次审核中
+          proveMethod = 21
+          isAudit = true
+          referTxt = '媒体认证'
+          provePass = true
+        }
+        if (certCategory === 2 && certStage === 4) {
+          // 自媒体认证二次审核中
+          proveMethod = 24
+          referTxt = '媒体认证'
+          provePass = true
+        }
+        //  --- 官方认证 ---
+        if (certCategory === 3 && certStage === 1) {
+          // 官方认证审核中
+          proveMethod = 31
+          referTxt = '官方认证'
+          isAudit = true
+        }
+        if (certCategory === 3 && certStage === 2) {
+          // 官方认证通过
+          proveMethod = 32
+          provePass = true
         }
         if (certStage === 5) {
           // 申请未通过
           proveMethod = 5
         }
-        if (provePass) {
+        if (provePass && professionTypeResps) {
           // 获取默认认证
           professionTypeResps.find((v, index) => {
             if (v.code === res1.data.professionTypeCode) {
@@ -257,6 +308,7 @@ export default {
 
       showMajor: false, // 显示专业认证
       showMedia: false, // 显示媒体认证
+      showOffice: false, // 显示官方认证
 
       userInfo: {},
       powerList: [],
@@ -270,7 +322,9 @@ export default {
       mediaPass: false, // 自媒体认证是否通过
 
       honorActive: null,
-      majorId: null
+      majorId: null,
+
+      deletEnable: false
     }
   },
 
@@ -285,17 +339,20 @@ export default {
           let hash = ''
           if (this.showMajor) hash = '#major'
           if (this.showMeida) hash = '#media'
+          if (this.showMeida) hash = '#office'
           window.location.hash = hash
         })
       } else if (to.hash === '#major') {
         this.showMajor = true
       } else if (to.hash === '#media') {
         this.showMedia = true
+      } else if (to.hash === '#office') {
+        this.showOffice = true
       }
     }
   },
 
-  created () {
+  mounted () {
     console.log('userInfo', this.userInfo)
   },
 
@@ -311,8 +368,9 @@ export default {
       window.location.hash = 'media'
     },
     professClick () {
-      if ((this.certCategory !== 3 && this.certCategory !== 0)) return
-      console.log(3)
+      if ((this.certCategory !== 3 && this.certCategory !== 0) || this.isAudit || this.provePass) return
+      this.showOffice = true
+      window.location.hash = 'office'
     },
     async chooseIcon (id, index) {
       this.majorId = id
@@ -328,16 +386,37 @@ export default {
         this.$toast(data)
       }
     },
-    cancel (type, id) {
-      if (this.proveMethod === 11) return this.$toast('当前正处于认证审核状态，请等待审核完毕后再执行相关操作')
+    cancel (id) {
+      if (this.proveMethod === 11 || this.proveMethod === 21 || this.proveMethod === 31) return this.$toast('当前正处于认证审核状态，请等待审核完毕后再执行相关操作')
       let fn = null
+      // 自媒体
+      if (this.userInfo.selfMediaPlatformResps) {
+        this.deletEnable = !this.deletEnable
+        return
+      }
       this.$dialog.confirm({
         message: '确定解除当前选中认证吗？'
       }).then(async () => {
-        if (type === 'major') {
-          fn = proveApi.cancelMajor(id)
+        if (this.userInfo.professionTypeResps) {
+          fn = proveApi.cancelMajor(this.majorId)
+        } else if (this.userInfo.officialTypeName) {
+          fn = proveApi.cancelOffice()
         }
         const { code, data } = await fn
+        if (code === 200) {
+          this.$toast('解绑成功')
+          window.location.reload()
+        } else {
+          this.$toast(data)
+        }
+      })
+    },
+    cancelMedia (id) {
+      if (!this.deletEnable) return
+      this.$dialog.confirm({
+        message: '确定解除当前选中认证吗？'
+      }).then(async () => {
+        const { code, data } = await proveApi.cancelMedia(id)
         if (code === 200) {
           this.$toast('解绑成功')
           window.location.reload()
@@ -507,6 +586,7 @@ export default {
         margin: 6px 0 13px;
       }
     }
+    // 专业认证icon显示
     .honor-item {
       font-size: 0;
       border-top: 1px solid #eee;
@@ -546,6 +626,70 @@ export default {
         margin-top: 9px;
         color: #333;
         font-size: 11px;
+      }
+    }
+    // 自媒体认证icon显示
+    .media-item {
+      font-size: 0;
+      text-align: center;
+      margin-bottom: 20px;
+      .icon {
+        display: block;
+        margin: 0 auto; 
+        width: 57px;
+        height: 57px;
+      }
+      span {
+        color: #333;
+        font-size: 11px;
+        display: block;
+        margin: 7px 0 15px;
+      }
+      &-list {
+        display: inline-block;
+        p {
+          display: inline-block;
+          color: #fff;
+          font-size: 11px;
+          margin: 0px 10px 0;
+          padding: 6px 10px;
+          background: #03A1CD;
+          border-radius: 3px;
+          position: relative;
+        }
+        i {
+          background: url('~/assets/img/prove/ic_off_red_20x20@2x.png') no-repeat center/contain;
+          width: 20px;
+          height: 20px;
+          position: absolute;
+          right: -12px;
+          top: -8px
+        }
+      }
+    }
+    // 官方认证icon显示
+    .office-item {
+      font-size: 0;
+      text-align: center;
+      .icon {
+        width: 57px;
+        height: 57px;
+        margin: 13px auto 0;
+      }
+      span {
+        color: #333;
+        font-size: 11px;
+        display: block;
+        margin: 15px 0 7px;
+      }
+      p {
+        display: inline-block;
+        color: #fff;
+        font-size: 12px;
+        padding: 6px 10px;
+        background: #03A1CD;
+        border-radius: 3px;
+        margin-bottom: 15px;
       }
     }
   }
@@ -796,6 +940,13 @@ export default {
       line-height: 48px;
       height: 48px;
       font-size: 15px;
+    }
+    .prove-input {
+      width: 100%;
+      font-size: 15px;
+      color: #666;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #f1f1f1;
     }
   }
   .van-dialog__message {

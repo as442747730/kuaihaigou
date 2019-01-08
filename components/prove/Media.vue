@@ -145,12 +145,20 @@ export default {
         weiboUrl: this.form.href
       }
       console.log(obj)
-      const { code } = await proveApi.certMedia(obj)
+      const toast1 = this.$toast.loading({
+        mask: true,
+        message: '认证提交中'
+      })
+      const { code, data } = await proveApi.certMedia(obj)
       if (code === 200) {
+        toast1.clear()
         this.$toast('提交成功')
         setTimeout(() => {
           window.location.replace('/prove')
         }, 500)
+      } else {
+        toast1.clear()
+        this.$toast(data)
       }
     },
     validate (val, msg) {
@@ -217,13 +225,6 @@ export default {
         color: #333
       }
     }
-  }
-  .prove-input {
-    width: 100%;
-    font-size: 15px;
-    color: #666;
-    padding-bottom: 18px;
-    border-bottom: 1px solid #f1f1f1;
   }
 }
 </style>

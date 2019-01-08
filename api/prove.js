@@ -14,6 +14,10 @@ export const proveApi = {
   certMedia (obj) {
     return request.clientPostJson('/api/user/cert/self_media', obj)
   },
+  // 官方认证
+  certOffice (obj) {
+    return request.clientPostJson('/api/user/cert/official', obj)
+  },
   // 专业认证设置默认
   certDefault (id) {
     return request.clientPost('/api/user/cert/default/' + id)

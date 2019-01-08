@@ -207,12 +207,20 @@ export default {
         certificateList: this.form.imgList.map(v => v.key)
       }
       console.log(obj)
-      const { code } = await proveApi.certMajor(obj)
+      const toast1 = this.$toast.loading({
+        mask: true,
+        message: '认证提交中'
+      })
+      const { code, data } = await proveApi.certMajor(obj)
       if (code === 200) {
+        toast1.clear()
         this.$toast('提交成功')
         setTimeout(() => {
           window.location.replace('/prove')
         }, 500)
+      } else {
+        toast1.clear()
+        this.$toast(data)
       }
     },
     clearArray (array) {
@@ -293,10 +301,15 @@ export default {
   &:nth-child(2n) {
     margin-right: 0;
   }
-  .van-checkbox__icon--checked + span{
+  .van-checkbox__icon--checked + span {
     color: #fff;
     background: #03A1CD;
     border-color: #03A1CD;
+  }
+  .van-checkbox__icon--disabled + span {
+    color: #fff;
+    background: #EAEAEA;
+    border-color: #EAEAEA;
   }
   &>div {
     display: none;
