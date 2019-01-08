@@ -76,7 +76,7 @@
             <div class="u-button small inline default" v-if="item.status >= 3 && item.status !== 7" @click="checkLogis(item.id)">查看物流</div>
 
             <!-- <div class="u-button small inline default" v-if="item.status >= 2 && item.status < 7" @click='toAfterSale(item.id)'>{{ item.status === 2 || item.status === 3 || item.status === 4 ? '申请退款' : '申请售后'}}</div> -->
-            <div class="u-button small inline default" v-if="item.status === 7" @click="deleteOrder(item.id)">删除订单</div>
+            <div class="u-button small inline default" v-if="(item.status === 6 || item.status === 7)" @click="deleteOrder(item.id)">删除订单</div>
 
             <div class="u-button small inline default" v-if="item.status === 1" @click="cancelOrder(item.id)">取消订单</div>
 

@@ -21,7 +21,7 @@
 
     </div>
 
-    <div class="f-bottom-btn">
+    <div class="f-bottom-btn" v-show='invoiceList.length <= 4'>
       <div class="m-invoice-btn active-status" @click="addInvoice">添加发票信息</div>
     </div>
 

@@ -6,12 +6,12 @@
 
         <div class="m-address-li" v-for="(item, index) in addressList" :key="item.id">
           <div class="top">
-            <div class="top-title">{{ item.name }} <span>{{ item.phone }}</span><span class="default" v-if="item.ifDefault">默认</span><span class="type">{{ item.addressType === 1 ? '家' : item.addressType === 2 ? '公司' : '其他' }}</span></div>
+            <div class="top-title font_hight">{{ item.name }} <span>{{ item.phone }}</span><span class="default" v-if="item.ifDefault">默认</span><span class="type">{{ item.addressType === 1 ? '家' : item.addressType === 2 ? '公司' : '其他' }}</span></div>
             <div class="top-desc">{{item.province | formatPlace }}{{item.city | formatPlace }}{{item.district | formatPlace }}{{item.street | formatPlace }}{{item.address}}</div>
           </div>
           <div class="bottom">
             <div :class="['u-checkbox', item.ifDefault ? 'active' : '']" @click="setDefault(item.id)"></div>
-            <span @click="setDefault(item)">默认地址</span>
+            <span @click="setDefault(item.id)">默认地址</span>
             <div class="icon-label icon-edit active-status" @click="editAddress(item)">编辑</div>
             <div class="icon-label icon-delete active-status" @click="deleteAddress(item.id)">删除</div>
           </div>
@@ -22,7 +22,7 @@
       </div>
     </van-pull-refresh>
 
-    <div class="f-bottom-btn">
+    <div class="f-bottom-btn" v-show='addressList.length <= 4'>
       <div class="m-address-btn active-status" @click="addAddress">新增收货地址</div>
     </div>
 
@@ -171,7 +171,6 @@ export default {
         font-size: 17px;
         color: @cor_333;
         margin-bottom: 10px;
-        font-weight: 500;
         span {
           vertical-align: middle;
           padding-left: 15px;

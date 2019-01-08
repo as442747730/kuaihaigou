@@ -9,12 +9,16 @@ Vue.use(Vuex)
 const store = () => new Vuex.Store({
 
   state: {
-    authUser: null
+    authUser: null,
+    blurOpen: false
   },
 
   mutations: {
     SET_USER: function (state, user) {
       state.authUser = user
+    },
+    SET_BLUR: function (state, val) {
+      state.blurOpen = val
     }
   },
 

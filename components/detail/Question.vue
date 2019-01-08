@@ -125,7 +125,8 @@ export default {
 
       // 疑问解答编辑
       quesShow: false,
-      quesContent: ''
+      quesContent: '',
+      sendLoading: false
     }
   },
   watch: {
@@ -166,18 +167,25 @@ export default {
       window.location.hash = 'toQues'
     },
     async submitQues () {
-      let param = {
-        goodsid: this.getGoodId,
-        question: this.quesContent
-      }
-      const { code, data } = await quizApi.consult(param)
-      if (code === 200) {
-        this.$toast('提问成功')
-        this.getData(1, true)
-        this.quesShow = false
-        window.location.hash = ''
-      } else {
-        this.$toast(data)
+      if (!this.sendLoading) {
+        this.sendLoading = true
+        let param = {
+          goodsid: this.getGoodId,
+          question: this.quesContent
+        }
+        const { code, data } = await quizApi.consult(param)
+        if (code === 200) {
+          this.$toast('提问成功')
+          this.getData(1, true)
+          setTimeout(() => {
+            this.quesShow = false
+            window.location.hash = ''
+            this.sendLoading = false
+          }, 500)
+        } else {
+          this.$toast(data)
+          this.sendLoading = false
+        }
       }
     },
     async replyFn (val) {
