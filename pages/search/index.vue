@@ -14,7 +14,6 @@
         <div class="navmdl-logo" :class="{active: ctrlLogo}" ref="navmdlLogo" @click="navLogo"></div>
       </nav>
     </div>
-    <list-one :isShow="isShow" :postObjs="classify" @closeFn="closeLogo"></list-one>
     <div class="search-result">
       <!-- 商品 -->
       <section class="goods" v-if="navData.elIndex === 0">
@@ -158,7 +157,6 @@ import bkImg from '~/assets/img/green_wine.jpg'
 import bkImg2 from '~/assets/img/bk1.png'
 import Imgs from '~/assets/img/foot/ic_home_ele@2x.png'
 import tools from '~/utils/tools.js'
-import listOne from '~/components/cpms/listOne'
 export default {
   head () {
     return {
@@ -191,9 +189,6 @@ export default {
         nowList: []
       }
     }
-  },
-  components: {
-    listOne
   },
   methods: {
     toWinecenter () {

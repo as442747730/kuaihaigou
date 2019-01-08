@@ -1,29 +1,41 @@
 <template>
-  <div class="hotlabel">
+  <div class="hotlabel" ref="scrollElem">
     <div class="label-top">
-      <span class="label_item" v-for="n in 10">疯狂拉菲</span>
+      <span class="label_item" v-for="(lab, index) in labels">{{lab.labelName}}</span>
     </div>
-    <div class="label-list">
-      <div class="list">
+    <div class="label-list" v-if="newsList.length !== 0">
+      <div class="list" v-for="(item, index) in newsList" :key="index" @click="todetail(item)">
         <div class="content">
           <div class="content-head">
-            <p>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</p>
+            <p>{{item.title}}</p>
           </div>
-          <div class="content-time">2018-08-23 14:24:87</div>
+          <div class="content-time">{{item.createdAt}}</div>
           <div class="content-other">
-            <span>作者：拉菲尼斯</span>
-            <span>来源：红酒网</span>
+            <span>作者：{{item.author || '佚名'}}</span>
+            <span v-if="item.sourceAddress">来源：{{item.sourceAddress}}</span>
+            <span v-if="item.classificationId >= 0">分类：{{circlenavList[item.classificationId]}}</span>
+          </div>
+          <div class="content-labels">
+            <span
+              class="label"
+              v-for="(lab, labIndex) in item.labels"
+              @click.stop="tolabel(lab)"
+              :key="labIndex">{{lab.labelName}}</span>
           </div>
           <div class="imgs">
-            <img class="imgtwo" v-lazy="require('~/assets/img/001.jpg')" />
+            <img class="imgtwo" v-lazy="item.imgPath" />
           </div>
-          <div class="article">红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…</div>
+          <div class="article">{{item.summary}}</div>
         </div>
       </div>
+      <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多资讯'}}</div>
     </div>
+    <null-data v-else></null-data>
   </div>
 </template>
 <script>
+  import { newApi } from '~/api/news'
+  import nullData from '~/components/nullData'
   export default {
     head () {
       return {
@@ -33,11 +45,105 @@
         ]
       }
     },
-    asyncData (req) {
-      console.log('我是商品详情')
+    components: {
+      nullData
+    },
+    async asyncData (req) {
+      const labelId = req.params.id
+      const params = {
+        page: 1,
+        count: 5,
+        labelId: labelId
+      }
+      const { code, data } = await newApi.serverTags(params)
+      if (code === 200) {
+        const { array, page, totalPageNo } = data
+        let _label = ''
+        if (array.length > 0) {
+          _label = array[0].labels
+        }
+        return {
+          curPage: page,
+          totalPage: totalPageNo,
+          transmit: params,
+          newsList: array,
+          labels: _label
+        }
+      }
+    },
+    data () {
+      return {
+        curPage: 1,
+        totalPage: 1,
+        transmit: {},
+        defaultTransmit: {},
+        loadOk: true,
+        moreData: true,
+        hasScroll: false,
+        loadTxt: '下拉加载更多',
+        circlenavList: ['这些圈子都在看', '行业热点', '培训讲座', '企业招商'],
+        newsList: [],
+        labels: {}
+
+      }
     },
     mounted () {
-      console.log('我是label')
+      // 滚动
+      const throttel = (fn, interval = 300) => {
+        let canRun = true
+        return function () {
+          if (!canRun) return
+          canRun = false
+          setTimeout(() => {
+            fn.apply(this, arguments)
+            canRun = true
+          }, interval)
+        }
+      }
+      window.addEventListener('scroll', throttel(() => {
+        let winH = document.documentElement.clientHeight || document.body.clientHeight
+        let elemBound = this.$refs.scrollElem.getBoundingClientRect()
+        let _height = elemBound.height
+        let _top = Math.abs(elemBound.top)
+        let bottomH = _height - (_top + winH)
+        if (bottomH <= 100 && this.loadOk && this.moreData) {
+          this.loadOk = false
+          this.fetchData(true)
+        }
+      }))
+    },
+    methods: {
+      async fetchData (isMore) {
+        this.$toast.loading('加载中...')
+        this.loadTxt = '加载中'
+        if (isMore) {
+          this.curPage += 1
+          this.hasScroll = true
+        } else {
+          this.curPage = 1
+          this.hasScroll = false
+        }
+        Object.assign(this.transmit, { page: this.curPage })
+        const { code, data } = await newApi.clientTags(this.transmit)
+        if (code === 200) {
+          const { array, page, totalPageNo } = data
+          this.curPage = page
+          this.moreData = this.curPage < totalPageNo
+          if (isMore) {
+            this.newsList.push(...array)
+          } else {
+            this.newsList = array
+          }
+          this.loadTxt = '下拉加载更多'
+        }
+        this.loadOk = true
+      },
+      tolabel (label) {
+        window.location.href = `/hotspot/label/${label.id}`
+      },
+      todetail (item) {
+        window.location.href = `/hotspot/detail/${item.id}`
+      }
     }
   }
 </script>
@@ -167,6 +273,21 @@
             &+span {
               margin-left: 20px;
             }
+          }
+        }
+
+        &-labels {
+          display: flex;
+          .label {
+            font-size:12px;
+            font-family:PingFang-SC-Regular;
+            font-weight:400;
+            color:rgba(153,153,153,1);
+            line-height:12px;
+            border-radius:20px;
+            border:1PX solid rgba(204,204,204,1);
+            padding: 5px 10px;
+            margin-top: 10px;
           }
         }
 

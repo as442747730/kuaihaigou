@@ -17,6 +17,10 @@ export const newApi = {
   serverTags (parame, req) {
     return request.serverGet('/api/news/paginateLabelNews/', parame, req)
   },
+  // 文章详情
+  serverArticle (id, req) {
+    return request.serverGet('/api/news/getNews/' + id, { id: id }, req)
+  },
   /* ----------------- client ----------------- */
   clientHot (hottest) {
     return request.clientGet('/api/news/listNewsHottest', { hottest: hottest })

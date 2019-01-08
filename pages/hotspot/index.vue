@@ -21,13 +21,17 @@
       <div class="banners">
         <div v-swiper:mySwiper1="bannerSwiper">
           <div class="bannerlist swiper-wrapper">
-            <div class="banneritem swiper-slide" v-for="(item, index) in bannerList" :key="index"  v-lazy:background-image="item.bannerPath"></div>
+            <div class="banneritem swiper-slide" v-for="(item, index) in bannerList" :key="index"  v-lazy:background-image="item.bannerPath" @click="todetail(item, 0)"></div>
           </div>
         </div>
       </div>
     </div>
     <div class="list-box" v-if="newList.length !== 0">
-      <div class="list" v-for="(item, index) in newList" :key="index">
+      <div
+        class="list"
+        v-for="(item, index) in newList"
+        :key="index"
+        @click="todetail(item)">
         <div class="content">
           <div class="content-head">
             <p>{{item.title}}</p>
@@ -36,6 +40,14 @@
           <div class="content-other">
             <span>作者：{{item.author || '佚名'}}</span>
             <span v-if="item.sourceAddress">来源：{{item.sourceAddress}}</span>
+            <span v-if="item.classificationId >= 0">分类：{{circlenavList[item.classificationId]}}</span>
+          </div>
+          <div class="content-labels">
+            <span
+              class="label"
+              v-for="(lab, labIndex) in item.labels"
+              @click.stop="tolabel(lab)"
+              :key="labIndex">{{lab.labelName}}</span>
           </div>
           <div class="imgs">
             <div class="imgone" v-lazy:background-image="item.imgPath"></div>
@@ -43,7 +55,7 @@
           <div class="article">{{item.summary}}</div>
         </div>
       </div>
-      <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多商品'}}</div>
+      <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多资讯'}}</div>
     </div>
     <null-data v-else></null-data>
   </div>
@@ -68,7 +80,7 @@
       const classificationId = 0
       const firstpage = 1
       const params = {
-        count: 1,
+        count: 5,
         page: firstpage,
         classificationId: classificationId
       }
@@ -195,6 +207,18 @@
         }
         Object.assign(this.transmit, objCir)
         this.fetchData()
+      },
+      tolabel (label) {
+        window.location.href = `/hotspot/label/${label.id}`
+      },
+      todetail (item, type = 1) {
+        let detailId
+        if (type === 0) {
+          detailId = item.newsId
+        } else {
+          detailId = item.id
+        }
+        window.location.href = `/hotspot/detail/${detailId}`
       }
     }
   }
@@ -456,6 +480,21 @@
             &+span {
               margin-left: 20px;
             }
+          }
+        }
+
+        &-labels {
+          display: flex;
+          .label {
+            font-size:12px;
+            font-family:PingFang-SC-Regular;
+            font-weight:400;
+            color:rgba(153,153,153,1);
+            line-height:12px;
+            border-radius:20px;
+            border:1PX solid rgba(204,204,204,1);
+            padding: 5px 10px;
+            margin-top: 10px;
           }
         }
 
