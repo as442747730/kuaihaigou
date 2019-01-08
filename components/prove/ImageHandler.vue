@@ -121,7 +121,7 @@ export default {
       height: 110px;
       box-sizing: border-box;
       border-radius: 5px;
-      background: @cor_border;
+      background: #fafafa;
       padding-top: 65px;
       text-align: center;
       font-size: 11px;
@@ -130,6 +130,7 @@ export default {
       background-size: 34px 26px;
       background-position: center 30px;
       background-repeat: no-repeat;
+      border: 1px solid #D9D9D9;
     }
   }
 }
