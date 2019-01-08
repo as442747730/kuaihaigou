@@ -21,11 +21,11 @@
   border-radius: 8px;
   border: 1PX solid #eaeaea;
   box-sizing: border-box;
-  width: 320px;
+  // width: 320px;
 
-  &+.list {
-    margin-left: 15px;
-  }
+  // &+.list {
+  //   margin-left: 15px;
+  // }
 
   .users {
     padding: 0 20px;
@@ -145,6 +145,7 @@
         width: 280px;
         height: 150px;
         border-radius: 5px;
+        margin: 0 auto;
         .bg_cover;
       }
     }

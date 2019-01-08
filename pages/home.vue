@@ -315,11 +315,11 @@
 
       <section class="news_home">
         <div class="margin-20">
-          <div class="title_home">
+          <div class="title_home" @click="tohotspot">
             <h2>
               新闻资讯
             </h2>
-            <a class="to-channel">
+            <a class="to-channel" >
               进入频道
               <i class="van-icon van-icon-arrow"></i>  
             </a>
@@ -465,6 +465,9 @@ export default {
           window.location.href = '/account/login'
         }).catch(() => {})
       }
+    },
+    tohotspot () {
+      window.location.href = '/hotspot'
     }
   }
 }

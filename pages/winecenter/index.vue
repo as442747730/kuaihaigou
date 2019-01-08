@@ -135,8 +135,8 @@
   </div>
 </template>
 <script>
-import countryCpm from '~/components/cpms/countryList'
-import listTwo from '~/components/cpms/listTwo'
+import countryCpm from '~/components/winecenter/countryList'
+import listTwo from '~/components/winecenter/listTwo'
 import nullData from '~/components/nullData'
 import { wineApi } from '~/api/wine'
 
