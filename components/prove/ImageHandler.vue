@@ -59,13 +59,16 @@ export default {
     },
     preview (index) {
       ImagePreview({
-        images: this.imgList.url,
+        images: this.imgList.map(v => v.url),
         startPosition: index
       })
     },
     removeImg (index) {
       this.imgList.splice(index, 1)
       this.$emit('parent-event', this.imgList)
+    },
+    getJSONArr (strArr) {
+      return JSON.parse(strArr)
     }
   }
 }

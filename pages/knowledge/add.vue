@@ -2,11 +2,18 @@
   <main class="m-article-add">
 
     <div class="item-cell">
-      <input v-model="title" class="input" placeholder="此处写下您的文章标题"></input>
+      <van-field
+        v-model="title"
+        class='input'
+        type="textarea"
+        placeholder="此处写下您的文章标题"
+        rows="1"
+        autosize
+      />
     </div>
 
     <div class="item-cell" v-if="addType === 1">
-      <Queditor @handleChange="getContent" @uploadSuccess="getUpload"></Queditor>
+      <Queditor @handleChange="getContent" @uploadSuccess="getUpload" :content='content'></Queditor>
     </div>
 
     <div class="item-cell" v-if="addType === 2">
@@ -121,9 +128,10 @@ export default {
       knowApi.getTopicList(req),
       knowApi.getTypeList(req),
       knowApi.getVariety(req),
-      cartApi.getCart(req)
+      cartApi.getCart(req),
+      knowApi.draft(req) // 数据回显
     ])
-      .then(api.spread(function (res1, res2, res3, res4) {
+      .then(api.spread(function (res1, res2, res3, res4, res5) {
         if (res1.code !== 200 || res2.code !== 200 || res3.code !== 200) {
           req.redirect('/error')
         }
@@ -133,7 +141,8 @@ export default {
           topicList: res1.data.map(n => { return { id: n.id, text: n.topicName } }),
           typeList: res2.data.map(n => { return { id: n.id, name: n.typeName } }),
           varietyList: res3.data.map(n => { return { id: n.id, name: n.varietyName } }),
-          ifLogin: hasLogin
+          ifLogin: hasLogin,
+          draftData: res5.data
         }
       }))
   },
@@ -175,10 +184,19 @@ export default {
   },
 
   created () {
-    console.log(this.topicList)
     if (!this.ifLogin) {
       this.$notify({ message: '你尚未登录，请先登录', duration: 5000 })
     }
+    console.log(this.draftData)
+    this.title = this.draftData.title
+    this.content = this.draftData.content
+    this.channelId = +this.draftData.channelNumber
+    this.topicSelected = this.draftData.topicName
+    this.topicId = this.draftData.topicId
+    this.typeIds = this.draftData.sharingKnowledgeContentTypeResps
+    this.varietyIds = this.draftData.sharingKnowledgeContentVarietyResps
+    this.auth = this.draftData.author
+    this.url = this.draftData.address
   },
 
   methods: {
@@ -187,6 +205,7 @@ export default {
     },
     getUpload (val) {
       this.imgs.push(val)
+      console.log(this.content)
     },
     openTopic () {
       this.topicShow = true
@@ -217,28 +236,50 @@ export default {
         return
       }
       if (this.addType === 1) {
+        // 传文章
         if (this.valid(this.title, '标题不可为空') || this.valid(this.content, '内容不可为空') || this.valid(this.channelId, '请选择频道') || this.valid(this.topicId, '请选择一个话题')) return
         this[ifPublish ? 'pLoading' : 'dLoading'] = true
         this.imgs = this.imgs.filter(m => this.content.includes(m))
-        const { code } = await knowApi.publishKnow({
-          varietys: this.varietyIds,
-          types: this.typeIds,
-          imgsPath: this.imgs,
-          title: this.title,
-          channelNumber: this.channelId,
-          topicId: this.topicId,
-          content: this.content,
-          author: this.auth,
-          address: this.url,
-          summary: this.content.replace(/<.+?>/g, '').replace(/\n/g, '。').substring(0, 100),
-          isDraft: !ifPublish
-        })
+        let obj = {}
+        if (ifPublish) {
+          // 发布
+          obj = {
+            id: this.draftId || null,
+            varietys: this.varietyIds,
+            types: this.typeIds,
+            imgsPath: this.imgs,
+            title: this.title,
+            channelNumber: this.channelId,
+            topicId: this.topicId,
+            content: this.content,
+            author: this.auth,
+            address: this.url,
+            summary: this.content.replace(/<.+?>/g, '').replace(/\n/g, '。').substring(0, 100),
+            isDraft: false
+          }
+        } else {
+          // 存草稿
+          obj = {
+            title: this.title,
+            channelNumber: this.channelId,
+            topicId: this.topicId,
+            content: this.content,
+            author: this.auth,
+            varietys: this.varietyIds,
+            types: this.typeIds,
+            address: this.url,
+            isDraft: true
+          }
+        }
+        console.log(obj)
+        const { code } = await knowApi.publishKnow(obj)
         if (code === 200) {
           this.$toast.success(ifPublish ? '发布成功' : '保存成功')
-          window.location.href = '/knowledge'
+          ifPublish ? window.location.href = '/knowledge' : window.location.reload()
         }
         this[ifPublish ? 'pLoading' : 'dLoading'] = false
       } else {
+        // 传视频
         if (this.valid(this.title, '标题不可为空') || this.valid(this.videoUrl, '请上传视频') || this.valid(this.channelId, '请选择频道') || this.valid(this.topicId, '请选择一个话题')) return
         this.pLoading = true
         const { code } = await knowApi.publishKnowVideo({
@@ -290,7 +331,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .m-article-add {
   min-height: 100vh;
   background: @cor_border;
@@ -427,7 +468,6 @@ export default {
         border: 1PX solid @nice-blue;
       }
       &:active {
-
       }
     }
   }
@@ -438,6 +478,8 @@ export default {
         border-top: none!important;
       }
       .ql-container {
+        border-left: 0;
+        border-right: 0;
       }
     }
   }
