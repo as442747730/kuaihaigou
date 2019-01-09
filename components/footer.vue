@@ -72,6 +72,8 @@ export default {
     },
     jumpMedia () {
       window.location.href = '/knowledge/add?type=2'
+    },
+    jumpDrink () {
     }
   }
 }

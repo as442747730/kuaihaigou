@@ -23,7 +23,6 @@ export default {
 
   watch: {
     blurState (val) {
-      console.log(val)
       if (val) {
         this.touchAble()
       } else {
