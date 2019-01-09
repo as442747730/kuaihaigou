@@ -8,6 +8,7 @@
     </form>
 
     <quill-editor :options="editorOption" ref="QuillEditor"
+      :content='content'
       @blur="onEditorBlur($event)"
       @focus="onEditorFocus($event)"
       @change="onEditorChange($event)"
@@ -24,6 +25,13 @@ import { Toast } from 'vant'
 
 export default {
   name: '',
+
+  props: {
+    content: {
+      type: String,
+      default: ''
+    }
+  },
 
   computed: {
     editor () {
@@ -131,10 +139,13 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .u-editor {
-  // .quill-editor {
-  //   height: 210px;
-  // }
+  .quill-editor {
+    img {
+      display: block;
+      margin: 0 auto;
+    }
+  }
 }
 </style>

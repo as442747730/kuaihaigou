@@ -48,6 +48,10 @@ export const knowApi = {
   getVariety (req) {
     return request.serverGet('/api/variety/listAll', {}, req)
   },
+  // 获取文章草稿
+  draft (req) {
+    return request.serverGet('/api/sk/draft', {}, req)
+  },
   getArticleDetail (obj, req) {
     return request.serverGet(`/api/sk/getArticle/${obj.id}`, obj, req)
   },
