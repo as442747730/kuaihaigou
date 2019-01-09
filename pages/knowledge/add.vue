@@ -1,5 +1,5 @@
 <template>
-  <div class="m-article-add">
+  <main class="m-article-add">
 
     <div class="item-cell">
       <input v-model="title" class="input" placeholder="此处写下您的文章标题"></input>
@@ -85,7 +85,7 @@
     </van-popup>
 
 
-  </div>
+  </main>
 </template>
 
 <script>
@@ -175,6 +175,7 @@ export default {
   },
 
   created () {
+    console.log(this.topicList)
     if (!this.ifLogin) {
       this.$notify({ message: '你尚未登录，请先登录', duration: 5000 })
     }
@@ -216,7 +217,7 @@ export default {
         return
       }
       if (this.addType === 1) {
-        if (this.valid(this.title, '标题不可为空') || this.valid(this.content, '内容不可为空') || this.valid(this.channelId, '前选择频道') || this.valid(this.topicId, '请选择一个话题')) return
+        if (this.valid(this.title, '标题不可为空') || this.valid(this.content, '内容不可为空') || this.valid(this.channelId, '请选择频道') || this.valid(this.topicId, '请选择一个话题')) return
         this[ifPublish ? 'pLoading' : 'dLoading'] = true
         this.imgs = this.imgs.filter(m => this.content.includes(m))
         const { code } = await knowApi.publishKnow({
@@ -238,7 +239,7 @@ export default {
         }
         this[ifPublish ? 'pLoading' : 'dLoading'] = false
       } else {
-        if (this.valid(this.title, '标题不可为空') || this.valid(this.videoUrl, '请上传视频') || this.valid(this.channelId, '前选择频道') || this.valid(this.topicId, '请选择一个话题')) return
+        if (this.valid(this.title, '标题不可为空') || this.valid(this.videoUrl, '请上传视频') || this.valid(this.channelId, '请选择频道') || this.valid(this.topicId, '请选择一个话题')) return
         this.pLoading = true
         const { code } = await knowApi.publishKnowVideo({
           title: this.title,

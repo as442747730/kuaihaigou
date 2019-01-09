@@ -1,27 +1,24 @@
 <template>
   <div class="u-editor">
-
     <!-- <Upload @on-success="test">
       <p id="up" style="font-size: 12px;">upload</p>
     </Upload> -->
     <form action="" method="post" enctype="multipart/form-data" id="uploadFormMulti">
-      <input style="display: none" id="up" type="file" name="file" accept="image/jpg,image/jpeg,image/png,image/gif" @change="uploadImg()">
+      <input style="display: none" id="up" type="file" name="file" accept="image/jpg,image/jpeg,image/png,image/gif" @change="uploadImg()" />
     </form>
 
-    <quill-editor :options="editorOption"
-      ref="QuillEditor"
-      @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+    <quill-editor :options="editorOption" ref="QuillEditor"
+      @blur="onEditorBlur($event)"
+      @focus="onEditorFocus($event)"
       @change="onEditorChange($event)"
-      @ready="onEditorReady($event)">
-    </quill-editor>
-
+      @ready="onEditorReady($event)" />
   </div>
 </template>
 
 <script>
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
-import Upload from '@/components/Upload'
+// import Upload from '@/components/Upload'
 import axios from 'axios'
 import { Toast } from 'vant'
 
@@ -34,7 +31,7 @@ export default {
     }
   },
 
-  components: { Upload },
+  // components: { Upload },
 
   mounted () {
     console.log(this.editor)
