@@ -32,7 +32,7 @@
           <van-button v-if="!uploading">上传视频</van-button>
         </el-upload>
 
-        <div class="upload-progress" v-if="uploading">
+        <div class="upload-progress" v-if='uploading'>
           <van-circle v-model="percent" :text="progressTxt" />
         </div>
 
@@ -136,13 +136,17 @@ export default {
           req.redirect('/error')
         }
         const hasLogin = res4.code !== 506
+        let draftData = null
+        if (res5.code === 200) {
+          draftData = res5.data
+        }
         return {
           addType: +req.query.type || 1,
           topicList: res1.data.map(n => { return { id: n.id, text: n.topicName } }),
           typeList: res2.data.map(n => { return { id: n.id, name: n.typeName } }),
           varietyList: res3.data.map(n => { return { id: n.id, name: n.varietyName } }),
           ifLogin: hasLogin,
-          draftData: res5.data
+          draftData: draftData
         }
       }))
   },
@@ -179,7 +183,8 @@ export default {
       ifLogin: false,
 
       topicShow: false,
-      topicCol: []
+      topicCol: [],
+      draftData: null
     }
   },
 
@@ -187,7 +192,7 @@ export default {
     if (!this.ifLogin) {
       this.$notify({ message: '你尚未登录，请先登录', duration: 5000 })
     }
-    console.log(this.draftData)
+    if (!this.draftData) return
     this.title = this.draftData.title
     this.content = this.draftData.content
     this.channelId = +this.draftData.channelNumber
@@ -434,6 +439,12 @@ export default {
     .upload-progress {
       font-size: 16px;
       text-align: center;
+      .van-circle {
+        width: 110px!important;
+        .van-circle__text {
+          padding-left: 11px;
+        }
+      }
     }
     .delete-btn {
       position: absolute;
