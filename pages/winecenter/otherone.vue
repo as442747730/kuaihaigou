@@ -29,6 +29,7 @@
 import topSelect from '~/components/winecenter/topSelect'
 import nullData from '~/components/nullData'
 import { wineApi } from '~/api/wine'
+import tools from '~/utils/tools'
 export default {
   head () {
     return {
@@ -52,20 +53,23 @@ export default {
       ifExclusive: false
     }
     let params2 = { ifWine: false }
-
+    const defParams = { ...params }
     let goodsFn = wineApi.goodList(params, req)
     let attrsFn = wineApi.serverAttrs(params2, req)
     const { code: goodCode, data: goodData } = await goodsFn
     const { code: attrsCode, data: attrsData } = await attrsFn
     console.log('attrsCode', attrsCode)
     if (goodCode === 200 && attrsCode === 200) {
-      let { array, total, page } = goodData
+      let { array, total, page, totalPageNo } = goodData
       let { categoryTreeRespList } = attrsData
+      const ismore = page < totalPageNo
       return {
         curTotal: total,
         curPage: page,
+        totalPage: totalPageNo,
         tansmit: params,
-        defaultTansmit: params,
+        defaultTansmit: defParams,
+        moreData: ismore,
         goodsList: array,
         sortList: categoryTreeRespList
       }
@@ -75,6 +79,7 @@ export default {
     return {
       tansmit: {}, // 传递参数
       curPage: 1,
+      totalPage: 1,
       curTotal: 0,
       goodsList: [],
       sortList: [],
@@ -91,22 +96,12 @@ export default {
     let scrollChild = this.$refs.scrollChild
     let allH = scrollElem.clientHeight
     let sctop = scrollElem.offsetTop
-    const throttel = (fn, interval = 300) => {
-      let canRun = true
-      return function () {
-        if (!canRun) return
-        canRun = false
-        setTimeout(() => {
-          fn.apply(this, arguments)
-          canRun = true
-        }, interval)
-      }
-    }
-    scrollElem.addEventListener('scroll', throttel(() => {
+    scrollElem.addEventListener('scroll', tools.throttel(() => {
       let { height, top } = scrollChild.getBoundingClientRect()
       let _top = Math.abs(top)
       let bottomH = height - (_top + sctop + allH)
       // console.log('bottomH', bottomH)
+      this.hasScroll = true
       if (bottomH <= 100 && this.loadOk && this.moreData) {
         this.loadOk = false
         this.fetchData(true)
@@ -115,7 +110,7 @@ export default {
   },
   methods: {
     async fetchData (getMore) {
-      this.$toast.loading('加载中...')
+      // this.$toast.loading('加载中...')
       this.loadTxt = '加载中'
       if (getMore) {
         this.curPage += 1
@@ -129,6 +124,7 @@ export default {
       if (code === 200) {
         let { array, page, totalPageNo } = data
         this.curPage = page
+        this.totalPage = totalPageNo
         this.moreData = this.curPage < totalPageNo
         if (getMore) {
           this.goodsList.push(...array)
@@ -143,7 +139,7 @@ export default {
       this.fetchData()
     },
     cancleFn () {
-      this.tansmit = this.defaultTansmit
+      this.tansmit = Object.assign({}, this.defaultTansmit)
       this.fetchData()
     },
     searchFn (objch) {

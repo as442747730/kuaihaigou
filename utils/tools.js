@@ -229,5 +229,19 @@ export default {
       }
       image.src = path
     })
+  },
+  /**
+   * 滚动节流
+  **/
+  throttel (fn, interval = 300) {
+    let canRun = true
+    return function () {
+      if (!canRun) return
+      canRun = false
+      setTimeout(() => {
+        fn.apply(this, arguments)
+        canRun = true
+      }, interval)
+    }
   }
 }
