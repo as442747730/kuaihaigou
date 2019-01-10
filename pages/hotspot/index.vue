@@ -62,6 +62,7 @@
 </template>
 <script>
   import { newApi } from '~/api/news'
+  import tools from '~/utils/tools'
   import nullData from '~/components/nullData'
   export default {
     head () {
@@ -131,18 +132,7 @@
     },
     mounted () {
       // 滚动
-      const throttel = (fn, interval = 300) => {
-        let canRun = true
-        return function () {
-          if (!canRun) return
-          canRun = false
-          setTimeout(() => {
-            fn.apply(this, arguments)
-            canRun = true
-          }, interval)
-        }
-      }
-      window.addEventListener('scroll', throttel(() => {
+      window.addEventListener('scroll', tools.throttel(() => {
         let winH = document.documentElement.clientHeight || document.body.clientHeight
         let elemBound = this.$refs.scrollElem.getBoundingClientRect()
         let _height = elemBound.height

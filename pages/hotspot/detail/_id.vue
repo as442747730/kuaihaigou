@@ -26,6 +26,14 @@
 <script>
 import { newApi } from '~/api/news'
 export default {
+  head () {
+    return {
+      title: '行业热点',
+      meta: [
+        { hid: 'title', name: 'title', content: '行业热点' }
+      ]
+    }
+  },
   async asyncData (req) {
     const detailId = req.params.id
     const articleFn = newApi.serverArticle(detailId)
