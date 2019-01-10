@@ -277,18 +277,23 @@ export default {
       this.toSearch()
     },
     subRest () {
-      this.tansmit = this.defaultTansmit
-      this.fetchData()
+      this.defTansmitFn()
       this.closeScreens()
       this.clearIndex()
+      this.fetchData()
     },
     subOk () {
       this.closeScreens()
       this.fetchData()
     },
+    defTansmitFn () {
+      // 重置默认参数，防止 tansmit指向 defaultTansmit的内存地址，修改 defaultTansmit 对象
+      this.tansmit = Object.assign({}, this.defaultTansmit)
+    },
     countryRest () {
-      this.tansmit = this.defaultTansmit
+      this.defTansmitFn()
       this.showCountry = false
+      this.clearIndex()
       this.fetchData()
     },
     countryOk () {

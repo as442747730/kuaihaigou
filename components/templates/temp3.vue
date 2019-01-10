@@ -3,7 +3,7 @@
     <div class="actlist-bk">
       <span class="theme">官方<br>活动</span>
       <span class="status sign">报名中</span>
-      <span class="status carry">进行中</span>
+      <!-- <span class="status carry">进行中</span> -->
     </div>
     <div class="actlist-head">
       <span class="head">第38期 | 红酒之夜</span>

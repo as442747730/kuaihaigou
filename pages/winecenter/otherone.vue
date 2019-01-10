@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     async fetchData (getMore) {
-      this.$toast.loading('加载中...')
+      // this.$toast.loading('加载中...')
       this.loadTxt = '加载中'
       if (getMore) {
         this.curPage += 1
@@ -139,7 +139,7 @@ export default {
       this.fetchData()
     },
     cancleFn () {
-      this.tansmit = this.defaultTansmit
+      this.tansmit = Object.assign({}, this.defaultTansmit)
       this.fetchData()
     },
     searchFn (objch) {

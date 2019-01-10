@@ -131,7 +131,9 @@ export default {
       ifSellOut: false,
       ifExclusive: true
     }
-    const defParams = { ...params }
+    const defParams = Object.assign({}, params)
+    Object.freeze(defParams)
+    console.log('Object.isFrozen(defParams)', Object.isFrozen(defParams))
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
     if (goodCode === 200) {
       let { array, page, totalPageNo } = goodData
@@ -248,19 +250,24 @@ export default {
       this.toSearch()
     },
     subRest () {
-      this.tansmit = this.defaultTansmit
-      this.fetchData()
+      this.defTansmitFn()
       this.closeScreens()
       this.clearIndex()
+      this.fetchData()
     },
     subOk () {
       this.closeScreens()
       this.fetchData()
     },
     countryRest () {
-      this.tansmit = this.defaultTansmit
+      this.defTansmitFn()
       this.showCountry = false
+      this.clearIndex()
       this.fetchData()
+    },
+    defTansmitFn () {
+      // 重置默认参数
+      this.tansmit = Object.assign({}, this.defaultTansmit)
     },
     countryOk () {
       this.showCountry = false
@@ -268,7 +275,7 @@ export default {
     },
     async fetchData (getMore) {
       // 滚动
-      this.$toast.loading('加载中...')
+      // this.$toast.loading('加载中...')
       this.loadTxt = '加载中'
       if (getMore) {
         this.curPage += 1
@@ -425,6 +432,7 @@ export default {
       this.postObj.list[groupIndex].elIndex = elIndex
       Object.assign(this.tansmit, subObj)
       console.log(this.tansmit, 'tansmit')
+      console.log(this.defaultTansmit, 'defaultTansmit')
     },
     elScreens (index) {
       // 控制筛选器
