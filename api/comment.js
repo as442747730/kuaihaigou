@@ -5,8 +5,24 @@ export const commentApi = {
   createComent (params) {
     return request.clientPostJson('/api/articleComment/create', params)
   },
+  // 创建回复评论
+  createReply (params) {
+    return request.clientPostJson('/api/articleComment/createReply', params)
+  },
   // 获取评论列表
   getComments (obj) {
     return request.clientGet('/api/articleComment/paginateComment', obj)
+  },
+  // 评论点赞
+  comGood (id) {
+    return request.clientPost('/api/articleComment/like/' + id, {commentId: id})
+  },
+  // 评论取消点赞
+  comCancle (id) {
+    return request.clientPost('/api/articleComment/dislike/' + id, {commentId: id})
+  },
+  // 获取评论回复分页列表
+  getRelyList (params) {
+    return request.clientGet('/api/articleComment/paginateReply', params)
   }
 }
