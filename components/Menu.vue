@@ -21,7 +21,7 @@
           { name: '我的优惠券', key: 'coupon', url: '/coupon/list' },
           { name: '售后记录', key: 'after', url: '/aftersale/list' },
           { name: '账号管理', key: 'account', url: '/account/mgnumber' },
-          { name: '资质认证', key: 'certif', url: '' },
+          { name: '资质认证', key: 'certif', url: '/prove' },
           { name: '打赏记录', key: 'reward', url: '' },
           { name: '服务中心', key: 'service', url: '' }
         ]

@@ -1,32 +1,37 @@
 <template>
   <div class="u-editor">
-
     <!-- <Upload @on-success="test">
       <p id="up" style="font-size: 12px;">upload</p>
     </Upload> -->
     <form action="" method="post" enctype="multipart/form-data" id="uploadFormMulti">
-      <input style="display: none" id="up" type="file" name="file" accept="image/jpg,image/jpeg,image/png,image/gif" @change="uploadImg()">
+      <input style="display: none" id="up" type="file" name="file" accept="image/jpg,image/jpeg,image/png,image/gif" @change="uploadImg()" />
     </form>
 
-    <quill-editor :options="editorOption"
-      ref="QuillEditor"
-      @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+    <quill-editor :options="editorOption" ref="QuillEditor"
+      :content='content'
+      @blur="onEditorBlur($event)"
+      @focus="onEditorFocus($event)"
       @change="onEditorChange($event)"
-      @ready="onEditorReady($event)">
-    </quill-editor>
-
+      @ready="onEditorReady($event)" />
   </div>
 </template>
 
 <script>
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
-import Upload from '@/components/Upload'
+// import Upload from '@/components/Upload'
 import axios from 'axios'
 import { Toast } from 'vant'
 
 export default {
   name: '',
+
+  props: {
+    content: {
+      type: String,
+      default: ''
+    }
+  },
 
   computed: {
     editor () {
@@ -34,7 +39,7 @@ export default {
     }
   },
 
-  components: { Upload },
+  // components: { Upload },
 
   mounted () {
     console.log(this.editor)
@@ -81,6 +86,7 @@ export default {
           vm.addImgRange = vm.editor.getSelection()
           // value = value.indexOf('http') !== -1 ? value : 'http:' + value
           vm.editor.insertEmbed(vm.addImgRange !== null ? vm.addImgRange.index : 0, 'image', value, 'user')
+          vm.editor.setSelection(vm.addImgRange.index + 1)
           vm.$emit('uploadSuccess', value)
         } else {
           Toast.fail('图片上传失败')
@@ -134,10 +140,13 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .u-editor {
-  // .quill-editor {
-  //   height: 210px;
-  // }
+  .quill-editor {
+    img {
+      display: block;
+      margin: 0 auto;
+    }
+  }
 }
 </style>

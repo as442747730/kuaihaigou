@@ -28,7 +28,7 @@
               <!-- 文章 -->
               <p v-if="item.articleType === 1" class="content-article" style="-webkit-box-orient: vertical;" v-html="item.summary"></p>
               <div class="imgs" v-if="item.articleType === 1 && item.imgsPaht">
-                <div :class="['img', item.imgsPaht.length === 1 ? 'big' : '' , item.imgsPaht.length % 3 === 0 ? 'small' : '', item.imgsPaht.length === 8 ? 'small' : '', (item.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="m" v-for="(m, index) in item.imgsPaht" :key="index"></div>
+                <div :class="['img', item.imgsPaht.length === 1 ? 'big' : '' , item.imgsPaht.length % 3 === 0 ? 'small' : '', item.imgsPaht.length === 8 ? 'small' : '', (item.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="m + '?imageView2/5/w/500/h/500'" v-for="(m, index) in item.imgsPaht" :key="index"></div>
                 <div class="img small" v-if="item.imgsPaht.length === 8"></div>
               </div>
               <!-- 视频 -->

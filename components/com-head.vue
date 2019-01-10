@@ -67,6 +67,9 @@ export default {
         case '/noun':
           window.location.href = '/encys'
           break
+        case '/prove':
+          window.location.href = '/mine'
+          break
         default:
           console.log('未知页面')
           break

@@ -23,8 +23,21 @@ export const knowApi = {
   getReplys (obj) {
     return request.clientGet('/api/articleComment/paginateReply', obj)
   },
-  toggleLike (id) {
-    return request.clientPost(`/api/sk/like/${id}`, { id: id })
+  // 文章点赞
+  artGood (params) {
+    return request.clientPostJson('/api/article/like', params)
+  },
+  // 取消文章点赞
+  artCancle (params) {
+    return request.clientPostJson('/api/article/dislike', params)
+  },
+  // 文章收藏
+  artCollect (params) {
+    return request.clientPostJson('/api/article/collect', params)
+  },
+  // 取消文章收藏
+  artCollectCancle (params) {
+    return request.clientPostJson('/api/article/cancelCollect', params)
   },
   lkieComment (id) {
     return request.clientPost(`/api/articleComment/like/${id}`, { commentId: id })
@@ -32,12 +45,12 @@ export const knowApi = {
   dislikeComment (id) {
     return request.clientPost(`/api/articleComment/dislike/${id}`, { commentId: id })
   },
-  handleCollect (obj) {
-    return request.clientPost('/api/article/collect', obj)
-  },
-  handleUnCollect (obj) {
-    return request.clientPost('/api/article/cancelCollect', obj)
-  },
+  // handleCollect (obj) {
+  //   return request.clientPost('/api/article/collect', obj)
+  // },
+  // handleUnCollect (obj) {
+  //   return request.clientPost('/api/article/cancelCollect', obj)
+  // },
   // server
   getTopicList (req) {
     return request.serverGet('/api/sk/listTopic', {}, req)
@@ -48,11 +61,11 @@ export const knowApi = {
   getVariety (req) {
     return request.serverGet('/api/variety/listAll', {}, req)
   },
+  // 获取文章草稿
+  draft (req) {
+    return request.serverGet('/api/sk/draft', {}, req)
+  },
   getArticleDetail (obj, req) {
     return request.serverGet(`/api/sk/getArticle/${obj.id}`, obj, req)
-  },
-
-  getComments (obj, req) {
-    return request.serverGet('/api/articleComment/paginateComment', obj, req)
   }
 }
