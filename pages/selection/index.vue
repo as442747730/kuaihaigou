@@ -11,22 +11,22 @@
     <section class="section" ref="scrollElem">
       <div class="list" ref="scrollChild" v-if="pickList.length > 0">
         <div class="picklist" v-for="(item, index) in pickList" :key="index" @click="detFn(item)">
-          <div class="infos" :data-val="item.goodsRedAttrDetailResp" v-if="item.goodsRedAttrDetailResp">
-            <div class="infos-l" v-lazy:background-image="item.img"></div>
+          <div class="infos" v-if="item.goodsMinimalResp">
+            <div class="infos-l" v-lazy:background-image="item.goodsMinimalResp.cover"></div>
             <div class="infos-r">
-              <div class="head">{{item.goodsRedAttrDetailResp.goodsName}}</div>
+              <div class="head">{{item.goodsMinimalResp.goodsName}}</div>
               <p class="tags">
-                <span class="tagsub" v-for="(tags, tagIndex) in item.goodsRedAttrDetailResp.tagList" :key="tagIndex">{{tags}}</span>
+                <span class="tagsub" v-for="(tags, tagIndex) in item.goodsMinimalResp.tagList" :key="tagIndex">{{tags}}</span>
               </p>
               <div class="lables">
-                <span class="label ic_year">{{item.goodsRedAttrDetailResp.year}}</span>
-                <span class="label ic_address" v-if="item.goodsRedAttrDetailResp.area">{{item.goodsRedAttrDetailResp.country}} / {{item.goodsRedAttrDetailResp.country}}</span>
-                <span class="label ic_address" v-else>{{item.goodsRedAttrDetailResp.country}}</span>
-                <span class="label ic_variety">{{item.goodsRedAttrDetailResp.year}}</span>
-                <span class="label ic_variety">{{item.goodsRedAttrDetailResp.variety}}</span>
+                <span class="label ic_year">{{item.goodsMinimalResp.year}}</span>
+                <span class="label ic_address" v-if="item.goodsMinimalResp.area">{{item.goodsMinimalResp.country}} / {{item.goodsMinimalResp.country}}</span>
+                <span class="label ic_address" v-else>{{item.goodsMinimalResp.country}}</span>
+                <span class="label ic_variety">{{item.goodsMinimalResp.year}}</span>
+                <span class="label ic_variety">{{item.goodsMinimalResp.variety}}</span>
               </div>
               <div class="probars">
-                <div class="word">复杂：{{item.goodsRedAttrDetailResp.complexity}}分</div>
+                <div class="word">复杂：{{item.goodsMinimalResp.complexity}}分</div>
                 <div class="probar">
                   <div class="probar_cors"></div>
                 </div>
