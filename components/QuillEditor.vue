@@ -86,6 +86,7 @@ export default {
           vm.addImgRange = vm.editor.getSelection()
           // value = value.indexOf('http') !== -1 ? value : 'http:' + value
           vm.editor.insertEmbed(vm.addImgRange !== null ? vm.addImgRange.index : 0, 'image', value, 'user')
+          vm.editor.setSelection(vm.addImgRange.index + 1)
           vm.$emit('uploadSuccess', value)
         } else {
           Toast.fail('图片上传失败')
