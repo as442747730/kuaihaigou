@@ -109,6 +109,7 @@ import countryCpm from '~/components/winecenter/countryList'
 import listTwo from '~/components/winecenter/listTwo'
 import nullData from '~/components/nullData'
 import { wineApi } from '~/api/wine'
+import tools from '~/utils/tools'
 
 export default {
   head () {
@@ -130,14 +131,17 @@ export default {
       ifSellOut: false,
       ifExclusive: true
     }
+    const defParams = { ...params }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
     if (goodCode === 200) {
-      let { array, total, page } = goodData
+      let { array, page, totalPageNo } = goodData
+      const ismore = page < totalPageNo
       return {
         tansmit: params,
-        defaultTansmit: params,
-        curTotal: total,
+        defaultTansmit: defParams,
         curPage: page,
+        totalPage: totalPageNo,
+        moreData: ismore,
         goodsList: array
       }
     }
@@ -188,8 +192,8 @@ export default {
       playerIndex: 0,
       tansmit: {}, // 传递参数
       defaultTansmit: {}, // 默认参数
-      curTotal: 0,
       curPage: 1,
+      totalPage: 1,
       loadOk: true, // 加载是否完成
       moreData: true, // 有更多数据
       loadTxt: '下拉加载更多',
@@ -218,26 +222,12 @@ export default {
     let scrollChild = this.$refs.scrollChild
     let allH = scrollElem.clientHeight
     let sctop = scrollElem.offsetTop
-    /**
-     * allH + sctop + top = height
-     * @throttel 300ms 滚一次
-    */
-    function throttel (fn, interval = 300) {
-      let canRun = true
-      return function () {
-        if (!canRun) return
-        canRun = false
-        setTimeout(() => {
-          fn.apply(this, arguments)
-          canRun = true
-        }, interval)
-      }
-    }
-    scrollElem.addEventListener('scroll', throttel(() => {
+    scrollElem.addEventListener('scroll', tools.throttel(() => {
       let { height, top } = scrollChild.getBoundingClientRect()
       let _top = Math.abs(top)
       let bottomH = height - (_top + sctop + allH)
       // console.log('bottomH', bottomH)
+      this.hasScroll = true
       if (bottomH <= 100 && this.loadOk && this.moreData) {
         this.loadOk = false
         this.fetchData(true)
@@ -291,8 +281,9 @@ export default {
       const { code, data } = await wineApi.clientList(this.tansmit)
       if (code === 200) {
         let { array, page, totalPageNo } = data
+        this.moreData = page < totalPageNo
         this.curPage = page
-        this.moreData = this.curPage < totalPageNo
+        this.totalPage = totalPageNo
         if (getMore) {
           this.goodsList.push(...array)
         } else {

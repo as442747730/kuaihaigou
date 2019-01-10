@@ -1,6 +1,6 @@
 <template>
   <van-popup v-model="showtwo" position="top" @click-overlay="closeFn" :close-on-click-overlay="false">
-    <div class="empty50" v-if="twotype"></div>
+    <div style="height: 50px;" v-if="twotype"></div>
     <section class="secs" :class="{secs_ok: posttype}">
       <slot name="headSild"></slot>
       <div class="type" v-for="(items, index) in postObj.list">
@@ -121,7 +121,7 @@ export default {
 .van-popup--top {
   top: 80px;
 }
-.empty50{
+.empty50 {
   width: 100%;
   height: 50px;
 }
