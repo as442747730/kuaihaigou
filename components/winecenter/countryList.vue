@@ -21,10 +21,12 @@
           </ul>
         </div>
       </section>
-      <footer>
-        <div class="btn" @click="btnRest">重置</div>
-        <div class="btn active" @click="btnOk">确认</div>
-      </footer>
+      <div class="adapter-ipx">
+        <footer class="footer">
+          <div class="btn" @click="btnRest">重置</div>
+          <div class="btn active" @click="btnOk">确认</div>
+        </footer>
+      </div>
     </div>
   </van-popup>
 </template>
@@ -94,43 +96,33 @@ export default {
 .vpCountry {
   width: 100vw;
   height: 100vh;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
   z-index: 6000!important;
 }
 .countrys {
-
   position: fixed;
-
   top: 0;
-
   left: 0;
-
   width: 100%;
-
   height: 100vh;
-
   z-index: 110;
-
   background: #fff;
+  box-sizing: border-box;
 
   &>header {
-
     padding: 8px 12px;
+    height: 50px;
     border-bottom: 1px solid #F1F1F1;
-
+    box-sizing: border-box;
     &>h1 {
-
       font-size: 17px;
-
       font-family: PingFangSC-Medium;
-
       font-weight: 500;
-
       color: @cor_333;
-
       text-align: center;
-
       height: 30px;
-
       line-height: 30px;
 
       .icon_del {
@@ -152,19 +144,13 @@ export default {
   }
 
   &>section {
-
-    height: calc(100vh - 96px);
-
+    height: calc(100vh - 100px);
     background: #fff;
-
+    box-sizing: border-box;
     .rollList {
-
       height: 100%;
-
       -webkit-overflow-scrolling: touch;
-
       overflow: auto;
-
     }
 
     .sec-l,
@@ -222,26 +208,16 @@ export default {
     }
   }
 
-  &>footer {
-
-    position: absolute;
-
+  .footer {
+    position: fixed;
     bottom: 0;
-
     left: 0;
-
     background: #fff;
-
     width: 100%;
-
     height: 50px;
-
     z-index: 100;
-
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
-
     .flex_between;
-
     .btn {
 
       width: 50%;

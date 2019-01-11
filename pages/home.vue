@@ -108,9 +108,9 @@
         <div class="margin-20">
           <div class="title_home">
             <h2>
-              热门精选
+              热门甄选
             </h2>
-            <a class="to-channel">
+            <a class="to-channel" href="/selection">
               进入频道
               <i class="van-icon van-icon-arrow"></i>  
             </a>
@@ -118,81 +118,35 @@
         </div>
         <div v-swiper:mySwiper="swiperOption">
           <div class="swiper-wrapper">
-            <div class="swiper-slide hot-list">
+            <div
+              class="swiper-slide hot-list"
+              v-for="(pick, index) in selectList"
+              :key="index">
               <div class="hot-list-box">
-                <div class="pro ib-top"></div>
+                <div class="pro ib-top" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
                 <div class="desc ib-middle">
-                  <h3>拉菲珍宝红葡萄酒</h3>
-                  <p>750ml | 日常餐酒 | 紧致单宁</p>
+                  <h3>{{pick.goodsMinimalResp.goodsName}}</h3>
+                  <div class="tags">
+                    <i class="tagsub" v-for="(tags, tagIndex) in pick.goodsMinimalResp.tagList" :key="tagIndex">{{tags}}</i>
+                  </div>
                   <div class="itemr-info">
-                    <span class="info_item icon_time">2016</span>
-                    <span class="info_item icon_address">法国／波尔多</span>
-                    <span class="info_item icon_variety">黑皮诺</span>
+                    <span class="info_item icon_time">{{pick.goodsMinimalResp.year}}</span>
+                    <span class="info_item icon_address" v-if="pick.goodsMinimalResp.area">{{pick.goodsMinimalResp.country}} / {{pick.goodsMinimalResp.area}}</span>
+                    <span class="info_item icon_address" v-else>{{pick.goodsMinimalResp.country}}</span>
+                    <span class="info_item icon_variety">{{pick.goodsMinimalResp.variety}}</span>
                   </div>
                   <div class="u-bars">
                     <div class="bars">
-                      <div class="bars-left">复杂：30分</div>
+                      <div class="bars-left">复杂：{{pick.goodsMinimalResp.complexity}}分</div>
                       <div class="bars-right">
-                        <!-- <span class="bars-right_top w30"></span> -->
+                        <span class="bars-right_top w30"></span>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="infor">
-                  <h3>2017小拉菲，尝得到的一级庄韵味</h3>
-                  <p>红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。</p>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide hot-list">
-              <div class="hot-list-box">
-                <div class="pro ib-top"></div>
-                <div class="desc ib-middle">
-                  <h3>拉菲珍宝红葡萄酒</h3>
-                  <p>750ml | 日常餐酒 | 紧致单宁</p>
-                  <div class="itemr-info">
-                    <span class="info_item icon_time">2016</span>
-                    <span class="info_item icon_address">法国／波尔多</span>
-                    <span class="info_item icon_variety">黑皮诺</span>
-                  </div>
-                  <div class="u-bars">
-                    <div class="bars">
-                      <div class="bars-left">复杂：30分</div>
-                      <div class="bars-right">
-                        <!-- <span class="bars-right_top w30"></span> -->
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="infor">
-                  <h3>2017小拉菲，尝得到的一级庄韵味</h3>
-                  <p>红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。</p>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide hot-list">
-              <div class="hot-list-box">
-                <div class="pro ib-top"></div>
-                <div class="desc ib-middle">
-                  <h3>拉菲珍宝红葡萄酒</h3>
-                  <p>750ml | 日常餐酒 | 紧致单宁</p>
-                  <div class="itemr-info">
-                    <span class="info_item icon_time">2016</span>
-                    <span class="info_item icon_address">法国／波尔多</span>
-                    <span class="info_item icon_variety">黑皮诺</span>
-                  </div>
-                  <div class="u-bars">
-                    <div class="bars">
-                      <div class="bars-left">复杂：30分</div>
-                      <div class="bars-right">
-                        <!-- <span class="bars-right_top w30"></span> -->
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="infor">
-                  <h3>2017小拉菲，尝得到的一级庄韵味</h3>
-                  <p>红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。</p>
+                  <h3>{{ pick.title }}</h3>
+                  <p>{{ pick.summary }}</p>
                 </div>
               </div>
             </div>
@@ -206,7 +160,7 @@
             <h2>
               知识分享
             </h2>
-            <a class="to-channel">
+            <a class="to-channel" href="/selection">
               进入频道
               <i class="van-icon van-icon-arrow"></i>  
             </a>
@@ -215,59 +169,32 @@
 
         <div v-swiper:mySwiper2="shareSwiper">
           <div class="swiper-wrapper">
-            <div class="swiper-slide share-list">
+            <div
+              class="swiper-slide share-list"
+              v-for="(share, index) in knowList"
+              :key="index">
               <div class="share-list-box">
-                <div class="share_home-user">
-                  <u class="ib-middle"></u>
+                <div class="share_home-user" v-if="share.userResp">
+                  <u class="ib-middle" v-lazy:background-image="share.userResp.headimgurl"></u>
                   <div class="ib-middle">
-                    <span>一朵小粒欣</span>
-                    <p>2018-08-23</p>
+                    <span>{{ share.userResp.nickname }}</span>
+                    <p>{{ share.userResp.createdAt }}</p>
                   </div>
                 </div>
                 <div class="share_home-content">
-                  <h3>2017雄狮，Decanter 97分好评，帕克眼中实力一级庄</h3>
+                  <h3>{{ share.title }}</h3>
                   <div class="tips">
-                    <span>频道：经验 | 心得 | 美食</span>
-                    <span>话题：红酒</span>
+                    <span>频道：{{ share.channelName }}</span>
+                    <span>话题：{{ share.topicName }}</span>
                   </div>
-                  <p>红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…</p>
+                  <p>{{ share.summary }}</p>
                   <div class="pro">
-                    <img src="../assets/img/home/img_home_335x180@2x.png">
+                    <img v-if="share.imgsPaht" v-lazy="share.imgsPaht[0]">
                   </div>
                   <div class="u-other">
-                    <span class="zan"><i></i>100</span>
-                    <span class="chat"><i></i>98</span>
-                    <span class="watch"><i></i>27456</span>
-                    <div class="more_share">
-                      <i class="point"></i>
-                    </div> 
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide share-list">
-              <div class="share-list-box">
-                <div class="share_home-user">
-                  <u class="ib-middle"></u>
-                  <div class="ib-middle">
-                    <span>一朵小粒欣</span>
-                    <p>2018-08-23</p>
-                  </div>
-                </div>
-                <div class="share_home-content">
-                  <h3>2017雄狮，Decanter 97分好评，帕克眼中实力一级庄</h3>
-                  <div class="tips">
-                    <span>频道：经验 | 心得 | 美食</span>
-                    <span>话题：红酒</span>
-                  </div>
-                  <p>红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…</p>
-                  <div class="pro">
-                    <img src="../assets/img/home/img_home_335x180@2x.png">
-                  </div>
-                  <div class="u-other">
-                    <span class="zan"><i></i>100</span>
-                    <span class="chat"><i></i>98</span>
-                    <span class="watch"><i></i>27456</span>
+                    <span class="zan"><i></i>{{ share.likeNumber }}</span>
+                    <span class="chat"><i></i>{{ share.commentNumber }}</span>
+                    <span class="watch"><i></i>{{ share.readNumber }}</span>
                     <div class="more_share">
                       <i class="point"></i>
                     </div> 
@@ -284,30 +211,23 @@
           <h2>
             社区活动
           </h2>
-          <a class="to-channel">
+          <a class="to-channel" href="/community">
             进入频道
             <i class="van-icon van-icon-arrow"></i>  
           </a>
         </div>
         <ul class="community_home-item">
-          <li class="community_home-list type_1 noing">
+          <li
+            class="community_home-list type_1 noing"
+            v-for="(munity, index) in munityList"
+            :key="index">
             <div class="pro">
               <div class="full bg" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
             </div>
             <div class="desc">
-              <h3>第38期 | 红酒之夜 <span>2018快海购红酒沙龙</span></h3>
-              <p>活动时间：2018年7月8日-2018年7月9日</p>
-              <p>活动地点：广州市天河区珠江新城四季酒店68层2号展厅</p>
-            </div>
-          </li>
-          <li class="community_home-list type_2 ing">
-            <div class="pro">
-              <div class="full bg" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
-            </div>
-            <div class="desc">
-              <h3>第38期 | 红酒之夜 <span>2018快海购红酒沙龙</span></h3>
-              <p>活动时间：2018年7月8日-2018年7月9日</p>
-              <p>活动地点：广州市天河区珠江新城四季酒店68层2号展厅</p>
+              <h3>第{{ munity.period }}期 | {{ munity.theme }} <span>{{ munity.title }}</span></h3>
+              <p>活动时间：{{ munity._times }}</p>
+              <p>活动地点：{{ munity._dz }}</p>
             </div>
           </li>
         </ul>
@@ -315,11 +235,11 @@
 
       <section class="news_home">
         <div class="margin-20">
-          <div class="title_home" @click="tohotspot">
+          <div class="title_home">
             <h2>
               新闻资讯
             </h2>
-            <a class="to-channel" >
+            <a class="to-channel" href="/hotspot">
               进入频道
               <i class="van-icon van-icon-arrow"></i>  
             </a>
@@ -327,81 +247,98 @@
         </div>
         <div v-swiper:mySwiper3="swiperNews">
           <div class="swiper-wrapper">
-            <div class="swiper-slide news-list">
+            <div
+              class="swiper-slide news-list"
+              v-for="(news, index) in newsList"
+              :key="index">
               <div class="news-list-box">
-                <h3>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</h3>
+                <h3>{{ news.title }}</h3>
                 <div class="tips">
-                  <span>国际资讯</span>
-                  <span>作者：拉菲尼斯</span>
-                  <span>来源：红酒网</span>
+                  <span>作者：{{news.author || '佚名'}}</span>
+                  <span>来源：{{ news.sourceAddress}}</span>
+                  <span>分类：{{circlenavList[news.classificationId]}}</span>
                 </div>
                 <div class="pro">
-                  <div class="bg full" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
+                  <div class="bg full" :style="'background: url(' + news.imgPath + ') no-repeat center/cover'"></div>
                 </div>
                 <div class="desc">
-                  红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide news-list">
-              <div class="news-list-box">
-                <h3>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</h3>
-                <div class="tips">
-                  <span>国际资讯</span>
-                  <span>作者：拉菲尼斯</span>
-                  <span>来源：红酒网</span>
-                </div>
-                <div class="pro">
-                  <div class="bg full" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
-                </div>
-                <div class="desc">
-                  红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…
+                  {{ news.summary }}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-    
     </article>
-
-
   </div>
 </template>
 <script>
-// import api from '~/utils/request'
 import { userApi } from '~/api/users'
+import { selectApi } from '~/api/selection'
+import { newApi } from '~/api/news'
+import { knowApi } from '~/api/knowledge'
+import { munityApi } from '~/api/community'
+import tools from '~/utils/tools'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 
 export default {
   name: 'home',
   layout: 'page-with-tabbar',
-
-  // async asyncData (req) {
-  //   return api.all([
-  //     api.serverGet('/api-1', {}, req),
-  //     api.serverGet('/api-2', {}, req)
-  //   ])
-  //     .then(api.spread(function (data1, data2) {
-  //       console.log(data1, data2)
-  //     })).catch(error => {
-  //       req.redirect('/error')
-  //     })
-  // },
-
-  // async asyncData (req) {
-  //   return api.serverGet('/api').then((res) => {
-  //     if (res.code !== 200) {
-  //       // todo 失败回调
-  //     }
-  //     return { text: res.data.text }
-  //   })
-  // },
-
+  async asyncData (req) {
+    const selectFn = selectApi.serverRecomlist(req)
+    const newsFn = newApi.serverPage({ page: 1, count: 5 }, req)
+    const knowFn = knowApi.homePage({ page: 1, count: 5 }, req)
+    const munityFn = munityApi.serverActiveList({ page: 1, count: 5 }, req)
+    // 并发异步
+    const { code: selectCode, data: selectData } = await selectFn
+    const { code: newsCode, data: newsData } = await newsFn
+    const { code: knowCode, data: knowData } = await knowFn
+    const { code: munityCode, data: munityData } = await munityFn
+    // 防止一个某一数据请求失败，所以给预估返回列表一个空数组
+    let _selects = []
+    let _news = []
+    let _knows = []
+    let _munitys = []
+    if (selectCode === 200) {
+      _selects = selectData
+    }
+    if (newsCode === 200) {
+      _news = newsData.array
+    }
+    if (knowCode === 200) {
+      _knows = knowData.array
+    }
+    if (munityCode === 200) {
+      let { array } = munityData
+      _munitys = array.map(v => {
+        // 时间
+        const { startTime, endTime } = v
+        const newtimes = tools.concatDate(startTime, endTime)
+        v._times = newtimes
+        // 地址
+        const { province, city, district, address } = v
+        const _provice = tools.getStrIndex(province)
+        const _city = tools.getStrIndex(city)
+        const _district = tools.getStrIndex(district)
+        v._dz = _provice + _city + _district + address
+        return v
+      })
+    }
+    return {
+      selectList: _selects,
+      newsList: _news,
+      knowList: _knows,
+      munityList: _munitys
+    }
+  },
   data () {
     return {
       bannerImg: bannerImg,
-
+      selectList: [], // 甄选
+      newsList: [], // 新闻热点
+      knowList: [], // 知识分享
+      munityList: [], // 社区活动
+      circlenavList: ['这些圈子都在看', '行业热点', '培训讲座', '企业招商'],
       swiperCommend: {
         speed: 800,
         slidesPerView: 'auto'
@@ -422,10 +359,6 @@ export default {
         slidesPerView: 'auto'
       }
     }
-  },
-
-  created () {
-    // console.log(this.swiperOption)
   },
 
   methods: {
@@ -657,11 +590,13 @@ export default {
       padding: 20px 0 0; 
       width: 320px;
       height: 370px;
+      overflow: hidden;
     }
     .pro {
       width: 100px;
       height: 159px;
       text-align: center;
+      .bg_cover;
     }
     .desc {
       font-size: 12px;
@@ -679,7 +614,26 @@ export default {
         color:rgba(153,153,153,1);
         line-height:12px;
       }
-      span {
+     .tags {
+        font-size: 12px;
+        font-family: PingFang-SC-Regular;
+        font-weight: 400;
+        color: rgba(153, 153, 153, 1);
+        margin-top: 10px;
+
+        .tagsub {
+          margin-top: 10px;
+
+          &+.tagsub {
+            margin-left: 5px;
+            padding-left: 5px;
+            position: relative;
+
+            &:before {}
+          }
+        }
+      }
+      .info_item {
         display: inline-block;
         height:24px;
         line-height: 24px;
@@ -737,6 +691,12 @@ export default {
         font-size: 14px;
         line-height: 24px;
         text-align: justify;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
       } 
     }
   }
@@ -767,7 +727,8 @@ export default {
       border-radius: 50%;
       overflow: hidden;
       margin-right: 17px;
-      background: #ff6c6c; 
+      background: #ff6c6c;
+      .bg_cover;
     }
     span {
       display: block;
