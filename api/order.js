@@ -29,8 +29,8 @@ export const orderApi = {
   receiveOrder (id) {
     return request.clientPost(`/api/order/confirmReceipt/${id}`)
   },
-  deleteOrder (id) {
-    return request.clientPost(`${id}`)
+  deleteOrder (orderId) {
+    return request.clientPost(`/api/order/delete/${orderId}`)
   },
   // 去评价
   submitEvaluation (obj) {

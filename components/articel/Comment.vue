@@ -1,7 +1,7 @@
 <template>
   <div class="u-articel">
     <!-- 操作选项 -->
-    <article-operation :ifLike='ifLike' :ifCollect='ifCollect' :type='type' :articelId='articelId' @setLike='setLike' @setCollect='setCollect' @handleComment='handleComment'></article-operation>
+    <article-operation :ifLike='artLike' :ifCollect='artCollect' :type='type' :articelId='articelId' @setLike='setLike' @setCollect='setCollect' @handleComment='handleComment'></article-operation>
 
     <!-- 评论列表 -->
     <div class="comment-section">
@@ -97,9 +97,10 @@ export default {
   name: 'u-comment',
 
   props: {
-    detailData: Object,
     type: String,
-    articelId: String
+    articelId: String,
+    ifLike: Boolean, // 是否喜欢
+    ifCollect: Boolean // 是否收藏
   },
 
   components: {
@@ -111,8 +112,9 @@ export default {
 
   data () {
     return {
-      ifLike: this.detailData.checkIfLike, // 是否点赞
-      ifCollect: this.detailData.checkIfCollect, // 是否收藏
+      artLike: this.ifLike,
+      artCollect: this.ifCollect,
+
       commentShow: false, // 去评论弹框
       commentContent: '', // 评论内容
       imgList: [], // 评论上传的图片
@@ -285,10 +287,10 @@ export default {
       })
     },
     setLike (val) {
-      this.ifLike = val
+      this.artLike = val
     },
     setCollect (val) {
-      this.ifCollect = val
+      this.artCollect = val
     },
     // 打开评论弹框
     handleComment (val) {

@@ -46,13 +46,14 @@
       </div>
     </div>
 
-    <!-- 
+    <!--
       文章评论
       type -> 文章类型
       articelId -> 文章id
-      detailObj -> 文章详情（只要包含是否收藏和是否点赞即可）
+      ifLike -> 是否喜欢
+      ifCollect -> 是否收藏
     -->
-    <articel-comment type='1' :articelId='id' :detailData='detailObj'></articel-comment>
+    <articel-comment type='1' :articelId='id' :ifLike='ifLike' :ifCollect='ifCollect'></articel-comment>
 
     <van-actionsheet
       v-model="tipShow"
