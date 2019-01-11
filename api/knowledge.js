@@ -19,7 +19,6 @@ export const knowApi = {
   getAuthorInfo (obj) {
     return request.clientGet('/api/sk/getUserContent', obj)
   },
-
   getReplys (obj) {
     return request.clientGet('/api/articleComment/paginateReply', obj)
   },
@@ -67,5 +66,8 @@ export const knowApi = {
   },
   getArticleDetail (obj, req) {
     return request.serverGet(`/api/sk/getArticle/${obj.id}`, obj, req)
+  },
+  homePage (params, req) {
+    return request.serverGet('/api/sk/homePage', params, req)
   }
 }

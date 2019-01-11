@@ -50,11 +50,11 @@ export default {
   },
   // 时间格式化
   /**
-    * @argument date * 时间对象
-    * @argument options * 配置参数
-    * dayDelimiter * 年月日分隔符，默认 -
-    * timeDelimiter * 时分秒分隔符，默认 :
-    * ifHaveTime * 是否需要时分秒，默认 false
+   * @argument date * 时间对象
+   * @argument options * 配置参数
+   * dayDelimiter * 年月日分隔符，默认 -
+   * timeDelimiter * 时分秒分隔符，默认 :
+   * ifHaveTime * 是否需要时分秒，默认 false
    */
   formatDate (date, options) {
     if (!date || !date.getFullYear()) {
@@ -149,7 +149,7 @@ export default {
    * 获取地址栏参数
    * @params 传入需要获取的参数
    * @return 参数值
-  **/
+   **/
   getUrlQues (que) {
     let webUrl = window.location.href
     console.log(webUrl)
@@ -167,7 +167,7 @@ export default {
   },
   /**
    * ['1032464259549761537_白葡萄'] => [{name: '白葡萄', id: '1032464259549761537'}]
-  **/
+   **/
   adjustProps (array) {
     return array.map(v => {
       let arrs = v.split('_')
@@ -179,7 +179,7 @@ export default {
    * el {list => Element}
    * parentList {el 父级，position: relative;}
    * amount {一行数量}
-  */
+   */
   waterFall (el, parentEl, amount) {
     let els = document.querySelectorAll(el)
     let elsParent = document.querySelector(parentEl)
@@ -200,9 +200,9 @@ export default {
     elsParent.style.minHeight = Math.max(...colHeights) + 'px'
   },
   /**
-  * 根据路径和宽度获取图片对应的高度
-  * {path, wid} => {src: path, _height: _h}
-  **/
+   * 根据路径和宽度获取图片对应的高度
+   * {path, wid} => {src: path, _height: _h}
+   **/
   getImgInfos (path, wid) {
     return new Promise((resolve) => {
       let image = new Image()
@@ -232,7 +232,7 @@ export default {
   },
   /**
    * 滚动节流
-  **/
+   **/
   throttel (fn, interval = 300) {
     let canRun = true
     return function () {
@@ -243,5 +243,52 @@ export default {
         canRun = true
       }, interval)
     }
+  },
+  /**
+   * @params {String} string='广东, 999991'
+   * @return 广东 or 999991
+   **/
+  getStrIndex (str, index = 0) {
+    if (!str) return
+    if (str.includes(',')) {
+      return str.split(',')[index]
+    }
+    return [str]
+  },
+  /**
+   * 合并两个时间
+  **/
+  concatDate (time1, time2) {
+    const date1 = new Date(time1)
+    const date2 = new Date(time2)
+    const addZero = val => {
+      if (+val < 10) {
+        return '0' + val
+      }
+      return val
+    }
+    // date1
+    const y1 = date1.getFullYear()
+    const m1 = addZero(date1.getMonth() + 1)
+    const d1 = addZero(date1.getDate())
+    const h1 = addZero(date1.getHours())
+    const minut1 = addZero(date1.getMinutes())
+    // date2
+    const y2 = date2.getFullYear()
+    const m2 = addZero(date2.getMonth() + 1)
+    const d2 = addZero(date2.getDate())
+    const h2 = addZero(date2.getHours())
+    const minut2 = addZero(date2.getMinutes())
+    // 符号
+    const [sep1, sep2] = ['-', ':']
+    let [strstart, strend] = ['', '']
+    if (y1 !== y2 || m1 !== m2 || d1 !== d2) {
+      strstart = y1 + sep1 + m1 + sep1 + d1 + ' ' + h1 + sep2 + minut1
+      strend = y2 + sep1 + m2 + sep1 + d2 + ' ' + h2 + sep2 + minut2
+    } else {
+      strstart = y1 + sep1 + m1 + sep1 + d1
+      strend = h1 + sep2 + minut1 + '~' + h2 + sep2 + minut2
+    }
+    return strstart + '~' + strend
   }
 }
