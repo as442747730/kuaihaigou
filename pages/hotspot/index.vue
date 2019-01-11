@@ -6,12 +6,14 @@
     </div>
     <div class="hotbox">
       <div class="box-item" v-for="(item, index) in hotList" :key="index">
-        <div class="box-left" v-lazy:background-image="item.imgPath"></div>
-        <div class="box-right">
-          <h3 class="r_head">{{item.title}}</h3>
-          <div class="r_time">{{item.createdAt}}</div>
-          <p class="r_summary">{{item.summary}}</p>
-        </div>
+        <a :href="'/hotspot/detail/' + item.id">
+          <div class="box-left" v-lazy:background-image="item.imgPath"></div>
+          <div class="box-right">
+            <h3 class="r_head">{{item.title}}</h3>
+            <div class="r_time">{{item.createdAt}}</div>
+            <p class="r_summary">{{item.summary}}</p>
+          </div>
+        </a>
       </div>
     </div>
     <div class="hotcircle">
@@ -21,7 +23,9 @@
       <div class="banners">
         <div v-swiper:mySwiper1="bannerSwiper">
           <div class="bannerlist swiper-wrapper">
-            <div class="banneritem swiper-slide" v-for="(item, index) in bannerList" :key="index"  v-lazy:background-image="item.bannerPath" @click="todetail(item, 0)"></div>
+            <div class="banneritem swiper-slide" v-for="(item, index) in bannerList" :key="index" v-lazy:background-image="item.bannerPath + '?imageView2/2/w/650/h/320'" @click="todetail(item, 0)">
+              <p>{{ item.title }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -131,6 +135,7 @@
       }
     },
     mounted () {
+      console.log(this.bannerList)
       // 滚动
       window.addEventListener('scroll', tools.throttel(() => {
         let winH = document.documentElement.clientHeight || document.body.clientHeight
@@ -262,6 +267,10 @@
       margin: 20px 0;
       display: flex;
       justify-content: flex-start;
+      a {
+        display: flex;
+        width: 100%;
+      }
 
       .box-left {
         width: 110px;
@@ -358,10 +367,30 @@
       .banneritem {
         width: 325px;
         height: 160px;
+        position: relative;
+        p {
+          text-align: left;
+          color: #fff;
+          font-size: 14px;
+          position: absolute;
+          bottom: 0px;
+          padding: 0 20px;
+          line-height: 22px;
+          height: 48px;
+          background: rgba(0, 0, 0, .3);
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+        }
         .bg_cover;
 
         &+.banneritem {
-          margin-left: 10px;
+          margin-left: 15px;
+        }
+        &:last-child {
+          margin-right: 30px;
         }
       }
     }
@@ -423,7 +452,6 @@
         padding: 20px 20px 0;
 
         &-head {
-          height: 44px;
           display: flex;
           align-items: center;
 
