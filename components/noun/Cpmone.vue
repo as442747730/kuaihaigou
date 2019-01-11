@@ -1,5 +1,5 @@
 <template>
-  <van-popup v-model="isShow" position="top" overlay-class="vanmb" :close-on-click-overlay="false">
+  <van-popup class='pop-box' v-model="isShow" position="top" overlay-class="vanmb" :close-on-click-overlay="false">
     <!-- 品种 start -->
     <section class="variety" v-if="navIndex === 0">
       <div class="secone">

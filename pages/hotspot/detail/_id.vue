@@ -19,12 +19,21 @@
       <div class="video-box" v-if="articles.videoSharingPath">
         <video class="video-player" controls :src="articles.videoSharingPath"></video>
       </div>
-      <article class="article" v-html="articles.content"></article>
+      <article class="article content-wrapper" v-html="articles.content"></article>
     </div>
+    <!--
+      文章评论
+      type -> 文章类型
+      articelId -> 文章id
+      ifLike -> 是否喜欢
+      ifCollect -> 是否收藏
+    -->
+    <articel-comment type='2' :articelId='id' :ifLike='ifLike' :ifCollect='ifCollect'></articel-comment>
   </div>
 </template>
 <script>
 import { newApi } from '~/api/news'
+import articelComment from '@/components/articel/Comment'
 export default {
   head () {
     return {
@@ -34,19 +43,28 @@ export default {
       ]
     }
   },
+
+  components: { articelComment },
+
   async asyncData (req) {
     const detailId = req.params.id
     const articleFn = newApi.serverArticle(detailId)
     const { code: artcleCode, data: articleData } = await articleFn
     if (artcleCode === 200) {
-      return { articles: articleData }
+      return { articles: articleData, id: detailId, ifLike: articleData.checkIfLike, ifCollect: articleData.checkIfCollect }
     }
   },
   data () {
     return {
+      id: null,
       articles: {},
+      ifLike: false,
+      ifCollect: false,
       circlenavList: ['这些圈子都在看', '行业热点', '培训讲座', '企业招商']
     }
+  },
+  created () {
+    console.log(this.articles)
   },
   methods: {
     tolabel (label) {
@@ -56,6 +74,9 @@ export default {
 }
 </script>
 <style lang="less">
+.hotspot-detail {
+  padding-bottom: 50px;
+}
 .details {
   font-size: 14px;
   padding-left: 20px;
@@ -118,7 +139,7 @@ export default {
 
   .summery {
     margin-top: 20px;
-    padding: 20px;
+    padding: 15px;
     font-size: 15px;
     font-family: PingFang-SC-Medium;
     font-weight: 500;
@@ -141,7 +162,7 @@ export default {
 
   .article {
     margin-top: 20px;
-    font-size: 12px;
+    // font-size: 12px;
     // font-weight: 500;
     font-family: PingFang-SC-Medium;
     color: rgba(153, 153, 153, 1);
