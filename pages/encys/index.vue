@@ -32,7 +32,9 @@
       <section class="mdl shares">
         <div class="mdl-head">
           <h1>知识分享</h1>
-          <div class="head_enter">进入频道</div>
+          <div class="head_enter">
+            <a href="/knowledge">进入频道</a>
+          </div>
         </div>
         <div v-swiper:mySwiper2="shareSwiper">
           <div class="mdl-lists swiper-wrapper">
@@ -48,18 +50,20 @@
                 </div>
               </div>
               <div class="content">
-                <div class="content-head">
-                  <p>{{ item.title }}</p>
-                </div>
-                <div class="content-other">
-                  <span>频道：{{ item.channelName }}</span>
-                  <span>话题：{{ item.topicName }}</span>
-                </div>
-                <div class="article" v-if="item.articleType === 1" style="-webkit-box-orient: vertical;" v-html="item.summary"></div>
-                <div class="imgs" v-if="item.articleType === 1 && item.imgsPaht">
-                  <div v-if="item.imgsPaht" class="imgone" v-lazy:background-image="item.imgsPaht[0]"></div>
-                  <!-- <div v-else class="imgone" v-lazy:background-image="require('~/assets/img/001.jpg')"></div> -->
-                </div>
+                <a :href="'/knowledge/detail/' + item.id + '?type=' + item.articleType">
+                  <div class="content-head">
+                    <p>{{ item.title }}</p>
+                  </div>
+                  <div class="content-other">
+                    <span>频道：{{ item.channelName }}</span>
+                    <span>话题：{{ item.topicName }}</span>
+                  </div>
+                  <div class="article" v-if="item.articleType === 1" style="-webkit-box-orient: vertical;" v-html="item.summary"></div>
+                  <div class="imgs" v-if="item.articleType === 1 && item.imgsPaht">
+                    <div v-if="item.imgsPaht" class="imgone" v-lazy:background-image="item.imgsPaht[0] + '?imageView2/2/w/560/h/300'"></div>
+                    <!-- <div v-else class="imgone" v-lazy:background-image="require('~/assets/img/001.jpg')"></div> -->
+                  </div>
+                </a>
                 <!-- 视频 -->
                 <div class="video-box" v-if="item.articleType === 2">
                   <video class="video-player" controls :src="item.videoPath"></video>
@@ -71,7 +75,7 @@
                   <span class="sub msg">{{ item.commentNumber }}</span>
                   <span class="sub look">{{ item.readNumber }}</span>
                 </div>
-                <div class="more"></div>
+                <a :href="'/knowledge/detail/' + item.id + '?type=' + item.articleType"><div class="more"></div></a>
               </div>
             </div>
           </div>
@@ -81,34 +85,38 @@
       <section class="mdl hotnews">
         <div class="mdl-head">
           <h1>行业热点</h1>
-          <div class="head_enter">进入频道</div>
+          <div class="head_enter">
+            <a href="/hotspot">进入频道</a>
+          </div>
         </div>
         <div v-swiper:mySwiper3="swiperNews">
           <div class="mdl-lists swiper-wrapper">
             <div class="list swiper-slide" v-for="(item, index) in hotnewList" :key="index">
-              <div class="content">
-                <div class="content-head">
-                  <p>{{ item.title }}</p>
+              <a :href="'/hotspot/detail/' + item.id">
+                <div class="content">
+                  <div class="content-head">
+                    <p>{{ item.title }}</p>
+                  </div>
+                  <div class="content-time">{{ item.createdAt }}</div>
+                  <div class="content-other">
+                    <span v-if='item.author'>作者：{{ item.author }}</span>
+                    <span v-if='item.sourceAddress'>来源：{{ item.sourceAddress }}</span>
+                  </div>
+                  <div class="imgs">
+                    <div v-if="item.imgPath" class="imgone" v-lazy:background-image="item.imgPath + '?imageView2/2/w/560/h/300'"></div>
+                    <div v-else class="imgone" v-lazy:background-image="require('~/assets/img/001.jpg')"></div>
+                  </div>
+                  <div class="article">{{item.summary}}</div>
                 </div>
-                <div class="content-time">{{ item.createdAt }}</div>
-                <div class="content-other">
-                  <span>作者：{{ item.author }}</span>
-                  <span>来源：{{ item.sourceAddress }}</span>
+                <div class="bottoms">
+                  <div class="btns">
+                    <span class="sub good">{{ item.likeNumber }}</span>
+                    <span class="sub msg">{{ item.commentNumber }}</span>
+                    <span class="sub look">{{ item.readNumber }}</span>
+                  </div>
+                  <!-- <div class="more"></div> -->
                 </div>
-                <div class="imgs">
-                  <div v-if="item.imgPath" class="imgone" v-lazy:background-image="item.imgPath"></div>
-                  <div v-else class="imgone" v-lazy:background-image="require('~/assets/img/001.jpg')"></div>
-                </div>
-                <div class="article">{{item.summary}}</div>
-              </div>
-              <div class="bottoms">
-                <div class="btns">
-                  <span class="sub good">{{ item.likeNumber }}</span>
-                  <span class="sub msg">{{ item.commentNumber }}</span>
-                  <span class="sub look">{{ item.readNumber }}</span>
-                </div>
-                <!-- <div class="more"></div> -->
-              </div>
+              </a>
             </div>
           </div>
         </div>
@@ -274,7 +282,7 @@ export default {
               overflow: hidden;
               text-overflow: ellipsis;
               display: -webkit-box;
-              -webkit-line-clamp: 2;
+              -webkit-line-clamp: 1;
               -webkit-box-orient: vertical;
             }
           }
@@ -343,7 +351,10 @@ export default {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-top: 10px;
+          position: absolute;
+          width: 100%;
+          bottom: 6px;
+          box-sizing: border-box;
           .btns {
             display: flex;
             align-items: center;
