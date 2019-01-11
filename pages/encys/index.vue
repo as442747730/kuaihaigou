@@ -42,6 +42,7 @@
                 <div class="infos">
                   <div class="person">
                     <p>{{ item.userResp.nickname }}</p>
+                    <user-lab :level='String(item.userResp.userGradeNumber)' type='1' :profess='String(item.userResp.category)'></user-lab>
                   </div>
                   <div class="time">{{ item.createdAt }}</div>
                 </div>
@@ -55,7 +56,7 @@
                   <span>话题：{{ item.topicName }}</span>
                 </div>
                 <div class="article" v-if="item.articleType === 1" style="-webkit-box-orient: vertical;" v-html="item.summary"></div>
-                <div class="imgs" v-if="item.articleType === 1">
+                <div class="imgs" v-if="item.articleType === 1 && item.imgsPaht">
                   <div v-if="item.imgsPaht" class="imgone" v-lazy:background-image="item.imgsPaht[0]"></div>
                   <!-- <div v-else class="imgone" v-lazy:background-image="require('~/assets/img/001.jpg')"></div> -->
                 </div>
@@ -117,6 +118,7 @@
 </template>
 <script>
 import { encyApi } from '~/api/encys'
+import userLab from '@/components/Usericon.vue'
 export default {
   asyncData (req) {
     let par1 = { page: 1, count: 10 }
@@ -135,6 +137,7 @@ export default {
       }
     })
   },
+  components: { userLab },
   data () {
     return {
       hotnewList: [],
@@ -150,6 +153,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.shareList)
   },
   methods: {
     toNoun (index) {
@@ -185,8 +189,7 @@ export default {
           position: relative;
           font-size:14px;
           font-family:PingFangSC-Semibold;
-          font-weight:600;
-          color:rgba(187,187,187,1);
+          color: rgba(187,187,187,1);
           line-height:14px;
           padding-right: 20px;
           &:after {
@@ -209,7 +212,7 @@ export default {
         width: 320px;
         margin-left: 15px;
         &:last-child {
-          margin-right: 15px;
+          margin-right: 20px;
         }
         // & + .list {
         //   margin-left: 15px;
@@ -233,11 +236,13 @@ export default {
               display: flex;
               align-items: center;
               height: 30px;
+              font-size: 0;
               &>p {
                 font-size:16px;
                 font-family:PingFangSC-Semibold;
                 font-weight:600;
                 color:rgba(51,51,51,1);
+                margin-right: 5px;
               }
             }
             .time {
@@ -258,7 +263,6 @@ export default {
         .content {
           padding: 20px 20px 0;
           &-head {
-            height: 44px;
             display: flex;
             align-items: center;
             &>p {
@@ -339,6 +343,7 @@ export default {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          margin-top: 10px;
           .btns {
             display: flex;
             align-items: center;
