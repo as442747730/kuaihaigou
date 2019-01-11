@@ -46,61 +46,12 @@
       </div>
     </div>
 
-    <!-- <div class="comment-section">
-      <p class="title">所有评论（{{ commentTotal }}条）</p>
-      <div class="part" v-for="item in commentList" :key="item.id">
-
-        <div class="part-body">
-          <div class="part-body-top">
-            <div class="avatar" :style="'background-image: url(' + item.personalInfoResp.headimgurl + ')'"></div>
-            <div class="user">
-              <p class="nickname">{{ item.personalInfoResp.nickname }}</p>
-              <user-lab :level='String(item.personalInfoResp.userGradeNumber)' type='1' :profess='String(item.personalInfoResp.category)'></user-lab>
-            </div>
-            <div class="good" v-if="item.ifGod">神评论</div>
-          </div>
-          <div class="part-body-center">{{ item.content }}</div>
-          
-          <div class="part-body-bottom">
-            <span class="time">{{ item.createdAt }}</span>
-            <div class="flex_tlCenter">
-              <div class="reply ">回复({{ item.replyNum }})</div>
-              <div :class="['like', item.ifLiked ? 'active' : '']" @click="handleCommentLike(item)">{{ item.likeNum }}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="part-content">
-          <div class="part-content-box">
-
-            <div class="reply-item" v-for="p in item.replyList">
-              <div class="avatar-img" :style="'background-image: url(' + p.headimgurl + ')'"></div>
-              <div class="reply-right">
-                <p class="username">{{ p.nickname }}<span>回复</span>{{ p.toUsername }}</p>
-                <user-lab :level='String(p.userGradeNumber)' type='1' :profess='String(p.category)'></user-lab>
-                <p class="reply-content">{{ p.content }}</p>
-                <div class="reply-handler">
-                  <span class="time">{{ p.createdAt }}</span>
-                  <div class="flex_tlCenter">
-                    <div class="reply ">回复({{ p.replyNum }})</div>
-                    <div :class="['like', p.ifLiked ? 'active' : '']" @click="handleCommentLike(p)">{{ p.likeNum }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- <div class="footer-section">
-      <div class="btn-item" @click="handleLike"><img src="~/assets/img/knowledge/icon-like-black.png" :class="['icon-btn', ifLike ? 'active' : '']" alt="" >点赞</div>
-      <div class="btn-item"><img src="~/assets/img/knowledge/icon-comment.png" class="icon-btn" alt="">去评论</div>
-      <div class="btn-item" @click="handleCollect"><img src="~/assets/img/knowledge/icon-star.png" :class="['icon-btn', ifCollect ? 'active' : '']" alt="">收藏</div>
-    </div> -->
-
-    <!-- 文章评论 -->
+    <!-- 
+      文章评论
+      type -> 文章类型
+      articelId -> 文章id
+      detailObj -> 文章详情（只要包含是否收藏和是否点赞即可）
+    -->
     <articel-comment type='1' :articelId='id' :detailData='detailObj'></articel-comment>
 
     <van-actionsheet

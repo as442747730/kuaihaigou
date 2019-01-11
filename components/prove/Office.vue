@@ -48,13 +48,14 @@
       </div>
     </div>
     <div class="depart-line"></div>
-    <div class="step step4">
-      <h3 class="title font_hight">上传企业营业执照</h3>
-      <Upload class='front' @on-success="uploadFront" :max="1">
+    <div class="step step5">
+      <h3 class="title font_hight">上传企业营业执照（最多2张）</h3>
+      <!-- <Upload class='front' @on-success="uploadFront" :max="2">
         <div class="upload-box qiye" :class="{'success': form.frontImg}" :style="'background: url(' + (form.frontImg || updDefault ) + ') no-repeat center/contain'">
           <p class="scp">点击上传</p>
         </div>
-      </Upload>
+      </Upload> -->
+      <u-imghandler class='multigraph' :maxNum="2" v-model="form.businessList"></u-imghandler>
     </div>
     <div class="depart-line"></div>
     <div class="step step5">
@@ -96,7 +97,8 @@ export default {
         frontKey: null,
         backImg: null,
         backKey: null,
-        imgList: []
+        imgList: [],
+        businessList: []
       },
 
       frontDefault: frontDefault, // 人像面
@@ -111,7 +113,7 @@ export default {
       this.form.frontKey = data.key
     },
     async submit () {
-      if (this.validate(this.form.officeName, '请填写企业名称') || this.validate(this.form.desc, '请填写认证描述') || this.validate(this.form.frontImg, '请上传企业营业执照') || this.validate(this.form.imgList, '请上传资格证相关照片')) {
+      if (this.validate(this.form.officeName, '请填写企业名称') || this.validate(this.form.desc, '请填写认证描述') || this.validate(this.form.businessList, '请上传企业营业执照') || this.validate(this.form.imgList, '请上传资格证相关照片')) {
         return
       }
       if (this.form.officeType === '3' && this.validate(this.form.other, '请填写其他平台')) {
@@ -137,7 +139,8 @@ export default {
       }
       let obj = {
         certificateList: this.form.imgList.map(v => v.key),
-        businessLicences: this.form.frontKey,
+        // businessLicences: this.form.frontKey,businessList
+        businessLicences: this.form.businessList.map(v => v.key),
         description: this.form.desc,
         enterpriseName: this.form.officeName,
         typeCode: this.form.officeType,

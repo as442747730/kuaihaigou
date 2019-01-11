@@ -43,7 +43,7 @@
     </div>
     <div class="depart-line"></div>
     <div class="step step4">
-      <h3 class="title font_hight">{{ form.mediaType === '0' ? '上传企业营业执照' : '上传身份证照片'}}</h3>
+      <h3 class="title font_hight">{{ form.mediaType === '0' ? '上传企业营业执照(最多两张)' : '上传身份证照片'}}</h3>
       <Upload class='front' @on-success="uploadFront" :max="1">
         <div v-if="form.mediaType !== '0'" class="upload-box" :class="{'success': form.frontImg}" :style="'background: url(' + (form.frontImg || frontDefault ) + ') no-repeat center/contain'">
           <i></i>
@@ -55,10 +55,19 @@
           <p v-else class="scp">点击上传</p>
         </div>
       </Upload>
-      <Upload class='back' @on-success="uploadBack" :max="1" v-if="form.mediaType === '1'">
-        <div class="upload-box" :class="{'success': form.backImg}" :style="'background: url(' + (form.backImg || backDefault ) + ') no-repeat center/contain'">
+      <Upload class='back' @on-success="uploadBack" :max="1">
+        <!-- <div class="upload-box" :class="{'success': form.backImg}" :style="'background: url(' + (form.backImg || backDefault ) + ') no-repeat center/contain'">
           <i></i>
           <p>{{ form.backImg ? '重新上传' : '上传国徽面' }}</p>
+        </div> -->
+        <div v-if="form.mediaType !== '0'" class="upload-box" :class="{'success': form.frontImg}" :style="'background: url(' + (form.frontImg || frontDefault ) + ') no-repeat center/contain'">
+          <i></i>
+          <p>{{ form.frontImg ? '重新上传' : '上传人像面' }}</p>
+        </div>
+        <div v-else class="upload-box" :class="[{'success': form.backImg, 'qiye': form.mediaType === '0'}]" :style="'background: url(' + (form.backImg || updDefault ) + ') no-repeat center/contain'">
+          <i v-show="form.mediaType !== '0'"></i>
+          <p v-if="form.mediaType !== '0'">{{ form.backImg ? '重新上传' : '上传人像面' }}</p>
+          <p v-else class="scp">点击上传</p>
         </div>
       </Upload>
     </div>
@@ -134,7 +143,7 @@ export default {
       }
       let s = []
       let obj = {
-        identificationList: this.form.mediaType === '0' ? this.form.frontKey : s = s.concat(this.form.frontKey, this.form.backKey),
+        identificationList: this.form.backKey ? s.concat(this.form.frontKey, this.form.backKey) : this.form.frontKey,
         certificateList: this.form.imgList.map(v => v.key),
         mediaType: this.form.mediaType,
         description: this.form.desc,
