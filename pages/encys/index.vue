@@ -1,6 +1,5 @@
 <template>
   <div class="encys">
-    <com-head titleConfig="红酒百科"></com-head>
     <div class="top">
       <div class="topbanner">
         <h2>查询工具</h2>
@@ -117,13 +116,8 @@
   </div>
 </template>
 <script>
-import comHead from '~/components/com-head'
-// import api from '~/utils/request'
 import { encyApi } from '~/api/encys'
 export default {
-  components: {
-    comHead
-  },
   asyncData (req) {
     let par1 = { page: 1, count: 10 }
     let par2 = { page: 1, count: 10 }
@@ -168,12 +162,13 @@ export default {
 .encys {
   .mdls {
     border-top: 10px solid #F5F5F5;
-    padding-left: 20px;
+    // padding-left: 20px;
     padding-bottom: 10px;
     background: #fff;
     .mdl {
       width: 100%;
       &-head {
+        padding-left: 20px;
         height: 60px;
         padding-right: 20px;
         display: flex;
@@ -212,9 +207,13 @@ export default {
         border: 1PX solid #eaeaea;
         box-sizing: border-box;
         width: 320px;
-        & + .list {
-          margin-left: 15px;
+        margin-left: 15px;
+        &:last-child {
+          margin-right: 15px;
         }
+        // & + .list {
+        //   margin-left: 15px;
+        // }
         .users {
           padding: 0 20px;
           height: 80px;
