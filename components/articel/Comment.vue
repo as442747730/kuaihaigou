@@ -154,6 +154,10 @@ export default {
         this.page = this.page + 1
         this.getData(this.page)
       }
+    },
+    articelId (val) {
+      this.getData(this.page, true, val)
+      console.log(val)
     }
   },
 
@@ -179,19 +183,19 @@ export default {
 
   methods: {
     // 获取评论内容
-    async getData (page, needRender = false) {
+    async getData (page, needRender = false, articelId = this.articelId) {
       this.pageLoding = true
       let params = {
         page: page,
         count: 5,
-        articleId: this.articelId,
+        articleId: articelId,
         type: this.type
       }
       const { code, data } = await commentApi.getComments(params)
       if (code === 200) {
         console.log(data)
         this.commentTotal = data.total
-        if (data.array.length === 0) {
+        if (data.array.length < 5) {
           this.pageEmpty = true
         } else {
           this.pageEmpty = false
@@ -355,6 +359,7 @@ export default {
 .comment-section {
   border-top: 10PX solid @cor_border;
   padding: 20px 0 20px 20px;
+  background: #fff;
   .title {
     font-size: 15px;
     color: @cor_333;

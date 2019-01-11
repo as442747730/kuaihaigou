@@ -266,6 +266,7 @@ export default {
       color: @cor_333;
       font-weight: bold;
       line-height: 26px;
+      text-align: justify;
     }
     .desc {
       margin-top: 10px;
@@ -288,11 +289,12 @@ export default {
     }
     .content-wrapper {
       line-height: 25px;
-      font-size: 15px;
+      font-size: 14px;
       color: @cor_999;
       img {
         max-width: 100%!important;
         height: auto!important;
+        margin: 5px 0;
       }
     }
   }
