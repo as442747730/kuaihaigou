@@ -41,9 +41,18 @@
       </section>
 
       <section class="notify_home margin-20">
-        <i class="ib-middle"></i>
-        <p class="ib-middle">品味杯中风情，曼妙醇香，未饮而醉，风情何止万种？</p>
-        <div class="notify_home-icon ib-middle bg"></div>
+        <div class="swiper-container home_in" v-swiper:mySwiper6="notyfySwiper">
+          <div class="swiper-wrapper">
+            <div
+              class="swiper-slide"
+              v-for="(poet, index) in poetList"
+              :key="index">
+              <i class="ib-middle" :style="{backgroundImage: 'url('+ poet.headimgurl +')'}"></i>
+              <p class="ib-middle">{{poet.content}}</p>
+              <div class="notify_home-icon ib-middle bg"></div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section class="entry_home margin-20">
@@ -51,14 +60,14 @@
         <div class="bg full"></div>
       </section>
 
-      <section class="commend_home">
+      <section class="commend_home" id="comwines">
         <div class="margin-20">
           <div class="title_home">
             <h2>
               美酒推荐
               <p>达人体验</p>
             </h2>
-            <div class="change-new">
+            <div class="change-new" id="changeNew">
               <i></i>
               换一批
             </div>
@@ -67,7 +76,10 @@
 
         <div class="commend_home-content">
           <div class="home_bk">
-            <div class="bg" v-lazy:background-image="wineBk"></div>
+            <div class="bg" :style="{backgroundImage: 'url(' + wineBk + ')'}">
+              <div class="bg_world">{{wineSence}}</div>
+            </div>
+            <!-- <div class="bg" v-lazy:background-image="wineBk"></div> -->
           </div>
           <div v-swiper:mySwiper4="swiperCommend">
             <div class="swiper-wrapper">
@@ -80,7 +92,12 @@
                 </div>
                 <div class="desc">
                   <h3 class="font_hight">{{wine.goodsName}}</h3>
-                  <p>750ml | 日常餐酒 | 紧致单宁</p>
+                  <p class="tags">
+                    <span
+                      class="subtag"
+                      v-for="(mytag, tagIndex) in wine.tagList"
+                      :key="tagIndex">{{mytag}}</span>
+                  </p>
                   <em class="font_impact">{{wine.actualPrice}}</em>
                 </div>
               </div>
@@ -207,7 +224,14 @@
             v-for="(munity, index) in munityList"
             :key="index">
             <div class="pro">
-              <div class="full bg" v-lazy:background-image="munity.cover"></div>
+              <div class="full bg munity_bk" v-lazy:background-image="munity.cover">
+                <span class="theme" v-if="munity.themeType === 1">官方<br>活动</span>
+                <span class="theme" v-if="munity.themeType === 2">合作<br>活动</span>
+                <span class="theme" v-if="munity.themeType === 3">酒展</span>
+                <span class="status sign" v-if="munity.status === 1">报名中</span>
+                <span class="status carry" v-else-if="munity.status === 2 || munity.status === 3">进行中</span>
+                <span class="status carry" v-else>已结束</span>
+              </div>
             </div>
             <div class="desc">
               <h3>第{{ munity.period }}期 | {{ munity.theme }} <span>{{ munity.title }}</span></h3>
@@ -264,6 +288,7 @@ import { selectApi } from '~/api/selection'
 import { newApi } from '~/api/news'
 import { knowApi } from '~/api/knowledge'
 import { munityApi } from '~/api/community'
+import { poetApi } from '~/api/poets'
 import tools from '~/utils/tools'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 
@@ -274,27 +299,36 @@ export default {
     // 分页查询列表，第1页，前5条数据
     const params = { page: 1, count: 5 }
     const wineFn = wineApi.serverGoodwineList(0, req)
+    const poetFn = poetApi.serverSignlist(params, req)
     const selectFn = selectApi.serverRecomlist(req)
     const newsFn = newApi.serverPage(params, req)
     const knowFn = knowApi.homePage(params, req)
     const munityFn = munityApi.serverActiveList(params, req)
     // 并发异步
     const { code: wineCode, data: wineData } = await wineFn
+    const { code: poetCode, data: poetData } = await poetFn
     const { code: selectCode, data: selectData } = await selectFn
     const { code: newsCode, data: newsData } = await newsFn
     const { code: knowCode, data: knowData } = await knowFn
     const { code: munityCode, data: munityData } = await munityFn
     // 防止一个某一数据请求失败，所以给预估返回列表一个空数组
     let _winebk = ''
+    let _sence = ''
     let _wines = []
+    let _poets = []
     let _selects = []
     let _news = []
     let _knows = []
     let _munitys = []
     if (wineCode === 200) {
-      const { cover, goodsList } = wineData
+      const { cover, scenesName, goodsList } = wineData
       _wines = goodsList
       _winebk = cover
+      _sence = scenesName
+    }
+    if (poetCode === 200) {
+      _poets = poetData.array
+      console.log('_poets', _poets)
     }
     if (selectCode === 200) {
       _selects = selectData
@@ -323,7 +357,9 @@ export default {
     }
     return {
       wineBk: _winebk,
+      wineSence: _sence,
       wineList: _wines,
+      poetList: _poets,
       selectList: _selects,
       newsList: _news,
       knowList: _knows,
@@ -334,12 +370,20 @@ export default {
     return {
       bannerImg: bannerImg,
       wineBk: '', // 美酒推荐背景图
+      wineSence: '', // 美酒推荐场景
       wineList: [], // 美酒
+      poetList: [], // 酒坛诗社
       selectList: [], // 甄选
       newsList: [], // 新闻热点
       knowList: [], // 知识分享
       munityList: [], // 社区活动
       circlenavList: ['这些圈子都在看', '行业热点', '培训讲座', '企业招商'],
+      notyfySwiper: {
+        speed: 800,
+        direction: 'vertical',
+        loop: true,
+        autoplay: true
+      },
       swiperCommend: {
         speed: 800,
         slidesPerView: 'auto'
@@ -358,7 +402,41 @@ export default {
       }
     }
   },
-
+  async mounted () {
+    // 美酒推荐，每5秒切换为下一个场景
+    const { code: scenCode, data: scenData } = await wineApi.clicentScener()
+    if (scenCode === 200) {
+      const promises = scenData.map(v => wineApi.clientGoodwineList(v.id))
+      const proResult = await Promise.all(promises)
+      console.log(proResult)
+      let nowIndex = 0
+      let len = proResult.length
+      let isChange = true
+      setInterval(() => {
+        if (isChange) {
+          nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
+          const { cover, scenesName, goodsList } = proResult[nowIndex].data
+          this.wineBk = cover
+          this.wineSence = scenesName
+          this.wineList = goodsList
+        }
+      }, 5000)
+      // 换一批
+      const chEl = document.querySelector('#changeNew')
+      let _this = this
+      chEl.onclick = function () {
+        console.time('chEl')
+        isChange = false
+        nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
+        const { cover, scenesName, goodsList } = proResult[nowIndex].data
+        _this.wineBk = cover
+        _this.wineSence = scenesName
+        _this.wineList = goodsList
+        isChange = true
+        console.timeEnd('chEl')
+      }
+    }
+  },
   methods: {
     toWineCenter () {
       // 选酒中心
@@ -392,7 +470,6 @@ export default {
           confirmButtonText: '去登陆',
           cancelButtonText: '取消'
         }).then(() => {
-          console.log(123456)
           window.location.href = '/account/login'
         }).catch(() => {})
       }
@@ -491,12 +568,16 @@ export default {
   height: 60px;
   background: #fef5e5;
   border-radius: 30px;
+  .home_in {
+    position: relative;
+    height: 60px;
+  }
   i {
     width: 30px;
     height: 30px;
     border-radius: 50%;
     margin-left: 10px;
-    background: #fff; 
+    .bg_cover;
   }
   p {
     width: 215px;
@@ -522,6 +603,44 @@ export default {
         border-radius: 10px;
         margin-bottom: 20px;
         .bg_cover;
+        &_world {
+          float: left;
+          margin-left: 20px;
+          margin-top: 109px;
+          font-size:16px;
+          font-family:PingFangSC-Semibold;
+          font-weight:600;
+          color:rgba(255,255,255,1);
+          line-height:16px;
+        }
+      }
+    }
+    .tags {
+      font-size: 12px;
+      font-family: PingFang-SC-Regular;
+      font-weight: 400;
+      color: rgba(153, 153, 153, 1);
+      margin-top: 10px;
+
+      .tagsub {
+        margin-top: 10px;
+
+        &+.tagsub {
+          margin-left: 5px;
+          padding-left: 5px;
+          position: relative;
+          &:before {
+            content: '';
+            width: 1PX;
+            height: 12px;
+            background: pink;
+            position: absolute;
+            top: 50%;
+            left: -1PX;
+            margin-top: -6px;
+            background: rgba(153,153,153,1);
+          }
+        }
       }
     }
   }
@@ -625,7 +744,7 @@ export default {
         color:rgba(153,153,153,1);
         line-height:12px;
       }
-     .tags {
+      .tags {
         font-size: 12px;
         font-family: PingFang-SC-Regular;
         font-weight: 400;
@@ -810,6 +929,65 @@ export default {
       overflow: hidden;
       .bg {
         .bg_cover;
+      }
+      .munity_bk {
+        .theme {
+          float: left;
+          margin-left: 10px;
+          font-size: 13px;
+          font-family: PingFangSC-Semibold;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 1);
+          line-height: 16px;
+          padding: 3px 5px;
+          background: rgba(0, 0, 0, .4);
+          position: relative;
+
+          &:before {
+            position: absolute;
+            left: 0;
+            bottom: -6px;
+            content: '';
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 6px 20px;
+            border-color: transparent transparent transparent rgba(0, 0, 0, .4);
+          }
+
+          &:after {
+            position: absolute;
+            right: 0;
+            bottom: -6px;
+            content: '';
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 20px 6px 0;
+            border-color: transparent rgba(0, 0, 0, .4) transparent transparent;
+          }
+        }
+
+        .status {
+          float: right;
+          margin-top: 10px;
+          margin-right: 10px;
+          font-size: 14px;
+          font-family: PingFangSC-Semibold;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 1);
+          line-height: 14px;
+          padding: 7px 10px;
+          border-radius: 4px;
+        }
+
+        .sign {
+          background: #FF3333;
+        }
+
+        .carry {
+          background: #F99C00;
+        }
       }
     }
     .desc {

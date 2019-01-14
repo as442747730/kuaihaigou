@@ -26,5 +26,13 @@ export const wineApi = {
   // 获取商品属性
   clientAttrs (params) {
     return request.clientGet('/api/esGoods/listAttr', params)
+  },
+  // 美酒推荐场景
+  clicentScener () {
+    return request.clientGet('/api/wine/listScene')
+  },
+  // 美酒推荐列表
+  clientGoodwineList (scenesNo) {
+    return request.clientGet('/api/wine/getWine/' + scenesNo)
   }
 }
