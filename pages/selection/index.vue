@@ -20,9 +20,8 @@
               </p>
               <div class="lables">
                 <span class="label ic_year">{{item.goodsMinimalResp.year}}</span>
-                <span class="label ic_address" v-if="item.goodsMinimalResp.area">{{item.goodsMinimalResp.country}} / {{item.goodsMinimalResp.country}}</span>
+                <span class="label ic_address" v-if="item.goodsMinimalResp.area">{{item.goodsMinimalResp.country}} / {{item.goodsMinimalResp.area}}</span>
                 <span class="label ic_address" v-else>{{item.goodsMinimalResp.country}}</span>
-                <span class="label ic_variety">{{item.goodsMinimalResp.year}}</span>
                 <span class="label ic_variety">{{item.goodsMinimalResp.variety}}</span>
               </div>
               <div class="probars">

@@ -8,6 +8,14 @@ export const wineApi = {
   serverAttrs (params, req) {
     return request.serverGet('/api/esGoods/listAttr', params, req)
   },
+  // 美酒推荐场景
+  serverScener (req) {
+    return request.serverGet('/api/wine/listScener', null, req)
+  },
+  // 美酒推荐列表
+  serverGoodwineList (scenesNo, req) {
+    return request.serverGet('/api/wine/getWine/' + scenesNo, { scenesNo: scenesNo }, req)
+  },
   /* ----------------- client ----------------- */
   clientList (params) {
     return request.clientGet('/api/esGoods/paginate', params)

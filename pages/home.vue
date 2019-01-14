@@ -10,7 +10,7 @@
     <article>
 
       <section class="banner_home margin-20">
-        <div class="bg full" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
+        <div class="bg full" v-lazy:background-image="bannerImg"></div>
       </section>
 
       <section class="tab_home">
@@ -66,37 +66,22 @@
         </div>
 
         <div class="commend_home-content">
-          <div class="bg" style="background: url('~/assets/img/home/img_tuijian_335x160@2x.png') no-repeat center"></div>
+          <div class="home_bk">
+            <div class="bg" v-lazy:background-image="wineBk"></div>
+          </div>
           <div v-swiper:mySwiper4="swiperCommend">
             <div class="swiper-wrapper">
-              <div class="swiper-slide commend-list">
+              <div
+                class="swiper-slide commend-list"
+                v-for="(wine, index) in wineList"
+                :key="index">
                 <div class="pro">
-                  <img src='~/assets/img/green_wine.jpg'>
+                  <img v-lazy="wine.cover" />
                 </div>
                 <div class="desc">
-                  <h3 class="font_hight">拉菲珍宝红葡萄酒</h3>
+                  <h3 class="font_hight">{{wine.goodsName}}</h3>
                   <p>750ml | 日常餐酒 | 紧致单宁</p>
-                  <em class="font_impact">¥199</em>
-                </div>
-              </div>
-              <div class="swiper-slide commend-list">
-                <div class="pro">
-                  <img src='~/assets/img/green_wine.jpg'>
-                </div>
-                <div class="desc">
-                  <h3 class="font_hight">拉菲珍宝红葡萄酒</h3>
-                  <p>750ml | 日常餐酒 | 紧致单宁</p>
-                  <em class="font_impact">¥199</em>
-                </div>
-              </div>
-              <div class="swiper-slide commend-list">
-                <div class="pro">
-                  <img src='~/assets/img/green_wine.jpg'>
-                </div>
-                <div class="desc">
-                  <h3 class="font_hight">拉菲珍宝红葡萄酒</h3>
-                  <p>750ml | 日常餐酒 | 紧致单宁</p>
-                  <em class="font_impact">¥199</em>
+                  <em class="font_impact">{{wine.actualPrice}}</em>
                 </div>
               </div>
             </div>
@@ -222,7 +207,7 @@
             v-for="(munity, index) in munityList"
             :key="index">
             <div class="pro">
-              <div class="full bg" :style="'background: url(' + bannerImg + ') no-repeat center/cover'"></div>
+              <div class="full bg" v-lazy:background-image="munity.cover"></div>
             </div>
             <div class="desc">
               <h3>第{{ munity.period }}期 | {{ munity.theme }} <span>{{ munity.title }}</span></h3>
@@ -274,6 +259,7 @@
 </template>
 <script>
 import { userApi } from '~/api/users'
+import { wineApi } from '~/api/wine'
 import { selectApi } from '~/api/selection'
 import { newApi } from '~/api/news'
 import { knowApi } from '~/api/knowledge'
@@ -285,20 +271,31 @@ export default {
   name: 'home',
   layout: 'page-with-tabbar',
   async asyncData (req) {
+    // 分页查询列表，第1页，前5条数据
+    const params = { page: 1, count: 5 }
+    const wineFn = wineApi.serverGoodwineList(0, req)
     const selectFn = selectApi.serverRecomlist(req)
-    const newsFn = newApi.serverPage({ page: 1, count: 5 }, req)
-    const knowFn = knowApi.homePage({ page: 1, count: 5 }, req)
-    const munityFn = munityApi.serverActiveList({ page: 1, count: 5 }, req)
+    const newsFn = newApi.serverPage(params, req)
+    const knowFn = knowApi.homePage(params, req)
+    const munityFn = munityApi.serverActiveList(params, req)
     // 并发异步
+    const { code: wineCode, data: wineData } = await wineFn
     const { code: selectCode, data: selectData } = await selectFn
     const { code: newsCode, data: newsData } = await newsFn
     const { code: knowCode, data: knowData } = await knowFn
     const { code: munityCode, data: munityData } = await munityFn
     // 防止一个某一数据请求失败，所以给预估返回列表一个空数组
+    let _winebk = ''
+    let _wines = []
     let _selects = []
     let _news = []
     let _knows = []
     let _munitys = []
+    if (wineCode === 200) {
+      const { cover, goodsList } = wineData
+      _wines = goodsList
+      _winebk = cover
+    }
     if (selectCode === 200) {
       _selects = selectData
     }
@@ -325,6 +322,8 @@ export default {
       })
     }
     return {
+      wineBk: _winebk,
+      wineList: _wines,
       selectList: _selects,
       newsList: _news,
       knowList: _knows,
@@ -334,6 +333,8 @@ export default {
   data () {
     return {
       bannerImg: bannerImg,
+      wineBk: '', // 美酒推荐背景图
+      wineList: [], // 美酒
       selectList: [], // 甄选
       newsList: [], // 新闻热点
       knowList: [], // 知识分享
@@ -343,17 +344,14 @@ export default {
         speed: 800,
         slidesPerView: 'auto'
       },
-
       swiperOption: {
         speed: 800,
         slidesPerView: 'auto'
       },
-
       shareSwiper: {
         speed: 800,
         slidesPerView: 'auto'
       },
-
       swiperNews: {
         speed: 800,
         slidesPerView: 'auto'
@@ -451,6 +449,9 @@ export default {
   border-radius: 6px;
   margin-top: 20px;
   margin-bottom: 17px;
+  .bg {
+    .bg_cover;
+  }
 }
 
 .tab_home {
@@ -514,11 +515,14 @@ export default {
 .commend_home {
   &-content {
     margin-left: 20px;
-    .bg {
-      width: 100%;
-      height: 160px;
-      border-radius: 10px;
-      margin-bottom: 20px;
+    .home_bk {
+      margin-right: 20px;
+      .bg {
+        height: 160px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        .bg_cover;
+      }
     }
   }
   .commend-list {
@@ -542,6 +546,13 @@ export default {
       h3 {
         font-size: 14px;
         color: #333;
+        line-height: 18px;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
       p {
         margin: 10px 0 4px;
@@ -797,6 +808,9 @@ export default {
       height: 180px;
       border-radius: 6px;
       overflow: hidden;
+      .bg {
+        .bg_cover;
+      }
     }
     .desc {
       h3 {
