@@ -73,7 +73,7 @@
             </div>
           </div>
           <div class="featcontent" v-if="objDetail.content">
-            <div class="cont" v-html="objDetail.content"></div>
+            <div class="cont content-wrapper" v-html="objDetail.content"></div>
           </div>
         </section>
         <section class="picture" v-if="lynavIndex === 1">
@@ -93,6 +93,16 @@
         </div>
       </section>
       <!-- 详情 end -->
+
+      <!--
+        文章评论
+        type -> 文章类型
+        articelId -> 文章id
+        ifLike -> 是否喜欢
+        ifCollect -> 是否收藏
+      -->
+      <articel-comment v-show='!isMore' :type='articelType' :articelId='objDetail.id' :ifLike='objDetail.ifLike' :ifCollect='objDetail.ifCollect'></articel-comment>
+
       <!-- 筛选器 start -->
       <cpmOne
         :isShow="showone"
@@ -117,6 +127,7 @@ import CpmOne from '~/components/noun/Cpmone'
 import { encyApi } from '~/api/encys'
 import { ImagePreview } from 'vant'
 import tools from '~/utils/tools'
+import articelComment from '@/components/articel/Comment'
 export default {
   head () {
     return {
@@ -128,7 +139,8 @@ export default {
   },
   components: {
     comHead,
-    CpmOne
+    CpmOne,
+    articelComment
   },
   async asyncData (req) {
     let queryNum = req.query.num
@@ -194,7 +206,8 @@ export default {
       elSort: null,
       wineryParams: {}, // 酒庄列表参数
       isWineryList: false, // 是否显示酒庄列表
-      wineryArr: [] // 酒庄列表
+      wineryArr: [], // 酒庄列表
+      articelType: '4' // 文章类型
     }
   },
   computed: {
@@ -229,6 +242,7 @@ export default {
     }
   },
   mounted () {
+    console.log('11', this.objDetail)
   },
   methods: {
     elNavs (index) {
@@ -311,6 +325,9 @@ export default {
     },
     btnOk (obj) {
       // 确认按钮
+      // 0 品种
+      // 1 产区
+      // 2 酒庄
       if (this.navIndex === 0) {
         let _id
         if (!obj.varietyid) {
@@ -369,8 +386,11 @@ export default {
       // 葡萄品种
       const { code, data } = await encyApi.getVarietyDetail(this.selectVarietyId)
       if (code === 200) {
+        this.articelType = '4'
         this.showone = false
         this.objDetail = data
+        this.isScorll = false
+        this.isMore = true
         this.imagesArr = !data.imgs ? [] : data.imgs
       }
     },
@@ -398,8 +418,11 @@ export default {
       const { code, data } = await encyApi.getAreaDetail(this.selectAreaId)
       if (code === 200) {
         // console.log('data', data)
+        this.articelType = '5'
         this.showone = false
         this.objDetail = data
+        this.isScorll = false
+        this.isMore = true
         this.imagesArr = !data.imgs ? [] : data.imgs
       }
     },
@@ -408,6 +431,9 @@ export default {
       const { code, data } = await encyApi.getWineryList(this.wineryParams)
       if (code === 200) {
         console.log(data)
+        this.articelType = '6'
+        this.isScorll = false
+        this.isMore = true
         this.wineryArr = data.array
         this.isWineryList = true
         this.showone = false
@@ -419,6 +445,8 @@ export default {
       if (code === 200) {
         console.log('data', data)
         this.isWineryList = false
+        this.isScorll = false
+        this.isMore = true
         this.objDetail = data
         this.imagesArr = !data.imgs ? [] : data.imgs
       }
@@ -471,6 +499,12 @@ export default {
   height: 100vh;
   background: #F5F5F5;
   overflow: hidden;
+  .pop-box {
+    z-index: 99!important;
+  }
+  .vanmb {
+    z-index: 98!important;
+  }
 }
 .nouns.overauto {
   overflow: auto !important;
@@ -478,7 +512,7 @@ export default {
 .noun {
   .noun-head {
     position: relative;
-    z-index: 3000;
+    z-index: 100;
     background: @bgcor1;
   }
   // 搜索按钮
@@ -553,8 +587,7 @@ export default {
         font-family: PingFangSC-Semibold;
         font-weight: 600;
         color: rgba(51, 51, 51, 1);
-        line-height: 19px;
-
+        line-height: 24px;
       }
 
       &>p {
@@ -621,13 +654,19 @@ export default {
   .introduce {
     margin-bottom: 10px;
     background: @bgcor1;
+    overflow: hidden;
     .padlr20;
 
     &-item {
       margin: 10px 0;
       padding-left: 75px;
       font-size: 14px;
-
+      &:first-child {
+        margin-top: 25px;
+      }
+      &:last-child {
+        margin-bottom: 25px;        
+      }
       &>span {
         float: left;
         margin-left: -75px;

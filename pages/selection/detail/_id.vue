@@ -8,7 +8,7 @@
         <span class="sub view">{{ articleDetail.browseNum }}</span>
       </div>
       <div class="list" v-for="(elGood, index) in artList" :key="index">
-        <div class="content" v-html="elGood.content"></div>
+        <div class="content content-wrapper" v-html="elGood.content"></div>
         <div class="wines" v-if="elGood.goodsMinimalResp">
           <div class="picklist">
             <div class="infos">
@@ -35,10 +35,19 @@
         </div>
       </div>
     </div>
+    <!--
+      文章评论
+      type -> 文章类型
+      articelId -> 文章id
+      ifLike -> 是否喜欢
+      ifCollect -> 是否收藏
+    -->
+    <articel-comment type='3' :articelId='id' :ifLike='ifLike' :ifCollect='ifCollect'></articel-comment>
   </div>
 </template>
 <script>
 import { selectApi } from '~/api/selection'
+import articelComment from '@/components/articel/Comment'
 export default {
   head () {
     return {
@@ -56,28 +65,35 @@ export default {
       const { selectionGoodsRespList } = articleData
       return {
         articleDetail: articleData,
-        artList: selectionGoodsRespList
+        artList: selectionGoodsRespList,
+        id: selectId,
+        ifCollect: articleData.ifCollect,
+        ifLike: articleData.ifLike
       }
     }
   },
+  components: { articelComment },
   data () {
     return {
       articleDetail: {},
-      artList: []
+      artList: [],
+      ifCollect: false,
+      ifLike: false
     }
   },
   mounted () {
-    console.log(this.artList, 'artList')
+    console.log(this.articleDetail, 'articleDetail')
   }
 }
 </script>
 <style lang="less">
 .selectiondetail {
-  font-size: 14px;
+  // font-size: 14px;
+  padding-bottom: 50px;
 
   .details {
     background: #fff;
-    padding: 0 20px;
+    padding: 0 20px 20px;
 
     .head {
       font-size: 19px;

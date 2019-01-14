@@ -120,7 +120,7 @@
       </template>
 
       <!-- 7 已关闭 -->
-      <div class="u-button small inline default" v-if="orderDetail.status === 7" @click="">删除订单</div>
+      <div class="u-button small inline default" v-if="orderDetail.status === 7" @click="deleteOrder">删除订单</div>
 
     </div>
 
@@ -271,7 +271,18 @@ export default {
         }
       })
     },
-
+    deleteOrder () {
+      this.$dialog.confirm({
+        message: '确定要删除订单吗？'
+      }).then(async () => {
+        const { code } = await orderApi.deleteOrder(this.orderId)
+        if (code === 200) {
+          this.$toast.success('删除成功')
+          // this.fetchData()
+          window.location.reload()
+        }
+      })
+    },
     countTime (pt) {
       var nt = new Date().getTime() / 1000
       var t = nt
