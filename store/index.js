@@ -10,7 +10,7 @@ const store = () => new Vuex.Store({
 
   state: {
     authUser: null,
-    blurOpen: false
+    blurOpen: false // 设置模糊动画
   },
 
   mutations: {
@@ -23,7 +23,6 @@ const store = () => new Vuex.Store({
   },
 
   actions: {
-    // ...
   }
 
 })

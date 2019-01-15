@@ -254,7 +254,6 @@ export default {
         const { code } = await orderApi.cancelOrder(this.orderId)
         if (code === 200) {
           this.$toast.success('取消订单成功')
-          // this.fetchData()
           window.location.reload()
         }
       }).catch(() => {})
@@ -266,7 +265,6 @@ export default {
         const { code } = await orderApi.receiveOrder(this.orderId)
         if (code === 200) {
           this.$toast.success('确认收货成功')
-          // this.fetchData()
           window.location.reload()
         }
       })
@@ -278,8 +276,7 @@ export default {
         const { code } = await orderApi.deleteOrder(this.orderId)
         if (code === 200) {
           this.$toast.success('删除成功')
-          // this.fetchData()
-          window.location.reload()
+          window.location.href = '/order/list'
         }
       })
     },
