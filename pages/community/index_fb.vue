@@ -3,31 +3,6 @@
     <div class="navbox">
       <div class="navitem" :class="{active: index === navIndex}" v-for="(item, index) in navList" :key="index">{{item.status}}</div>
     </div>
-    <div class="thembox">
-      <div :class="['thembox-item', {active: exptheme}]" @click="themFn">全部主题</div>
-      <div :class="['thembox-item', {active: expstatus}]" @click="statusFn">不限状态</div>
-    </div>
-    
-    <transition name="slide-bottom">
-      <div class="drop-wrapper-option" v-if="exptheme">
-        <div class="drop-wrapper-body">
-          <div :class="['option-item']" v-for="(n, index) in 5" :key="index">活动主题A</div>
-        </div>
-      </div>
-    </transition>
-
-     <transition name="slide-bottom">
-      <div class="drop-wrapper-option" v-if="expstatus">
-        <div class="drop-wrapper-body">
-          <div :class="['option-item']" v-for="(n, index) in 5" :key="index">状态A</div>
-        </div>
-      </div>
-    </transition>
-
-    <transition name="fade">
-      <div class="modal" v-show="exptheme || expstatus"></div>
-    </transition>
-
     <section class="secbox">
       <div class="seclist">
         <div class="actlist" v-for="(item, index) in 5" :key="index" @click="toDetail">
@@ -69,28 +44,16 @@ export default {
     return {
       navList: [
         {status: '全部活动', id: '0'},
-        {status: '官方活动', id: '1'},
-        {status: '合作活动', id: '2'},
-        {status: '酒会酒展', id: '3'}
+        {status: '未开始', id: '1'},
+        {status: '进行中', id: '2'},
+        {status: '已结束', id: '3'}
       ],
       navIndex: 0,
       tranmit: {},
-      comList: [],
-      // drop option
-      exptheme: false,
-      expstatus: false
-
+      comList: []
     }
   },
   methods: {
-    themFn () {
-      this.exptheme = !this.exptheme
-      this.expstatus = false
-    },
-    statusFn () {
-      this.expstatus = !this.expstatus
-      this.exptheme = false
-    },
     toDetail () {
       window.location.href = './community/detail/123'
     }
@@ -101,7 +64,7 @@ export default {
 .comindex {
   height: 100vh;
   font-size: 14px;
-  background: #fff;
+  background: #F0F2F5;
 
   .navbox {
     display: flex;
@@ -109,8 +72,6 @@ export default {
     justify-content: space-around;
     align-items: center;
     background: #fff;
-    z-index: 40;
-    position: relative;
 
     .navitem {
       padding: 10px 20px;
@@ -145,84 +106,14 @@ export default {
     }
   }
 
-
-  .thembox {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    height: 32px;
-    background: #F5F5F5;
-    z-index: 40;
-    position: relative;
-    &-item {
-      font-size:13px;
-      font-family:PingFang-SC-Medium;
-      font-weight:500;
-      color:rgba(153,153,153,1);
-      padding-right: 16px;
-      position: relative;
-      &:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        right: 0;
-        width: 16px;
-        height: 12px;
-        transform: translateY(-50%);
-        background-size: 12px 12px;
-        background-repeat: no-repeat;
-        background-position: right center;
-        background-image: url('~/assets/img/Icons/ic_xiala_g_line_12x12.png');
-      }
-      &.active {
-        color: #333333;
-      }
-
-    }
-  }
-
   .secbox {
     padding: 0 20px;
-    height: calc(100vh - 82px);
+    height: calc(100vh - 50px);
     overflow: auto;
-  }
 
-  .drop-wrapper-option {
-    width: 100%;
-    position: fixed;
-    z-index: 31;
-    top: 82px;
-    left: 0;
-    background: white;
-    .drop-wrapper-body {
-      padding: 16px 0;
-      .option-item {
-        text-align: center;
-        font-size: 13px;
-        color: @cor_999;
-        padding: 16px 0;
-        &.active {
-          color: @cor_333;
-          font-weight: bold;
-        }
-      }
-    }
-  }
-  .modal {
-    position: fixed;
-    top: 82px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 30;
-    background: rgba(0,0,0,.6);
-    width: 100%;
-    height: 100vh;
   }
 
   .seclist {
-    background: #fff;
     .actlist {
       margin-top: 20px;
       margin-bottom: 20px;
