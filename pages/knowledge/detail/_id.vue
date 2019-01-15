@@ -1,5 +1,7 @@
 <template>
   <div class="m-konwledge-detail">
+    <van-nav-bar title='知识分享' left-arrow @click-left='back'>
+    </van-nav-bar>
 
     <div class="author-section">
       <div class="avatar" :style="'background-image: url(' + (detailObj.userResp.headimgurl ? detailObj.userResp.headimgurl : require('~/assets/img/defaultImg.png') ) + ')'" @click="showAuthorInfo"></div>
@@ -10,9 +12,10 @@
         </div>
         <p class="signature">{{ signature }}</p>
       </div>
-      <div :class="['like', ifSubscribe ? 'dark' : '']" @click="clickSubscribe">
+      <div :class="['like', ifSubscribe ? 'dark' : '']" @click="clickSubscribe" v-if='!isAuthor'>
         <i :class="['btn-icon', ifSubscribe ? 'tick' : 'plus']" ></i>
-        {{ ifSubscribe ? '已关注' : '关注'}}</div>
+        {{ ifSubscribe ? '已关注' : '关注'}}
+      </div>
     </div>
 
     <div class="article-section">
@@ -35,7 +38,7 @@
     </div>
 
     <div class="reward-section">
-      <div class="center"></div>
+      <div class="center" @click='payOpen'></div>
       <p class="center-desc">分享不易，鼓励一下吧~</p>
       <div class="reward-info">
         <p class="info-title">他收到过 <span>{{ detailObj.appreciateNumber }}</span> 人打赏</p>
@@ -55,6 +58,38 @@
     -->
     <articel-comment type='1' :articelId='id' :ifLike='ifLike' :ifCollect='ifCollect'></articel-comment>
 
+    <!-- 打赏 -->
+    <pay-reward :payShow='payShow' :articelId='id' :userid='detailObj.userResp.id' @payClose='payClose'></pay-reward>
+
+    <!-- 支付结果 -->
+    <van-dialog v-model="resultWindow" :show-confirm-button="false" :closeOnClickOverlay='false' >
+      <div class="result-wrap">
+        <van-icon name='cross' @click='closeResult' />
+        <template v-if='hasPayed'>
+          <div class="pro">
+            <img src="~/assets/img/order/ic_zhifuchenggong_130x90@2x.png">
+          </div>
+          <div class="desc">
+            <h3>打赏成功</h3>
+            <p>您的打赏金额将会到达作者账户中。</p>
+          </div>
+        </template>
+        <template v-else>
+          <div class="pro">
+            <img src="~/assets/img/order/ic_zhifuzhibai_130x90@2x.png">
+          </div>
+          <div class="desc">
+            <h3>打赏失败</h3>
+            <p>请尝试重新打赏</p>
+          </div>
+        </template>
+        <div class="u-button" @click='closeResult'>
+          我知道了
+        </div>
+      </div>
+    </van-dialog>
+
+    <!-- 不再关注 -->
     <van-actionsheet
       v-model="tipShow"
       :actions="actions"
@@ -62,11 +97,11 @@
       @select="onSelect"
     />
 
+    <!-- 个人信息 -->
+    <u-author :class="{'show': setClass}" v-if="showInfo" :user="authObj" @closeInfo='closeInfo' @setFollow='setFollow'></u-author>
+    <!-- 蒙层 -->
     <transition name="fade">
-      <u-author v-if="showInfo" :user="authObj" @click="showInfo = false"></u-author>
-    </transition>
-    <transition name="fade">
-      <div class="modal" v-if="showInfo" @click="showInfo = false" @touchmove="prevenScroll"></div>
+      <div class="modal" v-if="showInfo" @click="closeInfo" @touchmove="prevenScroll"></div>
     </transition>
 
   </div>
@@ -74,17 +109,20 @@
 
 <script>
 import api from '~/utils/request'
+import { rewardApi } from '@/api/reward'
 import { knowApi } from '~/api/knowledge'
+import tools from '@/utils/tools'
 import userLab from '@/components/Usericon.vue'
 import uAuthor from '@/components/knowledge/Author'
 import articelComment from '@/components/articel/Comment'
+import payReward from '@/components/Pay-reward'
 
 export default {
   name: '',
 
   layout: 'default',
 
-  components: { userLab, uAuthor, articelComment },
+  components: { userLab, uAuthor, articelComment, payReward },
 
   head () {
     return {
@@ -98,23 +136,23 @@ export default {
   async asyncData (req) {
     const url = +req.query.type === 1 ? '/api/sk/getArticle/' : '/api/sk/getVideo/'
     return api.all([
-      api.serverGet(`${url}${req.params.id}`, { id: req.params.id }, req)
-      // knowApi.getComments({ page: 1, count: 5, articleId: req.params.id, type: 1 }, req)
+      api.serverGet(`${url}${req.params.id}`, { id: req.params.id }, req),
+      api.serverPost('/api/user/detail', null, req)
     ])
       .then(api.spread(function (res1, res2) {
         if (res1.code === 200) {
-          console.log('res1.data', res1.data)
-          // console.log(res2.data.array)
-          const sgt = res1.data.userResp.personalInfoResp.signature || ''
+          const sgt = res1.data.userResp.personalInfoResp.signature || '梦想还是要有的，万一实现了呢'
+          const isLogin = res2.code === 200
+          const isAuthor = isLogin && res1.data.userResp.id === res2.data.userId
           return {
             id: req.params.id,
             detailObj: res1.data,
             ifLike: res1.data.checkIfLike,
             ifCollect: res1.data.checkIfCollect,
-            // commentList: res2.data.array,
-            // commentTotal: res2.data.total,
             signature: sgt,
-            ifSubscribe: res1.data.userResp.checkAttention || false
+            ifSubscribe: res1.data.userResp.checkAttention || false,
+            isLogin: isLogin,
+            isAuthor: isAuthor
           }
         }
       }))
@@ -122,26 +160,44 @@ export default {
 
   data () {
     return {
-      id: null,
+      id: null, // 文章id
+      isLogin: false, // 是否登录
+      isAuthor: false, // 观看此文章的是否作者本人
       ifSubscribe: false, // 是否关注了作者
 
       actions: [{ name: '确定不再关注此人？', disabled: true }, { name: '确定' }],
       tipShow: false,
 
       signature: '',
-      // detailObj: {},
-      // commentList: [],
       commentTotal: 0,
       ifLike: false,
       ifCollect: false,
 
       showInfo: false,
-      authObj: {}
+      setClass: false,
+      authObj: {},
+
+      payShow: false, // 打开支付选项
+      resultWindow: false,
+      hasPayed: null,
+      configtitle: '知识分享'
     }
   },
 
-  mounted () {
+  async mounted () {
     console.log(this.detailObj)
+    // 有rewardId，调用支付状态检测
+    let getReward = tools.getUrlQues('rewardId')
+    if (getReward) {
+      const { code, data } = await rewardApi.checkPayOrNot(getReward)
+      if (code === 200) {
+        if (data.hasPayed) {
+          this.hasPayed = data.hasPayed
+          this.resultWindow = true
+          this.amount = data.rewardAmount
+        }
+      }
+    }
   },
 
   methods: {
@@ -159,6 +215,7 @@ export default {
       } else if (code === 200) {
         this.ifSubscribe = !this.ifSubscribe
         this.$toast.success(this.ifSubscribe ? '关注成功' : '已取消关注')
+        this.detailObj.userResp.checkAttention = this.ifSubscribe
         this.tipShow = false
       }
     },
@@ -171,7 +228,11 @@ export default {
         this.authObj = data
         Object.assign(this.authObj, this.detailObj.userResp.personalInfoResp)
         this.authObj.ifFollow = this.detailObj.userResp.checkAttention
+        this.authObj.videoPath = this.detailObj.videoPath || ''
         this.showInfo = true
+        setTimeout(() => {
+          this.setClass = true
+        }, 100)
       }
     },
     async handleCommentLike (val) {
@@ -182,6 +243,42 @@ export default {
       } else if (code === 200) {
         val.ifLkie = !val.ifLkie
       }
+    },
+    payOpen () {
+      if (!this.isLogin) return this.$toast('请先登录！')
+      if (this.isAuthor) return this.$toast('自己不能给自己打赏！')
+      this.payShow = true
+    },
+    // 关闭支付
+    payClose () {
+      this.payShow = false
+    },
+    // 关闭支付通知
+    closeResult () {
+      this.resultWindow = false
+    },
+    // 打开个人信息
+    openInfo () {
+      this.showInfo = true
+      setTimeout(() => {
+        this.setClass = true
+      }, 100)
+    },
+    // 关闭个人信息
+    closeInfo () {
+      this.setClass = false
+      setTimeout(() => {
+        this.showInfo = false
+      }, 200)
+    },
+    // 个人信息弹窗取消关注
+    setFollow (val) {
+      this.ifSubscribe = val
+      this.detailObj.userResp.checkAttention = val
+      this.authObj.ifFollow = val
+    },
+    back () {
+      window.location.href = '/knowledge'
     },
     prevenScroll (e) {
       e.preventDefault()
@@ -349,6 +446,43 @@ export default {
         }
       }
     }
-  } 
+  }
+  .result-wrap {
+    padding: 40px 45px 22px;
+    text-align: center;
+    position: relative;
+    .pro {
+      width: 130px;
+      height: 90px;
+      display: inline-block;
+      img {
+        max-width: 100%;
+      }
+    }
+    .desc {
+      h3 {
+        margin: 25px 0 15px;
+        font-size: 17px;
+        color: #333;
+      }
+      p {
+        color: #999;
+        font-size: 13px;
+      }
+    }
+    .u-button {
+      display: inline-block;
+      margin-top: 30px;
+      width: 133px;
+      height: 42px;      
+    }
+    i {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      color: #333;
+      font-size: 24px;
+    }
+  }
 }
 </style>

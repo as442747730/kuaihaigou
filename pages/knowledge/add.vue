@@ -198,8 +198,8 @@ export default {
     this.channelId = +this.draftData.channelNumber
     this.topicSelected = this.draftData.topicName
     this.topicId = this.draftData.topicId
-    this.typeIds = this.draftData.sharingKnowledgeContentTypeResps
-    this.varietyIds = this.draftData.sharingKnowledgeContentVarietyResps
+    this.typeIds = this.draftData.sharingKnowledgeContentTypeResps || []
+    this.varietyIds = this.draftData.sharingKnowledgeContentVarietyResps || []
     this.auth = this.draftData.author
     this.url = this.draftData.address
   },

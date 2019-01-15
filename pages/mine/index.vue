@@ -68,6 +68,7 @@ import uArticle from '~/components/mine/Article'
 import uJarsclb from '~/components/mine/Jarsclub'
 import leftMenu from '~/components/Menu'
 import { userApi } from '~/api/users'
+
 export default {
   name: 'mineIndex',
   layout: 'page-with-tabbar',
