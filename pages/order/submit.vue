@@ -188,7 +188,8 @@ export default {
   computed: {
     payable () {
       let c = +this.couponSelected.faceValue || 0 // 优惠卷
-      let p = +this.promotion.amount || 0 // 活动满减
+      let p = +this.fullSub // 活动满减
+      // console.log(p)
       let s = +this.rewardMoney || 0
       this.maxReward = this.totalPrice - c - p
       if (this.maxReward > this.rewardNow) {
@@ -352,7 +353,9 @@ export default {
     console.log('reductionStrategy', this.reductionStrategy)
     if (this.promotion.promotionName && this.totalPrice >= this.promotion.threshold) {
       this.fullSub = this.promotion.amount
+      this.fullSubCache = this.promotion.amount
       this.promotionId = this.promotion.id
+      this.promotionIdCache = this.promotion.id
     }
     // 减免策略
     let { minimumCost, ifDeliveryIncluded, reduceMoney } = this.reductionStrategy
@@ -432,14 +435,19 @@ export default {
       this.fullScreen = false
       this.navTitle = ''
       this.couponSelected = val
-      // 当优惠卷不可以与全场满减活动叠加时
-      if (!this.promotion.ifAccumulated && this.totalPrice >= this.promotion.threshold && !!val) {
-        this.promotionId = null
-        this.fullSub = 0
-        this.$toast('该满减活动与优惠卷不可叠加，请在两者选一项')
+      // 不选择优惠劵
+      if (val === '') {
+        this.promotionId = this.promotionIdCache || null
+        this.fullSub = this.fullSubCache || 0
+        console.log(this.fullSub)
       } else {
-        this.fullSub = this.promotion.amount || 0
-        this.promotionId = this.promotion.id
+        // 选择优惠劵
+        // 当优惠卷不可以与全场满减活动叠加时
+        if (!this.promotion.ifAccumulated && this.totalPrice >= this.promotion.threshold) {
+          this.promotionId = null
+          this.fullSub = 0
+          this.$toast('该满减活动与优惠卷不可叠加，请在两者选一项')
+        }
       }
     },
 
@@ -455,7 +463,7 @@ export default {
         remark: this.msg, // 留言
         invoiceId: this.invoinceSelected.id, // 发票信息id
         promotionId: this.promotionId || '', // 优惠活动id
-        couponId: this.couponSelected.couponId, // 优惠卷id
+        couponId: this.couponSelected.couponId || null, // 优惠卷id
         hiCoinReduction: this.rewardMoney, // hi币抵扣
         totalFeight: this.totalFreight - this.reduceFreight, // 实际运费
         source: 2 // 来源: 1:PC 2:移动端 3:APP

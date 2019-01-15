@@ -106,6 +106,7 @@ export default {
 
   data () {
     return {
+      defaulthead: this.defaulthead, // 默认头像
       page: 1,
       pageLoding: false,
       pageEmpty: false,
