@@ -14,30 +14,30 @@
       </section>
 
       <section class="tab_home">
-        <span class="tab" @click="toWineCenter">
+        <a class="tab" href="/winecenter">
           <i class="tab-icon-xjzx"></i>
           <span class="tab-txt">
             选酒中心
           </span>
-        </span>
-        <span class="tab" @click="toEncys">
+        </a>
+        <a class="tab" href="/encys">
           <i class="tab-icon-hjbk"></i>
           <span class="tab-txt">
             红酒百科
           </span>
-        </span>
-        <span class="tab">
+        </a>
+        <a class="tab" href="/community">
           <i class="tab-icon-sqhd"></i>
           <span class="tab-txt">
             社区活动
           </span>
-        </span>
-        <span class="tab" @click="toArrondi">
+        </a>
+        <a class="tab" @click="toArrondi">
           <i class="tab-icon-sjzq"></i>
           <span class="tab-txt">
             商家专区
           </span>
-        </span>
+        </a>
       </section>
 
       <section class="notify_home margin-20">
@@ -184,14 +184,17 @@
                   </div>
                 </div>
                 <div class="share_home-content">
-                  <h3>{{ share.title }}</h3>
+                  <h3 class="content_title">
+                    <p>{{ share.title }}</p>
+                  </h3>
                   <div class="tips">
                     <span>频道：{{ share.channelName }}</span>
                     <span>话题：{{ share.topicName }}</span>
                   </div>
-                  <p>{{ share.summary }}</p>
+                  <p class="content_summary">{{ share.summary }}</p>
                   <div class="pro">
-                    <img v-if="share.imgsPaht" v-lazy="share.imgsPaht[0]">
+                    <div class="content_bk" v-if="share.imgsPaht" v-lazy:background-image="share.imgsPaht[0]"></div>
+                    <!-- <img v-if="share.imgsPaht" v-lazy="share.imgsPaht[0]"> -->
                   </div>
                   <div class="u-other">
                     <span class="zan"><i></i>{{ share.likeNumber }}</span>
@@ -261,17 +264,19 @@
               v-for="(news, index) in newsList"
               :key="index">
               <div class="news-list-box">
-                <h3>{{ news.title }}</h3>
+                <h3 class="box_title">
+                  <p>{{ news.title }}</p>
+                </h3>
                 <div class="tips">
                   <span>作者：{{news.author || '佚名'}}</span>
                   <span>来源：{{ news.sourceAddress}}</span>
                   <span>分类：{{circlenavList[news.classificationId]}}</span>
                 </div>
                 <div class="pro">
-                  <div class="bg full" :style="'background: url(' + news.imgPath + ') no-repeat center/cover'"></div>
+                  <div class="bg full" v-if="news.imgPath" v-lazy:background-image="news.imgPath"></div>
                 </div>
                 <div class="desc">
-                  {{ news.summary }}
+                  <p>{{ news.summary }}</p>
                 </div>
               </div>
             </div>
@@ -438,14 +443,6 @@ export default {
     }
   },
   methods: {
-    toWineCenter () {
-      // 选酒中心
-      window.location.href = '/winecenter'
-    },
-    toEncys () {
-      // 红酒百科
-      window.location.href = '/encys'
-    },
     async toArrondi () {
       //  商家专区
       const { code, data } = await userApi.userDetail()
@@ -473,9 +470,6 @@ export default {
           window.location.href = '/account/login'
         }).catch(() => {})
       }
-    },
-    tohotspot () {
-      window.location.href = '/hotspot'
     }
   }
 }
@@ -543,6 +537,12 @@ export default {
     font-size: 14px;
     color: #333;
   }
+  .tab {
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+  }
   i {
     display: inline-block;
     width: 35px;
@@ -558,7 +558,7 @@ export default {
     &-xjzx {background-image: url('../assets/img/home/ic_xuanjiuzhongxin_35x35@2x.png')}
     &-hjbk {background-image: url('../assets/img/home/ic_hongjiubaike_35x35@2x.png')}
     &-sqhd {background-image: url('../assets/img/home/ic_shequhuodong_35x35@2x.png')}
-    &-sjzq {background-image: url('../assets/img/home/ic_xuanjiuzhongxin_35x35@2x.png')}
+    &-sjzq {background-image: url('../assets/img/home/ic_shangjiazhuangqu_35x35@2x.png')}
   }   
 }
 
@@ -667,11 +667,8 @@ export default {
         color: #333;
         line-height: 18px;
         overflow: hidden;
-        -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+        white-space: nowrap;
       }
       p {
         margin: 10px 0 4px;
@@ -763,6 +760,7 @@ export default {
           }
         }
       }
+
       .info_item {
         display: inline-block;
         height:24px;
@@ -884,12 +882,23 @@ export default {
   }
   &-content {
     padding: 15px 20px;
-    h3 {
+    .content_title {
       font-size: 16px;
       color: #333;
       font-family: PingFangSC-Semibold;
       font-weight: bold;
-      line-height: 22px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      p {
+        line-height: 22px;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
     }
     .tips{
       color: #999;
@@ -899,20 +908,25 @@ export default {
         margin-right: 20px;
       }
     }
-    p {
-      max-height: 120px;
-      overflow: hidden;
+    .content_summary {
       text-align: justify;
       font-size: 14px;
       color: #999;
       line-height: 24px;
+      overflow: hidden;
+      -o-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
     }
     .pro {
       margin: 10px 0 20px;
-      img {
-        width: 100%;
-        height: auto;
-      }
+    }
+    .content_bk {
+      height: 150px;
+      border-radius: 10px;
+      .bg_cover;
     }
   }
 }
@@ -1026,14 +1040,25 @@ export default {
       box-sizing: border-box;
       padding: 20px; 
       width: 320px;
-      height: 408px;
+      // height: 408px;
     }
-    h3 {
-      line-height: 22px;
-      color: #333;
-      font-size: 16px;
-      font-weight: bold;
-      font-family: 'PingFangSC-Semibold';
+    .box_title {
+      display: flex;
+      align-items: center;
+      height: 44px;
+      & > p {
+        line-height: 22px;
+        color: #333;
+        font-size: 16px;
+        font-weight: bold;
+        font-family: 'PingFangSC-Semibold';
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
     }
     .tips {
       margin: 6px 0 16px;
@@ -1051,14 +1076,24 @@ export default {
       height: 150px;
       border-radius: 6px;
       overflow: hidden;
+      .bg {
+        .bg_cover;
+      }
     }
     .desc {
       margin-top: 10px;
-      line-height: 24px;
-      color: #999;
-      font-size: 14px;
-      max-height: 122px;
-      overflow: hidden;
+      height: 120px;
+      & > p {
+        line-height: 24px;
+        color: #999;
+        font-size: 14px;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+      }
     }
   }
 }
