@@ -1,121 +1,125 @@
 <template>
-  <div class="noun">
-    <div class="noun-head">
-      <com-head titleConfig="名词解释"></com-head>
-      <div class="topnav">
-        <div
-          class="item"
-          v-for="(nav, index) in navList"
-          :class="[{active: navIndex === index}, {opcpm: showone && navIndex === index}]"
-          @click="elNavs(index)"
-          :key="index">
-          <span>{{nav.name}}</span>
-          <i class="ic_sj"></i>
+  <div class="nouns" :class="{overauto: isScorll && !showWineryList}" :data-showWineryList="showWineryList">
+    <div class="noun" ref="refNoun">
+      <div class="noun-head">
+        <com-head titleConfig="名词解释">
+          <div class="search"></div>
+        </com-head>
+        <div class="topnav">
+          <div
+            class="item"
+            v-for="(nav, index) in navList"
+            :class="[{active: navIndex === index}, {opcpm: showone && navIndex === index}]"
+            @click="elNavs(index)"
+            :key="index">
+            <span>{{nav.name}}</span>
+            <i class="ic_sj"></i>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- 酒庄列表 start -->
-    <section class="wineryList" v-if="showWineryList">
-      <div class="winery-head">
-        <span
-          v-for="(sorts, index) in winerySortkey"
-          :data-val="wineryParams.sortedBy"
-          :class="{active: wineryParams.sortedBy === sorts.sortkey}"
-          @click="winerySortFn(sorts)"
-          :key="index">{{sorts.name}}</span>
-      </div>
-      <div class="winery-items">
-        <ul class="item-ul">
-          <li
-            class="item_li"
-            v-for="(winery, index) in wineryArr"
-            @click="goWinery(winery)"
-            :key="index">
-            <div class="li-bk" v-lazy:background-image="winery.cover"></div>
-            <div class="li-zh u-ellipsis">{{winery.wineryName}}</div>
-            <div class="li-en">
-              <div class="en_inline">
-                <p>{{winery.englishName}}</p>
+      <!-- 酒庄列表 start -->
+      <section class="wineryList" v-if="showWineryList">
+        <div class="winery-head">
+          <span
+            v-for="(sorts, index) in winerySortkey"
+            :data-val="wineryParams.sortedBy"
+            :class="{active: wineryParams.sortedBy === sorts.sortkey}"
+            @click="winerySortFn(sorts)"
+            :key="index">{{sorts.name}}</span>
+        </div>
+        <div class="winery-items">
+          <ul class="item-ul">
+            <li
+              class="item_li"
+              v-for="(winery, index) in wineryArr"
+              @click="goWinery(winery)"
+              :key="index">
+              <div class="li-bk" v-lazy:background-image="winery.cover"></div>
+              <div class="li-zh u-ellipsis">{{winery.wineryName}}</div>
+              <div class="li-en">
+                <div class="en_inline">
+                  <p>{{winery.englishName}}</p>
+                </div>
               </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <!-- 酒庄列表 end -->
+      <!-- 详情 start -->
+      <section v-else>
+        <div class="top">
+          <div class="topinfo">
+            <h2>{{objDetail.chineseName}}（{{objDetail.englishName}}）</h2>
+            <p>作者：{{objDetail.auth}}</p>
+            <div class="btn">
+              <span>名词解释</span>
             </div>
-          </li>
-        </ul>
-      </div>
-    </section>
-    <!-- 酒庄列表 end -->
-    <!-- 详情 start -->
-    <section v-else>
-      <div class="top">
-        <div class="topinfo">
-          <h2>{{objDetail.chineseName}}（{{objDetail.englishName}}）</h2>
-          <p>作者：{{objDetail.auth}}</p>
-          <div class="btn">
-            <span>名词解释</span>
           </div>
         </div>
-      </div>
-      <div class="lynav">
-        <div class="lynav_item" :class="{active: lynavIndex === 0}" @click="lynavFn(0)">{{getType}}介绍</div>
-        <div class="lynav_item" :class="{active: lynavIndex === 1}" @click="lynavFn(1)">{{getType}}图片
-          <span>（{{imagesArr.length}}）</span>
-        </div>
-      </div>
-      <section v-if="lynavIndex === 0">
-        <div class="introduce" v-if="objDetail.baikeMessageList">
-          <div class="introduce-item" v-for="(bakeMes, index) in objDetail.baikeMessageList" :key="index">
-            <span>{{bakeMes.name}}:</span>
-            <p>
-              {{bakeMes.content}}
-            </p>
+        <div class="lynav">
+          <div class="lynav_item" :class="{active: lynavIndex === 0}" @click="lynavFn(0)">{{getType}}介绍</div>
+          <div class="lynav_item" :class="{active: lynavIndex === 1}" @click="lynavFn(1)">{{getType}}图片
+            <span>（{{imagesArr.length}}）</span>
           </div>
         </div>
-        <div class="featcontent" v-if="objDetail.content">
-          <div class="cont content-wrapper" v-html="objDetail.content"></div>
+        <section v-if="lynavIndex === 0">
+          <div class="introduce" v-if="objDetail.baikeMessageList">
+            <div class="introduce-item" v-for="(bakeMes, index) in objDetail.baikeMessageList" :key="index">
+              <span>{{bakeMes.name}}:</span>
+              <p>
+                {{bakeMes.content}}
+              </p>
+            </div>
+          </div>
+          <div class="featcontent" v-if="objDetail.content">
+            <div class="cont content-wrapper" v-html="objDetail.content"></div>
+          </div>
+        </section>
+        <section class="picture" v-if="lynavIndex === 1">
+          <ul class="picture-uls">
+            <li
+              class="uls_li"
+              ref="liImg"
+              v-for="(image, index) in imgsArray"
+              :style="{'height': image._height + 'px'}"
+              @click="opImage(index)"
+              :key="index">
+              <img v-lazy="image.src" />
+            </li>
+          </ul>
+        </section>
+        <div class="foot" @click="lookMoreFn" v-if="isMore">
+          <span> 查看更多 ></span>
         </div>
       </section>
-      <section class="picture" v-if="lynavIndex === 1">
-        <ul class="picture-uls">
-          <li
-            class="uls_li"
-            ref="liImg"
-            v-for="(image, index) in imgsArray"
-            :style="{'height': image._height + 'px'}"
-            @click="opImage(index)"
-            :key="index">
-            <img v-lazy="image.src" />
-          </li>
-        </ul>
-      </section>
-      <div class="foot" @click="lookMoreFn" v-if="isMore">
-        <span> 查看更多 ></span>
-      </div>
-    </section>
-    <!-- 详情 end -->
+      <!-- 详情 end -->
 
-    <!--
-      文章评论
-      type -> 文章类型
-      articelId -> 文章id
-      ifLike -> 是否喜欢
-      ifCollect -> 是否收藏
-    -->
-    <articel-comment v-show='!isMore' :type='articelType' :articelId='objDetail.id' :ifLike='objDetail.ifLike' :ifCollect='objDetail.ifCollect'></articel-comment>
+      <!--
+        文章评论
+        type -> 文章类型
+        articelId -> 文章id
+        ifLike -> 是否喜欢
+        ifCollect -> 是否收藏
+      -->
+      <articel-comment v-show='!isMore' :type='articelType' :articelId='objDetail.id' :ifLike='objDetail.ifLike' :ifCollect='objDetail.ifCollect'></articel-comment>
 
-    <!-- 筛选器 start -->
-    <cpmOne
-      :isShow="showone"
-      :navIndex="navIndex"
-      :letters="getLetter"
-      :varityIndex="varity"
-      :grapeList="grapeList"
-      @corsFn="clorsFn"
-      @enzhFn="enzhFn"
-      @letterFn="letterFn"
-      :areaContryList="countryList"
-      @areaWorldFn="areaWorldFn"
-      @btnRest="btnRest"
-      @btnOk="btnOk"></cpmOne>
-      <!-- 筛选器 end -->
+      <!-- 筛选器 start -->
+      <cpmOne
+        :isShow="showone"
+        :navIndex="navIndex"
+        :letters="getLetter"
+        :varityIndex="varity"
+        :grapeList="grapeList"
+        @corsFn="clorsFn"
+        @enzhFn="enzhFn"
+        @letterFn="letterFn"
+        :areaContryList="countryList"
+        @areaWorldFn="areaWorldFn"
+        @btnRest="btnRest"
+        @btnOk="btnOk"></cpmOne>
+        <!-- 筛选器 end -->
+    </div>
   </div>
 </template>
 <script>
@@ -159,7 +163,8 @@ export default {
         objVariety = varietyData
         _imgArr = varietyData.imgs
       }
-      return { letter: objInit, objDetail: objVariety, imagesArr: _imgArr, navIndex: 0, showone: true }
+      // _imgArr = ['http://public.kuaihaigou.com/FrWQ0eZd2oylIQh0gK8egK4oa713', 'https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=962a2223b4014a909e3e40bd99763971/21a4462309f79052101fdaaf01f3d7ca7bcbd51b.jpg', 'https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=e22d24982b9759ee555066cb82fa434e/0dd7912397dda14447e32c27bfb7d0a20df486b9.jpg', 'https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=2e94e5c1282dd42a400907ab333a5b2f/e4dde71190ef76c65e514b839016fdfaae516793.jpg', 'https://ss3.baidu.com/-fo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=5ed2cd93e424b899c13c7f385e071d59/d52a2834349b033b2d5f1b4918ce36d3d439bd4a.jpg', 'https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=afe49511adec08fa390015a769ef3d4d/b17eca8065380cd7c9c49343ac44ad3458828141.jpg', 'https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=c1c3a89e63061d95624631384bf50a5d/5ab5c9ea15ce36d3bdfb529637f33a87e850b19d.jpg', 'http://img0.imgtn.bdimg.com/it/u=3960337833,4234451047&fm=26&gp=0.jpg', 'https://f11.baidu.com/it/u=2465775762,1509670197&fm=72', 'http://img1.imgtn.bdimg.com/it/u=3390961998,1154407883&fm=200&gp=0.jpg', 'http://img5.imgtn.bdimg.com/it/u=639238630,2179659181&fm=26&gp=0.jpg']
+      return { letter: objInit, objDetail: objVariety, imagesArr: _imgArr }
     } else if (queryNum === '1') {
       let worldId = -1
       const { code, data } = await encyApi.serverCountry(worldId, req)
@@ -308,7 +313,6 @@ export default {
         this.selectVarietyId = 1 // 红葡萄
       } else if (this.navIndex === 1) {
         let firstCountry = this.countryList[0].countryid
-        // console.log('firstCountry', firstCountry)
         this.selectAreaId = firstCountry
       } else if (this.navIndex === 2) {
         let firstCountry = this.countryList[0].countryid
@@ -332,20 +336,12 @@ export default {
         } else {
           _id = obj.varietyid
         }
-        // 开始时红葡萄 selectVarietyId = _id, 避免确认按钮无效
-        if (this.selectVarietyId === _id) {
-          this.getVarietyDetail()
-        }
         this.selectVarietyId = _id
       } else if (this.navIndex === 1) {
         // console.log(obj)
         let { worldId, countryId, bigId, districtId, subId, smallId } = obj
         let firstCountry = this.countryList[0].countryid
         let _areaId = (!smallId || smallId === -4) ? ((!subId || subId === -3) ? ((!districtId || districtId === -2) ? ((!bigId || bigId === -1) ? ((!countryId || countryId === -1) ? ((!worldId || worldId === -1) ? firstCountry : worldId) : countryId) : bigId) : districtId) : subId) : smallId
-        console.log('_areaId ccc', _areaId)
-        if (this.selectAreaId === _areaId) {
-          this.getAreaDetail()
-        }
         this.selectAreaId = _areaId
       } else if (this.navIndex === 2) {
         // console.log('obj winery', obj)
@@ -370,6 +366,15 @@ export default {
     lookMoreFn () {
       this.isScorll = true
       this.isMore = false
+    },
+    getnounH () {
+      // 查看更多 状态
+      this.$nextTick(() => {
+        let winH = document.documentElement.clientHeight || document.body.clientHeight
+        let elnoun = this.$refs.refNoun.getBoundingClientRect().height
+        console.log('elnoun > winH', elnoun > winH)
+        this.isMore = elnoun > winH
+      })
     },
     async getInitials () {
       // 品种 首字母
@@ -490,22 +495,52 @@ export default {
 </script>
 <style lang="less">
 @bgcor1: #fff;
-.noun {
+.nouns {
   width: 100vw;
   height: 100vh;
   background: #F5F5F5;
   overflow: hidden;
+  .pop-box {
+    z-index: 99!important;
+  }
+  .vanmb {
+    z-index: 98!important;
+  }
+}
+.nouns.overauto {
+  overflow: auto !important;
+}
+.noun {
   .noun-head {
     position: relative;
-    height: 85px;
-    background: @bgcor1;
     z-index: 100;
+    background: @bgcor1;
+  }
+  // 搜索按钮
+  .search {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    width: 30px;
+    height: 100%;
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      margin-top: -15px;
+      width: 30px;
+      height: 30px;
+      background-image: url('~/assets/img/Icons/ic_search_b_30x30@2x.png');
+      .bg_cover;
+    }
   }
   .topnav {
     height: 40px;
     border-bottom: 1PX solid #F5F5F5;
-    box-sizing: border-box;
     .flex_around;
+
     .item {
       font-size: 13px;
       font-family: PingFangSC-Regular;

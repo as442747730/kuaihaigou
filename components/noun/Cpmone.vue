@@ -1,157 +1,164 @@
 <template>
-  <van-popup class='pop-box' v-model="isShow" position="top" overlay-class="vanmb" :close-on-click-overlay="false">
-    <!-- 品种 start -->
-    <section class="variety" v-if="navIndex === 0">
-      <div class="secone">
-        <div class="sectitle">综合</div>
-        <ul class="uls">
-          <li
-            class="lithree"
-            v-for="(cors, index) in corList"
-            :class="{active: varityIndex.corIndex === index}"
-            @click="corsFn(index)"
-            :key="index">{{cors}}</li>
-        </ul>
-      </div>
-      <div class="Initials" v-if="isInitials">
-        <div class="Initials-head">
-          <div class="head_title">综合</div>
-          <div
-            class="head_btn"
-            :class="{active: varityIndex.enzhIndex === index}"
-            v-for="(enzhs, index) in enZhList"
-            @click="enzhFn(index)"
-            :key="index">{{enzhs}}</div>
-        </div>
-        <ul class="Initials-uls">
-          <li
-            v-for="(letter, index) in letters"
-            :class="{active: letterIndex === index}"
-            @click="letterFn(letter, index)"
-            :key="index">{{letter.firstWord}} ({{letter.num}})</li>
-        </ul>
-      </div>
-      <div class="breed" v-else>
-        <div class="breed-head">
-          <div class="head_title">综合</div>
-          <div class="head_btn" @click="restWorld">
-            <span>{{letterworld}}</span>
-            <i class="ic_close"></i>
+  <div class="cpmone" v-show="isShow">
+    <transition name="slide-bottom">
+      <div class="sizer">
+        <!-- 品种 start -->
+        <section class="variety" v-if="navIndex === 0">
+          <div class="secone">
+            <div class="sectitle">综合</div>
+            <ul class="uls">
+              <li
+                class="lithree"
+                v-for="(cors, index) in corList"
+                :class="{active: varityIndex.corIndex === index}"
+                @click="corsFn(index)"
+                :key="index">{{cors}}</li>
+            </ul>
           </div>
-        </div>
-        <div class="breed-select" v-if="elGrape.name">
-          <p class="select-btn" @click="restGrape">
-            <span class="select_name">{{elGrape.name}}</span>
-            <i class="select_close"></i>
-          </p>
-        </div>
-        <div class="breed-list">
-          <ul class="list-uls">
-            <li
-              v-for="(grape, index) in grapeList"
-              @click="grapeDetail(grape)"
-              :key="index">{{grape.name}}</li>
-          </ul>
-        </div>
+          <div class="Initials" v-if="isInitials">
+            <div class="Initials-head">
+              <div class="head_title">综合</div>
+              <div
+                class="head_btn"
+                :class="{active: varityIndex.enzhIndex === index}"
+                v-for="(enzhs, index) in enZhList"
+                @click="enzhFn(index)"
+                :key="index">{{enzhs}}</div>
+            </div>
+            <ul class="Initials-uls">
+              <li
+                v-for="(letter, index) in letters"
+                :class="{active: letterIndex === index}"
+                @click="letterFn(letter, index)"
+                :key="index">{{letter.firstWord}} ({{letter.num}})</li>
+            </ul>
+          </div>
+          <div class="breed" v-else>
+            <div class="breed-head">
+              <div class="head_title">综合</div>
+              <div class="head_btn" @click="restWorld">
+                <span>{{letterworld}}</span>
+                <i class="ic_close"></i>
+              </div>
+            </div>
+            <div class="breed-select" v-if="elGrape.name">
+              <p class="select-btn" @click="restGrape">
+                <span class="select_name">{{elGrape.name}}</span>
+                <i class="select_close"></i>
+              </p>
+            </div>
+            <div class="breed-list">
+              <ul class="list-uls">
+                <li
+                  v-for="(grape, index) in grapeList"
+                  @click="grapeDetail(grape)"
+                  :key="index">{{grape.name}}</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <!-- 品种 end -->
+        <!-- 产区 start -->
+        <section class="areas" v-else-if="navIndex === 1 || navIndex === 2">
+          <div class="areas-world">
+            <div class="world_tip">综合</div>
+            <div
+              class="world_one"
+              v-for="(world, index) in worlds"
+              :class="{active: elAreas.worldId === world.id}"
+              @click="worldFn(world)"
+              :key="index">{{world.name}}</div>
+          </div>
+          <div :data-counId="elAreas.countryId" :class="['areas-country', {maxhight: elAreas.countryId || elAreas.countryId === '-1'}]">
+            <ul class="country-l" :class="[{lb_ok: elAreas.countryId}]">
+              <li
+                :data-val="areaContryList.length"
+                v-if="areaContryList.length > 0"
+                :class="{active: elAreas.countryId === -1}"
+                @click="countryFn(-1)">全部国家</li>
+              <li
+                v-for="(country, index) in areaContryList"
+                :class="{active: elAreas.countryId === country.countryid}"
+                @click="countryFn(country.countryid)"
+                :key="index">{{country.countryName}}</li>
+            </ul>
+            <ul class="country-r" v-if="elAreas.countryId && bigList.length > 0">
+              <li
+                :class="{active: elAreas.bigId === -1}"
+                @click="bigFn(-1)">全部</li>
+              <li
+                v-for="(big, index) in bigList"
+                :class="{active: elAreas.bigId === big.areaid}"
+                @click="bigFn(big.areaid)"
+                :key="index">{{big.areaName}}</li>
+            </ul>
+          </div>
+          <div class="areas-items" v-if="elAreas.bigId && districtList.length > 0">
+            <div class="items-head">地区级</div>
+            <ul class="items_uls">
+              <li
+                :class="{active: elAreas.districtId === -2}"
+                @click="districtFn(-2)">
+                  <span>全部</span>
+                </li>
+              <li
+                v-for="(district, index) in districtList"
+                :class="{active: elAreas.districtId === district.areaid}"
+                @click="districtFn(district.areaid)"
+                :key="index">
+                <span>{{district.areaName}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="areas-items" v-if="elAreas.districtId && subList.length > 0">
+            <div class="items-head">子区级</div>
+            <ul class="items_uls">
+              <li
+                :class="{active: elAreas.subId === -3}"
+                @click="subFn(-3)">
+                  <span>全部</span>
+                </li>
+              <li
+                v-for="(sub, index) in subList"
+                :class="{active: elAreas.subId === sub.areaid}"
+                @click="subFn(sub.areaid)"
+                :key="index">
+                <span>{{sub.areaName}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="areas-items" v-if="elAreas.subId && smallList.length > 0">
+            <div class="items-head">小子区</div>
+            <ul class="items_uls">
+              <li
+                v-if="navIndex === 2"
+                :class="{active: elAreas.smallId === -4}"
+                @click="smallFn(-4)">
+                  <span>全部</span>
+                </li>
+              <li
+                v-for="(small, index) in smallList"
+                :class="{active: elAreas.smallId === small.areaid}"
+                @click="smallFn(small.areaid)"
+                :key="index">
+                <span>{{small.areaName}}</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <!-- 产区 end -->
+        <footer class="footerbox">
+          <div class="footbtns">
+            <div class="btn" @click="btnRest">重置</div>
+            <div class="btn btn_ok" @click="btnOk">确认</div>
+          </div>
+        </footer>
       </div>
-    </section>
-    <!-- 品种 end -->
-    <!-- 产区 start -->
-    <section class="areas" v-else-if="navIndex === 1 || navIndex === 2">
-      <div class="areas-world">
-        <div class="world_tip">综合</div>
-        <div
-          class="world_one"
-          v-for="(world, index) in worlds"
-          :class="{active: elAreas.worldId === world.id}"
-          @click="worldFn(world)"
-          :key="index">{{world.name}}</div>
-      </div>
-      <div class="areas-country">
-        <ul class="country-l" :class="[{lb_ok: elAreas.countryId}, {scrollCountry: elAreas.bigId}]">
-          <li
-            :data-val="areaContryList.length"
-            v-if="areaContryList.length > 0"
-            :class="{active: elAreas.countryId === -1}"
-            @click="countryFn(-1)">全部国家</li>
-          <li
-            v-for="(country, index) in areaContryList"
-            :class="{active: elAreas.countryId === country.countryid}"
-            @click="countryFn(country.countryid)"
-            :key="index">{{country.countryName}}</li>
-        </ul>
-        <ul class="country-r" :class="[{scrollCountry: elAreas.bigId}]" v-if="elAreas.countryId && bigList.length > 0">
-          <li
-            :class="{active: elAreas.bigId === -1}"
-            @click="bigFn(-1)">全部</li>
-          <li
-            v-for="(big, index) in bigList"
-            :class="{active: elAreas.bigId === big.areaid}"
-            @click="bigFn(big.areaid)"
-            :key="index">{{big.areaName}}</li>
-        </ul>
-      </div>
-      <div class="areas-items" v-if="elAreas.bigId && districtList.length > 0">
-        <div class="items-head">地区级</div>
-        <ul class="items_uls">
-          <li
-            :class="{active: elAreas.districtId === -2}"
-            @click="districtFn(-2)">
-              <span>全部</span>
-            </li>
-          <li
-            v-for="(district, index) in districtList"
-            :class="{active: elAreas.districtId === district.areaid}"
-            @click="districtFn(district.areaid)"
-            :key="index">
-            <span>{{district.areaName}}</span>
-          </li>
-        </ul>
-      </div>
-      <div class="areas-items" v-if="elAreas.districtId && subList.length > 0">
-        <div class="items-head">子区级</div>
-        <ul class="items_uls">
-          <li
-            :class="{active: elAreas.subId === -3}"
-            @click="subFn(-3)">
-              <span>全部</span>
-            </li>
-          <li
-            v-for="(sub, index) in subList"
-            :class="{active: elAreas.subId === sub.areaid}"
-            @click="subFn(sub.areaid)"
-            :key="index">
-            <span>{{sub.areaName}}</span>
-          </li>
-        </ul>
-      </div>
-      <div class="areas-items" v-if="elAreas.subId && smallList.length > 0">
-        <div class="items-head">小子区</div>
-        <ul class="items_uls">
-          <li
-            v-if="navIndex === 2"
-            :class="{active: elAreas.smallId === -4}"
-            @click="smallFn(-4)">
-              <span>全部</span>
-            </li>
-          <li
-            v-for="(small, index) in smallList"
-            :class="{active: elAreas.smallId === small.areaid}"
-            @click="smallFn(small.areaid)"
-            :key="index">
-            <span>{{small.areaName}}</span>
-          </li>
-        </ul>
-      </div>
-    </section>
-    <!-- 产区 end -->
-    <footer class="footerbox">
-      <div class="footbtns">
-        <div class="btn" @click="btnRest">重置</div>
-        <div class="btn btn_ok" @click="btnOk">确认</div>
-      </div>
-    </footer>
-  </van-popup>
+    </transition>
+    <transition name="fade">
+      <div class="modal" v-show="navIndex || navIndex === 0"></div>
+    </transition>
+  </div>
 </template>
 <script>
 import { encyApi } from '~/api/encys'
@@ -370,23 +377,37 @@ export default {
 <style lang="less" scoped>
 @plr: 19px;
 @mlr: 19px;
-.van-popup--top {
+.cpmone {
+  width: 100%;
+  position: fixed;
   top: 85px;
+  left: 0;
+}
+.sizer {
+  z-index: 60;
+  background: #fff;
+  position: relative;
+  height: calc(100vh - 85px);
+  max-height: calc(100vh - 85px);
 }
 .variety {
   padding: 0 @plr;
-  overflow: hidden;
+  max-height: calc(100% - 50px);
+  overflow: auto;
+
   .secone {
     .sectitle {
       font-size: 15px;
       font-family: PingFangSC-Semibold;
       font-weight: 600;
       color: rgba(51, 51, 51, 1);
-      padding: 20px 0;
+      height: 55px;
+      display: flex;
+      align-items: center;
     }
 
     .uls {
-      margin-bottom: 37px;
+      margin-bottom: 35px;
       display: flex;
       align-items: center;
       margin-left: -19px;
@@ -400,6 +421,7 @@ export default {
         font-weight: 500;
         color: rgba(153, 153, 153, 1);
         border: 1PX solid @cor_border;
+        box-sizing: border-box;
         border-radius: 4px;
         .flex_allCenter;
       }
@@ -474,7 +496,8 @@ export default {
     &-head {
       display: flex;
       align-items: center;
-      margin-bottom: 23px;
+      height: 20px;
+      margin-bottom: 20px;
 
       .head_title {
         font-size: 15px;
@@ -511,7 +534,9 @@ export default {
       display: inline-block;
       background: #F8F8F8;
       border-radius: 4px;
-      padding: 7px 10px;
+      line-height: 15px;
+      padding: 5px 10px;
+      margin-bottom: 20px;
 
       .select-btn {
         font-size: 15px;
@@ -532,13 +557,11 @@ export default {
     }
 
     &-list {
-      margin-top: 23px;
       padding: 10px 0;
       background: #FCFCFC;
       border: 1PX solid @cor_border;
       border-radius: 10px;
-      max-height: 200px;
-      overflow-y: scroll;
+      box-sizing: border-box;
       .list-uls {
         padding-left: 13px;
         &>li {
@@ -554,7 +577,7 @@ export default {
   }
 }
 .areas {
-  max-height: calc(100vh - 130px);
+  max-height: calc(100% - 50px);
   overflow: auto;
   &-world {
     display: flex;
@@ -591,6 +614,16 @@ export default {
     display: flex;
     border-top: 1PX solid #F1F1F1;
     border-bottom: 1PX solid #F1F1F1;
+    &.maxhight {
+      .country-l {
+        max-height: 220px;
+        overflow: auto;
+      }
+      .country-r {
+        max-height: 220px;
+        overflow: auto;
+      }
+    }
     .country-l {
       width: 100vw;
       &>li {
@@ -631,10 +664,6 @@ export default {
         color:rgba(51,51,51,1);
       }
     }
-    .scrollCountry {
-      max-height: 220px;
-      overflow: auto;
-    }
   }
   &-items {
     padding: 0 @plr;
@@ -665,6 +694,9 @@ export default {
           font-family:PingFang-SC-Medium;
           font-weight:500;
           color:rgba(153,153,153,1);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
       .active {
@@ -681,7 +713,6 @@ export default {
 }
 .footerbox {
   height: 50px;
-
   .footbtns {
     .u-footbtns;
     .btn_ok {
