@@ -1,5 +1,5 @@
 <template>
-  <div class="u-prove">
+  <div class="u-prove" :class="{'fullScreen': fullScreen}">
     <com-head :titleConfig="configtitle"></com-head>
     <div class="u-prove-info" :class="{'provePass': provePass}">
       <div class="title font_hight" v-if='!provePass'>
@@ -324,7 +324,8 @@ export default {
       honorActive: null,
       majorId: null,
 
-      deletEnable: false
+      deletEnable: false,
+      fullScreen: false
     }
   },
 
@@ -340,14 +341,18 @@ export default {
           if (this.showMajor) hash = '#major'
           if (this.showMeida) hash = '#media'
           if (this.showMeida) hash = '#office'
+          this.fullScreen = false
           window.location.hash = hash
         })
       } else if (to.hash === '#major') {
         this.showMajor = true
+        this.fullScreen = true
       } else if (to.hash === '#media') {
         this.showMedia = true
+        this.fullScreen = true
       } else if (to.hash === '#office') {
         this.showOffice = true
+        this.fullScreen = true
       }
     }
   },
@@ -436,6 +441,11 @@ export default {
 </script>
 <style lang="less" scoped>
 .u-prove {
+  &.fullScreen {
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
   &-info {
     &.provePass {
       .title {

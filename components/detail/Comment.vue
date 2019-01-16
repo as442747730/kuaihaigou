@@ -307,7 +307,7 @@ export default {
     },
     countTimeAgo (now, setTime) {
       const getTime = new Date(now).getTime() - new Date(setTime).getTime()
-      return Math.floor(getTime / (3600 * 24 * 1e3)) === 0 ? '当天' : Math.floor(getTime / (3600 * 24 * 1e3)) + '天后'
+      return Math.floor(getTime / (3600 * 24 * 1000)) === 0 ? '当天' : Math.floor(getTime / (3600 * 24 * 1000)) + '天后'
     },
     getJSONArr (strArr) {
       return JSON.parse(strArr)

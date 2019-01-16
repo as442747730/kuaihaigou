@@ -31,9 +31,11 @@
           </div>
         </div>
         <div class="part-top-right ib-middle">
-          <div class="follow">
-            <van-icon name="plus" />
-            <span>关注</span>
+          <div :class="['follow', userInfo.friendSystem ? 'dark' : '']" @click='clickSubscribe'>
+            <van-icon class='ib-middle' :name="userInfo.friendSystem ? 'success' : 'cross'" />
+            <span class='ib-middle'>
+              {{ userInfo.friendSystem ? '已关注' : '关注' }}
+            </span>
           </div>
         </div>
       </div>
@@ -46,6 +48,7 @@
 
 import { userApi, personApi } from '@/api/users'
 import userLab from '@/components/Usericon.vue'
+import 'vant/lib/icon/local.css'
 import tools from '@/utils/tools'
 
 export default {
@@ -63,6 +66,7 @@ export default {
 
   mounted () {
     this.uid = tools.getUrlQues('uid')
+    if (!this.uid) window.location.href = '/missing'
     this.getUserInfo()
   },
 
@@ -76,6 +80,17 @@ export default {
       if (personCode === 200) {
         this.userInfo = personData
         console.log('user', this.userInfo)
+      }
+    },
+    // 关注/取消关注
+    async clickSubscribe () {
+      const { code } = await personApi.subscribeUser(this.uid)
+      if (code === 200) {
+        this.userInfo.friendSystem = !this.userInfo.friendSystem
+        this.userInfo.friendSystem ? this.userInfo.fanNumber += 1 : this.userInfo.fanNumber -= 1
+        this.$toast.success(this.userInfo.friendSystem ? '关注成功' : '已取消关注')
+      } else if (code === 506) {
+        this.$toast('检测到您尚未登录，请先登录！')
       }
     }
   }
@@ -149,11 +164,26 @@ export default {
         height: 35px;
         border: 1px solid #03A1CD;
         color: #03A1CD;
-        font-size: 13px;
+        font-size: 0;
         border-radius:4px;
         text-align: center;
         line-height: 35px;
         box-sizing: border-box;
+        &.dark {
+          background: #ccc;
+          color: #fff;
+          border-color: #ccc;
+        }
+        i {
+          font-size: 12px;
+        }
+        .van-icon-cross {
+          transform: rotate(45deg);
+        }
+        span {
+          font-size: 13px;
+          margin-left: 3px;
+        }
       }
     }
     &-left {
@@ -180,6 +210,52 @@ export default {
       .label {
         color: @cor_999;
         font-size: 13px;
+      }
+    }
+  }
+}
+.m-page-user {
+  .tab-item {
+    font-size: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f1f1;
+    padding: 0 20px;
+    &-list {
+      color: #ccc;
+      font-size: 13px;
+      position: relative;
+      padding: 18px 0 14px;
+      &.cur {
+        color: #333;
+        &:after {
+          content: '';
+          position: absolute;
+          width: 20px;
+          height: 2px;
+          background: #333;
+          margin-top: -1px;
+          margin-left: -10px;
+          left: 50%;
+          bottom: 0;
+        }
+      }
+    }
+  }
+  .model-item {
+    font-size: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f1f1;
+    padding: 15px 40px;
+    a {
+      font-size: 13px;
+      color: #666;
+      &.cur {
+        color: #333;
+        font-weight: bolder;
       }
     }
   }

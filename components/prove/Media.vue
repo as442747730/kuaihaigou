@@ -3,18 +3,22 @@
     <div class="step step-1">
       <div class="input-item">
         <h3 class="title font_hight">媒体类型</h3>
-        <van-radio-group v-model="form.mediaType">
+        <van-radio-group v-model="form.mediaType" @change='handlerMedia' style='margin-bottom: 0'>
           <van-radio name="0" :class="{'checked': form.mediaType === '0'}"><em>企业媒体</em></van-radio>
           <van-radio name="1" :class="{'checked': form.mediaType === '1'}"><em>个人自媒体</em></van-radio>
         </van-radio-group>
       </div>
-    </div>
-    <div class="depart-line"></div>
-    <div class="step step-2">
       <div class="input-item">
-        <h3 class="title font_hight">{{ form.mediaType === '0' ? '企业名称' : '个人名称' }}</h3>
-        <input class="prove-input" type="text" v-model='form.mediaName' placeholder="请填写主体信息（至少填写一个媒体）" maxlength="30">
+        <h3 class="title font_hight">自媒体名称</h3>
+        <input class="prove-input" type="text" v-model='form.mediaName' placeholder="请填写自媒体名称" maxlength="30">
       </div>
+    </div>
+
+    <div class="depart-tips">
+        请至少填写一个媒体平台信息
+    </div>
+
+    <div class="step step-2">
       <div class="input-item">
         <h3 class="title font_hight">公众号</h3>
         <input class="prove-input" type="text" v-model='form.wechat' placeholder="请填写公众号名称" maxlength="30">
@@ -22,10 +26,10 @@
       <div class="input-item">
         <h3 class="title font_hight">新浪微博</h3>
         <input class="prove-input" type="text" v-model='form.weibo' placeholder="请填写新浪微博名称" maxlength="30">
-        <input class="prove-input mt-20" type="text" v-model='form.href' placeholder="请填微博主页链接（选填）" style="border-bottom: 0">
+        <input class="prove-input mt-20" type="text" v-model='form.href' placeholder="请填微博主页链接（选填）">
       </div>
     </div>
-    <div class="depart-line"></div>
+    <!-- <div class="depart-line"></div> -->
     <div class="step step3">
       <div class="textarea-item">
         <h3 class="title font_hight">其他平台</h3>
@@ -60,9 +64,9 @@
           <i></i>
           <p>{{ form.backImg ? '重新上传' : '上传国徽面' }}</p>
         </div> -->
-        <div v-if="form.mediaType !== '0'" class="upload-box" :class="{'success': form.frontImg}" :style="'background: url(' + (form.frontImg || frontDefault ) + ') no-repeat center/contain'">
+        <div v-if="form.mediaType !== '0'" class="upload-box" :class="{'success': form.backImg}" :style="'background: url(' + (form.backImg || frontDefault ) + ') no-repeat center/contain'">
           <i></i>
-          <p>{{ form.frontImg ? '重新上传' : '上传人像面' }}</p>
+          <p>{{ form.backImg ? '重新上传' : '上传国徽面' }}</p>
         </div>
         <div v-else class="upload-box" :class="[{'success': form.backImg, 'qiye': form.mediaType === '0'}]" :style="'background: url(' + (form.backImg || updDefault ) + ') no-repeat center/contain'">
           <i v-show="form.mediaType !== '0'"></i>
@@ -101,6 +105,7 @@ export default {
     return {
       form: {
         mediaType: '0',
+        mediaName: '',
         other: '',
         desc: '',
         wechat: '',
@@ -128,11 +133,18 @@ export default {
       this.form.backImg = data.url
       this.form.backKey = data.key
     },
+    handlerMedia (val) {
+      this.form.frontImg = null
+      this.form.frontKey = null
+      this.form.backImg = null
+      this.form.backKey = null
+      this.form.imgList = []
+    },
     async submit () {
-      if (this.validate(this.form.mediaName, '请填写主体信息（至少填写一个媒体）')) {
+      if (this.validate(this.form.mediaName, '请填写自媒体名称')) {
         return
       } else if (this.form.wechat === '' && this.form.weibo === '' && this.form.other === '') {
-        return this.$toast('公众号/新浪微博/其他平台选择一项填写')
+        return this.$toast('请至少填写一个媒体平台信息')
       } else if (this.validate(this.form.desc, '请填写媒体描述') || this.validate(this.form.imgList, '请上传资格证相关照片')) {
         return
       }
@@ -234,6 +246,12 @@ export default {
         color: #333
       }
     }
+  }
+  .depart-tips {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #666;
+    background: #f5f5f5;
   }
 }
 </style>

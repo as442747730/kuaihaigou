@@ -208,6 +208,7 @@ export default {
       }
       this.handleSubscribe()
     },
+    // 关注、取消关注
     async handleSubscribe () {
       const { code } = await knowApi.subscribeUser({ userId: this.detailObj.userResp.id })
       if (code === 506) {
@@ -223,17 +224,24 @@ export default {
       this.handleSubscribe()
     },
     async showAuthorInfo () {
-      const { code, data } = await knowApi.getAuthorInfo({ id: this.detailObj.userResp.id })
-      if (code === 200) {
-        this.authObj = data
-        Object.assign(this.authObj, this.detailObj.userResp.personalInfoResp)
-        this.authObj.ifFollow = this.detailObj.userResp.checkAttention
-        this.authObj.videoPath = this.detailObj.videoPath || ''
-        this.showInfo = true
-        setTimeout(() => {
-          this.setClass = true
-        }, 100)
-      }
+      this.showInfo = true
+      setTimeout(() => {
+        this.setClass = true
+      }, 100)
+      Object.assign(this.authObj, this.detailObj.userResp.personalInfoResp, this.detailObj.userResp.sharingKnowledgeContentUserResps[0])
+      this.authObj.ifFollow = this.detailObj.userResp.checkAttention
+      this.authObj.userId = this.detailObj.userId
+      // const { code, data } = await knowApi.getAuthorInfo({ id: this.detailObj.userResp.id })
+      // if (code === 200) {
+      //   this.authObj = data
+      //   Object.assign(this.authObj, this.detailObj.userResp.personalInfoResp)
+      //   this.authObj.ifFollow = this.detailObj.userResp.checkAttention
+      //   this.authObj.videoPath = this.detailObj.videoPath || ''
+      //   this.showInfo = true
+      //   setTimeout(() => {
+      //     this.setClass = true
+      //   }, 100)
+      // }
     },
     async handleCommentLike (val) {
       const method = val.ifLkie ? 'dislikeComment' : 'lkieComment'
@@ -273,9 +281,12 @@ export default {
     },
     // 个人信息弹窗取消关注
     setFollow (val) {
+      console.log(val)
       this.ifSubscribe = val
       this.detailObj.userResp.checkAttention = val
       this.authObj.ifFollow = val
+      val ? this.detailObj.userResp.personalInfoResp.fanNumber += 1 : this.detailObj.userResp.personalInfoResp.fanNumber -= 1
+      val ? this.authObj.fanNumber += 1 : this.authObj.fanNumber -= 1
     },
     back () {
       window.location.href = '/knowledge'
