@@ -64,7 +64,15 @@ export const personApi = {
     return request.serverGet('/api/personal/userInfo', { id: id }, req)
   },
   serverCreation (userId) {
-    return request.serverGet('/api/sk/myCreation?page=1&count=2&userId=' + userId)
+    return request.serverGet('/api/sk/myCreation?page=1&count=5&userId=' + userId)
+  },
+  // 酒坛诗社分页
+  serverUserSign (param) {
+    return request.serverGet('/api/sign/paginateUserSign', param)
+  },
+  // 分页查询我的收藏 (商品)
+  serverCollection (param) {
+    return request.serverGet('/api/goods/otherCollection', param)
   },
   // client
   personalInfo (id) {
@@ -77,6 +85,18 @@ export const personApi = {
     } else {
       param = '&channelNumber=' + channelNumber
     }
-    return request.clientGet('/api/sk/myCreation?page=' + page + '&count=2&userId=' + userId + param)
+    return request.clientGet('/api/sk/myCreation?page=' + page + '&count=5&userId=' + userId + param)
+  },
+  // 关注/取消关注
+  subscribeUser (userId) {
+    return request.clientPost('/api/friend/followFriends', { userId: userId })
+  },
+  // 酒坛诗社分页
+  paginateUserSign (param) {
+    return request.clientGet('/api/sign/paginateUserSign', param)
+  },
+  // 分页查询我的收藏 (商品)
+  otherCollection (param) {
+    return request.clientGet('/api/goods/otherCollection', param)
   }
 }

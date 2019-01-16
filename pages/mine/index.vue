@@ -13,8 +13,7 @@
       </div>
       <div class="hd-name">
         <p class="hd_world">{{ userInfo.nickname }}</p>
-        <i class="icons ic_level"></i>
-        <i class="icons ic_cms"></i>
+        <user-lab :level='String(userInfo.userGradeNumber)' type='1' :profess='String(userInfo.professionTypeCode)'></user-lab>
       </div>
       <div class="hd-sign">
         <p>{{ userInfo.signature }}</p>
@@ -67,6 +66,7 @@
 import uArticle from '~/components/mine/Article'
 import uJarsclb from '~/components/mine/Jarsclub'
 import leftMenu from '~/components/Menu'
+import userLab from '~/components/Usericon.vue'
 import { userApi } from '~/api/users'
 
 export default {
@@ -93,7 +93,8 @@ export default {
   components: {
     uArticle,
     uJarsclb,
-    leftMenu
+    leftMenu,
+    userLab
   },
   data () {
     return {
@@ -130,6 +131,7 @@ export default {
     this.getArts()
   },
   mounted () {
+    console.log(this.userInfo)
     window.addEventListener('scroll', () => {
       let winH = document.documentElement.clientHeight || document.body.clientHeight
       let elemBound = this.$refs.scrollElem.getBoundingClientRect()
@@ -268,6 +270,7 @@ export default {
     }
 
     .hd-name {
+      font-size: 0;
       .flex_allCenter;
       .hd_world {
         padding-left: 60px;
@@ -276,18 +279,18 @@ export default {
         font-family: PingFangSC-Semibold;
         font-weight: bold;
         color: rgba(255, 255, 255, 1);
+        margin-right: 3px;
+        box-sizing: border-box;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .icons {
         width: 22px;
         height: 22px;
         margin-left: 7px;
         .bg_cover;
-      }
-      .ic_level {
-        background-image: url('~/assets/img/Icons/ic_membership_level2_22x22@1.png');
-      }
-      .ic_cms {
-        background-image: url('~/assets/img/Icons/ic_cms_cs_22x22@2x.png');
       }
     }
 
