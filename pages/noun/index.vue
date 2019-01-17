@@ -503,7 +503,7 @@ export default {
   }
   .topnav {
     height: 40px;
-    border-bottom: 1PX solid #F5F5F5;
+    // border-bottom: 1PX solid #F5F5F5;
     box-sizing: border-box;
     .flex_around;
     .item {

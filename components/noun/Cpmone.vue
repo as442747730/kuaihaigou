@@ -583,15 +583,22 @@ export default {
     display: flex;
     padding: 18px @plr 30px;
     .world_tip {
+      display: flex;
+      height: 20px;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
       font-size:15px;
       font-family:PingFangSC-Semibold;
       font-weight:600;
       color:rgba(51,51,51,1);
-      line-height:15px;
     }
     .world_one {
       width:80px;
-      line-height: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border: 1px solid @cor_border;
       text-align: center;
       margin-left: 10px;
