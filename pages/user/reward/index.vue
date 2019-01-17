@@ -19,7 +19,7 @@
           ></a>
         </div>
       </div>
-      <div v-else>
+      <div class="desc" v-else>
         <p style="text-align: center">目前还没有用户给Ta打赏，快来占坑吧～</p>
       </div>
     </div>

@@ -112,19 +112,21 @@
         </div>
         <!-- 名词解释 -->
         <div class="varity" v-if="$v.collectType >= 4">
-          <h1 class="varity-head">{{ $v.title }}</h1>
-          <div class="varity-bk">
-            <div class="varity-bk_in" :style="'background: url(' + bkImg2 + ') no-repeat center/contain'"></div>
-          </div>
-          <div class="varity-article" v-html='$v.summary'></div>
-          <div class="varity-foot">
-            <i class="icon_same ic_good"></i>
-            <span class="num_same">{{ $v.likeNumber }}</span>
-            <i class="icon_same ic_collect marl"></i>
-            <span class="num_same">{{ $v.commentNumber }}</span>
-            <i class="icon_same ic_look marl"></i>
-            <span class="num_same">{{ $v.readNumber }}</span>
-          </div>
+          <a :href="'/noun/detail/' + $v.attrid + '?num=' + ($v.collectType - 4)">
+            <h3 class="varity-head">{{ $v.title }}</h3>
+            <div class="varity-bk">
+              <div class="varity-bk_in" v-lazy:background-image="$v.bgimg + '?imageView2/5/w/600/h/330'"></div>
+            </div>
+            <!-- <div class="varity-article" v-html='$v.summary'></div> -->
+            <div class="varity-foot">
+              <i class="icon_same ic_good"></i>
+              <span class="num_same">{{ $v.likeNumber }}</span>
+              <i class="icon_same ic_collect marl"></i>
+              <span class="num_same">{{ $v.commentNumber }}</span>
+              <i class="icon_same ic_look marl"></i>
+              <span class="num_same">{{ $v.readNumber }}</span>
+            </div>
+          </a>
         </div>
       </div>
     </div>

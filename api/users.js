@@ -110,5 +110,13 @@ export const personApi = {
   // 分页查询我的收藏 (文章)
   collect (param) {
     return request.clientGet('/api/article/paginateOtherCollection', param)
+  },
+  // 关注、粉丝列表
+  followFans (param) {
+    return request.clientGet('/api/friend/followFriends', param)
+  },
+  // 关注好友
+  followFriends (userId) {
+    return request.clientPost('/api/friend/followFriends', { userId: userId })
   }
 }
