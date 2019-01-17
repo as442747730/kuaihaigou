@@ -7,7 +7,7 @@
       <a :href="'/user/collect?uid=' + uid">Ta的收藏</a>
     </li>
     <li class="tab-item-list" :class="{'cur': index === 2}">
-      <a href="#">给Ta的打赏</a>
+      <a :href="'/user/reward?uid=' + uid">给Ta的打赏</a>
     </li>
   </ul>
 </template>

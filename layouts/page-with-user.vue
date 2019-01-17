@@ -3,15 +3,19 @@
     
     <div class="u-user-common">
       <div class="bar">
-        <i></i>
-        <!-- <van-icon name="close" @click="menuShow = true" /> -->
+        <van-nav-bar
+          title="用户主页"
+          left-arrow
+          @click-left="onClickLeft"
+        />
+        <u></u>
       </div>
       <!-- <div class="part-top-pro" :style="'background: url('') no-repeat center/cover'"></div> -->
       <div class="part-top-pro" :style="'background: url(' + ( userInfo.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
       <div class="part-top-title">
         <h3 class="font_hight">
-          {{ userInfo.nickname }}
-          <user-lab :level='String(userInfo.userGradeNumber)' type='1' :profess='String(userInfo.category)'></user-lab>
+          <span class="ib-middle">{{ userInfo.nickname }}</span>
+          <user-lab class="ib-middle" :level='String(userInfo.userGradeNumber)' type='1' :profess='String(userInfo.category)'></user-lab>
         </h3>
         <p>{{ userInfo.signature }}</p>
       </div>
@@ -21,11 +25,11 @@
             <p class="count">{{ userInfo.buyNumber || 0 }} <span>瓶</span></p>
             <span class="label">已购(酒)</span>
           </div>
-          <div class="part-top-item">
+          <div class="part-top-item" @click='showLayer(1)'>
             <p class="count">{{ userInfo.attentionNumber || 0 }}</p>
             <span class="label">关注</span>
           </div>
-          <div class="part-top-item">
+          <div class="part-top-item" @click='showLayer(2)'>
             <p class="count">{{ userInfo.fanNumber || 0 }}</p>
             <span class="label">粉丝</span>
           </div>
@@ -42,12 +46,17 @@
       <div class="depart-line"></div>
     </div>
     <nuxt/>
+    <!-- 粉丝/关注弹层 -->
+    <van-popup v-model="layerShow" position="right" :overlay="false">
+      <fansFollow :lists='fansFollowData' :type='type' :uid='uid' :myId='myId' :islogin='islogin'></fansFollow>
+    </van-popup>
   </div>
 </template>
 <script>
 
 import { userApi, personApi } from '@/api/users'
-import userLab from '@/components/Usericon.vue'
+import userLab from '@/components/Usericon'
+import fansFollow from '@/components/user/FansFollow'
 import 'vant/lib/icon/local.css'
 import tools from '@/utils/tools'
 
@@ -58,14 +67,30 @@ export default {
       uid: null,
       userInfo: {},
 
-      defaulthead: this.defaulthead // 默认头像
+      defaulthead: this.defaulthead, // 默认头像
+
+      layerShow: false,
+      fansFollowData: [],
+      type: 1,
+      myId: null,
+      islogin: false
     }
   },
 
-  components: { userLab },
+  components: { userLab, fansFollow },
+
+  watch: {
+    $route (to, from) {
+      if (to.hash === '') {
+        this.layerShow = false
+      } else if (to.hash === '#layer') {
+        this.layerShow = true
+      }
+    }
+  },
 
   mounted () {
-    this.uid = tools.getUrlQues('uid')
+    this.uid = tools.getUrlQues2('uid')
     if (!this.uid) window.location.href = '/missing'
     this.getUserInfo()
   },
@@ -74,6 +99,12 @@ export default {
     async getUserInfo () {
       const { code: personCode, data: personData } = await personApi.personalInfo(this.uid)
       const { code: memberCode, data: memberData } = await userApi.userDetail()
+      if (memberCode === 200) {
+        this.myId = memberData.userId
+        this.islogin = true
+      } else if (memberCode === 506) {
+        this.islogin = false
+      }
       if (memberCode === 200 && memberData.userId === this.uid) {
         window.location.href = '/mine'
       }
@@ -92,6 +123,21 @@ export default {
       } else if (code === 506) {
         this.$toast('检测到您尚未登录，请先登录！')
       }
+    },
+    async showLayer (type) {
+      this.type = type
+      window.location.hash = 'layer'
+      const toast1 = this.$toast.loading({ mask: true, message: '信息获取中', duration: 0 })
+      const { code, data } = await personApi.followFans({ page: 1, count: 5, number: this.type, id: this.uid })
+      if (code === 200) {
+        this.fansFollowData = data.array
+        console.log(this.fansFollowData)
+        toast1.clear()
+        this.layerShow = true
+      }
+    },
+    onClickLeft () {
+      window.location.href = '/home'
     }
   }
 
@@ -106,11 +152,21 @@ export default {
     background: -o-linear-gradient(-45deg, #4FEDEF, #00A1F0);
     background: -moz-linear-gradient(-45deg, #4FEDEF, #00A1F0);
     background: linear-gradient(-45deg, #4FEDEF, #00A1F0);
+    .van-nav-bar {
+      background: transparent;
+      &:after {
+        display: none;
+      }
+      i, .van-nav-bar__title {
+        color: #fff!important;
+        font-weight: normal;
+      }
+    }
     .title {
       font-size: 16px;
       color: white;
     }
-    i {
+    u {
       width: 100%;
       height: 35px;
       background: url('~/assets/img/user/img_wave_375x35@2x.png') no-repeat center/cover;
@@ -151,6 +207,19 @@ export default {
       h3 {
         font-size: 21px;
         color: #333;
+        margin-top: 20px;
+        span {
+          font-size: 21px;
+          color: #333;
+          display: inline-block;
+          max-width: 150px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          padding-left: 60px;
+          box-sizing: border-box;
+          margin-right: 5px;
+        }
       }
       p {
         color: #bbb;

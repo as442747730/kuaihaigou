@@ -3,7 +3,7 @@
     <tab :uid='uid' :index='1'></tab>
     <div class="model-item">
       <a class="cur" :href="'/user/collect?uid=' + uid">商品</a>
-      <a :href="'/user/collect?uid=' + uid">文章</a>
+      <a :href="'/user/collectArticle?uid=' + uid">文章</a>
       <a href="javascript:void(0)" @click='selectShow = true'>{{ orderTxt }}</a>
     </div>
     
@@ -145,6 +145,7 @@ export default {
           this.ifSellOut = true
           break
       }
+      this.page = 1
       this.selectShow = false
       this.pageEmpty = false
       this.getData(1, true)
