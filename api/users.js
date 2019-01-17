@@ -78,6 +78,10 @@ export const personApi = {
   serverArticel (param) {
     return request.serverGet('/api/article/paginateOtherCollection', param)
   },
+  // 查询打赏人头数
+  serverReward (userId) {
+    return request.serverGet('/api/reward/listRewardUser/' + userId)
+  },
   // client
   personalInfo (id) {
     return request.clientGet('/api/personal/userInfo', { id: id })

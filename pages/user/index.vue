@@ -189,6 +189,9 @@ export default {
 
 <style lang="less" scoped>
 @import './common.less';
+.u-share-articel-item {
+  margin-bottom: 20px;
+}
 .model-item a{
   &:last-child {
     &:after {

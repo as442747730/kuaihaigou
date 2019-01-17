@@ -15,7 +15,7 @@
             <h3 class="font_hight">{{ $v.title }}</h3>
             <div class="time">{{ $v.createdAt }}</div>
             <div class="tips">
-              <span class="tips_one">频道：{{ $v.channelName }}</span>
+              <span class="tips_one">频道：{{ channelName[$v.channelNumber - 1] }}</span>
               <span>话题：{{ $v.topicName }}</span>
             </div>
             <!-- 文章 -->
@@ -50,7 +50,9 @@
           <div class="list">
             <div class="content">
               <div class="content-head">
-                <p>{{$v.title}}</p>
+                <p>
+                  <a :href="'/hotspot/detail/' + $v.id">{{ $v.title }}</a>
+                </p>
               </div>
               <div class="content-time">{{$v.createdAt}}</div>
               <div class="content-other">
@@ -63,13 +65,65 @@
                   class="label"
                   v-for="(lab, labIndex) in $v.labels"
                   @click.stop="tolabel(lab)"
-                  :key="labIndex">{{lab.labelName}}</span>
+                  :key="labIndex">
+                    <a :href="'/hotspot/label/' + lab.id">{{ lab.labelName }}</a>
+                  </span>
               </div>
               <div class="imgs">
-                <div class="imgone" v-lazy:background-image="$v.imgPath"></div>
+                <a :href="'/hotspot/detail/' + $v.id">
+                  <div class="imgone" v-lazy:background-image="$v.imgPath + '?imageslim'"></div>
+                </a>
               </div>
-              <div class="article">{{$v.summary}}</div>
+              <div class="article">
+                <a :href="'/hotspot/detail/' + $v.id">{{ $v.summary }}</a>
+              </div>
             </div>
+          </div>
+        </div>
+        <!-- 甄选内容 -->
+        <div class="picklist" v-if="$v.collectType === 3">
+          <a :href="'/selection/detail/' + $v.id">
+            <div class="infos" v-if="$v.goodsMinimalResp">
+              <div class="infos-l" v-lazy:background-image="$v.goodsMinimalResp.cover"></div>
+              <div class="infos-r">
+                <div class="head">{{$v.goodsMinimalResp.goodsName}}</div>
+                <p class="tags">
+                  <span class="tagsub" v-for="(tags, tagIndex) in $v.goodsMinimalResp.tagList" :key="tagIndex">{{tags}}</span>
+                </p>
+                <div class="lables">
+                  <span class="label ic_year">{{$v.goodsMinimalResp.year}}</span>
+                  <span class="label ic_address" v-if="$v.goodsMinimalResp.area">{{$v.goodsMinimalResp.country}} / {{$v.goodsMinimalResp.area}}</span>
+                  <span class="label ic_address" v-else>{{$v.goodsMinimalResp.country}}</span>
+                  <span class="label ic_variety">{{$v.goodsMinimalResp.variety}}</span>
+                </div>
+                <div class="probars">
+                  <div class="word">复杂：{{$v.goodsMinimalResp.complexity}}分</div>
+                  <div class="probar">
+                    <div class="probar_cors"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="articles">
+              <h3 class="title">{{ $v.title }}</h3>
+              <p class="content">{{ $v.summary }}</p>
+            </div>
+          </a>
+        </div>
+        <!-- 名词解释 -->
+        <div class="varity" v-if="$v.collectType >= 4">
+          <h1 class="varity-head">{{ $v.title }}</h1>
+          <div class="varity-bk">
+            <div class="varity-bk_in" :style="'background: url(' + bkImg2 + ') no-repeat center/contain'"></div>
+          </div>
+          <div class="varity-article" v-html='$v.summary'></div>
+          <div class="varity-foot">
+            <i class="icon_same ic_good"></i>
+            <span class="num_same">{{ $v.likeNumber }}</span>
+            <i class="icon_same ic_collect marl"></i>
+            <span class="num_same">{{ $v.commentNumber }}</span>
+            <i class="icon_same ic_look marl"></i>
+            <span class="num_same">{{ $v.readNumber }}</span>
           </div>
         </div>
       </div>
@@ -105,9 +159,9 @@ export default {
 
   head () {
     return {
-      title: '个人主页_商品收藏',
+      title: '个人主页_文章收藏',
       meta: [
-        { hid: 'title', name: 'title', content: '个人主页_商品收藏' }
+        { hid: 'title', name: 'title', content: '个人主页_文章收藏' }
       ]
     }
   },
@@ -144,6 +198,8 @@ export default {
         { sort: 4, text: '名词' }
       ],
       orderTxt: '全部',
+      channelName: ['经验/知识', '美食/周边'],
+      circlenavList: ['这些圈子都在看', '行业热点', '培训讲座', '企业招商'],
       type: null // 文章类型
     }
   },
@@ -165,7 +221,7 @@ export default {
   methods: {
     async getData (page, needClear = false) {
       this.pageLoding = true
-      const { code, data } = await personApi.otherCollection({ page: page, count: 5, type: this.type, userId: this.uid })
+      const { code, data } = await personApi.collect({ page: page, count: 5, type: this.type, userId: this.uid })
       if (code === 200) {
         if (needClear) {
           this.collectData = data.array
@@ -210,6 +266,7 @@ export default {
   margin: 20px 0;
   &-list {
     padding: 0 20px;
+    margin-bottom: 20px;
   }
 }
 .model-item a{
