@@ -74,6 +74,10 @@ export const personApi = {
   serverCollection (param) {
     return request.serverGet('/api/goods/otherCollection', param)
   },
+  // 分页查询我的收藏 (文章)
+  serverArticel (param) {
+    return request.serverGet('/api/article/paginateOtherCollection', param)
+  },
   // client
   personalInfo (id) {
     return request.clientGet('/api/personal/userInfo', { id: id })
@@ -98,5 +102,9 @@ export const personApi = {
   // 分页查询我的收藏 (商品)
   otherCollection (param) {
     return request.clientGet('/api/goods/otherCollection', param)
+  },
+  // 分页查询我的收藏 (文章)
+  collect (param) {
+    return request.clientGet('/api/article/paginateOtherCollection', param)
   }
 }
