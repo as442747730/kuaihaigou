@@ -1,79 +1,66 @@
 <template>
   <div class="comDetail">
     <div class="specific">
-      <div class="specific-bk" v-lazy:background-image="require('~/assets/img/img_shequhuodong_335x180@2x.png')"></div>
+      <div class="specific-bk" v-lazy:background-image="detailInfo.background"></div>
       <div class="specific-head">
-        <span class="head">第38期 | 红酒之夜</span>
-        <span class="subhead">吉佳乐世家酒庄——拉菲的品质，平民的价格。帕克满分酒次数远高于世界顶级酒庄吉吉</span>
+        <span class="head">第{{detailInfo.period}}期 | {{detailInfo.theme}}</span>
+        <span class="subhead">{{detailInfo.title}}</span>
       </div>
     </div>
     <div class="introduction">
-      <h3 class="acthead">活动简介</h3>
-      <p>本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。这必将成为华南地区迄今为止最令人惊叹、空前绝后的文艺盛事。本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。这必将成为华南地区迄今为止最令人惊叹、空前绝后的文艺盛事。本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。</p>
+      <h3 class="acthead">
+        活动简介<span class="acthead_sub">EVENT PROFILE</span>
+      </h3>
+      <p>{{detailInfo.introduce}}</p>
     </div>
     <!-- 活动流程 -->
     <div class="process">
       <h3 class="acthead">
-          活动流程<span class="acthead_sub">ACTIVITY PROCESS</span>
-        </h3>
+        活动流程<span class="acthead_sub">ACTIVITY PROCESS</span>
+      </h3>
       <div class="remarks">
-        <time>2018-12.03 14:00-18:00</time>
-        <p>备注：由于场地有限，按照报名顺序，先报名先预定</p>
+        <time>{{detailInfo._staEndtime}}</time>
+        <p>备注：{{detailInfo.activityRemark}}</p>
       </div>
-      <div class="process-list">
-        <div class="list-item">
+      <div class="process-list" v-if="processList.length > 0">
+        <div class="list-item" v-for="(process, index) in processList" :key="index">
           <div class="list_head">
             <span class="heads">
                 <div class="heads-child">
-                  <div class="child_index">1</div>
+                  <div class="child_index">{{index + 1}}</div>
                   <div class="child_content">
-                    活动入活动入场活动活动活动入活动入场活动活动活动入活动入场活动活动
+                    {{process.processName}}
                   </div>
                 </div>
               </span>
           </div>
-          <div class="item_time">2018-12.03 14:00-18:00</div>
-          <div class="item_speack">规则</div>
-          <div class="item_speackword">盲品游戏规则盲品游戏规则盲品游戏规则盲品游戏规则盲品游戏规则盲品游戏规则盲品游戏规则盲品游戏规则盲品游戏规则盲品游戏规则</div>
-          <div class="item_sub">活动奖品</div>
-          <ul class="item_sublist">
-            <li>
-              <div class="sublist_icon"></div>
-              <p class="sublist_content">活动详情内容活动详情内容活动活动详情内容活动详情内容活动活动情内容活动活动详情内容活动详情内容活动活动</p>
-            </li>
-            <li>
-              <div class="sublist_icon"></div>
-              <p class="sublist_content">活动详情内容活动详情内容活动活动详情内容活动详情内容活动活动情内容活动活动详情内容活动详情内容活动活动</p>
-            </li>
-            <li>
-              <div class="sublist_icon"></div>
-              <p class="sublist_content">活动详情内容活动详情内容活动活动详情内容活动详情内容活动活动情内容活动活动详情内容活动详情内容活动活动</p>
+          <div class="item_time">{{process._strTime}}</div>
+          <div class="item_speack">{{process.title}}</div>
+          <div class="item_speackword">{{process.content}}</div>
+          <div class="item_sub">{{process.subTitle}}</div>
+          <ul class="item_sublist" v-if="process.subProcessRespList && process.subProcessRespList.length > 0">
+            <li v-for="(subpro, subIndex) in process.subProcessRespList" :key="subIndex" v-if="subpro.content">
+              <div class="sublist_icon" v-lazy:background-image="subpro.img"></div>
+              <p class="sublist_content">{{subpro.content}}</p>
             </li>
           </ul>
         </div>
       </div>
     </div>
     <!-- 盲品投票 前 -->
-    <div class="blinds">
+    <div class="blinds" v-if="blindList.length > 0">
       <h3 class="acthead">
         盲品投票
         <span class="acthead_sub">BLIND VOTE</span>
         <span class="acthead_right">敬请期待</span>
       </h3>
       <!-- marauto 只有一个 -->
-      <div :class="['blinds-list', {marauto: 1 !== 1}]" v-swiper:mySwiper1="swiperBlind">
+      <div :class="['blinds-list', {marauto: blindList.length === 1}]" v-swiper:mySwiper1="swiperBlind">
         <div class="swiper-wrapper">
-          <div class="swiper-slide list-item">
-            <div class="item-logo">01</div>
-            <img class="item_img" :src="require('~/assets/img/img2.png')" />
-          </div>
-          <div class="swiper-slide list-item">
-            <div class="item-logo">02</div>
-            <img class="item_img" :src="require('~/assets/img/img2.png')" />
-          </div>
-          <div class="swiper-slide list-item">
-            <div class="item-logo">03</div>
-            <img class="item_img" :src="require('~/assets/img/img2.png')" />
+          <div class="swiper-slide list-item" v-for="(blind, index) in blindList" :key="index">
+            <div class="item-logo" v-if="index < 9">0{{index + 1}}</div>
+            <div class="item-logo" v-else>{{index + 1}}</div>
+            <img class="item_img" v-lazy="blind.showImg" />
           </div>
         </div>
       </div>
@@ -190,109 +177,72 @@
       </div>
     </div>
     <!-- 参与大咖 -->
-    <div class="bigshot">
+    <div class="bigshot" v-if="bigshotList.length > 0">
       <h3 class="acthead">
         参与大咖<span class="acthead_sub">PARTICIPATE IN BIG COFFEE</span>
       </h3>
       <div class="bigshot-list">
-        <div class="list-item">
-          <div class="item_l"></div>
+        <div class="list-item" v-for="(bigshot, index) in bigshotList" :key="index">
+          <div class="item_l" v-lazy:background-image="bigshot.img"></div>
           <div class="item_r">
             <div class="r_cards">
-              王刚<span class="cards-sub">中国红酒协会副会长</span>
+              {{bigshot.name}}<span class="cards-sub"></span>
             </div>
             <div class="r_instroduce">
-              <p>他的简介和荣誉他的简介和荣誉他的简介和荣誉他的简介和荣誉他的简介和荣誉他的简介和荣誉他的简介和荣誉他的简介和荣誉他的简介和荣誉他的简介和荣誉</p>
+              <p>{{bigshot.introduce}}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="winemoney">
+    <div class="winemoney" v-if="buygoodsList.length > 0 ||othergoodsList.length > 0">
       <h3 class="acthead">
       活动酒款<span class="acthead_sub">ACTIVE WINE</span>
     </h3>
-      <div class="wine-item wine-one">
+      <div class="wine-item wine-one" v-if="buygoodsList.length > 0">
         <div class="item-head">快海购在售</div>
-        <div :class="['item-list', {marauto: 1 !== 1}]" v-swiper:mySwiper3="swiperBuy">
+        <div :class="['item-list', {marauto: buygoodsList.length === 1}]" v-swiper:mySwiper3="swiperBuy">
           <div class="swiper-wrapper">
-            <div class="swiper-slide list_one">
+            <div class="swiper-slide list_one" v-for="(buygoods, index) in buygoodsList" :key="index">
               <div class="onemdl">
-                <div class="onemdl-l" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
+                <div class="onemdl-l" v-lazy:background-image="buygoods.cover"></div>
                 <div class="onemdl-r">
-                  <h4>拉菲珍宝红葡萄酒</h4>
+                  <h4>{{buygoods.variety}}</h4>
                   <div class="tags">
-                    <span class="tagsub">750ml</span>
-                    <span class="tagsub">日常餐酒</span>
-                    <span class="tagsub">紧致单宁</span>
+                    <span class="tagsub" v-for="(tags, tagIndex) in buygoods.tagList">{{tags}}</span>
                   </div>
-                  <div class="mdlbar">
-                    <div class="mdlbar_l">复杂： 30分</div>
+                  <div class="mdlbar" v-if="buygoods.acidity">
+                    <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
                     <div class="mdlbar_r">
                       <div class="mdlbar_r-top w30"></div>
                     </div>
                   </div>
-                  <div class="mdlbar">
-                    <div class="mdlbar_l">果香：30分</div>
+                  <div class="mdlbar" v-if="buygoods.bitterness">
+                    <div class="mdlbar_l">苦度：{{buygoods.bitterness}}分</div>
                     <div class="mdlbar_r">
                       <div class="mdlbar_r-top w30"></div>
                     </div>
                   </div>
-                  <div class="mdlbar">
-                    <div class="mdlbar_l">酸度：65分</div>
+                  <div class="mdlbar" v-if="buygoods.astringency">
+                    <div class="mdlbar_l">涩度：{{buygoods.astringency}}分</div>
                     <div class="mdlbar_r">
                       <div class="mdlbar_r-top w30"></div>
                     </div>
                   </div>
-                  <div class="mdlbar">
-                    <div class="mdlbar_l">复杂：30分</div>
+                  <div class="mdlbar" v-if="buygoods.fruity">
+                    <div class="mdlbar_l">果香：{{buygoods.fruity}}分</div>
+                    <div class="mdlbar_r">
+                      <div class="mdlbar_r-top w30"></div>
+                    </div>
+                  </div>
+                  <div class="mdlbar" v-if="buygoods.complexity">
+                    <div class="mdlbar_l">复杂度：{{buygoods.complexity}}分</div>
                     <div class="mdlbar_r">
                       <div class="mdlbar_r-top w30"></div>
                     </div>
                   </div>
                   <div class="prices">
-                    <span class="actual">¥299</span>
-                    <span class="market">市场价：¥ 499</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide list_one">
-              <div class="onemdl">
-                <div class="onemdl-l" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
-                <div class="onemdl-r">
-                  <h4>拉菲珍宝红葡萄酒</h4>
-                  <div class="tags">
-                    <span class="tagsub">750ml</span>
-                    <span class="tagsub">日常餐酒</span>
-                    <span class="tagsub">紧致单宁</span>
-                  </div>
-                  <div class="mdlbar">
-                    <div class="mdlbar_l">复杂： 30分</div>
-                    <div class="mdlbar_r">
-                      <div class="mdlbar_r-top w30"></div>
-                    </div>
-                  </div>
-                  <div class="mdlbar">
-                    <div class="mdlbar_l">果香：30分</div>
-                    <div class="mdlbar_r">
-                      <div class="mdlbar_r-top w30"></div>
-                    </div>
-                  </div>
-                  <div class="mdlbar">
-                    <div class="mdlbar_l">酸度：65分</div>
-                    <div class="mdlbar_r">
-                      <div class="mdlbar_r-top w30"></div>
-                    </div>
-                  </div>
-                  <div class="mdlbar">
-                    <div class="mdlbar_l">复杂：30分</div>
-                    <div class="mdlbar_r">
-                      <div class="mdlbar_r-top w30"></div>
-                    </div>
-                  </div>
-                  <div class="prices">
-                    <span class="actual">¥299</span>
+                    <span class="actual">¥{{buygoods.actualPrice}}</span>
                     <span class="market">市场价：¥ 499</span>
                   </div>
                 </div>
@@ -301,48 +251,28 @@
           </div>
         </div>
       </div>
-      <div class="wine-item wine-two">
+      <div class="wine-item wine-two" v-if="othergoodsList.length > 0">
         <div class="item-head">其他酒款</div>
-        <div :class="['item-list', {marauto: 1 !== 1}]" v-swiper:mySwiper4="swiperOther">
+        <div :class="['item-list', {marauto: othergoodsList.length === 1}]" v-swiper:mySwiper4="swiperOther">
           <div class="swiper-wrapper">
-            <div class="swiper-slide list_one">
+            <div class="swiper-slide list_one" v-for="(othergoods, index) in othergoodsList" :key="index">
               <div class="onemdl">
-                <div class="onemdl-l" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
+                <div class="onemdl-l" v-lazy:background-image="othergoods.img"></div>
                 <div class="onemdl-r">
-                  <h4>拉菲珍宝红葡萄酒</h4>
+                  <h4>{{othergoods.name}}</h4>
                   <div class="tags">
                     <span class="tagsub">750ml</span>
                     <span class="tagsub">日常餐酒</span>
                     <span class="tagsub">紧致单宁</span>
                   </div>
                   <div class="itemr-info">
-                    <span class="info_item icon_time">2016年</span>
-                    <span class="info_item icon_address">法国／波尔多</span>
-                    <span class="info_item icon_variety">黑皮诺</span>
+                    <span class="info_item icon_time">{{othergoods.year}}</span>
+                    <span class="info_item icon_address" v-if="othergoods.area">{{othergoods.country}}/{{othergoods.area}}</span>
+                    <span class="info_item icon_address" v-else>{{othergoods.country}}</span>
+                    <span class="info_item icon_variety">{{othergoods.variety}}</span>
                   </div>
                   <div class="prices">
-                    <span class="actual">¥299</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide list_one">
-              <div class="onemdl">
-                <div class="onemdl-l" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
-                <div class="onemdl-r">
-                  <h4>拉菲珍宝红葡萄酒</h4>
-                  <div class="tags">
-                    <span class="tagsub">750ml</span>
-                    <span class="tagsub">日常餐酒</span>
-                    <span class="tagsub">紧致单宁</span>
-                  </div>
-                  <div class="itemr-info">
-                    <span class="info_item icon_time">2016年</span>
-                    <span class="info_item icon_address">法国／波尔多</span>
-                    <span class="info_item icon_variety">黑皮诺</span>
-                  </div>
-                  <div class="prices">
-                    <span class="actual">¥299</span>
+                    <span class="actual">¥{{othergoods.salePrice}}</span>
                   </div>
                 </div>
               </div>
@@ -357,96 +287,159 @@
         报名详情<span class="acthead_sub">DEADLINE</span>
       </h3>
       <div class="subhead">报名截止</div>
-      <div class="subitem">2018-12.03 14:00-18:0</div>
+      <div class="subitem">{{applicationDetail.deadline}}</div>
       <div class="subhead">时间地点</div>
-      <div class="subitem">时间：2018-12.03 14:00-18:00</div>
-      <div class="subitem">电话：（020）89810811</div>
-      <div class="subitem">地址：广东省广州市天河区兴民路222号天盈广场东塔10楼1005室</div>
+      <div class="subitem">时间：{{applicationDetail._staEndtime}}</div>
+      <!-- <div class="subitem">电话：（020）89810811</div> -->
+      <div class="subitem">地址：{{applicationDetail.detAddress}}</div>
     </div>
     <!-- 报名须知 -->
-    <div class="notice">
+    <div class="notice" v-if="detailInfo.notice">
       <h3 class="acthead">
        报名须知<span class="acthead_sub">REGISTRATION NOTICE</span>
       </h3>
       <ul class="notice-items">
-        <li class="notice_item"> 1、本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。</li>
-        <li class="notice_item"> 2、这必将成为华南地区迄今为止最令人惊叹、空前绝后的文艺盛事。</li>
-        <li class="notice_item"> 3、本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。</li>
-        <li class="notice_item"> 4、这必将成为华南地区迄今为止最令人惊叹、空前绝后的文艺盛事。</li>
-        <li class="notice_item"> 5、本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。 </li>
-        <li class="notice_item"> 6、这必将成为华南地区迄今为止最令人惊叹、空前绝后的文艺盛。 </li>
+        <li class="notice_item">
+          {{detailInfo.notice}}
+        </li>
       </ul>
     </div>
     <!-- 其它信息 -->
-    <div class="others">
+    <div class="others" v-if="detailInfo.otherInfo">
       <h3 class="acthead">
         其它信息<span class="acthead_sub">OTHER INFORMATION</span>
       </h3>
-      <div class="others-html"></div>
+      <div class="others-html" v-html="detailInfo.otherInfo"></div>
     </div>
     <!-- 合作伙伴 -->
-    <div class="cooperation">
+    <div class="cooperation" v-if="detailInfo.organizer || detailInfo.coorganizer">
       <h3 class="acthead">
         合作伙伴<span class="acthead_sub">PARTNER</span>
       </h3>
-      <div class="coop-one">
+      <div class="coop-one" v-if="detailInfo.organizer && detailInfo.organizer.length > 0">
         <div class="coop-head">主办方</div>
         <div class="coop-items">
-          <div class="coop_item" v-for="n in 3">
-            <img :src="require('~/assets/img/001.jpg')" alt="">
+          <div class="coop_item" v-for="(organ, index) in detailInfo.organizer" :key="index">
+            <img v-lazy="organ" alt="">
           </div>
         </div>
       </div>
-      <div class="coop-one">
+      <div class="coop-one" v-if="detailInfo.coorganizer">
         <div class="coop-head">协办方/赞助商</div>
         <div class="coop-items">
-          <div class="coop_item" v-for="n in 6">
-            <img :src="require('~/assets/img/001.jpg')" alt="">
+          <div class="coop_item" v-for="(coor, index) in detailInfo.coorganizer" :key="index">
+            <img v-lazy="coor" alt="">
           </div>
         </div>
       </div>
     </div>
-    <div class="period">
+    <div class="period" v-if="pastActList.length > 0">
       <h3 class="acthead">
         往期活动<span class="acthead_sub">OTHER INFORMATION</span>
       </h3>
       <div class="period-list">
-        <div class="actlist">
+        <div class="actlist" v-for="(past, index) in pastActList" :key="index">
           <div class="actlist-bk">
-            <span class="theme">官方<br>活动</span>
-            <span class="status sign">报名中</span>
-            <span class="status carry">进行中</span>
-            <span class="status ends">已结束</span>
+            <!-- 活动类型 -->
+            <span class="theme" v-if="past.themeType === 1">官方<br>活动</span>
+            <span class="theme" v-if="past.themeType === 2">合作<br>活动</span>
+            <span class="theme" v-if="past.themeType === 3">酒展</span>
+            <!-- 活动状态 -->
+            <span class="status sign" v-if="past.status === 1">报名中</span>
+            <span class="status carry" v-if="past.status === 2 || past.status === 3">进行中</span>
+            <span class="status carry" v-if="past.status === 4">已结束</span>
           </div>
           <div class="actlist-head">
-            <span class="head">第38期 | 红酒之夜</span>
-            <span class="subhead">2018快海购红酒沙龙</span>
+            <span class="head">第{{past.period}}期 | {{past.theme}}</span>
+            <span class="subhead">{{past.title}}</span>
           </div>
-          <div class="actlist-same">活动时间：2018年7月8日-2018年7月9日</div>
-          <div class="actlist-same">活动地点：广州市天河区珠江新城四季酒店68层2号展厅</div>
-        </div>
-        <div class="actlist">
-          <div class="actlist-bk">
-            <span class="theme">官方<br>活动</span>
-            <span class="status sign">报名中</span>
-            <span class="status carry">进行中</span>
-            <span class="status ends">已结束</span>
-          </div>
-          <div class="actlist-head">
-            <span class="head">第38期 | 红酒之夜</span>
-            <span class="subhead">2018快海购红酒沙龙</span>
-          </div>
-          <div class="actlist-same">活动时间：2018年7月8日-2018年7月9日</div>
-          <div class="actlist-same">活动地点：广州市天河区珠江新城四季酒店68层2号展厅</div>
+          <div class="actlist-same">活动时间：{{past._strTime}}</div>
+          <div class="actlist-same">活动地点：{{past._dz}}</div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+  import { munityApi } from '~/api/community'
+  import tools from '~/utils/tools'
   export default {
+    asyncData (req) {
+      const munityId = req.params.id
+      const detFn = munityApi.serverDetail(munityId, req)
+      const voteFn = munityApi.serverVote(munityId, req)
+      return Promise.all([detFn, voteFn]).then(([detRes, voteRes]) => {
+        if (detRes.code === 200 && voteRes.code === 200) {
+          const detData = detRes.data
+          console.log('detData', detData)
+          // 流程, 盲品， 大咖
+          let { processReqList, blindTastingRespList, activityPersonRespList } = detData
+          processReqList = processReqList.map(item => {
+            const { startProcess, endProcess } = item
+            item._strTime = tools.concatDate(startProcess, endProcess)
+            return item
+          })
+          // 酒款
+          const { goodsMinimalRespList, activityOtherGoodsRespList } = detData
+          // 报名截止时间, 报名须知
+          let { deadline, startTime, endTime } = detData
+          let _staEndtime
+          if (deadline) {
+            let objtime = new Date(deadline)
+            deadline = tools.formatDate(objtime, { ifMinutes: true })
+          }
+          if (startTime && endTime) {
+            _staEndtime = tools.concatDate(startTime, endTime)
+          }
+          let { province, city, district, address } = detData
+          let __province = tools.getStrIndex(province)
+          let __city = tools.getStrIndex(city)
+          let __district = tools.getStrIndex(district)
+          let detAddress = __province + __city + __district + address
+          let _appdetail = { _staEndtime, deadline, detAddress }
+          //  往期
+          let { activityPastRespList } = detData
+          let _pastList = []
+          if (Array.isArray(activityPastRespList)) {
+            _pastList = activityPastRespList.map(v => {
+              // 处理地址
+              const { province, city, district, address } = v
+              const _province = tools.getStrIndex(province)
+              const _city = tools.getStrIndex(city)
+              const _district = tools.getStrIndex(district)
+              const _dz = _province + _city + _district + address
+              const { createdAt, endTime } = v
+              // 处理时间
+              const _strTime = tools.concatDate(createdAt, endTime)
+              v._dz = _dz
+              v._strTime = _strTime
+              return v
+            })
+          }
+          return {
+            detailInfo: detData,
+            processList: processReqList,
+            blindList: blindTastingRespList,
+            bigshotList: activityPersonRespList,
+            buygoodsList: goodsMinimalRespList,
+            othergoodsList: activityOtherGoodsRespList,
+            pastActList: _pastList,
+            applicationDetail: _appdetail
+          }
+        }
+      })
+    },
     data () {
       return {
+        detailInfo: {}, // 全部信息
+        processList: [], // 活动流程
+        blindList: [], // 盲品
+        bigshotList: [], // 大咖
+        buygoodsList: [], // 在售酒款
+        othergoodsList: [], // 其它酒款
+        pastActList: [], // 往期活动
+        regDeadtime: '', // 报名截止时间
+        applicationDetail: {}, // 报名详情
         swiperBlind: {
           speed: 800,
           slidesPerView: 'auto'
@@ -464,6 +457,11 @@
           slidesPerView: 'auto'
         }
       }
+    },
+    mounted () {
+      setTimeout(() => {
+        console.log(this.detailInfo)
+      }, 100)
     }
   }
 </script>
@@ -952,8 +950,8 @@
           height: 80px;
           float: left;
           border-radius: 40px;
-          background: pink;
           margin-left: -90px;
+          .bg_cover;
         }
 
         .item_r {
@@ -1130,10 +1128,10 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                width: 200px;
+                width: 210px;
                 margin: 15px 0;
                 &_l {
-                  width: 73px;
+                  width: 80px;
                   font-size: 12px;
                   font-family: PingFang-SC-Regular;
                   font-weight: 400;
@@ -1141,7 +1139,7 @@
                 }
                 &_r {
                   position: relative;
-                  width: 117px;
+                  width: 120px;
                   height: 10px;
                   background: #EFF9FC;
                   border-radius: 5px;
