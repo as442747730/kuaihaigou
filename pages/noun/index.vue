@@ -1,7 +1,9 @@
 <template>
   <div class="noun">
     <div class="noun-head">
-      <com-head titleConfig="名词解释"></com-head>
+      <com-head titleConfig="名词解释">
+        <div class="search"></div>
+      </com-head>
       <div class="topnav">
         <div
           class="item"
@@ -55,12 +57,12 @@
         </div>
       </div>
       <div class="lynav">
-        <div class="lynav_item" :class="{active: lynavIndex === 0}" @click="lynavFn(0)">{{getType}}介绍</div>
-        <div class="lynav_item" :class="{active: lynavIndex === 1}" @click="lynavFn(1)">{{getType}}图片
+        <div class="lynav_item" :class="{active: lynavIndex === 0}">{{getType}}介绍</div>
+        <div class="lynav_item" :class="{active: lynavIndex === 1}">{{getType}}图片
           <span>（{{imagesArr.length}}）</span>
         </div>
       </div>
-      <section v-if="lynavIndex === 0">
+      <section>
         <div class="introduce" v-if="objDetail.baikeMessageList">
           <div class="introduce-item" v-for="(bakeMes, index) in objDetail.baikeMessageList" :key="index">
             <span>{{bakeMes.name}}:</span>
@@ -73,34 +75,11 @@
           <div class="cont content-wrapper" v-html="objDetail.content"></div>
         </div>
       </section>
-      <section class="picture" v-if="lynavIndex === 1">
-        <ul class="picture-uls">
-          <li
-            class="uls_li"
-            ref="liImg"
-            v-for="(image, index) in imgsArray"
-            :style="{'height': image._height + 'px'}"
-            @click="opImage(index)"
-            :key="index">
-            <img v-lazy="image.src" />
-          </li>
-        </ul>
-      </section>
       <div class="foot" @click="lookMoreFn" v-if="isMore">
         <span> 查看更多 ></span>
       </div>
     </section>
     <!-- 详情 end -->
-
-    <!--
-      文章评论
-      type -> 文章类型
-      articelId -> 文章id
-      ifLike -> 是否喜欢
-      ifCollect -> 是否收藏
-    -->
-    <articel-comment v-show='!isMore' :type='articelType' :articelId='objDetail.id' :ifLike='objDetail.ifLike' :ifCollect='objDetail.ifCollect'></articel-comment>
-
     <!-- 筛选器 start -->
     <cpmOne
       :isShow="showone"
@@ -122,9 +101,6 @@
 import comHead from '~/components/com-head'
 import CpmOne from '~/components/noun/Cpmone'
 import { encyApi } from '~/api/encys'
-import { ImagePreview } from 'vant'
-import tools from '~/utils/tools'
-import articelComment from '@/components/articel/Comment'
 export default {
   head () {
     return {
@@ -136,12 +112,10 @@ export default {
   },
   components: {
     comHead,
-    CpmOne,
-    articelComment
+    CpmOne
   },
   async asyncData (req) {
     let queryNum = req.query.num
-    console.log('queryNum', queryNum, typeof queryNum)
     if (queryNum === '0') {
       // 红葡萄 1， 白葡萄 2
       let varietyId = 1
@@ -238,7 +212,6 @@ export default {
     }
   },
   mounted () {
-    console.log('11', this.objDetail)
   },
   methods: {
     elNavs (index) {
@@ -257,25 +230,11 @@ export default {
         this.showone = !this.showone
       }
     },
-    lynavFn (index) {
-      // 介绍 图片
-      if (this.lynavIndex === 0 && this.isMore) {
-        return
-      }
-      if (index === 1) {
-        this.adjustImage()
-      }
-      this.lynavIndex = index
-    },
     winerySortFn (sorts) {
       // console.log(sorts, 'sorts')
       let params = { sortedBy: sorts.sortkey }
       Object.assign(this.wineryParams, params)
       this.getWineryList()
-    },
-    goWinery (winery) {
-      // console.log(winery, 'winery')
-      this.getWineryDetail(winery.wineryid)
     },
     clorsFn (index) {
       this.varity.corIndex = index
@@ -367,9 +326,19 @@ export default {
         this.getWineryList()
       }
     },
+    goWinery (winery) {
+      let encyId = winery.wineryid
+      window.location.href = '/noun/detail/' + encyId + '?num=' + 2
+    },
     lookMoreFn () {
-      this.isScorll = true
-      this.isMore = false
+      let _index = this.navIndex
+      let encyId
+      if (_index === 0) {
+        encyId = this.selectVarietyId
+      } else if (_index === 1) {
+        encyId = this.selectAreaId
+      }
+      window.location.href = '/noun/detail/' + encyId + '?num=' + _index
     },
     async getInitials () {
       // 品种 首字母
@@ -434,47 +403,6 @@ export default {
         this.isWineryList = true
         this.showone = false
       }
-    },
-    async getWineryDetail (wineryId) {
-      // 酒庄详情
-      const { code, data } = await encyApi.getWineryDetail(wineryId)
-      if (code === 200) {
-        console.log('data', data)
-        this.isWineryList = false
-        this.isScorll = false
-        this.isMore = true
-        this.objDetail = data
-        this.imagesArr = !data.imgs ? [] : data.imgs
-      }
-    },
-    opImage (position, timer) {
-      // 展示大图
-      let images = this.imagesArr
-      const instance = ImagePreview({
-        images,
-        asyncClose: !!timer,
-        startPosition: typeof position === 'number' ? position : 0
-      })
-      if (timer) {
-        setTimeout(() => {
-          instance.close()
-        }, timer)
-      }
-    },
-    adjustImage () {
-      // 图片高度 宽度 105
-      let _promises = this.imagesArr.map(path => {
-        return tools.getImgInfos(path, 105)
-      })
-      Promise.all(_promises).then(res => {
-        console.log('res', res)
-        this.imgsArray = res
-        this.$nextTick(() => {
-          tools.waterFall('.uls_li', '.picture-uls', 3)
-        })
-      }).catch(err => {
-        console.log(err)
-      })
     }
   },
   watch: {
@@ -500,6 +428,39 @@ export default {
     height: 85px;
     background: @bgcor1;
     z-index: 100;
+  }
+  .heads {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 45px;
+    box-sizing: border-box;
+    border-bottom: 1PX solid #F1F1F1;
+    .icon_back {
+      position: relative;
+      width: 45px;
+      height: 100%;
+      &:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 14px;
+        margin-top: -7px;
+        margin-left: -4px;
+        background-image: url('~/assets/img/Icons/ic_return_b_30x30@2x.png');
+        background-position: 50% 50%;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+    }
+    .title {
+      font-size: 17px;
+      font-family: PingFangSC-Medium;
+      font-weight: bold;
+      color: rgba(51, 51, 51, 1);
+    }
   }
   .topnav {
     height: 40px;

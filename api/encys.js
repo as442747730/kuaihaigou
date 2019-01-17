@@ -19,8 +19,14 @@ export const encyApi = {
   serverCountry (id, req) {
     return request.serverGet('/api/baike/listCountryForArea/' + id, null, req)
   },
+  serverAreaDetail (id, req) {
+    return request.serverGet('/api/baike/getAreaDetail/' + id, { areaid: id }, req)
+  },
   serverWineryCountry (id, req) {
     return request.serverGet('/api/baike/listCountryForWinery/' + id, null, req)
+  },
+  serverWineryDetail (id, req) {
+    return request.serverGet('/api/baike/getWineryDetail/' + id, { wineryid: id }, req)
   },
   /* ----------------- client  ------------------ */
   // 获取品种
