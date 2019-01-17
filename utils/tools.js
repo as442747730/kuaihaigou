@@ -175,6 +175,21 @@ export default {
       console.log('该地址没有参数')
     }
   },
+  getUrlQues2 (que) {
+    let webUrl = window.location.search
+    console.log(webUrl)
+    if (webUrl.includes('?')) {
+      let dealUrl = webUrl.split('?')[1]
+      let queArr = dealUrl.split('&')
+      let ewArr = queArr.map(v => {
+        v = v.split('=')
+        return v
+      })
+      return new Map(ewArr).get(que)
+    } else {
+      console.log('该地址没有参数')
+    }
+  },
   /**
    * ['1032464259549761537_白葡萄'] => [{name: '白葡萄', id: '1032464259549761537'}]
    **/

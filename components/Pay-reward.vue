@@ -1,3 +1,7 @@
+<!-- 
+  本模块在知识分享详情页和个人主页打赏页均有用到
+  有articleId -> 知识分享，没有就是个人主页
+ -->
 <template>
   <van-actionsheet class='pay-methods u-reward' v-model="payShow" :close-on-click-overlay='false'>
     <div class="pay-methods-top">
@@ -41,22 +45,23 @@
         type: Boolean
       },
       articelId: {
-        type: String
+        type: String,
+        default: null
       },
       userid: {
         type: String
+      },
+      setRewardIndex: {
+        type: Number,
+        default: null
       }
     },
 
     watch: {
       async payShow (val) {
         if (val) {
-          // const { code, data } = await orderApi.getPayMsg(this.orderId)
-          // if (code === 200) {
-          //   this.orderInfo = data
-          //   console.log(data)
-          //   this.countTime(parseInt(data.timestamp / 1000) + 10)
-          // }
+          this.rewardIndex = this.setRewardIndex ? this.setRewardIndex : 0
+          this.amount = this.rewardData[this.setRewardIndex || this.rewardIndex].price
         }
       }
     },
@@ -88,13 +93,13 @@
           price: 520,
           desc: '带我飞'
         }],
-
-        rewardIndex: 0
+        rewardIndex: null
       }
     },
 
     created () {
-      this.amount = this.rewardData[this.rewardIndex].price
+      this.rewardIndex = this.setRewardIndex ? this.setRewardIndex : 0
+      this.amount = this.rewardData[this.setRewardIndex || this.rewardIndex].price
     },
 
     methods: {
@@ -126,9 +131,15 @@
           }
           // 生成订单号
           this.rewardId = await this.createOrder(obj)
+          let returnUrl = ''
+          if (this.articelId) {
+            returnUrl = 'http://' + window.location.host + '/knowledge/detail/' + this.articelId + '?type=' + tools.getUrlQues('type') + '&rewardId=' + this.rewardId
+          } else {
+            returnUrl = 'http://' + window.location.host + '/user/reward?uid=' + this.userid + '&rewardId=' + this.rewardId
+          }
           const { code, data } = await rewardApi.alipayReward({
             rewardId: this.rewardId,
-            returnUrl: 'http://' + window.location.host + '/knowledge/detail/' + this.articelId + '?type=' + tools.getUrlQues('type') + '&rewardId=' + this.rewardId
+            returnUrl: returnUrl
           })
           if (code === 200) {
             this.zfbHtml = data.payInfo
