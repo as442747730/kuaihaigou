@@ -20,15 +20,17 @@
         <div class="close" @click="closeComponent"></div>
       </div>
       <div class="u-author-wrapper-bottom">
-        <p class="article-title">{{ user.title }}</p>
-        <div v-if="user.articleType === 1 && user.imgs.length !== 0" class="article-img" v-lazy:background-image="user.imgs[0]"></div>
-        <div class="video-box" v-else>
-          <video :src="user.videoPath" @loadedmetadata="loadVideoData" class="video-img">
-          </video>
-          <div class="play">00:00 / {{ videoTime }}</div>
-        </div>
-        <!-- todo -->
-        <van-button class="btn-bottom" round size="large">进入用户主页</van-button>
+        <a v-if='user.title' :href="'/knowledge/detail/' + user.id + '?type=' + user.articleType">
+          <p class="article-title">{{ user.title }}</p>
+          <div v-if="user.articleType === 1 && user.path" class="article-img" v-lazy:background-image="user.path"></div>
+          <div class="video-box" v-if='user.videoPath'>
+            <video :src="user.videoPath" @loadedmetadata="loadVideoData" class="video-img">
+            </video>
+            <div class="play">00:00 / {{ videoTime }}</div>
+          </div>
+        </a>
+
+        <van-button class="btn-bottom" round size="large" @click='toUserPage'>进入用户主页</van-button>
       </div>
     </div>
 
@@ -62,7 +64,7 @@ export default {
   methods: {
     // 关注切换
     async handleSubscribe () {
-      const { code } = await knowApi.subscribeUser({ userId: this.user.id })
+      const { code } = await knowApi.subscribeUser({ userId: this.user.userId })
       if (code === 506) {
         window.location.href = '/account/login'
       } else if (code === 200) {
@@ -76,6 +78,9 @@ export default {
     },
     closeComponent () {
       this.$emit('closeInfo')
+    },
+    toUserPage () {
+      window.location.href = '/user?uid=' + this.user.userId
     },
 
     formatVideoTime (v) {
@@ -217,10 +222,11 @@ export default {
         font-weight: bold;
         line-height: 25px;
         overflow : hidden;
-        text-overflow: ellipsis;
-        display:-webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+        max-height: 48px;
+        // text-overflow: ellipsis;
+        // display:-webkit-box;
+        // -webkit-line-clamp: 2;
+        // -webkit-box-orient: vertical;
         margin: 0 10px 10px 10px;
       }
       .article-img {
@@ -236,7 +242,7 @@ export default {
         position: relative;
         .video-img {
           width: 100%;
-          height: auto;
+          max-height: 180px;
           margin-bottom: 20px;
         }
         .play {
