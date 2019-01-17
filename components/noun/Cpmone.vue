@@ -67,7 +67,7 @@
               v-for="(world, index) in worlds"
               :class="{active: elAreas.worldId === world.id}"
               @click="worldFn(world)"
-              :key="index">{{world.name}}</div>
+              :key="index"><span>{{world.name}}</span></div>
           </div>
           <div :data-counId="elAreas.countryId" :class="['areas-country', {maxhight: elAreas.countryId || elAreas.countryId === '-1'}]">
             <ul class="country-l" :class="[{lb_ok: elAreas.countryId}]">
@@ -156,7 +156,7 @@
       </div>
     </transition>
     <transition name="fade">
-      <div class="modal" v-show="navIndex || navIndex === 0"></div>
+      <div class="smodal" v-show="navIndex || navIndex === 0"></div>
     </transition>
   </div>
 </template>
@@ -379,21 +379,36 @@ export default {
 @mlr: 19px;
 .cpmone {
   width: 100%;
+  height: 100vh;
   position: fixed;
-  top: 85px;
+  top: 0;
   left: 0;
+  overflow: hidden;
 }
 .sizer {
   z-index: 60;
-  background: #fff;
   position: relative;
-  height: calc(100vh - 85px);
-  max-height: calc(100vh - 85px);
+  padding-top: 85px;
+  height: 100vh;
+  box-sizing: border-box;
+}
+.smodal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  overflow: hidden;
 }
 .variety {
   padding: 0 @plr;
   max-height: calc(100% - 50px);
   overflow: auto;
+  background: #fff;
 
   .secone {
     .sectitle {
@@ -579,6 +594,7 @@ export default {
 .areas {
   max-height: calc(100% - 50px);
   overflow: auto;
+  background: #fff;
   &-world {
     display: flex;
     padding: 18px @plr 30px;

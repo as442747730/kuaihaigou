@@ -19,7 +19,7 @@
      <transition name="slide-bottom">
       <div class="drop-wrapper-option" v-if="expstatus">
         <div class="drop-wrapper-body">
-          <div :class="['option-item']" v-for="(n, index) in 5" :key="index">状态A</div>
+          <div :class="['option-item']" v-for="(item, index) in stateArr" :key="index">{{item.status}}</div>
         </div>
       </div>
     </transition>
@@ -72,6 +72,13 @@ export default {
         {status: '官方活动', id: '1'},
         {status: '合作活动', id: '2'},
         {status: '酒会酒展', id: '3'}
+      ],
+      stateArr: [
+        {status: '不限状态', id: '0'},
+        {status: '活动报名中', id: '1'},
+        {status: '报名已结束', id: '2'},
+        {status: '活动进行中', id: '3'},
+        {status: '活动已结束', id: '4'}
       ],
       navIndex: 0,
       tranmit: {},
