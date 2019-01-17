@@ -54,18 +54,28 @@ export default {
    * @argument options * 配置参数
    * dayDelimiter * 年月日分隔符，默认 -
    * timeDelimiter * 时分秒分隔符，默认 :
+   * ifMinutes * 是否需要时分， 默认 fase
    * ifHaveTime * 是否需要时分秒，默认 false
    */
   formatDate (date, options) {
     if (!date || !date.getFullYear()) {
       throw new Error('请传入时间对象')
     }
+    console.log('options', options)
     options = options || {}
     options.dayDelimiter = options.dayDelimiter || '-'
     options.timeDelimiter = options.timeDelimiter || ':'
+    options.ifMinutes = options.ifMinutes || false
     options.ifHaveTime = options.ifHaveTime || false
     let str = ''
     str = date.getFullYear() + options.dayDelimiter + (date.getMonth() + 1) + options.dayDelimiter + date.getDate()
+    if (options.ifMinutes) {
+      const _h = date.getHours()
+      const _m = date.getMinutes()
+      const hh = _h < 10 ? '0' + _h : _h
+      const mm = _m < 10 ? '0' + _m : _m
+      str += ' ' + hh + options.timeDelimiter + mm
+    }
     if (options.ifHaveTime) {
       str += ' ' + date.getHours() + options.timeDelimiter + date.getMinutes() + options.timeDelimiter + date.getSeconds()
     }
