@@ -11,6 +11,7 @@
       <h3 class="acthead">活动简介</h3>
       <p>本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。这必将成为华南地区迄今为止最令人惊叹、空前绝后的文艺盛事。本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。这必将成为华南地区迄今为止最令人惊叹、空前绝后的文艺盛事。本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。</p>
     </div>
+    <!-- 活动流程 -->
     <div class="process">
       <h3 class="acthead">
           活动流程<span class="acthead_sub">ACTIVITY PROCESS</span>
@@ -52,19 +53,143 @@
         </div>
       </div>
     </div>
+    <!-- 盲品投票 前 -->
     <div class="blinds">
       <h3 class="acthead">
         盲品投票
         <span class="acthead_sub">BLIND VOTE</span>
         <span class="acthead_right">敬请期待</span>
       </h3>
-      <div class="blinds-list">
-        <div class="list-item">
-          <div class="item-logo">01</div>
-          <img class="item_img" :src="require('~/assets/img/img2.png')" />
+      <!-- marauto 只有一个 -->
+      <div :class="['blinds-list', {marauto: 1 !== 1}]" v-swiper:mySwiper1="swiperBlind">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide list-item">
+            <div class="item-logo">01</div>
+            <img class="item_img" :src="require('~/assets/img/img2.png')" />
+          </div>
+          <div class="swiper-slide list-item">
+            <div class="item-logo">02</div>
+            <img class="item_img" :src="require('~/assets/img/img2.png')" />
+          </div>
+          <div class="swiper-slide list-item">
+            <div class="item-logo">03</div>
+            <img class="item_img" :src="require('~/assets/img/img2.png')" />
+          </div>
         </div>
       </div>
     </div>
+    <!-- 盲品投票 后 -->
+    <div class="votes">
+      <h3 class="acthead">
+        盲品投票
+        <span class="acthead_sub">BLIND VOTE</span>
+      </h3>
+      <div :class="['votes-list', {marauto: 1 !== 1}]" v-swiper:mySwiper2="swiperVote">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide list-item">
+            <div class="item-info">
+              <div class="info-bk" v-lazy:background-image="require('~/assets/img/img.png')"></div>
+              <div class="info-detail">
+                <h4>
+                  <p>拉菲珍宝红葡萄酒干红拉菲</p>
+                </h4>
+                <div class="prices">
+                  <span class="rmb">¥799</span>
+                  <span class="dollar">$100.00</span>
+                </div>
+                <div class="overlike">
+                  <i class="overicon"></i>
+                  最喜欢（30）
+                </div>
+              </div>
+            </div>
+            <ul class="item-assess">
+              <li class="assess-list">
+                <div class="list-l">
+                  <div class="l_price">¥899</div>
+                  <p>估价最高</p>
+                </div>
+                <div class="list-r">
+                  <div class="r_name">小小猴子小小猴子小小猴子小小猴子小小猴子</div>
+                  <p></p>
+                </div>
+              </li>
+               <li class="assess-list">
+                <div class="list-l">
+                  <div class="l_price true_price">¥799</div>
+                  <p>估价最准</p>
+                </div>
+                <div class="list-r">
+                  <div class="r_name">小小猴子</div>
+                  <p></p>
+                </div>
+              </li>
+               <li class="assess-list">
+                <div class="list-l">
+                  <div class="l_price">¥699</div>
+                  <p>估价最低</p>
+                </div>
+                <div class="list-r">
+                  <div class="r_name">小小猴子</div>
+                  <p></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="swiper-slide list-item">
+            <div class="item-info">
+              <div class="info-bk" v-lazy:background-image="require('~/assets/img/img.png')"></div>
+              <div class="info-detail">
+                <h4>
+                  <p>拉菲珍宝红葡萄酒干红拉菲</p>
+                </h4>
+                <div class="prices">
+                  <span class="rmb">¥799</span>
+                  <span class="dollar">$100.00</span>
+                </div>
+                <div class="overlike">
+                  <i class="overicon"></i>
+                  最喜欢（30）
+                </div>
+              </div>
+            </div>
+            <ul class="item-assess">
+              <li class="assess-list">
+                <div class="list-l">
+                  <div class="l_price">¥899</div>
+                  <p>估价最高</p>
+                </div>
+                <div class="list-r">
+                  <div class="r_name">小小猴子小小猴子小小猴子小小猴子小小猴子</div>
+                  <p></p>
+                </div>
+              </li>
+               <li class="assess-list">
+                <div class="list-l">
+                  <div class="l_price true_price">¥799</div>
+                  <p>估价最准</p>
+                </div>
+                <div class="list-r">
+                  <div class="r_name">小小猴子</div>
+                  <p></p>
+                </div>
+              </li>
+               <li class="assess-list">
+                <div class="list-l">
+                  <div class="l_price">¥699</div>
+                  <p>估价最低</p>
+                </div>
+                <div class="list-r">
+                  <div class="r_name">小小猴子</div>
+                  <p></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 参与大咖 -->
     <div class="bigshot">
       <h3 class="acthead">
         参与大咖<span class="acthead_sub">PARTICIPATE IN BIG COFFEE</span>
@@ -83,6 +208,150 @@
         </div>
       </div>
     </div>
+    <div class="winemoney">
+      <h3 class="acthead">
+      活动酒款<span class="acthead_sub">ACTIVE WINE</span>
+    </h3>
+      <div class="wine-item wine-one">
+        <div class="item-head">快海购在售</div>
+        <div :class="['item-list', {marauto: 1 !== 1}]" v-swiper:mySwiper3="swiperBuy">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide list_one">
+              <div class="onemdl">
+                <div class="onemdl-l" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
+                <div class="onemdl-r">
+                  <h4>拉菲珍宝红葡萄酒</h4>
+                  <div class="tags">
+                    <span class="tagsub">750ml</span>
+                    <span class="tagsub">日常餐酒</span>
+                    <span class="tagsub">紧致单宁</span>
+                  </div>
+                  <div class="mdlbar">
+                    <div class="mdlbar_l">复杂： 30分</div>
+                    <div class="mdlbar_r">
+                      <div class="mdlbar_r-top w30"></div>
+                    </div>
+                  </div>
+                  <div class="mdlbar">
+                    <div class="mdlbar_l">果香：30分</div>
+                    <div class="mdlbar_r">
+                      <div class="mdlbar_r-top w30"></div>
+                    </div>
+                  </div>
+                  <div class="mdlbar">
+                    <div class="mdlbar_l">酸度：65分</div>
+                    <div class="mdlbar_r">
+                      <div class="mdlbar_r-top w30"></div>
+                    </div>
+                  </div>
+                  <div class="mdlbar">
+                    <div class="mdlbar_l">复杂：30分</div>
+                    <div class="mdlbar_r">
+                      <div class="mdlbar_r-top w30"></div>
+                    </div>
+                  </div>
+                  <div class="prices">
+                    <span class="actual">¥299</span>
+                    <span class="market">市场价：¥ 499</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide list_one">
+              <div class="onemdl">
+                <div class="onemdl-l" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
+                <div class="onemdl-r">
+                  <h4>拉菲珍宝红葡萄酒</h4>
+                  <div class="tags">
+                    <span class="tagsub">750ml</span>
+                    <span class="tagsub">日常餐酒</span>
+                    <span class="tagsub">紧致单宁</span>
+                  </div>
+                  <div class="mdlbar">
+                    <div class="mdlbar_l">复杂： 30分</div>
+                    <div class="mdlbar_r">
+                      <div class="mdlbar_r-top w30"></div>
+                    </div>
+                  </div>
+                  <div class="mdlbar">
+                    <div class="mdlbar_l">果香：30分</div>
+                    <div class="mdlbar_r">
+                      <div class="mdlbar_r-top w30"></div>
+                    </div>
+                  </div>
+                  <div class="mdlbar">
+                    <div class="mdlbar_l">酸度：65分</div>
+                    <div class="mdlbar_r">
+                      <div class="mdlbar_r-top w30"></div>
+                    </div>
+                  </div>
+                  <div class="mdlbar">
+                    <div class="mdlbar_l">复杂：30分</div>
+                    <div class="mdlbar_r">
+                      <div class="mdlbar_r-top w30"></div>
+                    </div>
+                  </div>
+                  <div class="prices">
+                    <span class="actual">¥299</span>
+                    <span class="market">市场价：¥ 499</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wine-item wine-two">
+        <div class="item-head">其他酒款</div>
+        <div :class="['item-list', {marauto: 1 !== 1}]" v-swiper:mySwiper4="swiperOther">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide list_one">
+              <div class="onemdl">
+                <div class="onemdl-l" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
+                <div class="onemdl-r">
+                  <h4>拉菲珍宝红葡萄酒</h4>
+                  <div class="tags">
+                    <span class="tagsub">750ml</span>
+                    <span class="tagsub">日常餐酒</span>
+                    <span class="tagsub">紧致单宁</span>
+                  </div>
+                  <div class="itemr-info">
+                    <span class="info_item icon_time">2016年</span>
+                    <span class="info_item icon_address">法国／波尔多</span>
+                    <span class="info_item icon_variety">黑皮诺</span>
+                  </div>
+                  <div class="prices">
+                    <span class="actual">¥299</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide list_one">
+              <div class="onemdl">
+                <div class="onemdl-l" v-lazy:background-image="require('~/assets/img/img2.png')"></div>
+                <div class="onemdl-r">
+                  <h4>拉菲珍宝红葡萄酒</h4>
+                  <div class="tags">
+                    <span class="tagsub">750ml</span>
+                    <span class="tagsub">日常餐酒</span>
+                    <span class="tagsub">紧致单宁</span>
+                  </div>
+                  <div class="itemr-info">
+                    <span class="info_item icon_time">2016年</span>
+                    <span class="info_item icon_address">法国／波尔多</span>
+                    <span class="info_item icon_variety">黑皮诺</span>
+                  </div>
+                  <div class="prices">
+                    <span class="actual">¥299</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      <!-- 报名详情 -->
     <div class="information">
       <h3 class="acthead">
         报名详情<span class="acthead_sub">DEADLINE</span>
@@ -94,9 +363,10 @@
       <div class="subitem">电话：（020）89810811</div>
       <div class="subitem">地址：广东省广州市天河区兴民路222号天盈广场东塔10楼1005室</div>
     </div>
+    <!-- 报名须知 -->
     <div class="notice">
       <h3 class="acthead">
-         报名须知<span class="acthead_sub">REGISTRATION NOTICE</span>
+       报名须知<span class="acthead_sub">REGISTRATION NOTICE</span>
       </h3>
       <ul class="notice-items">
         <li class="notice_item"> 1、本展览将在全球范围内首次运用崭新高科技形式来展现世界艺术史里的华彩篇章，落址于首次对外揭开神秘面纱的海心沙展馆。</li>
@@ -112,6 +382,7 @@
       <h3 class="acthead">
         其它信息<span class="acthead_sub">OTHER INFORMATION</span>
       </h3>
+      <div class="others-html"></div>
     </div>
     <!-- 合作伙伴 -->
     <div class="cooperation">
@@ -127,7 +398,7 @@
         </div>
       </div>
       <div class="coop-one">
-        <div class="coop-head">合作伙伴</div>
+        <div class="coop-head">协办方/赞助商</div>
         <div class="coop-items">
           <div class="coop_item" v-for="n in 6">
             <img :src="require('~/assets/img/001.jpg')" alt="">
@@ -135,8 +406,67 @@
         </div>
       </div>
     </div>
+    <div class="period">
+      <h3 class="acthead">
+        往期活动<span class="acthead_sub">OTHER INFORMATION</span>
+      </h3>
+      <div class="period-list">
+        <div class="actlist">
+          <div class="actlist-bk">
+            <span class="theme">官方<br>活动</span>
+            <span class="status sign">报名中</span>
+            <span class="status carry">进行中</span>
+            <span class="status ends">已结束</span>
+          </div>
+          <div class="actlist-head">
+            <span class="head">第38期 | 红酒之夜</span>
+            <span class="subhead">2018快海购红酒沙龙</span>
+          </div>
+          <div class="actlist-same">活动时间：2018年7月8日-2018年7月9日</div>
+          <div class="actlist-same">活动地点：广州市天河区珠江新城四季酒店68层2号展厅</div>
+        </div>
+        <div class="actlist">
+          <div class="actlist-bk">
+            <span class="theme">官方<br>活动</span>
+            <span class="status sign">报名中</span>
+            <span class="status carry">进行中</span>
+            <span class="status ends">已结束</span>
+          </div>
+          <div class="actlist-head">
+            <span class="head">第38期 | 红酒之夜</span>
+            <span class="subhead">2018快海购红酒沙龙</span>
+          </div>
+          <div class="actlist-same">活动时间：2018年7月8日-2018年7月9日</div>
+          <div class="actlist-same">活动地点：广州市天河区珠江新城四季酒店68层2号展厅</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+<script>
+  export default {
+    data () {
+      return {
+        swiperBlind: {
+          speed: 800,
+          slidesPerView: 'auto'
+        },
+        swiperVote: {
+          speed: 800,
+          slidesPerView: 'auto'
+        },
+        swiperBuy: {
+          speed: 800,
+          slidesPerView: 'auto'
+        },
+        swiperOther: {
+          speed: 800,
+          slidesPerView: 'auto'
+        }
+      }
+    }
+  }
+</script>
 <style lang="less" scoped>
 .comDetail {
   font-size: 14px;
@@ -187,6 +517,7 @@
       font-weight: 500;
       line-height: 12px;
       color: #DDDDDD;
+      margin-left: 10px;
     }
 
     &_right {
@@ -381,7 +712,12 @@
 
     &-list {
       padding: 20px 0 25px;
-
+      &.marauto {
+        padding-right: 20px;
+        .list-item {
+          margin: 0 auto;
+        }
+      }
       .list-item {
         width: 200px;
         height: 240px;
@@ -391,10 +727,7 @@
         border-radius: 6px;
         overflow: hidden;
         position: relative;
-
-        &+.list-item {
-          // margin-left: 20px;
-        }
+        margin-right: 20px;
 
         .item_img {
           display: inline-block;
@@ -445,6 +778,162 @@
     }
   }
 
+  .votes {
+    padding-left: 20px;
+    margin-top: 25px;
+
+    .acthead {
+      padding-right: 20px;
+    }
+
+    &-list {
+      padding: 20px 0 25px;
+      &.marauto {
+        padding-right: 20px;
+        .list-item {
+          margin: 0 auto;
+        }
+      }
+
+      .list-item {
+        width: 280px;
+        width:280px;
+        background: #fff;
+        border-radius:8px;
+        margin-right: 20px;
+
+        .item-info {
+          padding: 10px 20px 20px 10px;
+          display: flex;
+          align-items: center;
+          .info-bk {
+            flex-grow: 0;
+            width: 80px;
+            max-width: 80px;
+            min-width: 80px; 
+            height: 115px;
+            margin-right: 10px;
+            .bg_cover;
+          }
+          .info-detail {
+            flex-grow: 1;
+            h4 {
+              display: flex;
+              align-items: center;
+              height: 40px;
+              & > p {
+                font-size:16px;
+                font-family:PingFangSC-Medium;
+                font-weight:500;
+                color:rgba(51,51,51,1);
+                line-height:20px;
+              }
+            }
+            .prices {
+              margin: 15px 0 12px;
+              .rmb {
+                font-size:18px;
+                font-family:Impact;
+                color:rgba(249,156,0,1);
+                line-height:18px;
+              }
+              .dollar {
+                font-size:12px;
+                font-family:PingFangSC-Regular;
+                font-weight:400;
+                color:rgba(51,51,51,1);
+                margin-left: 6px;
+              }
+
+            }
+            .overlike {
+              width: 126px;
+              height: 24px;
+              line-height: 22px;
+              text-align: center;
+              border-radius:12px;
+              border:1px solid rgba(238,238,238,1);
+              font-size:12px;
+              font-family:PingFangSC-Regular;
+              font-weight:400;
+              color:rgba(153,153,153,1);
+              padding-left: 25px;
+              box-sizing: border-box;
+              .overicon {
+                float: left;
+                margin-left: -25px;
+                margin-top: -1px;
+                width: 24px;
+                height: 24px;
+                background-size: 24px 24px;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-image: url('~/assets/img/Icons/ic_like_r_24x24@2x.png');
+              }
+            }
+          }
+        }
+        .item-assess {
+          border-top: 1PX solid #D8D8D8;
+          padding-left: 20px;
+          padding-bottom: 30px;
+          .assess-list {
+            display: flex;
+            margin-top: 43px;
+            .list-l {
+              padding-left: 42px;
+              background-size: 30px 30px;
+              background-position: left center;
+              background-repeat: no-repeat;
+              background-image: url('~/assets/img/Icons/ic_price_t_30x30@2x.png');
+              .l_price {
+                font-size:18px;
+                font-family:Impact;
+                color:rgba(85,85,85,1);
+                line-height:18px;
+                &.true_price {
+                  color:rgba(249,156,0,1);
+                }
+              }
+              & > p {
+                margin-top: 7px;
+                font-size:13px;
+                font-family:PingFangSC-Regular;
+                font-weight:400;
+                color:rgba(136,136,136,1);
+                line-height:13px;
+              }
+            }
+            .list-r {
+              margin-left: 16px;
+              padding-left: 42px;
+              background-size: 36px 36px;
+              background-position: left center;
+              background-image: url('~/assets/img/pic_touxiang_01@2x.png');
+              background-repeat: no-repeat;
+              .r_name {
+                max-width: 100px;
+                font-size:12px;
+                font-family:PingFangSC-Semibold;
+                font-weight:600;
+                color:rgba(102,102,102,1);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+              &>p {
+                margin-top: 7px;
+                height: 15px;
+              }
+            }
+          }
+        }
+      }
+
+    }
+
+  }
+
   .bigshot {
     background: #fff;
     padding: 25px 20px 10px;
@@ -481,6 +970,7 @@
               font-family: PingFang-SC-Regular;
               font-weight: 400;
               color: rgba(102, 102, 102, 1);
+              margin-left: 10px;
             }
           }
 
@@ -506,6 +996,205 @@
         }
       }
     }
+  }
+
+  .winemoney {
+    background: #fff;
+    padding: 25px 0 10px;
+    margin-top: 10px;
+    .acthead {
+      padding: 0 20px;
+    }
+
+    .wine-item {
+      padding: 20px 0;
+      .item-head {
+        padding-left: 20px;
+        font-size: 14px;
+        font-family: PingFangSC-Semibold;
+        font-weight: 600;
+        color: rgba(3, 161, 205, 1);
+        line-height: 14px;
+        margin-bottom: 15px;
+      }
+      .item-list {
+        padding-left: 20px;
+        &.marauto {
+          padding-left: 0;
+          .list_one {
+            margin: 0 auto;
+          }
+        }
+        .list_one {
+          width: 320px;
+          border-radius: 8px;
+          border: 1PX solid #EAEAEA;
+          padding: 20px 10px 10px;
+          box-sizing: border-box;
+          margin-right: 20px;
+          .onemdl {
+            display: flex;
+            align-items: center;
+            &-l {
+              width: 80px;
+              // height: 180px;
+              min-width: 80px;
+              max-width: 80px;
+              margin-right: 10px;
+              flex-grow: 0;
+              .bg_cover;
+            }
+            &-r {
+              flex-flow: 1;
+              width: 100%;
+              h4 {
+                font-size:16px;
+                font-family:PingFangSC-Semibold;
+                font-weight:600;
+                color:rgba(51,51,51,1);
+              }
+              .tags {
+                font-size: 12px;
+                font-family: PingFang-SC-Regular;
+                font-weight: 400;
+                color: rgba(153, 153, 153, 1);
+                margin-top: 10px;
+
+                .tagsub {
+                  margin-top: 10px;
+
+                  &+.tagsub {
+                    margin-left: 5px;
+                    padding-left: 5px;
+                    position: relative;
+                    &:before {
+                      content: '';
+                      width: 1PX;
+                      height: 12px;
+                      background: pink;
+                      position: absolute;
+                      top: 50%;
+                      left: -1PX;
+                      margin-top: -6px;
+                      background: rgba(153,153,153,1);
+                    }
+                  }
+                }
+              }
+              .itemr-info {
+                .info_item {
+                  display: inline-block;
+                  height:24px;
+                  line-height: 24px;
+                  background:#DEF3F9;
+                  border-radius:12px;
+                  padding-left: 25px;
+                  padding-right: 5px;
+                  vertical-align: middle;
+                  margin-top: 10px;
+                  position: relative;
+                  font-size:12px;
+                  font-family:PingFangSC-Semibold;
+                  font-weight:600;
+                  color: #03A1CD;
+                  margin-left: 7px;
+                  &:before {
+                    content: '';
+                    width: 24px;
+                    height: 24px;
+                    position: absolute;
+                    top: 50%;
+                    left: 0;
+                    margin-top: -12px;
+                    .bg_cover;
+                  }
+
+                }
+                .icon_time {
+                  &:before {
+                    background-image: url('~/assets/img/Icons/ic_time_24x24.png');
+                  }
+                }
+                .icon_address {
+                  &:before {
+                    background-image: url('~/assets/img/Icons/ic_position_24x24.png');
+                  }
+                }
+                .icon_variety {
+                  &:before {
+                    background-image: url('~/assets/img/Icons/ic_grape_24x24.png');
+                  }
+                }
+              }
+              .mdlbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 200px;
+                margin: 15px 0;
+                &_l {
+                  width: 73px;
+                  font-size: 12px;
+                  font-family: PingFang-SC-Regular;
+                  font-weight: 400;
+                  color: @cor_666;
+                }
+                &_r {
+                  position: relative;
+                  width: 117px;
+                  height: 10px;
+                  background: #EFF9FC;
+                  border-radius: 5px;
+                  overflow: hidden;
+                  &-top {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 0;
+                    height: 10px;
+                    background: #59C2E1;
+                    border-radius: 5px;
+                    transition: .3s;
+                    &.w30 {
+                      width: 30px;
+                    }
+                  }
+                }
+              }
+              .prices {
+                margin-top: 12px;
+                .actual {
+                  font-size:18px;
+                  font-family:Impact;
+                  color:rgba(249,156,0,1);
+                  line-height:18px;
+                }
+                .market {
+                  font-size:12px;
+                  font-family:PingFang-SC-Medium;
+                  font-weight:500;
+                  color:rgba(153,153,153,1);
+                  margin-left: 10px;
+                  text-decoration: line-through
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .wine-one {
+      border-bottom: 1PX solid #F1F1F1;
+      .onemdl-l {
+        height: 180px;
+      }
+    }
+    .wine-two {
+      .onemdl-l {
+        height: 160px;
+      }
+    }
+
   }
 
   .information {
@@ -557,6 +1246,9 @@
     margin-top: 10px;
     background: #fff;
     padding: 25px 20px 30px;
+    &-html {
+      font-size: 14px;
+    }
   }
 
   .cooperation {
@@ -589,6 +1281,101 @@
           display: inline-block;
           height: 50px;
           width: auto;
+        }
+      }
+    }
+  }
+
+  .period {
+    margin-top: 10px;
+    background: #fff;
+    padding: 25px 20px 30px;
+    &-list {
+      .actlist {
+        margin-top: 20px;
+
+        &-bk {
+          height: 180px;
+          border-radius: 10px;
+          background-image: url('~/assets/img/img_shequhuodong_335x180@2x.png');
+          .bg_cover;
+          .theme {
+            float: left;
+            margin-left: 10px;
+            font-size:13px;
+            font-family:PingFangSC-Semibold;
+            font-weight:600;
+            color:rgba(255,255,255,1);
+            line-height:16px;
+            padding: 3px 5px;
+            background: rgba(0,0,0,.4);
+            position: relative;
+            &:before {
+              position: absolute;
+              left: 0;
+              bottom: -6px;
+              content: '';
+              width: 0;
+              height: 0;
+              border-style: solid;
+              border-width: 0 0 6px 20px;
+              border-color: transparent transparent transparent rgba(0,0,0,.4);
+            }
+            &:after {
+              position: absolute;
+              right: 0;
+              bottom: -6px;
+              content: '';
+              width: 0;
+              height: 0;
+              border-style: solid;
+              border-width: 0 20px 6px 0;
+              border-color: transparent rgba(0,0,0,.4) transparent transparent;
+            }
+          }
+          .status {
+            float: right;
+            margin-top: 10px;
+            margin-right: 10px;
+            font-size:14px;
+            font-family:PingFangSC-Semibold;
+            font-weight:600;
+            color:rgba(255,255,255,1);
+            line-height:14px;
+            padding: 7px 10px;
+            border-radius: 4px;
+          }
+          .sign{
+            background: #FF3333;
+          }
+          .carry {
+            background: #F99C00;
+          }
+          .ends {
+            background: #999999;
+          }
+        }
+
+        &-head {
+          margin-top: 13px;
+          margin-bottom: 10px;
+          font-size: 16px;
+          color: rgba(51, 51, 51, 1);
+          line-height: 16px;
+          font-family: PingFangSC-Semibold;
+
+          .head {
+            margin-right: 5px;
+            font-weight: 600;
+          }
+        }
+
+        &-same {
+          margin-top: 5px;
+          font-size: 12px;
+          font-family: PingFangSC-Regular;
+          font-weight: 400;
+          color: rgba(153, 153, 153, 1);
         }
       }
     }

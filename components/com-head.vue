@@ -89,6 +89,7 @@ header {
   line-height: 1;
   font-size: 12px;
   background: #fff;
+  box-sizing: border-box;
 
   .icon_back {
     // position: absolute;
