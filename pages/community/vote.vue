@@ -65,15 +65,18 @@ export default {
         return
       }
       let objBlind = this.blindList.map((v, index) => {
-        let { evaluate, blindId } = v
+        let { evaluate, id } = v
+        if (evaluate === '') {
+          evaluate = null
+        }
         let ifLike = false
         if (index === this.elIndex) {
           ifLike = true
         }
         return {
-          blindId: blindId,
+          blindId: id,
           ifLike: ifLike,
-          price: evaluate || 0
+          price: evaluate
         }
       })
       let params = {

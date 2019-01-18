@@ -3,12 +3,12 @@ import request from '~/utils/request'
 export const encyApi = {
   /* ----------------- server  ------------------ */
   // 红酒百科主页
-  encyclopediaHomePage (parame, req) {
-    return request.serverGet('/api/sk/encyclopediaHomePage/', parame, req)
+  encyclopediaHomePage (params, req) {
+    return request.serverGet('/api/sk/encyclopediaHomePage/', params, req)
   },
   // 行业热点主页
-  paginate (parame, req) {
-    return request.serverGet('/api/news/paginateClassificationNews/', parame, req)
+  paginate (params, req) {
+    return request.serverGet('/api/news/paginateClassificationNews/', params, req)
   },
   serverInitials (req) {
     return request.serverGet('/api/baike/listVarietyCategory', null, req)
@@ -16,14 +16,14 @@ export const encyApi = {
   serverVarietyList (id, req) {
     return request.serverGet('/api/baike/getVarietyDetail/' + id, { varietyid: id }, req)
   },
-  serverCountry (id, req) {
-    return request.serverGet('/api/baike/listCountryForArea/' + id, null, req)
+  serverCountry (params, req) {
+    return request.serverGet('/api/baike/listCountryForArea', params, req)
   },
   serverAreaDetail (id, req) {
     return request.serverGet('/api/baike/getAreaDetail/' + id, { areaid: id }, req)
   },
-  serverWineryCountry (id, req) {
-    return request.serverGet('/api/baike/listCountryForWinery/' + id, null, req)
+  serverWineryCountry (params, req) {
+    return request.serverGet('/api/baike/listCountryForWinery', params, req)
   },
   serverWineryDetail (id, req) {
     return request.serverGet('/api/baike/getWineryDetail/' + id, { wineryid: id }, req)
@@ -45,16 +45,16 @@ export const encyApi = {
    * 产区
    */
   // 获取国家
-  getAreaCountry (id) {
-    return request.clientGet('/api/baike/listCountryForArea/' + id)
+  getAreaCountry (params) {
+    return request.clientGet('/api/baike/listCountryForArea', params)
   },
   // 获取大产区
-  getAreaBig (countryid) {
-    return request.clientGet('/api/baike/listOneAreaByCountryidForArea/' + countryid)
+  getAreaBig (params) {
+    return request.clientGet('/api/baike/listOneAreaByCountryidForArea', params)
   },
   // 获取下一级产区
-  getAreaNext (areaid) {
-    return request.clientGet('/api/baike/listAreaBySuperiorAreaidForArea/', { areaid: areaid })
+  getAreaNext (params) {
+    return request.clientGet('/api/baike/listAreaBySuperiorAreaidForArea', params)
   },
   getAreaDetail (areaid) {
     // 产区详情
@@ -64,16 +64,16 @@ export const encyApi = {
    * 酒庄
    **/
   // 获取国家
-  getWineryCountry (id) {
-    return request.clientGet('/api/baike/listCountryForWinery/' + id)
+  getWineryCountry (params) {
+    return request.clientGet('/api/baike/listCountryForWinery', params)
   },
   // 获取大产区
-  getWineryBig (countryid) {
-    return request.clientGet('/api/baike/listOneAreaByCountryidForWinery/' + countryid)
+  getWineryBig (params) {
+    return request.clientGet('/api/baike/listOneAreaByCountryidForWinery', params)
   },
   // 获取下一级产区
-  getWineryNext (areaid) {
-    return request.clientGet('/api/baike/listAreaBySuperiorAreaidForWinery/', { areaid: areaid })
+  getWineryNext (params) {
+    return request.clientGet('/api/baike/listAreaBySuperiorAreaidForWinery', params)
   },
   // 酒庄列表
   getWineryList (params) {

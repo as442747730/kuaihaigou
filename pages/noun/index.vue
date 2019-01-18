@@ -135,16 +135,15 @@ export default {
       }
       return { letter: objInit, objDetail: objVariety, imagesArr: _imgArr, navIndex: 0, showone: true }
     } else if (queryNum === '1') {
-      let worldId = -1
-      const { code, data } = await encyApi.serverCountry(worldId, req)
+      const params = { classify: '-1' }
+      const { code, data } = await encyApi.serverCountry(params, req)
       if (code === 200) {
         let countrys = data.baikeCountryCountRespList
         return { countryList: countrys, navIndex: 1, showone: true }
       }
     } else if (queryNum === '2') {
-      let worldId = '-1'
-      const { code, data } = await encyApi.serverWineryCountry(worldId, req)
-      // console.log('data', data)
+      const params = { classify: '-1' }
+      const { code, data } = await encyApi.serverWineryCountry(params, req)
       if (code === 200) {
         let countrys = data.baikeCountryCountRespList
         return { countryList: countrys, navIndex: 2, showone: true }
@@ -170,11 +169,12 @@ export default {
       isScorll: false, // 页面是否可滚动
       isMore: true, // 是否显示 查看更多
       countryList: [],
-      selectWorldId: -1, // 默认世界（全部）
-      selectAreaId: -1, // 产区id(全部)
+      selectWorldId: null, // 默认世界（全部）
+      selectAreaId: null, // 产区id(全部)
+      areaparams: {}, // 产区参数集
       winerySortkey: [{name: '热门', sortkey: 1}, {name: '推荐', sortkey: 2}, {name: '知名度', sortkey: 3}, {name: '销量', sortkey: 4}],
       elSort: null,
-      wineryParams: {}, // 酒庄列表参数
+      wineryParams: {}, // 酒庄参数集
       isWineryList: false, // 是否显示酒庄列表
       wineryArr: [], // 酒庄列表
       articelType: '4' // 文章类型
@@ -215,23 +215,9 @@ export default {
   },
   methods: {
     elNavs (index) {
-      if (this.navIndex !== index) {
-        this.showone = true
-        this.navIndex = index
-        // 重置介绍图片
-        this.lynavIndex = 0
-        this.isMore = true
-        if (this.navIndex === 0) {
-          this.getInitials()
-        } else {
-          this.areaCountryFn()
-        }
-      } else {
-        this.showone = !this.showone
-      }
+      window.location.href = 'noun?num=' + index
     },
     winerySortFn (sorts) {
-      // console.log(sorts, 'sorts')
       let params = { sortedBy: sorts.sortkey }
       Object.assign(this.wineryParams, params)
       this.getWineryList()
@@ -272,7 +258,7 @@ export default {
       } else if (this.navIndex === 2) {
         let firstCountry = this.countryList[0].countryid
         let params = {
-          classify: -1,
+          classify: '-1',
           countryid: firstCountry
         }
         Object.assign(this.wineryParams, params)
@@ -296,25 +282,12 @@ export default {
           this.getVarietyDetail()
         }
         this.selectVarietyId = _id
-      } else if (this.navIndex === 1) {
-        // console.log(obj)
-        let { worldId, countryId, bigId, districtId, subId, smallId } = obj
-        let firstCountry = this.countryList[0].countryid
-        let _areaId = (!smallId || smallId === -4) ? ((!subId || subId === -3) ? ((!districtId || districtId === -2) ? ((!bigId || bigId === -1) ? ((!countryId || countryId === -1) ? ((!worldId || worldId === -1) ? firstCountry : worldId) : countryId) : bigId) : districtId) : subId) : smallId
-        console.log('_areaId ccc', _areaId)
-        if (this.selectAreaId === _areaId) {
-          this.getAreaDetail()
-        }
-        this.selectAreaId = _areaId
-      } else if (this.navIndex === 2) {
-        // console.log('obj winery', obj)
+      } else {
         /**
-         * 全部 {classify} -1, {countryid} -1
-         * 全部 {oneAreaId} -1, {twoAreaId} -2, {threeAreaId} -3, {fourAreaId} -4
-         *
+         * 全部 -1
         */
-        let { worldId, countryId, bigId, districtId, subId, smallId } = obj
-        let params = {
+        const { worldId, countryId, bigId, districtId, subId, smallId } = obj
+        const params = {
           classify: worldId,
           countryid: countryId,
           oneAreaId: bigId,
@@ -322,8 +295,13 @@ export default {
           threeAreaId: subId,
           fourAreaId: smallId
         }
-        Object.assign(this.wineryParams, params)
-        this.getWineryList()
+        if (this.navIndex === 1) {
+          Object.assign(this.areaparams, params)
+          this.getAreaDetail()
+        } else if (this.navIndex === 2) {
+          Object.assign(this.wineryParams, params)
+          this.getWineryList()
+        }
       }
     },
     goWinery (winery) {
@@ -360,18 +338,17 @@ export default {
       }
     },
     areaWorldFn (wroldId) {
-      // console.log('worldId', wroldId)
       this.selectWorldId = wroldId
       this.areaCountryFn()
     },
     async areaCountryFn () {
       // 世界的国家列表 1 => 产区； 2 => 酒庄
-      let id = this.selectWorldId
+      let params = { classify: this.selectWorldId }
       let countryFn
       if (this.navIndex === 1) {
-        countryFn = encyApi.getAreaCountry(id)
+        countryFn = encyApi.getAreaCountry(params)
       } else if (this.navIndex === 2) {
-        countryFn = encyApi.getWineryCountry(id)
+        countryFn = encyApi.getWineryCountry(params)
       }
       const { code, data } = await countryFn
       if (code === 200) {
@@ -380,7 +357,7 @@ export default {
     },
     async getAreaDetail () {
       // 产区详情
-      const { code, data } = await encyApi.getAreaDetail(this.selectAreaId)
+      const { code, data } = await encyApi.getAreaDetail(this.areaparams)
       if (code === 200) {
         // console.log('data', data)
         this.articelType = '5'
@@ -408,9 +385,6 @@ export default {
   watch: {
     selectVarietyId: function () {
       this.getVarietyDetail()
-    },
-    selectAreaId: function () {
-      this.getAreaDetail()
     }
   }
 }

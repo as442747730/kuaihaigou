@@ -310,17 +310,17 @@
         </div>
       </div>
     </div>
-    <div class="btns-group" @click="tovote">
-      <div class="btnitem btnstart" v-if="activeStatus === '0'">立即报名</div>
-      <div class="btnitem btnstart" v-if="activeStatus === '1'">已报名</div>
-      <div class="btnitem btnstart" v-if="activeStatus === '2'">报名结束</div>
-      <div class="btnitem btnstart" v-if="activeStatus === '3'">未开始</div>
-      <div class="btnitem btnstart" v-if="activeStatus === '4'">进行中</div>
-      <div class="btnitem btnstart" v-if="activeStatus === '5'">参与投票</div>
-      <div class="btnitem btnstart" v-if="activeStatus === '6'">已投票</div>
-      <div class="btnitem btnstart" v-if="activeStatus === '7'">投票结束</div>
-      <div class="btnitem btnstart" v-if="activeStatus === '8'">活动结束</div>
-      <div class="btnitem btnstart" v-if="activeStatus === '9'">活动已下线</div>
+    <div class="btns-group">
+      <div class="btnitem btncor1" v-if="activeStatus === '0'">立即报名</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '1'">已报名</div>
+      <div class="btnitem btncor3" v-if="activeStatus === '2'">报名结束</div>
+      <div class="btnitem btncor3" v-if="activeStatus === '3'">未开始</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '4'">进行中</div>
+      <div class="btnitem btncor4" v-if="activeStatus === '5'" @click="tovote">参与投票</div>
+      <div class="btnitem btncor5" v-if="activeStatus === '6'">已投票</div>
+      <div class="btnitem btncor6" v-if="activeStatus === '7'">投票结束</div>
+      <div class="btnitem btncor7" v-if="activeStatus === '8'">活动结束</div>
+      <div class="btnitem btncor7" v-if="activeStatus === '9'">活动已下线</div>
     </div>
   </div>
 </template>
@@ -1445,9 +1445,26 @@
     font-weight:500;
     color:rgba(255,255,255,1);
   }
-  .btnstart {
+  .btncor1 {
     background: #59C3E1;
   }
-
+  .btncor2 {
+    background: #03A1CD;
+  }
+  .btncor3 {
+    background: #CCCCCC;
+  }
+  .btncor4 {
+    background: #F99C00;
+  }
+  .btncor5 {
+    background: #F99C00;
+  }
+  .btncor6 {
+    background: #F99C00;
+  }
+  .btncor7 {
+    background: #CCCCCC;
+  }
 }
 </style>
