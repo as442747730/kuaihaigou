@@ -6,7 +6,7 @@
         <div class="jars-l_ym">{{ item.yymm }}</div>
       </div>
       <div class="jars-r">
-        <div class="tip">酒坛诗社</div>
+        <div class="tip" v-if='item.checkSign'>酒坛诗社</div>
         <p>{{ item.content }}</p>
       </div>
     </div>
@@ -58,6 +58,9 @@ export default {
   display: flex;
   padding: 25px 0;
   border-bottom: 1px solid @cor_border;
+  &:first-child {
+    padding-top: 0;
+  }
 
   .jars-l {
     display: flex;
@@ -105,6 +108,7 @@ export default {
       font-family: PingFangSC-Semibold;
       font-weight: 600;
       color: rgba(255, 255, 255, 1);
+      border-radius: 2PX;
     }
 
     &>p {

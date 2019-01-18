@@ -39,7 +39,7 @@
           <a class="navitem ic_gwc" href="/order/cart">购物车</a>
           <a class="navitem ic_wdgz" href="/order/list">我的订单</a>
           <a class="navitem ic_wdhd" href="#">我的活动</a>
-          <a class="navitem ic_wdsc" href="#">我的收藏</a>
+          <a class="navitem ic_wdsc" href="/mine/collect">我的收藏</a>
         </nav>
       </div>
       <div class="main-bottom">
@@ -49,11 +49,33 @@
           </div>
         </div>
         <section class="bottom-content" v-if="headactive === 0">
-          <u-article :artlist="artList"></u-article>
+          <u-article :artlist="artList" ></u-article>
         </section>
         <section class="bottom-content" v-else>
           <u-jarsclb :poetryList="poetrys"></u-jarsclb>
         </section>
+
+        <template v-if='headactive === 0'>
+          <div class='more-loading' v-show='artLoad'>
+            <van-loading type="spinner" />
+            <p>正在加载更多</p>
+          </div>
+
+          <div class="no-more" v-show='!artMore'>
+            <p>没有更多内容了！</p>
+          </div>
+        </template>
+        <template v-else>
+          <div class='more-loading' v-show='poesLoad'>
+            <van-loading type="spinner" />
+            <p>正在加载更多</p>
+          </div>
+
+          <div class="no-more" v-show='!poesMore'>
+            <p>没有更多内容了！</p>
+          </div>
+        </template>
+
       </div>
     </div>
     <van-popup class="vanpopup" v-model="showmenu" position="left">
@@ -82,10 +104,19 @@ export default {
   },
   async asyncData (req) {
     const { code: detCode, data: detData } = await userApi.serverPostInfo(req)
+    const { code: artCode, data: artData } = await userApi.serveGetAartical({ page: 1, count: 5 }, req)
     if (detCode === 506) {
       req.redirect('/account/login')
-    } else if (detCode === 200) {
-      return { userInfo: detData }
+    } else if (detCode === 200 && artCode === 200) {
+      let artMore = false
+      artMore = artData.total > 5
+      return {
+        userInfo: detData,
+        artList: artData.array,
+        artMore: artMore,
+        artLoad: artMore,
+        artTotalPage: artData.total
+      }
     } else {
       req.redirect('/error')
     }
@@ -112,26 +143,30 @@ export default {
       artTotalPage: 1,
       curArt: {
         page: 1,
-        count: 10
+        count: 5
       }, // 我的文章请求参数
-      artLoad: true,
-      artMore: true,
+      artLoad: false,
+      artMore: false,
       poetrys: [], // 酒坛诗社
       poetTotalPage: 1,
       curPoes: {
         page: 1,
-        count: 10
+        count: 5
       }, // 酒坛诗社请求参数
-      poesLoad: true,
+      poesLoad: false,
       poesMore: true,
-      showmenu: false // 是否显示菜单栏
+      showmenu: false, // 是否显示菜单栏
+
+      // pageEmpty: false,
+      // pageLoding: false,
+      isFirst: true
     }
   },
   created () {
-    this.getArts()
+    // this.getArts()
   },
   mounted () {
-    console.log(this.userInfo)
+    console.log(this.artMore)
     window.addEventListener('scroll', () => {
       let winH = document.documentElement.clientHeight || document.body.clientHeight
       let elemBound = this.$refs.scrollElem.getBoundingClientRect()
@@ -141,22 +176,24 @@ export default {
       if (bottomH <= 100) {
         if (this.headactive === 0) {
           if (this.artLoad && this.artMore) {
-            if (this.artTotalPage > this.curArt.page) {
-              this.artLoad = false
-              this.curPoes.page += 1
+            if (this.artTotalPage > this.curArt.page * 5) {
+              // this.artLoad = false
+              this.curArt.page += 1
               this.getArts()
             } else {
-              this.artMore = false
+              // this.pageEmpty = true
+              // this.artMore = false
             }
           }
         } else {
           if (this.poesLoad && this.poesMore) {
-            if (this.poetTotalPage > this.curPoes.page) {
+            if (this.poetTotalPage > this.curPoes.page * 5) {
               this.poesLoad = false
               this.curPoes.page += 1
               this.getpoetry()
             } else {
               this.poesMore = false
+              // this.pageEmpty = true
             }
           }
         }
@@ -166,8 +203,9 @@ export default {
   methods: {
     headFn (index) {
       this.headactive = index
-      if (index === 1) {
+      if (index === 1 && this.isFirst) {
         this.getpoetry()
+        this.isFirst = false
       }
     },
     tofollow (num) {
@@ -180,23 +218,27 @@ export default {
       this.showmenu = !this.showmenu
     },
     async getArts () {
+      this.artLoad = true
       // 获取文章
       let params = { ...this.curArt }
       const { code, data } = await userApi.getArticle(params)
       if (code === 200) {
         if (data && data.array) {
           this.artList.push(...data.array)
+          this.artMore = this.artTotalPage > this.curArt.page * 5
         }
         this.artLoad = true
       }
+      this.artLoad = false
     },
     async getpoetry () {
       // 酒坛诗社
+      this.poesLoad = true
       let params = { ...this.curPoes }
       const { code, data } = await userApi.windPoetry(params)
       if (code === 200) {
-        let { array, totalPageNo } = data
-        this.poetTotalPage = totalPageNo
+        let { array, total } = data
+        this.poetTotalPage = total
         let poeArr = array.map(v => {
           let { content, createdAt } = v
           let date = new Date(createdAt)
@@ -207,8 +249,8 @@ export default {
           return { content, yymm, dd }
         })
         this.poetrys.push(...poeArr)
-        this.artLoad = true
       }
+      this.poesLoad = false
     }
   }
 }

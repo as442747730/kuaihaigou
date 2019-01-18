@@ -136,8 +136,8 @@ export default {
   async asyncData (req) {
     const url = +req.query.type === 1 ? '/api/sk/getArticle/' : '/api/sk/getVideo/'
     return api.all([
-      api.serverGet(`${url}${req.params.id}`, { id: req.params.id }, req),
-      api.serverPost('/api/user/detail', null, req)
+      api.serverGet(`${url}${req.params.id}`, { id: req.params.id }, req), // 获取详情
+      api.serverPost('/api/user/detail', null, req) // 获取登陆者信息
     ])
       .then(api.spread(function (res1, res2) {
         if (res1.code === 200) {

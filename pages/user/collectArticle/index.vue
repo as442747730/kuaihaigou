@@ -21,7 +21,7 @@
             <!-- 文章 -->
             <div class="artcon" v-if='$v.articleType === 1' v-html='$v.summary'></div>
             <div class="imglist" v-if='$v.articleType === 1 && $v.imgsPaht'>
-              <div v-for="(item, index) in $v.imgsPaht" :key="index" :class="['imgitem', $v.imgsPaht.length === 1 ? 'big' : '' , $v.imgsPaht.length % 3 === 0 ? 'small' : '', $v.imgsPaht.length === 8 ? 'small' : '', ($v.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image='setImgUrl(item)'>
+              <div v-for="(item, index) in $v.imgsPaht" :key="index" :class="['imgitem', $v.imgsPaht.length === 1 ? 'big' : '' , $v.imgsPaht.length % 3 === 0 ? 'small' : '', $v.imgsPaht.length === 8 ? 'small' : '', ($v.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="setImgUrl(item) + '&' + new Date().getTime()">
               </div>
               <div class="imgitem small" v-if="$v.imgsPaht.length === 8"></div>
             </div>
@@ -115,7 +115,7 @@
           <a :href="'/noun/detail/' + $v.attrid + '?num=' + ($v.collectType - 4)">
             <h3 class="varity-head">{{ $v.title }}</h3>
             <div class="varity-bk">
-              <div class="varity-bk_in" v-lazy:background-image="$v.bgimg + '?imageView2/5/w/600/h/330'"></div>
+              <div class="varity-bk_in" v-lazy:background-image="$v.bgimg"></div>
             </div>
             <!-- <div class="varity-article" v-html='$v.summary'></div> -->
             <div class="varity-foot">
@@ -226,7 +226,17 @@ export default {
       const { code, data } = await personApi.collect({ page: page, count: 5, type: this.type, userId: this.uid })
       if (code === 200) {
         if (needClear) {
+          // data.array.forEach(v => {
+          //   if (v.collectType === 3) {
+          //     v.goodsMinimalResp.cover = v.goodsMinimalResp.cover + '?' + new Date().getTime()
+          //   } else if (v.collectType >= 4) {
+          //     v.bgimg = v.bgimg + '?' + new Date().getTime() + '&imageView2/5/w/600/h/330'
+          //   }
+          // })
+          this.collectData = []
           this.collectData = data.array
+          // setTimeout(() => {
+          // }, 1000)
         } else {
           this.collectData.push(...data.array)
         }
@@ -257,6 +267,9 @@ export default {
           Switch = true
         }, 150)
       }
+    },
+    setImgUrl (url) {
+      return url.indexOf('imageslim') !== -1 ? url.split('?')[0] + '?imageView2/5/w/480/h/480' : url + '?imageView2/5/w/480/h/480'
     }
   }
 }
