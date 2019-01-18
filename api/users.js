@@ -9,6 +9,19 @@ export const userApi = {
   serveGetAartical (params, req) {
     return request.serverGet('/api/sk/myCreation', params, req)
   },
+  serveClts (page, ifPopular = false, ifSellOut = false, req) {
+    let param = ''
+    if (ifPopular) {
+      param = '&ifPopular=' + ifPopular
+    } else if (ifSellOut) {
+      param = '&ifSellOut=' + ifSellOut
+    }
+    return request.serverGet('/api/goods/clts?page=' + page + '&count=5' + param, null, req)
+  },
+  // TA打赏我
+  serveRewardToMe (params, req) {
+    return request.serverGet('/api/reward/paginateRewardToMe', params, req)
+  },
   /* ------------------- lient ------------------- */
   // 获取用户详情
   userDetail () {
@@ -32,7 +45,7 @@ export const userApi = {
   },
   // 酒坛诗社
   windPoetry (params) {
-    return request.clientGet('/api/sign/paginateHomeUserSign', params)
+    return request.clientGet('/api/sign/paginateUserSign', params)
   },
   // 好友/粉丝列表
   friendlist (params, req) {
@@ -53,6 +66,20 @@ export const userApi = {
   // 修改手机号码
   updatephone (params) {
     return request.clientPost('/api/phone', params)
+  },
+  // 获取收藏商品
+  getClts (page, ifPopular = false, ifSellOut = false) {
+    let param = ''
+    if (ifPopular) {
+      param = '&ifPopular=' + ifPopular
+    } else if (ifSellOut) {
+      param = '&ifSellOut=' + ifSellOut
+    }
+    return request.clientGet('/api/goods/clts?page=' + page + '&count=5' + param)
+  },
+  // 分页查询我的文章收藏
+  collect (param) {
+    return request.clientGet('/api/article/paginateMyCollection', param)
   }
 }
 

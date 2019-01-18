@@ -21,8 +21,8 @@
           </div>
         </div>
         <div class="item-r">
-          <div class="item-gz item-xhgz" v-if="list.checkAttention && getNum === 2">相互关注</div>
-          <div class="item-gz item-ygz" v-else-if="list.checkAttention">
+          <div class="item-gz item-xhgz" v-if="list.checkAttention && getNum === '2'" @click='followFriend(list)'>相互关注</div>
+          <div class="item-gz item-ygz" v-else-if="list.checkAttention" @click='followFriend(list)'>
             <div class="gz_level ygz_level"></div>
             <p>已关注</p>
           </div>
@@ -118,11 +118,10 @@ export default {
       window.location.href = '/mine'
     },
     async followFriend (person) {
-      console.log(person)
       let params = { userId: person.id }
       const { code, data } = await userApi.likeFriend(params)
       if (code === 200) {
-        // console.log('data', data)
+        this.$toast(data)
         this.getList()
       } else {
         this.$toast(data)

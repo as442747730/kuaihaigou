@@ -329,8 +329,9 @@ export default {
             position: relative;
             .video-player {
               width: 100%;
-              height: auto;
+              max-height: 180px;
               border-radius: 5px;
+              margin: 5px 0;
             }
           }
           .imgs {
