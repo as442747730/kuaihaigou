@@ -3,31 +3,6 @@
     <div class="navbox">
       <div class="navitem" :class="{active: item.id === navIndex}" v-for="(item, index) in navList" @click="hrefFn(item)" :key="index">{{item.status}}</div>
     </div>
-    <div class="thembox">
-      <div :class="['thembox-item', {active: exptheme}]" @click="themFn">全部主题</div>
-      <div :class="['thembox-item', {active: expstatus}]" @click="statusFn">不限状态</div>
-    </div>
-    
-    <transition name="slide-bottom">
-      <div class="drop-wrapper-option" v-if="exptheme">
-        <div class="drop-wrapper-body">
-          <div :class="['option-item', {active: item.id === elthemeId}]" v-for="(item, index) in themeArr" :key="index" @click="elTheme(item.id)">{{item.theme}}</div>
-        </div>
-      </div>
-    </transition>
-
-     <transition name="slide-bottom">
-      <div class="drop-wrapper-option" v-if="expstatus">
-        <div class="drop-wrapper-body">
-          <div :class="['option-item', {active: item.id === elstateId}]" v-for="(item, index) in stateArr" :key="index" @click="elActive(item.id)">{{item.status}}</div>
-        </div>
-      </div>
-    </transition>
-
-    <transition name="fade">
-      <div class="modal" v-show="exptheme || expstatus"></div>
-    </transition>
-
     <section class="secbox" ref="scrollElem">
       <div class="seclist" ref="scrollChild" v-if="activeList.length > 0">
         <div class="actlist" v-for="(item, index) in activeList" :key="index" @click="toDetail(item.id)">
@@ -78,16 +53,11 @@ export default {
       count: 3,
       themeType: _themes
     }
-    const defparams = Object.assign({}, params)
-    const themeType = navstatus
     const listfn = munityApi.serverActiveList(params, req)
-    const themeFn = munityApi.serverTheme(themeType, req)
     // 异步
     const { code: listCode, data: listData } = await listfn
-    const { code: themeCode, data: themeData } = await themeFn
-    let _thems = []
     let _actList = []
-    if (listCode === 200 && themeCode === 200) {
+    if (listCode === 200) {
       const { array, page, totalPageNo } = listData
       const ismore = page < totalPageNo
       _actList = array.map(v => {
@@ -105,18 +75,13 @@ export default {
         return v
       })
       // 主题
-      _thems = themeData
-      const nolimt = { theme: '不限主题', id: '404' }
-      _thems.unshift(nolimt)
       return {
         curPage: page,
         totalPage: totalPageNo,
         moreData: ismore,
         navIndex: navstatus,
-        themeArr: _thems,
         activeList: _actList,
-        transmit: params,
-        defTransmit: defparams
+        transmit: params
       }
     }
   },
@@ -129,29 +94,15 @@ export default {
       hasScroll: false, // 是否有滚动
       loadTxt: '下拉加载更多',
       transmit: {},
-      defTransmit: {},
       navList: [
         {status: '全部活动', id: '0'},
-        {status: '官方活动', id: '1'},
-        {status: '合作活动', id: '2'},
-        {status: '酒会酒展', id: '3'}
+        {status: '未开始', id: '1'},
+        {status: '进行中', id: '2'},
+        {status: '已结束', id: '3'}
       ],
-      stateArr: [
-        {status: '不限状态', id: '0'},
-        {status: '活动报名中', id: '1'},
-        {status: '报名已结束', id: '2'},
-        {status: '活动进行中', id: '3'},
-        {status: '活动已结束', id: '4'}
-      ],
-      elstateId: '0',
       themeArr: [],
-      elthemeId: '404',
       activeList: [],
-      navIndex: '0',
-      // drop option
-      exptheme: false,
-      expstatus: false
-
+      navIndex: '0'
     }
   },
   mounted () {
@@ -197,36 +148,10 @@ export default {
       }
     },
     hrefFn (item) {
-      console.log('item', item)
-      window.location.href = '/community?status=' + item.id
-    },
-    themFn () {
-      this.exptheme = !this.exptheme
-      this.expstatus = false
-    },
-    elTheme (id) {
-      this.exptheme = false
-      this.expstatus = false
-      this.elthemeId = id
-      if (id === '404') id = null
-      let themeObj = { themeId: id }
-      Object.assign(this.transmit, themeObj)
-      this.fetchData(false)
-    },
-    statusFn () {
-      this.expstatus = !this.expstatus
-      this.exptheme = false
-    },
-    elActive (id) {
-      this.exptheme = false
-      this.expstatus = false
-      this.elstateId = id
-      let statusObj = { status: id }
-      Object.assign(this.transmit, statusObj)
-      this.fetchData(false)
+      window.location.href = '/community/mymunity?status=' + item.id
     },
     toDetail (id) {
-      window.location.href = './community/detail/' + id + '?page=1'
+      window.location.href = '/community/detail/' + id + '?page=2'
     }
   }
 }
@@ -245,6 +170,8 @@ export default {
     background: #fff;
     z-index: 40;
     position: relative;
+    border-bottom: 1PX solid @cor_border;
+    box-sizing: border-box;
 
     .navitem {
       padding: 10px 20px;
@@ -278,80 +205,9 @@ export default {
       }
     }
   }
-
-
-  .thembox {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    height: 32px;
-    background: #F5F5F5;
-    z-index: 40;
-    position: relative;
-    &-item {
-      font-size:13px;
-      font-family:PingFang-SC-Medium;
-      font-weight:500;
-      color:rgba(153,153,153,1);
-      padding-right: 16px;
-      position: relative;
-      &:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        right: 0;
-        width: 16px;
-        height: 12px;
-        transform: translateY(-50%);
-        background-size: 12px 12px;
-        background-repeat: no-repeat;
-        background-position: right center;
-        background-image: url('~/assets/img/Icons/ic_xiala_g_line_12x12.png');
-      }
-      &.active {
-        color: #333333;
-      }
-
-    }
-  }
-
   .secbox {
-    height: calc(100vh - 82px);
+    height: calc(100vh - 50px);
     overflow: auto;
-  }
-
-  .drop-wrapper-option {
-    width: 100%;
-    position: fixed;
-    z-index: 31;
-    top: 82px;
-    left: 0;
-    background: white;
-    .drop-wrapper-body {
-      padding: 16px 0;
-      .option-item {
-        text-align: center;
-        font-size: 13px;
-        color: @cor_999;
-        padding: 16px 0;
-        &.active {
-          color: @cor_333;
-          font-weight: bold;
-        }
-      }
-    }
-  }
-  .modal {
-    position: fixed;
-    top: 82px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 30;
-    background: rgba(0,0,0,.6);
-    width: 100%;
-    height: 100vh;
   }
 
   .seclist {

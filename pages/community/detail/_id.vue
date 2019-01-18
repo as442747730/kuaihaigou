@@ -1,249 +1,230 @@
 <template>
-  <div class="comDetail">
-    <div class="specific">
-      <div class="specific-bk" v-lazy:background-image="detailInfo.background"></div>
-      <div class="specific-head">
-        <span class="head">第{{detailInfo.period}}期 | {{detailInfo.theme}}</span>
-        <span class="subhead">{{detailInfo.title}}</span>
+  <div class="munitydeatil">
+    <div class="comDetail">
+      <div class="specific">
+        <div class="specific-bk" v-lazy:background-image="detailInfo.background"></div>
+        <div class="specific-head">
+          <span class="head">第{{detailInfo.period}}期 | {{detailInfo.theme}}</span>
+          <span class="subhead">{{detailInfo.title}}</span>
+        </div>
       </div>
-    </div>
-    <div class="introduction">
-      <h3 class="acthead">
-        活动简介<span class="acthead_sub">EVENT PROFILE</span>
-      </h3>
-      <p>{{detailInfo.introduce}}</p>
-    </div>
-    <!-- 活动流程 -->
-    <div class="process">
-      <h3 class="acthead">
-        活动流程<span class="acthead_sub">ACTIVITY PROCESS</span>
-      </h3>
-      <div class="remarks">
-        <time>{{detailInfo._staEndtime}}</time>
-        <p>备注：{{detailInfo.activityRemark}}</p>
+      <div class="introduction">
+        <h3 class="acthead">
+          活动简介<span class="acthead_sub">EVENT PROFILE</span>
+        </h3>
+        <p>{{detailInfo.introduce}}</p>
       </div>
-      <div class="process-list" v-if="processList.length > 0">
-        <div class="list-item" v-for="(process, index) in processList" :key="index">
-          <div class="list_head">
-            <span class="heads">
-                <div class="heads-child">
-                  <div class="child_index">{{index + 1}}</div>
-                  <div class="child_content">
-                    {{process.processName}}
+      <!-- 活动流程 -->
+      <div class="process">
+        <h3 class="acthead">
+          活动流程<span class="acthead_sub">ACTIVITY PROCESS</span>
+        </h3>
+        <div class="remarks">
+          <time>{{detailInfo._staEndtime}}</time>
+          <p>备注：{{detailInfo.activityRemark}}</p>
+        </div>
+        <div class="process-list" v-if="processList.length > 0">
+          <div class="list-item" v-for="(process, index) in processList" :key="index">
+            <div class="list_head">
+              <span class="heads">
+                  <div class="heads-child">
+                    <div class="child_index">{{index + 1}}</div>
+                    <div class="child_content">
+                      {{process.processName}}
+                    </div>
                   </div>
-                </div>
-              </span>
-          </div>
-          <div class="item_time">{{process._strTime}}</div>
-          <div class="item_speack">{{process.title}}</div>
-          <div class="item_speackword">{{process.content}}</div>
-          <div class="item_sub">{{process.subTitle}}</div>
-          <ul class="item_sublist" v-if="process.subProcessRespList && process.subProcessRespList.length > 0">
-            <li v-for="(subpro, subIndex) in process.subProcessRespList" :key="subIndex" v-if="subpro.content">
-              <div class="sublist_icon" v-lazy:background-image="subpro.img"></div>
-              <p class="sublist_content">{{subpro.content}}</p>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <!-- 盲品投票 前 -->
-    <div class="blinds" v-if="blindList.length > 0">
-      <h3 class="acthead">
-        盲品投票
-        <span class="acthead_sub">BLIND VOTE</span>
-        <span class="acthead_right">敬请期待</span>
-      </h3>
-      <!-- marauto 只有一个 -->
-      <div :class="['blinds-list', {marauto: blindList.length === 1}]" v-swiper:mySwiper1="swiperBlind">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide list-item" v-for="(blind, index) in blindList" :key="index">
-            <div class="item-logo" v-if="index < 9">0{{index + 1}}</div>
-            <div class="item-logo" v-else>{{index + 1}}</div>
-            <img class="item_img" v-lazy="blind.showImg" />
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- 盲品投票 后 -->
-    <div class="votes">
-      <h3 class="acthead">
-        盲品投票
-        <span class="acthead_sub">BLIND VOTE</span>
-      </h3>
-      <div :class="['votes-list', {marauto: 1 !== 1}]" v-swiper:mySwiper2="swiperVote">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide list-item">
-            <div class="item-info">
-              <div class="info-bk" v-lazy:background-image="require('~/assets/img/img.png')"></div>
-              <div class="info-detail">
-                <h4>
-                  <p>拉菲珍宝红葡萄酒干红拉菲</p>
-                </h4>
-                <div class="prices">
-                  <span class="rmb">¥799</span>
-                  <span class="dollar">$100.00</span>
-                </div>
-                <div class="overlike">
-                  <i class="overicon"></i>
-                  最喜欢（30）
-                </div>
-              </div>
+                </span>
             </div>
-            <ul class="item-assess">
-              <li class="assess-list">
-                <div class="list-l">
-                  <div class="l_price">¥899</div>
-                  <p>估价最高</p>
-                </div>
-                <div class="list-r">
-                  <div class="r_name">小小猴子小小猴子小小猴子小小猴子小小猴子</div>
-                  <p></p>
-                </div>
-              </li>
-               <li class="assess-list">
-                <div class="list-l">
-                  <div class="l_price true_price">¥799</div>
-                  <p>估价最准</p>
-                </div>
-                <div class="list-r">
-                  <div class="r_name">小小猴子</div>
-                  <p></p>
-                </div>
-              </li>
-               <li class="assess-list">
-                <div class="list-l">
-                  <div class="l_price">¥699</div>
-                  <p>估价最低</p>
-                </div>
-                <div class="list-r">
-                  <div class="r_name">小小猴子</div>
-                  <p></p>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div class="swiper-slide list-item">
-            <div class="item-info">
-              <div class="info-bk" v-lazy:background-image="require('~/assets/img/img.png')"></div>
-              <div class="info-detail">
-                <h4>
-                  <p>拉菲珍宝红葡萄酒干红拉菲</p>
-                </h4>
-                <div class="prices">
-                  <span class="rmb">¥799</span>
-                  <span class="dollar">$100.00</span>
-                </div>
-                <div class="overlike">
-                  <i class="overicon"></i>
-                  最喜欢（30）
-                </div>
-              </div>
-            </div>
-            <ul class="item-assess">
-              <li class="assess-list">
-                <div class="list-l">
-                  <div class="l_price">¥899</div>
-                  <p>估价最高</p>
-                </div>
-                <div class="list-r">
-                  <div class="r_name">小小猴子小小猴子小小猴子小小猴子小小猴子</div>
-                  <p></p>
-                </div>
-              </li>
-               <li class="assess-list">
-                <div class="list-l">
-                  <div class="l_price true_price">¥799</div>
-                  <p>估价最准</p>
-                </div>
-                <div class="list-r">
-                  <div class="r_name">小小猴子</div>
-                  <p></p>
-                </div>
-              </li>
-               <li class="assess-list">
-                <div class="list-l">
-                  <div class="l_price">¥699</div>
-                  <p>估价最低</p>
-                </div>
-                <div class="list-r">
-                  <div class="r_name">小小猴子</div>
-                  <p></p>
-                </div>
+            <div class="item_time">{{process._strTime}}</div>
+            <div class="item_speack">{{process.title}}</div>
+            <div class="item_speackword">{{process.content}}</div>
+            <div class="item_sub">{{process.subTitle}}</div>
+            <ul class="item_sublist" v-if="process.subProcessRespList && process.subProcessRespList.length > 0">
+              <li v-for="(subpro, subIndex) in process.subProcessRespList" :key="subIndex" v-if="subpro.content">
+                <div class="sublist_icon" v-lazy:background-image="subpro.img"></div>
+                <p class="sublist_content">{{subpro.content}}</p>
               </li>
             </ul>
           </div>
         </div>
       </div>
-    </div>
-    <!-- 参与大咖 -->
-    <div class="bigshot" v-if="bigshotList.length > 0">
-      <h3 class="acthead">
-        参与大咖<span class="acthead_sub">PARTICIPATE IN BIG COFFEE</span>
-      </h3>
-      <div class="bigshot-list">
-        <div class="list-item" v-for="(bigshot, index) in bigshotList" :key="index">
-          <div class="item_l" v-lazy:background-image="bigshot.img"></div>
-          <div class="item_r">
-            <div class="r_cards">
-              {{bigshot.name}}<span class="cards-sub"></span>
-            </div>
-            <div class="r_instroduce">
-              <p>{{bigshot.introduce}}</p>
+      <!-- 盲品投票 前 -->
+      <div class="blinds" v-if="blindList.length > 0 && votestatus !== 3">
+        <h3 class="acthead">
+          盲品投票
+          <span class="acthead_sub">BLIND VOTE</span>
+          <span class="acthead_right">敬请期待</span>
+        </h3>
+        <!-- marauto 只有一个 -->
+        <div :class="['blinds-list', {marauto: blindList.length === 1}]" v-swiper:mySwiper1="swiperBlind">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide list-item" v-for="(blind, index) in blindList" :key="index">
+              <div class="item-logo" v-if="index < 9">0{{index + 1}}</div>
+              <div class="item-logo" v-else>{{index + 1}}</div>
+              <img class="item_img" v-lazy="require('~/assets/img/Icons/img_jiu_02 copy@2x.png')" />
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="winemoney" v-if="buygoodsList.length > 0 ||othergoodsList.length > 0">
-      <h3 class="acthead">
-      活动酒款<span class="acthead_sub">ACTIVE WINE</span>
-    </h3>
-      <div class="wine-item wine-one" v-if="buygoodsList.length > 0">
-        <div class="item-head">快海购在售</div>
-        <div :class="['item-list', {marauto: buygoodsList.length === 1}]" v-swiper:mySwiper3="swiperBuy">
+      <!-- 盲品投票 后 -->
+      <div class="votes" v-if="voteList.length > 0 && votestatus === 3">
+        <h3 class="acthead">
+          盲品投票
+          <span class="acthead_sub">BLIND VOTE</span>
+        </h3>
+        <div :class="['votes-list', {marauto: voteList.length === 1}]" v-swiper:mySwiper2="swiperVote">
           <div class="swiper-wrapper">
-            <div class="swiper-slide list_one" v-for="(buygoods, index) in buygoodsList" :key="index">
-              <div class="onemdl">
-                <div class="onemdl-l" v-lazy:background-image="buygoods.cover"></div>
-                <div class="onemdl-r">
-                  <h4>{{buygoods.variety}}</h4>
-                  <div class="tags">
-                    <span class="tagsub" v-for="(tags, tagIndex) in buygoods.tagList">{{tags}}</span>
-                  </div>
-                  <div class="mdlbar" v-if="buygoods.acidity">
-                    <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
-                    <div class="mdlbar_r">
-                      <div class="mdlbar_r-top w30"></div>
-                    </div>
-                  </div>
-                  <div class="mdlbar" v-if="buygoods.bitterness">
-                    <div class="mdlbar_l">苦度：{{buygoods.bitterness}}分</div>
-                    <div class="mdlbar_r">
-                      <div class="mdlbar_r-top w30"></div>
-                    </div>
-                  </div>
-                  <div class="mdlbar" v-if="buygoods.astringency">
-                    <div class="mdlbar_l">涩度：{{buygoods.astringency}}分</div>
-                    <div class="mdlbar_r">
-                      <div class="mdlbar_r-top w30"></div>
-                    </div>
-                  </div>
-                  <div class="mdlbar" v-if="buygoods.fruity">
-                    <div class="mdlbar_l">果香：{{buygoods.fruity}}分</div>
-                    <div class="mdlbar_r">
-                      <div class="mdlbar_r-top w30"></div>
-                    </div>
-                  </div>
-                  <div class="mdlbar" v-if="buygoods.complexity">
-                    <div class="mdlbar_l">复杂度：{{buygoods.complexity}}分</div>
-                    <div class="mdlbar_r">
-                      <div class="mdlbar_r-top w30"></div>
-                    </div>
-                  </div>
+            <div class="swiper-slide list-item" v-for="(votes, index) in voteList" :key="index">
+              <div class="item-info">
+                <div class="info-bk" v-lazy:background-image="votes.showImg"></div>
+                <div class="info-detail">
+                  <h4>
+                    <p>{{votes.name}}</p>
+                  </h4>
                   <div class="prices">
-                    <span class="actual">¥{{buygoods.actualPrice}}</span>
-                    <span class="market">市场价：¥ 499</span>
+                    <span class="rmb">¥{{votes.priceRmb}}</span>
+                    <span class="dollar">${{votes.priceForeign}}</span>
+                  </div>
+                  <div class="overlike">
+                    <i class="overicon"></i>
+                    最喜欢（{{votes.likeNum}}）
+                  </div>
+                </div>
+              </div>
+              <ul class="item-assess">
+                <li class="assess-list">
+                  <div class="list-l" v-lazy:background-image="votes.maxHeadimgurl">
+                    <div class="l_price">¥{{votes.maxPrice}}</div>
+                    <p>估价最高</p>
+                  </div>
+                  <div class="list-r">
+                    <div class="r_name">{{votes.maxUsername}}</div>
+                    <p></p>
+                  </div>
+                </li>
+                 <li class="assess-list">
+                  <div class="list-l" v-lazy:background-image="votes.accurateHeadimgurl">
+                    <div class="l_price true_price">¥{{votes.accuratePrice}}</div>
+                    <p>估价最准</p>
+                  </div>
+                  <div class="list-r">
+                    <div class="r_name">{{votes.accurateUsername}}</div>
+                    <p></p>
+                  </div>
+                </li>
+                 <li class="assess-list">
+                  <div class="list-l" v-lazy:background-image="votes.minHeadimgurl">
+                    <div class="l_price">¥{{votes.minPrice}}</div>
+                    <p>估价最低</p>
+                  </div>
+                  <div class="list-r">
+                    <div class="r_name">{{votes.minUsername}}</div>
+                    <p></p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 参与大咖 -->
+      <div class="bigshot" v-if="bigshotList.length > 0">
+        <h3 class="acthead">
+          参与大咖<span class="acthead_sub">PARTICIPATE IN BIG COFFEE</span>
+        </h3>
+        <div class="bigshot-list">
+          <div class="list-item" v-for="(bigshot, index) in bigshotList" :key="index">
+            <div class="item_l" v-lazy:background-image="bigshot.img"></div>
+            <div class="item_r">
+              <div class="r_cards">
+                {{bigshot.name}}<span class="cards-sub"></span>
+              </div>
+              <div class="r_instroduce">
+                <p>{{bigshot.introduce}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="winemoney" v-if="buygoodsList.length > 0 ||othergoodsList.length > 0">
+        <h3 class="acthead">
+        活动酒款<span class="acthead_sub">ACTIVE WINE</span>
+        </h3>
+        <div class="wine-item wine-one" v-if="buygoodsList.length > 0">
+          <div class="item-head">快海购在售</div>
+          <div :class="['item-list', {marauto: buygoodsList.length === 1}]" v-swiper:mySwiper3="swiperBuy">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide list_one" v-for="(buygoods, index) in buygoodsList" :key="index">
+                <div class="onemdl">
+                  <div class="onemdl-l" v-lazy:background-image="buygoods.cover"></div>
+                  <div class="onemdl-r">
+                    <h4>{{buygoods.variety}}</h4>
+                    <div class="tags">
+                      <span class="tagsub" v-for="(tags, tagIndex) in buygoods.tagList">{{tags}}</span>
+                    </div>
+                    <div class="mdlbar" v-if="buygoods.acidity">
+                      <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
+                      <div class="mdlbar_r">
+                        <div class="mdlbar_r-top w30"></div>
+                      </div>
+                    </div>
+                    <div class="mdlbar" v-if="buygoods.bitterness">
+                      <div class="mdlbar_l">苦度：{{buygoods.bitterness}}分</div>
+                      <div class="mdlbar_r">
+                        <div class="mdlbar_r-top w30"></div>
+                      </div>
+                    </div>
+                    <div class="mdlbar" v-if="buygoods.astringency">
+                      <div class="mdlbar_l">涩度：{{buygoods.astringency}}分</div>
+                      <div class="mdlbar_r">
+                        <div class="mdlbar_r-top w30"></div>
+                      </div>
+                    </div>
+                    <div class="mdlbar" v-if="buygoods.fruity">
+                      <div class="mdlbar_l">果香：{{buygoods.fruity}}分</div>
+                      <div class="mdlbar_r">
+                        <div class="mdlbar_r-top w30"></div>
+                      </div>
+                    </div>
+                    <div class="mdlbar" v-if="buygoods.complexity">
+                      <div class="mdlbar_l">复杂度：{{buygoods.complexity}}分</div>
+                      <div class="mdlbar_r">
+                        <div class="mdlbar_r-top w30"></div>
+                      </div>
+                    </div>
+                    <div class="prices">
+                      <span class="actual">¥{{buygoods.actualPrice}}</span>
+                      <span class="market">市场价：¥ 499</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wine-item wine-two" v-if="othergoodsList.length > 0">
+          <div class="item-head">其他酒款</div>
+          <div :class="['item-list', {marauto: othergoodsList.length === 1}]" v-swiper:mySwiper4="swiperOther">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide list_one" v-for="(othergoods, index) in othergoodsList" :key="index">
+                <div class="onemdl">
+                  <div class="onemdl-l" v-lazy:background-image="othergoods.img"></div>
+                  <div class="onemdl-r">
+                    <h4>{{othergoods.name}}</h4>
+                    <div class="tags">
+                      <span class="tagsub">750ml</span>
+                      <span class="tagsub">日常餐酒</span>
+                      <span class="tagsub">紧致单宁</span>
+                    </div>
+                    <div class="itemr-info">
+                      <span class="info_item icon_time">{{othergoods.year}}</span>
+                      <span class="info_item icon_address" v-if="othergoods.area">{{othergoods.country}}/{{othergoods.area}}</span>
+                      <span class="info_item icon_address" v-else>{{othergoods.country}}</span>
+                      <span class="info_item icon_variety">{{othergoods.variety}}</span>
+                    </div>
+                    <div class="prices">
+                      <span class="actual">¥{{othergoods.salePrice}}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -251,112 +232,95 @@
           </div>
         </div>
       </div>
-      <div class="wine-item wine-two" v-if="othergoodsList.length > 0">
-        <div class="item-head">其他酒款</div>
-        <div :class="['item-list', {marauto: othergoodsList.length === 1}]" v-swiper:mySwiper4="swiperOther">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide list_one" v-for="(othergoods, index) in othergoodsList" :key="index">
-              <div class="onemdl">
-                <div class="onemdl-l" v-lazy:background-image="othergoods.img"></div>
-                <div class="onemdl-r">
-                  <h4>{{othergoods.name}}</h4>
-                  <div class="tags">
-                    <span class="tagsub">750ml</span>
-                    <span class="tagsub">日常餐酒</span>
-                    <span class="tagsub">紧致单宁</span>
-                  </div>
-                  <div class="itemr-info">
-                    <span class="info_item icon_time">{{othergoods.year}}</span>
-                    <span class="info_item icon_address" v-if="othergoods.area">{{othergoods.country}}/{{othergoods.area}}</span>
-                    <span class="info_item icon_address" v-else>{{othergoods.country}}</span>
-                    <span class="info_item icon_variety">{{othergoods.variety}}</span>
-                  </div>
-                  <div class="prices">
-                    <span class="actual">¥{{othergoods.salePrice}}</span>
-                  </div>
-                </div>
-              </div>
+        <!-- 报名详情 -->
+      <div class="information">
+        <h3 class="acthead">
+          报名详情<span class="acthead_sub">DEADLINE</span>
+        </h3>
+        <div class="subhead">报名截止</div>
+        <div class="subitem">{{applicationDetail.deadline}}</div>
+        <div class="subhead">时间地点</div>
+        <div class="subitem">时间：{{applicationDetail._staEndtime}}</div>
+        <!-- <div class="subitem">电话：（020）89810811</div> -->
+        <div class="subitem">地址：{{applicationDetail.detAddress}}</div>
+      </div>
+      <!-- 报名须知 -->
+      <div class="notice" v-if="detailInfo.notice">
+        <h3 class="acthead">
+         报名须知<span class="acthead_sub">REGISTRATION NOTICE</span>
+        </h3>
+        <ul class="notice-items">
+          <li class="notice_item">
+            {{detailInfo.notice}}
+          </li>
+        </ul>
+      </div>
+      <!-- 其它信息 -->
+      <div class="others" v-if="detailInfo.otherInfo">
+        <h3 class="acthead">
+          其它信息<span class="acthead_sub">OTHER INFORMATION</span>
+        </h3>
+        <div class="others-html" v-html="detailInfo.otherInfo"></div>
+      </div>
+      <!-- 合作伙伴 -->
+      <div class="cooperation" v-if="detailInfo.organizer || detailInfo.coorganizer">
+        <h3 class="acthead">
+          合作伙伴<span class="acthead_sub">PARTNER</span>
+        </h3>
+        <div class="coop-one" v-if="detailInfo.organizer && detailInfo.organizer.length > 0">
+          <div class="coop-head">主办方</div>
+          <div class="coop-items">
+            <div class="coop_item" v-for="(organ, index) in detailInfo.organizer" :key="index">
+              <img v-lazy="organ" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="coop-one" v-if="detailInfo.coorganizer">
+          <div class="coop-head">协办方/赞助商</div>
+          <div class="coop-items">
+            <div class="coop_item" v-for="(coor, index) in detailInfo.coorganizer" :key="index">
+              <img v-lazy="coor" alt="">
             </div>
           </div>
         </div>
       </div>
-    </div>
-      <!-- 报名详情 -->
-    <div class="information">
-      <h3 class="acthead">
-        报名详情<span class="acthead_sub">DEADLINE</span>
-      </h3>
-      <div class="subhead">报名截止</div>
-      <div class="subitem">{{applicationDetail.deadline}}</div>
-      <div class="subhead">时间地点</div>
-      <div class="subitem">时间：{{applicationDetail._staEndtime}}</div>
-      <!-- <div class="subitem">电话：（020）89810811</div> -->
-      <div class="subitem">地址：{{applicationDetail.detAddress}}</div>
-    </div>
-    <!-- 报名须知 -->
-    <div class="notice" v-if="detailInfo.notice">
-      <h3 class="acthead">
-       报名须知<span class="acthead_sub">REGISTRATION NOTICE</span>
-      </h3>
-      <ul class="notice-items">
-        <li class="notice_item">
-          {{detailInfo.notice}}
-        </li>
-      </ul>
-    </div>
-    <!-- 其它信息 -->
-    <div class="others" v-if="detailInfo.otherInfo">
-      <h3 class="acthead">
-        其它信息<span class="acthead_sub">OTHER INFORMATION</span>
-      </h3>
-      <div class="others-html" v-html="detailInfo.otherInfo"></div>
-    </div>
-    <!-- 合作伙伴 -->
-    <div class="cooperation" v-if="detailInfo.organizer || detailInfo.coorganizer">
-      <h3 class="acthead">
-        合作伙伴<span class="acthead_sub">PARTNER</span>
-      </h3>
-      <div class="coop-one" v-if="detailInfo.organizer && detailInfo.organizer.length > 0">
-        <div class="coop-head">主办方</div>
-        <div class="coop-items">
-          <div class="coop_item" v-for="(organ, index) in detailInfo.organizer" :key="index">
-            <img v-lazy="organ" alt="">
-          </div>
-        </div>
-      </div>
-      <div class="coop-one" v-if="detailInfo.coorganizer">
-        <div class="coop-head">协办方/赞助商</div>
-        <div class="coop-items">
-          <div class="coop_item" v-for="(coor, index) in detailInfo.coorganizer" :key="index">
-            <img v-lazy="coor" alt="">
+      <div class="period" v-if="pastActList.length > 0">
+        <h3 class="acthead">
+          往期活动<span class="acthead_sub">OTHER INFORMATION</span>
+        </h3>
+        <div class="period-list">
+          <div class="actlist" v-for="(past, index) in pastActList" :key="index">
+            <div class="actlist-bk">
+              <!-- 活动类型 -->
+              <span class="theme" v-if="past.themeType === 1">官方<br>活动</span>
+              <span class="theme" v-if="past.themeType === 2">合作<br>活动</span>
+              <span class="theme" v-if="past.themeType === 3">酒展</span>
+              <!-- 活动状态 -->
+              <span class="status sign" v-if="past.status === 1">报名中</span>
+              <span class="status carry" v-if="past.status === 2 || past.status === 3">进行中</span>
+              <span class="status ends" v-if="past.status === 4">已结束</span>
+            </div>
+            <div class="actlist-head">
+              <span class="head">第{{past.period}}期 | {{past.theme}}</span>
+              <span class="subhead">{{past.title}}</span>
+            </div>
+            <div class="actlist-same">活动时间：{{past._strTime}}</div>
+            <div class="actlist-same">活动地点：{{past._dz}}</div>
           </div>
         </div>
       </div>
     </div>
-    <div class="period" v-if="pastActList.length > 0">
-      <h3 class="acthead">
-        往期活动<span class="acthead_sub">OTHER INFORMATION</span>
-      </h3>
-      <div class="period-list">
-        <div class="actlist" v-for="(past, index) in pastActList" :key="index">
-          <div class="actlist-bk">
-            <!-- 活动类型 -->
-            <span class="theme" v-if="past.themeType === 1">官方<br>活动</span>
-            <span class="theme" v-if="past.themeType === 2">合作<br>活动</span>
-            <span class="theme" v-if="past.themeType === 3">酒展</span>
-            <!-- 活动状态 -->
-            <span class="status sign" v-if="past.status === 1">报名中</span>
-            <span class="status carry" v-if="past.status === 2 || past.status === 3">进行中</span>
-            <span class="status carry" v-if="past.status === 4">已结束</span>
-          </div>
-          <div class="actlist-head">
-            <span class="head">第{{past.period}}期 | {{past.theme}}</span>
-            <span class="subhead">{{past.title}}</span>
-          </div>
-          <div class="actlist-same">活动时间：{{past._strTime}}</div>
-          <div class="actlist-same">活动地点：{{past._dz}}</div>
-        </div>
-      </div>
+    <div class="btns-group">
+      <div class="btnitem btncor1" v-if="activeStatus === '0'">立即报名</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '1'">已报名</div>
+      <div class="btnitem btncor3" v-if="activeStatus === '2'">报名结束</div>
+      <div class="btnitem btncor3" v-if="activeStatus === '3'">未开始</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '4'">进行中</div>
+      <div class="btnitem btncor4" v-if="activeStatus === '5'" @click="tovote">参与投票</div>
+      <div class="btnitem btncor5" v-if="activeStatus === '6'">已投票</div>
+      <div class="btnitem btncor6" v-if="activeStatus === '7'">投票结束</div>
+      <div class="btnitem btncor7" v-if="activeStatus === '8'">活动结束</div>
+      <div class="btnitem btncor7" v-if="activeStatus === '9'">活动已下线</div>
     </div>
   </div>
 </template>
@@ -371,7 +335,6 @@
       return Promise.all([detFn, voteFn]).then(([detRes, voteRes]) => {
         if (detRes.code === 200 && voteRes.code === 200) {
           const detData = detRes.data
-          console.log('detData', detData)
           // 流程, 盲品， 大咖
           let { processReqList, blindTastingRespList, activityPersonRespList } = detData
           processReqList = processReqList.map(item => {
@@ -416,30 +379,103 @@
               return v
             })
           }
+          // 投票
+          const voteData = voteRes.data
+          const { blindStatisticsRespList } = voteData
+          let _votelist = []
+          _votelist = blindStatisticsRespList.map((v, index) => {
+            let { showImg, name, priceRmb, priceForeign } = blindTastingRespList[index]
+            v.showImg = showImg
+            v.name = name
+            v.priceRmb = priceRmb
+            v.priceForeign = priceForeign
+            return v
+          })
+          /*
+           * queryNum '1' index页面； '2' mymunity
+           * ----------------------------
+           * ifSignUp 当前用户是否已报名
+           * status 活动状态（1:报名中 2:报名结束 3:进行中 4:已结束 5:已下线）
+           * voteStatus 活动投票状态（1:未开始 2:已开始 3:已结束）
+           * ifVote 当前用户是否已投票
+           * -------- 判断 ------------
+           * 立即报名
+           * status = 1 && ifSignUp = false
+           * 已报名
+           * (status = 1 || status = 2) && ifSignUp = true && queryNum === '1'
+           * 报名结束
+           * status = 2 && ifSignUp = false
+           * 未开始
+           * (status = 1 || status = 2) && queryNum === '2'
+           * 进行中
+           * status = 3 && voteStatus = 1
+           * 参与投票
+           * status = 3 && voteStatus = 2 && ifVote = false
+           * 已投票
+           * status = 3 && voteStatus = 2 && ifVote = true
+           * 投票结束
+           * status = 3 && voteStatus = 3 && ifVote = false
+           * 活动结束
+           * status = 4
+           * 活动已下线
+           * status = 5 && (从我的社区进入)
+          */
+          let _actstatus = '0'
+          const queryNum = req.query.page
+          const { ifSignUp, status, voteStatus, ifVote } = detData
+          if (status === 1 && ifSignUp === false) {
+            _actstatus = '0'
+          } else if ((status === 1 || status === 2) && ifSignUp === true && queryNum === '1') {
+            _actstatus = '1'
+          } else if (status === 2 && ifSignUp === false) {
+            _actstatus = '2'
+          } else if ((status === 1 || status === 2) && queryNum === '2') {
+            _actstatus = '3'
+          } else if (status === 3 && voteStatus === 1) {
+            _actstatus = '4'
+          } else if (status === 3 && voteStatus === 2 && ifVote === false) {
+            _actstatus = '5'
+          } else if (status === 3 && voteStatus === 2 && ifVote === true) {
+            _actstatus = '6'
+          } else if (status === 3 && voteStatus === 3 && ifVote === false) {
+            _actstatus = '7'
+          } else if (status === 4) {
+            _actstatus = '8'
+          } else if (status === 5 && queryNum === '2') {
+            _actstatus = '9'
+          }
           return {
+            communityId: munityId,
             detailInfo: detData,
             processList: processReqList,
             blindList: blindTastingRespList,
+            voteList: _votelist,
             bigshotList: activityPersonRespList,
             buygoodsList: goodsMinimalRespList,
             othergoodsList: activityOtherGoodsRespList,
             pastActList: _pastList,
-            applicationDetail: _appdetail
+            applicationDetail: _appdetail,
+            votestatus: voteStatus,
+            activeStatus: _actstatus
           }
         }
       })
     },
     data () {
       return {
+        communityId: '', // 活动id
         detailInfo: {}, // 全部信息
         processList: [], // 活动流程
         blindList: [], // 盲品
+        voteList: [], // 盲品投票后
         bigshotList: [], // 大咖
         buygoodsList: [], // 在售酒款
         othergoodsList: [], // 其它酒款
         pastActList: [], // 往期活动
         regDeadtime: '', // 报名截止时间
         applicationDetail: {}, // 报名详情
+        votestatus: null,
+        activeStatus: '0', // 活动状态
         swiperBlind: {
           speed: 800,
           slidesPerView: 'auto'
@@ -461,15 +497,25 @@
     mounted () {
       setTimeout(() => {
         console.log(this.detailInfo)
+        console.log(this.voteList)
       }, 100)
+    },
+    methods: {
+      tovote () {
+        window.location.href = '/community/vote?communityId=' + this.communityId
+      }
     }
   }
 </script>
 <style lang="less" scoped>
+.munitydeatil {
+
+}
 .comDetail {
   font-size: 14px;
   min-height: 100vh;
   background: #F5F5F5;
+  margin-bottom: 50px;
 
   .specific {
     padding: 20px 20px 30px;
@@ -729,8 +775,10 @@
 
         .item_img {
           display: inline-block;
-          max-width: 100%;
-          max-height: 100%;
+          // max-width: 100%;
+          // max-height: 100%;
+          width: 76px;
+          height: 172px;
           height: auto;
         }
 
@@ -747,6 +795,7 @@
           font-family: Impact;
           color: rgba(255, 255, 255, 1);
           line-height: 24px;
+          z-index: 20;
 
           &:before {
             position: absolute;
@@ -883,7 +932,6 @@
               background-size: 30px 30px;
               background-position: left center;
               background-repeat: no-repeat;
-              background-image: url('~/assets/img/Icons/ic_price_t_30x30@2x.png');
               .l_price {
                 font-size:18px;
                 font-family:Impact;
@@ -1379,5 +1427,44 @@
     }
   }
 
+}
+.btns-group {
+  width: 100%;
+  height: 50px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  .btnitem {
+    display: flex;
+    height: 50px;
+    align-items: center;
+    justify-content: center;
+    font-size:18px;
+    font-family:PingFangSC-Medium;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+  }
+  .btncor1 {
+    background: #59C3E1;
+  }
+  .btncor2 {
+    background: #03A1CD;
+  }
+  .btncor3 {
+    background: #CCCCCC;
+  }
+  .btncor4 {
+    background: #F99C00;
+  }
+  .btncor5 {
+    background: #F99C00;
+  }
+  .btncor6 {
+    background: #F99C00;
+  }
+  .btncor7 {
+    background: #CCCCCC;
+  }
 }
 </style>

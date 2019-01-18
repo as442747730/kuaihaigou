@@ -275,12 +275,16 @@
       .box-left {
         width: 110px;
         height: 80px;
+        min-width: 110px;
+        max-width: 110px;
+        flex-grow: 0;
         border-radius: 6px;
         margin-right: 10px;
         .bg_cover;
       }
 
       .box-right {
+        flex-grow: 1;
         width: calc(100% - 110px);
         .r_head {
           font-size: 14px;
@@ -513,6 +517,9 @@
             border:1PX solid rgba(204,204,204,1);
             padding: 5px 10px;
             margin-top: 10px;
+            & + .label {
+              margin-left: 15px;
+            }
           }
         }
 
