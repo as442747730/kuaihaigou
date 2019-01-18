@@ -19,5 +19,9 @@ export const munityApi = {
   /* ----------- client ------------ */
   clientActList (params) {
     return request.clientGet('/api/activity/paginateActivity', params)
+  },
+  // 投票
+  clicentVote (params) {
+    return request.clientPostJson('/api/activity/vote', params)
   }
 }
