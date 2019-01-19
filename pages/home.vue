@@ -26,7 +26,7 @@
             红酒百科
           </span>
         </a>
-        <a class="tab" href="/community">
+        <a class="tab" href="/community?status=0">
           <i class="tab-icon-sqhd"></i>
           <span class="tab-txt">
             社区活动
@@ -124,7 +124,7 @@
               class="swiper-slide hot-list"
               v-for="(pick, index) in selectList"
               :key="index">
-              <div class="hot-list-box">
+              <div class="hot-list-box" v-if="pick.goodsMinimalResp">
                 <div class="pro ib-top" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
                 <div class="desc ib-middle">
                   <h3>{{pick.goodsMinimalResp.goodsName}}</h3>
@@ -216,7 +216,7 @@
           <h2>
             社区活动
           </h2>
-          <a class="to-channel" href="/community">
+          <a class="to-channel" href="/community?status=0">
             进入频道
             <i class="van-icon van-icon-arrow"></i>  
           </a>
@@ -231,9 +231,10 @@
                 <span class="theme" v-if="munity.themeType === 1">官方<br>活动</span>
                 <span class="theme" v-if="munity.themeType === 2">合作<br>活动</span>
                 <span class="theme" v-if="munity.themeType === 3">酒展</span>
+
                 <span class="status sign" v-if="munity.status === 1">报名中</span>
-                <span class="status carry" v-else-if="munity.status === 2 || munity.status === 3">进行中</span>
-                <span class="status carry" v-else>已结束</span>
+                <span class="status carry" v-if="munity.status === 2 || munity.status === 3">进行中</span>
+                <span class="status ends" v-if="munity.status === 4">已结束</span>
               </div>
             </div>
             <div class="desc">
@@ -1001,6 +1002,10 @@ export default {
 
         .carry {
           background: #F99C00;
+        }
+
+        .ends {
+          background: #999999;
         }
       }
     }

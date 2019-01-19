@@ -1,7 +1,7 @@
 <template>
   <div class="hotlabel" ref="scrollElem">
     <div class="label-top">
-      <span class="label_item" v-for="(lab, index) in labels">{{lab.labelName}}</span>
+      <span class="label_item">{{labels}}</span>
     </div>
     <div class="label-list" v-if="newsList.length !== 0">
       <div class="list" v-for="(item, index) in newsList" :key="index" @click="todetail(item)">
@@ -61,7 +61,8 @@
         const { array, page, totalPageNo } = data
         let _label = ''
         if (array.length > 0) {
-          _label = array[0].labels
+          const labels = array[0].labels.find(v => v.id === labelId)
+          _label = labels.labelName
         }
         return {
           curPage: page,
@@ -253,6 +254,7 @@
           display: flex;
           align-items: center;
           margin-top: 10px;
+          flex-wrap: wrap;
 
           &>span {
             font-size: 12px;
@@ -278,6 +280,9 @@
             border:1PX solid rgba(204,204,204,1);
             padding: 5px 10px;
             margin-top: 10px;
+            & + .label {
+              margin-left: 15px;
+            }
           }
         }
 

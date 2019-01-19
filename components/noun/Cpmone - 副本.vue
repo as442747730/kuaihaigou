@@ -65,80 +65,80 @@
             <div
               class="world_one"
               v-for="(world, index) in worlds"
-              :class="{active: elAreas.classify === world.id}"
+              :class="{active: elAreas.worldId === world.id}"
               @click="worldFn(world)"
               :key="index"><span>{{world.name}}</span></div>
           </div>
-          <div :data-counId="elAreas.countryid" :class="['areas-country', {maxhight: elAreas.countryid || elAreas.countryid === '-1'}]">
-            <ul class="country-l" :class="[{lb_ok: elAreas.countryid}]">
+          <div :data-counId="elAreas.countryId" :class="['areas-country', {maxhight: elAreas.countryId || elAreas.countryId === '-1'}]">
+            <ul class="country-l" :class="[{lb_ok: elAreas.countryId}]">
               <li
                 :data-val="areaContryList.length"
                 v-if="areaContryList.length > 0"
-                :class="{active: elAreas.countryid === -1}"
+                :class="{active: elAreas.countryId === -1}"
                 @click="countryFn(-1)">全部国家</li>
               <li
                 v-for="(country, index) in areaContryList"
-                :class="{active: elAreas.countryid === country.countryid}"
+                :class="{active: elAreas.countryId === country.countryid}"
                 @click="countryFn(country.countryid)"
                 :key="index">{{country.countryName}}</li>
             </ul>
-            <ul class="country-r" v-if="elAreas.countryid && bigList.length > 0">
+            <ul class="country-r" v-if="elAreas.countryId && bigList.length > 0">
               <li
-                :class="{active: elAreas.oneAreaId === -1}"
+                :class="{active: elAreas.bigId === -1}"
                 @click="bigFn(-1)">全部</li>
               <li
                 v-for="(big, index) in bigList"
-                :class="{active: elAreas.oneAreaId === big.areaid}"
+                :class="{active: elAreas.bigId === big.areaid}"
                 @click="bigFn(big.areaid)"
                 :key="index">{{big.areaName}}</li>
             </ul>
           </div>
-          <div class="areas-items" v-if="elAreas.oneAreaId && districtList.length > 0">
+          <div class="areas-items" v-if="elAreas.bigId && districtList.length > 0">
             <div class="items-head">地区级</div>
             <ul class="items_uls">
               <li
-                :class="{active: elAreas.twoAreaId === -2}"
+                :class="{active: elAreas.districtId === -2}"
                 @click="districtFn(-2)">
                   <span>全部</span>
                 </li>
               <li
                 v-for="(district, index) in districtList"
-                :class="{active: elAreas.twoAreaId === district.areaid}"
+                :class="{active: elAreas.districtId === district.areaid}"
                 @click="districtFn(district.areaid)"
                 :key="index">
                 <span>{{district.areaName}}</span>
               </li>
             </ul>
           </div>
-          <div class="areas-items" v-if="elAreas.twoAreaId && subList.length > 0">
+          <div class="areas-items" v-if="elAreas.districtId && subList.length > 0">
             <div class="items-head">子区级</div>
             <ul class="items_uls">
               <li
-                :class="{active: elAreas.threeAreaId === -3}"
+                :class="{active: elAreas.subId === -3}"
                 @click="subFn(-3)">
                   <span>全部</span>
                 </li>
               <li
                 v-for="(sub, index) in subList"
-                :class="{active: elAreas.threeAreaId === sub.areaid}"
+                :class="{active: elAreas.subId === sub.areaid}"
                 @click="subFn(sub.areaid)"
                 :key="index">
                 <span>{{sub.areaName}}</span>
               </li>
             </ul>
           </div>
-          <div class="areas-items" v-if="elAreas.threeAreaId && smallList.length > 0">
+          <div class="areas-items" v-if="elAreas.subId && smallList.length > 0">
             <div class="items-head">小子区</div>
             <ul class="items_uls">
               <li
                 v-if="navIndex === 2"
-                :class="{active: elAreas.fourAreaId === -4}"
+                :class="{active: elAreas.smallId === -4}"
                 @click="smallFn(-4)">
                   <span>全部</span>
                 </li>
               <li
                 v-for="(small, index) in smallList"
-                :class="{active: elAreas.fourAreaId === small.areaid}"
+                :class="{active: elAreas.smallId === small.areaid}"
                 @click="smallFn(small.areaid)"
                 :key="index">
                 <span>{{small.areaName}}</span>
@@ -200,14 +200,14 @@ export default {
       elGrape: {},
       isVariey: false,
       elAreas: {
-        classify: '-1',
-        countryid: '-1',
-        oneAreaId: null,
-        twoAreaId: null,
-        threeAreaId: null,
-        fourAreaId: null
+        worldId: -1,
+        countryId: null,
+        bigId: null,
+        districtId: null,
+        subId: null,
+        smallId: null
       },
-      worlds: [{name: '全部', id: '-1'}, {name: '新世界', id: '1'}, {name: '旧世界', id: '2'}],
+      worlds: [{name: '全部', id: -1}, {name: '新世界', id: 1}, {name: '旧世界', id: 2}],
       bigList: [], // 大产区
       districtList: [], // 地产区
       subList: [], // 子产区
@@ -247,70 +247,74 @@ export default {
     },
     worldFn (event) {
       // 世界 => 国家列表
-      this.elAreas.classify = event.id
+      this.elAreas.worldId = event.id
       this.$emit('areaWorldFn', event.id)
       this.restAreaId('world')
     },
     countryFn (countryid) {
       // 国家
-      this.elAreas.countryid = countryid
+      this.elAreas.countryId = countryid
       this.bigArea(countryid)
       this.restAreaId('country')
     },
     bigFn (areaid) {
       // 大区
-      this.elAreas.oneAreaId = areaid
-      this.elAreas.twoAreaId = null
+      this.elAreas.bigId = areaid
+      this.elAreas.districtId = null
       this.nextArea(areaid, 0)
       this.restAreaId('big')
     },
     districtFn (areaid) {
       // 地区
-      this.elAreas.twoAreaId = areaid
-      this.elAreas.threeAreaId = null
+      this.elAreas.districtId = areaid
+      this.elAreas.subId = null
       this.nextArea(areaid, 1)
     },
     subFn (areaid) {
       // 子区
-      this.elAreas.threeAreaId = areaid
+      this.elAreas.subId = areaid
       this.nextArea(areaid, 2)
     },
     smallFn (areaid) {
       // 小子区
-      this.elAreas.fourAreaId = areaid
+      this.elAreas.smallId = areaid
     },
     restAreaId (str) {
       // 重置 选中id
-      this.elAreas.fourAreaId = null
+      this.elAreas.smallId = null
       switch (str) {
         case 'world':
-          this.elAreas.countryid = null
-          this.elAreas.oneAreaId = null
-          this.elAreas.twoAreaId = null
-          this.elAreas.threeAreaId = null
+          this.elAreas.countryId = null
+          this.elAreas.bigId = null
+          this.elAreas.districtId = null
+          this.elAreas.subId = null
           break
         case 'country':
-          this.elAreas.oneAreaId = null
-          this.elAreas.twoAreaId = null
-          this.elAreas.threeAreaId = null
+          this.elAreas.bigId = null
+          this.elAreas.districtId = null
+          this.elAreas.subId = null
           break
         case 'big':
-          this.elAreas.twoAreaId = null
-          this.elAreas.threeAreaId = null
+          this.elAreas.districtId = null
+          this.elAreas.subId = null
           break
         case 'district':
-          this.elAreas.threeAreaId = null
+          this.elAreas.subId = null
           break
       }
+      // console.log(this.elAreas, 'elAreas')
     },
     async bigArea (countryid) {
       // 大产区
-      let params = { ...this.elAreas }
+      let params = {
+        classify: ,
+        countryid: countryid,
+      }
       let bigAreaFn
       if (this.navIndex === 1) {
-        bigAreaFn = encyApi.getAreaBig(params)
+        bigAreaFn = encyApi.getAreaBig(countryid)
       } else if (this.navIndex === 2) {
-        bigAreaFn = encyApi.getWineryBig(params)
+        bigAreaFn = encyApi.getWineryBig(countryid)
       }
       const {code, data} = await bigAreaFn
       if (code === 200) {
@@ -319,24 +323,11 @@ export default {
     },
     async nextArea (areaid, num) {
       // 获取下级产区
-      let { classify, countryid, oneAreaId, twoAreaId, threeAreaId, fourAreaId } = this.elAreas
-      if (oneAreaId === null) oneAreaId = '-1'
-      if (twoAreaId === null) twoAreaId = '-1'
-      if (threeAreaId === null) threeAreaId = '-1'
-      if (fourAreaId === null) fourAreaId = '-1'
-      let params = {
-        classify: classify,
-        countryid: countryid,
-        oneAreaId: oneAreaId,
-        twoAreaId: twoAreaId,
-        threeAreaId: threeAreaId,
-        fourAreaId: fourAreaId
-      }
       let nextAreaFn
       if (this.navIndex === 1) {
-        nextAreaFn = encyApi.getAreaNext(params)
+        nextAreaFn = encyApi.getAreaNext(areaid)
       } else if (this.navIndex === 2) {
-        nextAreaFn = encyApi.getWineryNext(params)
+        nextAreaFn = encyApi.getWineryNext(areaid)
       }
       const { code, data } = await nextAreaFn
       if (code === 200) {
@@ -358,7 +349,7 @@ export default {
       if (this.navIndex === 0) {
         this.restWorld()
       } else {
-        this.elAreas.classify = -1
+        this.elAreas.worldId = -1
         this.restAreaId('world')
       }
     },
@@ -380,7 +371,7 @@ export default {
     navIndex: function (value) {
       if (value === 1 || value === 2) {
         // 重置产区酒庄的初始数据
-        this.elAreas.classify = '-1'
+        this.elAreas.worldId = -1
         this.restAreaId('world')
       }
     }
