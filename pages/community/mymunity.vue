@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多活动'}}</div>
-      <null-data v-else></null-data>
+      <null-data  v-if="activeList.length === 0"></null-data>
     </section>
   </div>
 </template>
@@ -45,15 +45,15 @@ export default {
     nullData
   },
   async asyncData (req) {
-    let _themes = null
+    let status = null
     const navstatus = req.query.status
-    if (navstatus && navstatus !== '0') _themes = navstatus
+    if (navstatus && navstatus !== '0') status = navstatus
     const params = {
       page: 1,
       count: 3,
-      themeType: _themes
+      status: status
     }
-    const listfn = munityApi.serverActiveList(params, req)
+    const listfn = munityApi.serverMineactlist(params, req)
     // 异步
     const { code: listCode, data: listData } = await listfn
     let _actList = []
@@ -97,8 +97,8 @@ export default {
       navList: [
         {status: '全部活动', id: '0'},
         {status: '未开始', id: '1'},
-        {status: '进行中', id: '2'},
-        {status: '已结束', id: '3'}
+        {status: '进行中', id: '3'},
+        {status: '已结束', id: '4'}
       ],
       themeArr: [],
       activeList: [],

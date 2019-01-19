@@ -5,6 +5,9 @@ export const munityApi = {
   serverActiveList (params, req) {
     return request.serverGet('/api/activity/paginateActivity', params, req)
   },
+  serverMineactlist (params, req) {
+    return request.serverGet('/api/activity/paginateMobileActivityForUser', params, req)
+  },
   // 活动详情
   serverDetail (id, req) {
     return request.serverGet('/api/activity/getActivity/' + id, { activityId: id }, req)

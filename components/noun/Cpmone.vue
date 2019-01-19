@@ -260,20 +260,20 @@ export default {
     bigFn (areaid) {
       // 大区
       this.elAreas.oneAreaId = areaid
-      this.elAreas.twoAreaId = null
-      this.nextArea(areaid, 0)
       this.restAreaId('big')
+      this.nextArea(areaid, 1)
     },
     districtFn (areaid) {
       // 地区
       this.elAreas.twoAreaId = areaid
-      this.elAreas.threeAreaId = null
-      this.nextArea(areaid, 1)
+      this.restAreaId('district')
+      this.nextArea(areaid, 2)
     },
     subFn (areaid) {
       // 子区
       this.elAreas.threeAreaId = areaid
-      this.nextArea(areaid, 2)
+      this.restAreaId()
+      this.nextArea(areaid, 3)
     },
     smallFn (areaid) {
       // 小子区
@@ -324,13 +324,15 @@ export default {
       if (twoAreaId === null) twoAreaId = '-1'
       if (threeAreaId === null) threeAreaId = '-1'
       if (fourAreaId === null) fourAreaId = '-1'
+      let areaLevel = num
       let params = {
         classify: classify,
         countryid: countryid,
         oneAreaId: oneAreaId,
         twoAreaId: twoAreaId,
         threeAreaId: threeAreaId,
-        fourAreaId: fourAreaId
+        fourAreaId: fourAreaId,
+        areaLevel: areaLevel
       }
       let nextAreaFn
       if (this.navIndex === 1) {
@@ -341,13 +343,13 @@ export default {
       const { code, data } = await nextAreaFn
       if (code === 200) {
         switch (num) {
-          case 0:
+          case 1:
             this.districtList = data
             break
-          case 1:
+          case 2:
             this.subList = data
             break
-          case 2:
+          case 3:
             this.smallList = data
             break
         }
