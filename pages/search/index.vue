@@ -20,23 +20,25 @@
         <section class="goods" v-if="navData.elIndex === 0">
           <div class="goods-details">
             <div class="list-item" v-for="($v, $k) in searchData" :key="$k">
-              <div class="item_l">
-                <div class="item_l-bk" :style="'background: url(' + $v.imgUrl + ') no-repeat center/contain'"></div>
-              </div>
-              <div class="item_r">
-                <h4>{{ $v.goodsName }}</h4>
-                <p v-if='$v.tagListJson'>
-                  <span v-for='($v2, $k2) in customArray($v.tagListJson)' :key='$k2'>
-                    <template v-if='$k2 === customArray($v.tagListJson).length - 1'>
-                      {{ $v2 }}
-                    </template>
-                    <template v-else>
-                      {{ $v2 + ' | ' }}
-                    </template>
-                  </span>
-                </p>
-                <div class="price">¥ {{ $v.actualPrice }}</div>
-              </div>
+              <a :href="'/detail/' + $v.id" style="display: flex">
+                <div class="item_l">
+                  <div class="item_l-bk" :style="'background: url(' + $v.imgUrl + ') no-repeat center/contain'"></div>
+                </div>
+                <div class="item_r">
+                  <h4>{{ $v.goodsName }}</h4>
+                  <p v-if='$v.tagListJson'>
+                    <span v-for='($v2, $k2) in customArray($v.tagListJson)' :key='$k2'>
+                      <template v-if='$k2 === customArray($v.tagListJson).length - 1'>
+                        {{ $v2 }}
+                      </template>
+                      <template v-else>
+                        {{ $v2 + ' | ' }}
+                      </template>
+                    </span>
+                  </p>
+                  <div class="price">¥ {{ $v.actualPrice }}</div>
+                </div>
+              </a>
             </div>
           </div>
         </section>
@@ -44,19 +46,21 @@
         <section class="definitions" v-if="navData.elIndex === 1">
           <div class="definitions-list">
             <div class="definitions-list_item varity" v-for="($v, $k) in searchData" :key="$k">
-              <h1 class="varity-head">{{ $v.chineseName }}</h1>
-              <div class="varity-bk">
-                <div class="varity-bk_in" :style="'background: url(' + $v.bgimg + ') no-repeat center/cover'"></div>
-              </div>
-              <!-- <article class="varity-article">{{  }}</article> -->
-              <footer class="varity-foot">
-                <i class="icon_same ic_good ib-middle"></i>
-                <span class="num_same ib-middle">{{ $v.likeNum }}</span>
-                <i class="icon_same ic_collect marl ib-middle"></i>
-                <span class="num_same ib-middle">{{ $v.commentNum }}</span>
-                <i class="icon_same ic_look marl ib-middle"></i>
-                <span class="num_same ib-middle">{{ $v.browseNum }}</span>
-              </footer>
+              <a :href="'/noun/detail/' + $v.attrid + '?num=' + ($v.type - 4)">
+                <h1 class="varity-head">{{ $v.chineseName }}</h1>
+                <div class="varity-bk">
+                  <div class="varity-bk_in" :style="'background: url(' + $v.bgimg + ') no-repeat center/cover'"></div>
+                </div>
+                <!-- <article class="varity-article">{{  }}</article> -->
+                <footer class="varity-foot">
+                  <i class="icon_same ic_good ib-middle"></i>
+                  <span class="num_same ib-middle">{{ $v.likeNum }}</span>
+                  <i class="icon_same ic_collect marl ib-middle"></i>
+                  <span class="num_same ib-middle">{{ $v.commentNum }}</span>
+                  <i class="icon_same ic_look marl ib-middle"></i>
+                  <span class="num_same ib-middle">{{ $v.browseNum }}</span>
+                </footer>
+              </a>
             </div>
           </div>
         </section>
@@ -101,24 +105,26 @@
         <!-- 新闻资讯 -->
         <section class="news" v-if="navData.elIndex === 3">
           <div class="news-item" v-for="($v, $k) in searchData" :key="$k">
-            <div class="news_head">
-              <h1>{{ $v.title }}</h1>
-              <div class="times">
-                <time>{{ $v.createdAt }}</time>
+            <a :href="'/hotspot/detail/' + $v.id">
+              <div class="news_head">
+                <h1>{{ $v.title }}</h1>
+                <div class="times">
+                  <time>{{ $v.createdAt }}</time>
+                </div>
+                <p>
+                  <span v-if="$v.classificationId >= 0">分类：{{circlenavList[$v.classificationId]}}</span>
+                  <span>作者：{{ $v.author || '佚名' }}</span>
+                  <span v-if='$v.sourceAuthor'>来源：{{ $v.sourceAuthor }}</span>
+                </p>
               </div>
-              <p>
-                <span v-if="$v.classificationId >= 0">分类：{{circlenavList[$v.classificationId]}}</span>
-                <span>作者：{{ $v.author || '佚名' }}</span>
-                <span v-if='$v.sourceAuthor'>来源：{{ $v.sourceAuthor }}</span>
-              </p>
-            </div>
-            <div class="news_main">
-              <img :src="$v.imgPath" />
-            </div>
+              <div class="news_main">
+                <img :src="$v.imgPath" />
+              </div>
               <article class="news_article">
                 {{ $v.summary }}
               </article>
-            </div>
+            </a>
+          </div>
         </section>
 
         <div class='more-loading' v-show='pageLoding'>
