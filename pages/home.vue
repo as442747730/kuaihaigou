@@ -2,7 +2,7 @@
   <div class="m-home">
     <header>
       <h1 class="ib-middle">首页</h1>
-      <div class="u-search ib-middle">
+      <div class="u-search ib-middle" @click='toSearch'>
         <input type="text">
         <i class="van-icon van-icon-search"></i>
       </div>
@@ -471,6 +471,9 @@ export default {
           window.location.href = '/account/login'
         }).catch(() => {})
       }
+    },
+    toSearch () {
+      window.location.href = '/search'
     }
   }
 }
