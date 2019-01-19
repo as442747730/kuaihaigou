@@ -114,6 +114,7 @@
   &-main {
     height: calc(100vh - 45px);
     padding-bottom: 50px;
+    box-sizing: border-box;
     background: #F5F5F5;
     overflow: auto;
 

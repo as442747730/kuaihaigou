@@ -186,6 +186,12 @@
                         <div class="mdlbar_r-top w30"></div>
                       </div>
                     </div>
+                    <div class="mdlbar" v-if="buygoods.tannin">
+                      <div class="mdlbar_l">单宁：{{buygoods.tannin}}分</div>
+                      <div class="mdlbar_r">
+                        <div class="mdlbar_r-top w30"></div>
+                      </div>
+                    </div>
                     <div class="mdlbar" v-if="buygoods.complexity">
                       <div class="mdlbar_l">复杂度：{{buygoods.complexity}}分</div>
                       <div class="mdlbar_r">
@@ -194,7 +200,7 @@
                     </div>
                     <div class="prices">
                       <span class="actual">¥{{buygoods.actualPrice}}</span>
-                      <span class="market">市场价：¥ 499</span>
+                      <!-- <span class="market">市场价：¥ 499</span> -->
                     </div>
                   </div>
                 </div>
@@ -576,6 +582,7 @@
 </script>
 <style lang="less" scoped>
 .munitydeatil {
+  height: 100vh;
   &.defscroll {
     max-height: 100vh;
     overflow: hidden;
@@ -668,9 +675,12 @@
 }
 .comDetail {
   font-size: 14px;
-  min-height: 100vh;
+  height: 100vh;
   background: #F5F5F5;
-  margin-bottom: 50px;
+  padding-bottom: 50px;
+  overflow: auto;
+  box-sizing: border-box;
+
 
   .specific {
     padding: 20px 20px 30px;
@@ -1448,6 +1458,7 @@
     background: #fff;
     padding: 25px 20px 30px;
     &-html {
+      padding-top: 15px;
       font-size: 14px;
     }
   }

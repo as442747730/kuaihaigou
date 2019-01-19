@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多活动'}}</div>
-      <null-data  v-if="activeList.length === 0"></null-data>
+      <null-data tips="暂无您想要的活动"  v-if="activeList.length === 0"></null-data>
     </section>
   </div>
 </template>
@@ -47,7 +47,7 @@ export default {
   async asyncData (req) {
     let status = null
     const navstatus = req.query.status
-    if (navstatus && navstatus !== '0') status = navstatus
+    if (navstatus && navstatus !== '-1') status = navstatus
     const params = {
       page: 1,
       count: 3,
@@ -95,14 +95,14 @@ export default {
       loadTxt: '下拉加载更多',
       transmit: {},
       navList: [
-        {status: '全部活动', id: '0'},
-        {status: '未开始', id: '1'},
+        {status: '全部活动', id: '-1'},
+        {status: '未开始', id: '0'},
         {status: '进行中', id: '3'},
         {status: '已结束', id: '4'}
       ],
       themeArr: [],
       activeList: [],
-      navIndex: '0'
+      navIndex: '-1'
     }
   },
   mounted () {

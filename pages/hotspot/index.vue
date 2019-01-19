@@ -152,7 +152,7 @@
     methods: {
       async fetchData (isMore) {
         // banner newList
-        this.$toast.loading('加载中...')
+        // this.$toast.loading('加载中...')
         this.loadTxt = '加载中'
         if (isMore) {
           this.curPage += 1
@@ -220,6 +220,7 @@
 </script>
 <style lang="less" scoped>
 .homelist {
+  overflow: hidden;
   .hothead {
     height: 40px;
     background: #F5F5F5;
