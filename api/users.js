@@ -22,6 +22,10 @@ export const userApi = {
   serveRewardToMe (params, req) {
     return request.serverGet('/api/reward/paginateRewardToMe', params, req)
   },
+  // 查询打赏总金额
+  serveGetTotal (req) {
+    return request.serverGet('/api/reward/getTotalActualAmount/', null, req)
+  },
   /* ------------------- lient ------------------- */
   // 获取用户详情
   userDetail () {
@@ -80,6 +84,22 @@ export const userApi = {
   // 分页查询我的文章收藏
   collect (param) {
     return request.clientGet('/api/article/paginateMyCollection', param)
+  },
+  // TA打赏我
+  rewardToMe (params) {
+    return request.clientGet('/api/reward/paginateRewardToMe', params)
+  },
+  // 我打赏TA
+  rewardFromMe (params) {
+    return request.clientGet('/api/reward/paginateRewardFromMe', params)
+  },
+  // 消费记录
+  record (params) {
+    return request.clientGet('/api/reward/paginateRewardExpenseRecord', params)
+  },
+  // 登出
+  loginOut (params) {
+    return request.clientPost('/api/logout')
   }
 }
 
