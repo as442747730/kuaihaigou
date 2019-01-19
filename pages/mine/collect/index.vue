@@ -199,6 +199,8 @@ export default {
         pageEmpty: pageEmpty,
         pageTotal: data.total
       }
+    } else if (code === 506) {
+      req.redirect('/account/login')
     }
   },
 
