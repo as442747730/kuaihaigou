@@ -255,8 +255,12 @@ export default {
         let firstCountry = this.countryList[0].countryid
         // console.log('firstCountry', firstCountry)
         this.selectAreaId = firstCountry
+        this.getAreaDetail()
       } else if (this.navIndex === 2) {
-        let firstCountry = this.countryList[0].countryid
+        let firstCountry
+        if (this.countryList[0]) {
+          firstCountry = this.countryList[0].countryid
+        }
         let params = {
           classify: '-1',
           countryid: firstCountry
@@ -282,26 +286,19 @@ export default {
           this.getVarietyDetail()
         }
         this.selectVarietyId = _id
-      } else {
+      } else if (this.navIndex === 1) {
+        let { worldId, countryId, bigId, districtId, subId, smallId } = obj
+        let firstCountry = this.countryList[0].countryid
+        let _areaId = (!smallId || smallId === -4) ? ((!subId || subId === -3) ? ((!districtId || districtId === -2) ? ((!bigId || bigId === -1) ? ((!countryId || countryId === -1) ? ((!worldId || worldId === -1) ? firstCountry : worldId) : countryId) : bigId) : districtId) : subId) : smallId
+        this.selectAreaId = _areaId
+        this.getAreaDetail()
+      } else if (this.navIndex === 2) {
         /**
          * 全部 -1
         */
-        const { worldId, countryId, bigId, districtId, subId, smallId } = obj
-        const params = {
-          classify: worldId,
-          countryid: countryId,
-          oneAreaId: bigId,
-          twoAreaId: districtId,
-          threeAreaId: subId,
-          fourAreaId: smallId
-        }
-        if (this.navIndex === 1) {
-          Object.assign(this.areaparams, params)
-          this.getAreaDetail()
-        } else if (this.navIndex === 2) {
-          Object.assign(this.wineryParams, params)
-          this.getWineryList()
-        }
+        Object.assign(this.wineryParams, obj)
+        console.log(this.wineryParams, 'wineryParams')
+        this.getWineryList()
       }
     },
     goWinery (winery) {
@@ -339,6 +336,7 @@ export default {
     },
     areaWorldFn (wroldId) {
       this.selectWorldId = wroldId
+      console.log('wroldId', wroldId)
       this.areaCountryFn()
     },
     async areaCountryFn () {
@@ -357,7 +355,7 @@ export default {
     },
     async getAreaDetail () {
       // 产区详情
-      const { code, data } = await encyApi.getAreaDetail(this.areaparams)
+      const { code, data } = await encyApi.getAreaDetail(this.selectAreaId)
       if (code === 200) {
         // console.log('data', data)
         this.articelType = '5'

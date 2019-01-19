@@ -1,5 +1,5 @@
 <template>
-  <div class="munitydeatil">
+  <div class="munitydeatil" :class="{defscroll: showsignup}">
     <div class="comDetail">
       <div class="specific">
         <div class="specific-bk" v-lazy:background-image="detailInfo.background"></div>
@@ -311,7 +311,7 @@
       </div>
     </div>
     <div class="btns-group">
-      <div class="btnitem btncor1" v-if="activeStatus === '0'">立即报名</div>
+      <div class="btnitem btncor1" v-if="activeStatus === '0'" @click="toSignup">立即报名</div>
       <div class="btnitem btncor2" v-if="activeStatus === '1'">已报名</div>
       <div class="btnitem btncor3" v-if="activeStatus === '2'">报名结束</div>
       <div class="btnitem btncor3" v-if="activeStatus === '3'">未开始</div>
@@ -322,6 +322,32 @@
       <div class="btnitem btncor7" v-if="activeStatus === '8'">活动结束</div>
       <div class="btnitem btncor7" v-if="activeStatus === '9'">活动已下线</div>
     </div>
+    <!-- 报名弹窗 satart -->
+    <transition name="slide-bottom">
+      <div class="signup" v-show="showsignup">
+        <div class="signup-head">
+          活动报名
+          <div class="singup_close" @click="hidefn"></div>
+        </div>
+        <div class="signup-item">
+          <div class="item_l">姓名</div>
+          <div class="item_r">
+            <input type="text"  v-model="signName" placeholder="请输入姓名" />
+          </div>
+        </div>
+        <div class="signup-item">
+          <div class="item_l">联系号码</div>
+          <div class="item_r">
+            <input type="text" v-model="signPhone" placeholder="请输入联系号码" />
+          </div>
+        </div>
+        <div class="signup-btn" @click="signupfn">确定</div>
+      </div>
+    </transition>
+    <transition name="fade">
+      <div class="modal" v-show="showsignup" @click="hidefn"></div>
+    </transition>
+    <!-- 报名弹窗 end -->
   </div>
 </template>
 <script>
@@ -476,6 +502,9 @@
         applicationDetail: {}, // 报名详情
         votestatus: null,
         activeStatus: '0', // 活动状态
+        showsignup: false, // 报名弹窗
+        signName: '',
+        signPhone: '',
         swiperBlind: {
           speed: 800,
           slidesPerView: 'auto'
@@ -495,13 +524,48 @@
       }
     },
     mounted () {
-      setTimeout(() => {
-        console.log(this.detailInfo)
-        console.log(this.voteList)
-      }, 100)
     },
     methods: {
+      toSignup () {
+        // 去报名
+        this.showsignup = true
+      },
+      hidefn () {
+        this.showsignup = false
+        this.signName = ''
+        this.signPhone = ''
+      },
+      async signupfn () {
+        if (this.signName === '') {
+          this.$toast('请输入姓名')
+          return
+        }
+        let _phone = this.signPhone
+        let myRe = /^1[34578]{1}\d{9}$/
+        let isphone = myRe.test(_phone)
+        // console.log('isphone', isphone)
+        if (!isphone) {
+          this.$toast('请输入正确联系号码')
+          this.signPhone = ''
+          return
+        }
+        let params = {
+          activityId: this.communityId,
+          contact: this.signName,
+          phone: this.signPhone
+        }
+        const { code, data } = await munityApi.clientSignup(params)
+        if (code === 200) {
+          console.log(data)
+          this.activeStatus = '1'
+          this.$toast.success('报名成功')
+          this.hidefn()
+        } else if (code === 506) {
+          window.location.href = '/account/login'
+        }
+      },
       tovote () {
+        // 去投票
         window.location.href = '/community/vote?communityId=' + this.communityId
       }
     }
@@ -509,6 +573,94 @@
 </script>
 <style lang="less" scoped>
 .munitydeatil {
+  &.defscroll {
+    max-height: 100vh;
+    overflow: hidden;
+  }
+
+  .signup {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 110;
+    width: 335px;
+    background: #fff;    
+    border-radius: 4px;
+    padding: 0 20px 20px;
+    box-sizing: border-box;
+    &-head {
+      position: relative;
+      font-size:19px;
+      font-family:PingFangSC-Semibold;
+      font-weight:600;
+      color:rgba(51,51,51,1);
+      text-align: center;
+      padding-top: 30px;
+      padding-bottom: 5px;
+      .singup_close {
+        position: absolute;
+        top: 26px;
+        right: 0;
+        width: 29px;
+        height: 29px;
+        background-image: url('~/assets/img/Icons/ic_off_b_18x18@2x.png');
+        background-size: 18px 18px;
+        background-position: center center;
+        background-repeat: no-repeat;
+      }
+    }
+    &-item {
+      display: flex;
+      align-items: center;
+      height: 65px;
+      border-bottom: 1PX solid #EFEFEF;
+      .item_l {
+        width: 80px;
+        min-width: 80px;
+        max-width: 80px;
+        flex-grow: 0;
+        font-size:16px;
+        font-family:PingFang-SC-Medium;
+        font-weight:500;
+        color:rgba(51,51,51,1);
+      }
+      .item_r {
+        flex-grow: 1;
+        overflow: hidden;
+        font-size:16px;
+        font-family:PingFang-SC-Medium;
+        font-weight:500;
+        color:rgba(199,199,199,1);
+      }
+    }
+    &-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height:42px;
+      background:rgba(3,161,205,1);
+      border-radius:4px;
+      font-size:15px;
+      font-family:PingFangSC-Medium;
+      font-weight:500;
+      color:rgba(255,255,255,1);
+      margin-top: 40px
+    }
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    background: rgba(0,0,0,0.6);
+    width: 100%;
+    height: 100vh;
+    z-index: 100;
+  }
 
 }
 .comDetail {
