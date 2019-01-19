@@ -20,7 +20,7 @@
               <h3>{{ $v.goodsName }}</h3>
               <p v-if='$v.tagListJson'>
                 <span v-for='($v2, $k2) in customArray($v.tagListJson)' :key='$k2'>
-                  <template v-if='$k2 === customArray($v.tagListJson).length -1'>
+                  <template v-if='$k2 === customArray($v.tagListJson).length - 1'>
                     {{ $v2 }}
                   </template>
                   <template v-else>

@@ -4,20 +4,141 @@
       <div class="inputmdl">
         <div class="inputmdl-in">
           <i class="icon_fdj"></i>
-          <i class="icon_close" v-if="keywords"></i>
-          <input v-model="keywords" type="text" placeholder="输入商品关键词或用户名" />
+          <i class="icon_close" v-if="keywords" @click="keywords = ''"></i>
+          <input v-model="keywords" type="text" placeholder="请输入想查找的内容" @keyup.13="search" />
         </div>
         <div class="inputmdl-world" @click="toWinecenter">取消</div>
       </div>
       <nav class="navmdl">
         <div class="navmdl-item" :class="{active: navData.elIndex === index}" @click="elNavlist(index)" v-for="(navitem, index) in navData.list" :key="index">{{navitem}}</div>
-        <div class="navmdl-logo" :class="{active: ctrlLogo}" ref="navmdlLogo" @click="navLogo"></div>
+        <div class="navmdl-logo" :class="{active: ctrlLogo}" ref="navmdlLogo" @click="handleSlide"></div>
       </nav>
     </div>
     <div class="search-result">
-      <!-- 商品 -->
-      <section class="goods" v-if="navData.elIndex === 0">
-        <div v-if="!keywords">
+      <template v-if='keywords && searching'>
+        <!-- 商品 -->
+        <section class="goods" v-if="navData.elIndex === 0">
+          <div class="goods-details">
+            <div class="list-item" v-for="($v, $k) in searchData" :key="$k">
+              <a :href="'/detail/' + $v.id" style="display: flex">
+                <div class="item_l">
+                  <div class="item_l-bk" :style="'background: url(' + $v.imgUrl + ') no-repeat center/contain'"></div>
+                </div>
+                <div class="item_r">
+                  <h4>{{ $v.goodsName }}</h4>
+                  <p v-if='$v.tagListJson'>
+                    <span v-for='($v2, $k2) in customArray($v.tagListJson)' :key='$k2'>
+                      <template v-if='$k2 === customArray($v.tagListJson).length - 1'>
+                        {{ $v2 }}
+                      </template>
+                      <template v-else>
+                        {{ $v2 + ' | ' }}
+                      </template>
+                    </span>
+                  </p>
+                  <div class="price">¥ {{ $v.actualPrice }}</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
+        <!-- 名词解释 -->
+        <section class="definitions" v-if="navData.elIndex === 1">
+          <div class="definitions-list">
+            <div class="definitions-list_item varity" v-for="($v, $k) in searchData" :key="$k">
+              <a :href="'/noun/detail/' + $v.attrid + '?num=' + ($v.type - 4)">
+                <h1 class="varity-head">{{ $v.chineseName }}</h1>
+                <div class="varity-bk">
+                  <div class="varity-bk_in" :style="'background: url(' + $v.bgimg + ') no-repeat center/cover'"></div>
+                </div>
+                <!-- <article class="varity-article">{{  }}</article> -->
+                <footer class="varity-foot">
+                  <i class="icon_same ic_good ib-middle"></i>
+                  <span class="num_same ib-middle">{{ $v.likeNum }}</span>
+                  <i class="icon_same ic_collect marl ib-middle"></i>
+                  <span class="num_same ib-middle">{{ $v.commentNum }}</span>
+                  <i class="icon_same ic_look marl ib-middle"></i>
+                  <span class="num_same ib-middle">{{ $v.browseNum }}</span>
+                </footer>
+              </a>
+            </div>
+          </div>
+        </section>
+        <!-- 知识分享 -->
+        <section class="u-share-articel-item" v-if='navData.elIndex === 2'>
+          <div class="u-share-articel-list" v-for="($v, $k) in searchData" :key="$k">
+            <a :href="'/knowledge/detail/' + $v.id + '?type=' + $v.articleType">
+              <h3 class="font_hight">{{ $v.title }}</h3>
+              <div class="time">{{ $v.createdAt }}</div>
+              <div class="tips">
+                <span class="tips_one">频道：{{ channelName[$v.channelNumber - 1] }}</span>
+                <span>话题：{{ $v.topicName }}</span>
+              </div>
+              <!-- 文章 -->
+              <div class="artcon" v-if='$v.articleType === 1' v-html='$v.summary'></div>
+              <div class="imglist" v-if='$v.articleType === 1 && $v.imgsPaht'>
+                <div v-for="(item, index) in $v.imgsPaht" :key="index" :class="['imgitem', $v.imgsPaht.length === 1 ? 'big' : '' , $v.imgsPaht.length % 3 === 0 ? 'small' : '', $v.imgsPaht.length === 8 ? 'small' : '', ($v.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="setImgUrl(item)">
+                </div>
+                <div class="imgitem small" v-if="$v.imgsPaht.length === 8"></div>
+              </div>
+              <!-- 视频 -->
+              <div class="video-box" v-if="$v.articleType === 2">
+                <video class="video-player" controls :src="$v.videoPath"></video>
+              </div>
+              <div class="ctrls">
+                <div class="ctrl">
+                  <img class="ib-middle" src="~/assets/img/Icons/ic_dianzan_g_18x18@2x.png" />
+                  <span class="ib-middle">{{ $v.likeNumber }}</span>
+                </div>
+                <div class="ctrl">
+                  <img class="ib-middle" src="~/assets/img/Icons/ic_pinglun_g_18x18@2x.png" />
+                  <span class="ib-middle">{{ $v.commentNumber }}</span>
+                </div>
+                <div class="ctrl">
+                  <img class="ib-middle" src="~/assets/img/Icons/ic_liulang_g_18x18@2x.png" />
+                  <span class="ib-middle">{{ $v.readNumber }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+        <!-- 新闻资讯 -->
+        <section class="news" v-if="navData.elIndex === 3">
+          <div class="news-item" v-for="($v, $k) in searchData" :key="$k">
+            <a :href="'/hotspot/detail/' + $v.id">
+              <div class="news_head">
+                <h1>{{ $v.title }}</h1>
+                <div class="times">
+                  <time>{{ $v.createdAt }}</time>
+                </div>
+                <p>
+                  <span v-if="$v.classificationId >= 0">分类：{{circlenavList[$v.classificationId]}}</span>
+                  <span>作者：{{ $v.author || '佚名' }}</span>
+                  <span v-if='$v.sourceAuthor'>来源：{{ $v.sourceAuthor }}</span>
+                </p>
+              </div>
+              <div class="news_main">
+                <img :src="$v.imgPath" />
+              </div>
+              <article class="news_article">
+                {{ $v.summary }}
+              </article>
+            </a>
+          </div>
+        </section>
+
+        <div class='more-loading' v-show='pageLoding'>
+          <van-loading type="spinner" />
+          <p>正在加载更多</p>
+        </div>
+
+        <div class="no-more" v-show='pageEmpty'>
+          <p>没有更多内容了！</p>
+        </div>
+      </template>
+
+      <template v-else>
+        <div class="search-index">
           <div class="goods-hot">
             <h3 class="hot-tip">热门搜索</h3>
             <ul class="hot-words">
@@ -48,108 +169,21 @@
             </ul>
           </div>
         </div>
-        <div class="goods-details" v-else>
-          <div class="list">
-            <div class="list-item" v-for="(good, index) in 6" :key="index">
-              <div class="item_l">
-                <div class="item_l-bk" :style="'background: url(' + bkImg + ') no-repeat center/contain'"></div>
-              </div>
-              <div class="item_r">
-                <h4>法国1982拉菲法国1982拉菲传奇Lafite</h4>
-                <p>
-                  <span>750ml</span>
-                  <span>日常餐酒</span>
-                  <span>紧致单宁</span>
-                </p>
-                <div class="price">¥ 399</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- 名词解释 -->
-      <section class="definitions" v-if="navData.elIndex === 1">
-        <div class="definitions-list">
-          <div class="definitions-list_item varity" v-for="(varity, index) in 4" :key="index">
-            <h1 class="varity-head">品种：赤霞珠（Cabernet Sauvignon)</h1>
-            <div class="varity-bk">
-              <div class="varity-bk_in" :style="'background: url(' + bkImg2 + ') no-repeat center/contain'"></div>
-            </div>
-            <article class="varity-article">红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元…</article>
-            <footer class="varity-foot">
-              <i class="icon_same ic_good"></i>
-              <span class="num_same">100</span>
-              <i class="icon_same ic_collect marl"></i>
-              <span class="num_same">100</span>
-              <i class="icon_same ic_look marl"></i>
-              <span class="num_same">100</span>
-            </footer>
-          </div>
-        </div>
-      </section>
-      <!-- 知识分享 -->
-      <section class="lore" v-if="navData.elIndex === 2">
-        <div class="lore-items">
-          <div class="lore_item" v-for="(item, index) in 5" :key="index">
-            <div class="lore_item-top">
-              <div class="vessel">
-                <div class="vessel-l" :style="'background: url(' + Imgs + ') no-repeat center/contain'"></div>
-                <div class="vessel-r">
-                  <div class="vessel-r_head">一朵小粒欣</div>
-                  <p>
-                    <time>2018-08-23 14:24:87</time>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="lore_item-bottom">
-              <h2 class="lore_item_head">2017雄狮，Decanter 97分好评，帕克眼中实力一级庄</h2>
-              <div class="lore_item_tips">
-                频道：<span>经验</span><span>心得</span><span>美食</span>
-                话题：红酒
-              </div>
-              <div class="lore_item_content">
-                <div class="lt" :style="'background: url(' + bkImg2 + ') no-repeat center/cover'"></div>
-                <div class="lore_content_js">
-                  <p>红酒世界会员商城第一时间上架这款期酒，国内税前价为486元，香港商城价为610红酒世界会员商城第一时间上架这款期酒，国内税前价为486元，香港商城价为610</p>
-                </div>
-              </div>
-              <footer class="varity-foot">
-                <i class="icon_same ic_good"></i>
-                <span class="num_same">100</span>
-                <i class="icon_same ic_collect marl"></i>
-                <span class="num_same">100</span>
-                <i class="icon_same ic_look marl"></i>
-                <span class="num_same">100</span>
-                <i class="ic_ddd"></i>
-              </footer>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- 新闻资讯 -->
-      <section class="news" v-if="navData.elIndex === 3">
-        <div class="news-item" v-for="(item, index) in 5" :key="index">
-          <div class="news_head">
-            <h1>拉菲传说：拉菲传奇和拉菲珍藏葡萄酒三者之间的区别</h1>
-            <div class="times">
-              <time>2018-08-23 14:24:87</time>
-            </div>
-            <p>
-              <span>国际资讯</span>
-              <span>作者：拉菲尼斯</span>
-              <span>来源：红酒网</span>
-            </p>
-          </div>
-          <div class="news_main">
-            <img :src="bkImg2" />
-          </div>
-            <article class="news_article">
-              红酒世界会员商城第一时间上架这款期酒，其国内税前价为486元，香港商城价为610港元。 在2017这一颇具挑战性的年份，巴顿城堡无惧恶劣天气，表现抢眼。2017年巴顿城堡红葡萄酒。红酒世界会员商城第一时间上…
-            </article>
-          </div>
-      </section>
+      </template>
     </div>
+
+    <transition name="slide-bottom">
+      <div class="drop-wrapper-option" v-if="openSlide">
+        <div class="drop-wrapper-body">
+          <div class='option-item' :class="{'active': item.value === slideActive}" v-for="(item, index) in setArr" :key="index" @click="elActive(item.value)">{{ item.label }}</div>
+        </div>
+      </div>
+    </transition>
+
+    <transition name="fade">
+      <div class="modal" v-show="openSlide"></div>
+    </transition>
+  
   </div>
 </template>
 <script>
@@ -157,19 +191,19 @@ import bkImg from '~/assets/img/green_wine.jpg'
 import bkImg2 from '~/assets/img/bk1.png'
 import Imgs from '~/assets/img/foot/ic_home_ele@2x.png'
 import tools from '~/utils/tools.js'
+import { searchApi } from '@/api/search'
 export default {
   head () {
     return {
-      title: '我的购物车',
+      title: '搜索页',
       meta: [
-        { hid: 'title', name: 'title', content: '我的购物车' }
+        { hid: 'title', name: 'title', content: '搜索页' }
       ]
     }
   },
   data () {
     return {
       isRoll: false,
-      isShow: false,
       keywords: '',
       bkImg: bkImg,
       bkImg2: bkImg2,
@@ -187,10 +221,159 @@ export default {
       classify: {
         elIndex: null,
         nowList: []
+      },
+
+      searchData: [],
+
+      openSlide: false,
+      slideActive: 1,
+      searching: false,
+
+      setArr: [],
+      goodsArr: [{
+        value: 1,
+        label: '酒类'
+      }, {
+        value: 2,
+        label: '非酒类'
+      }], // 商品选择栏
+      phraseArr: [{
+        value: 1,
+        label: '最新'
+      }, {
+        value: 2,
+        label: '评论最多'
+      }, {
+        value: 3,
+        label: '点赞最多'
+      }], // 名词解释
+      knowArr: [{
+        value: 1,
+        label: '最新'
+      }, {
+        value: 2,
+        label: '最热门'
+      }, {
+        value: 3,
+        label: '评论最多'
+      }, {
+        value: 4,
+        label: '点赞最多'
+      }], // 知识分享
+      newsArr: [{
+        value: 1,
+        label: '最新'
+      }, {
+        value: 2,
+        label: '最热门'
+      }, {
+        value: 3,
+        label: '评论最多'
+      }, {
+        value: 4,
+        label: '点赞最多'
+      }],
+      channelName: ['经验/知识', '美食/周边'],
+      circlenavList: ['这些圈子都在看', '行业热点', '培训讲座', '企业招商'],
+
+      ifWine: true, // 是否红酒
+      ifSellOut: false, // 是否售罄
+
+      pageEmpty: false,
+      page: 1, // 当前页
+      pageLoding: false // 加载ing
+    }
+  },
+
+  watch: {
+    keywords (val) {
+      if (val === '') {
+        this.searching = false
       }
     }
   },
+
+  created () {
+    this.setArr = this.goodsArr
+  },
+
+  mounted () {
+    const content = document.querySelector('.search-result')
+    content.addEventListener('scroll', this.handleScroll(() => {
+      this.eleHeight = content.clientHeight
+      this.scrollHeight = content.scrollHeight
+      let scrollTop = content.scrollTop
+      // 距离底部大约200像素
+      if (scrollTop + this.eleHeight >= this.scrollHeight - 200 && !this.pageLoding && !this.pageEmpty) {
+        this.page += 1
+        this.getData(this.page)
+      }
+    }))
+  },
+
   methods: {
+    search () {
+      this.searching = true
+      this.getData(this.page, true)
+    },
+    async getData (page, needClear = false) {
+      this.pageLoding = true
+      let fn = null
+      let param = {}
+      switch (this.navData.elIndex) {
+        case 0:
+          param = {
+            page: page,
+            count: 5,
+            goodsName: this.keywords, // 商品名称
+            sortedBy: 1,
+            ifWine: this.ifWine, // 是否红酒
+            ifSellOut: this.ifSellOut, // 查看往期
+            ifExclusive: false // 非认证
+          }
+          fn = searchApi.searchGoods(param)
+          break
+        case 1:
+          param = {
+            page: page,
+            count: 10,
+            title: this.keywords,
+            sortedBy: this.sortedBy
+          }
+          fn = searchApi.searchBaiKe(param)
+          break
+        case 2:
+          param = {
+            page: page,
+            count: 5,
+            title: this.keywords,
+            orderByNumber: this.sortedBy
+          }
+          fn = searchApi.searchShare(param)
+          break
+        case 3:
+          param = {
+            page: page,
+            count: 5,
+            title: this.keywords,
+            orderByNumber: this.sortedBy
+          }
+          fn = searchApi.searchNews(param)
+          break
+      }
+      const { code, data } = await fn
+      if (code === 200) {
+        if (needClear) {
+          this.searchData = data.array
+        } else {
+          this.searchData.push(...data.array)
+        }
+        this.pageEmpty = this.page * 5 >= data.total
+      } else {
+        this.pageEmpty = false
+      }
+      this.pageLoding = false
+    },
     toWinecenter () {
       let id = tools.getUrlQues('id')
       console.log('id', id)
@@ -201,16 +384,77 @@ export default {
       }
     },
     elNavlist (index) {
+      if (this.navData.elIndex === index) return
+      this.pageEmpty = false
+      this.ctrlLogo = false
       this.navData.elIndex = index
+      this.sortedBy = 1
+      this.slideActive = 1
+      switch (index) {
+        case 0:
+          this.setArr = this.goodsArr
+          break
+        case 1:
+          this.setArr = this.phraseArr
+          break
+        case 2:
+          this.setArr = this.knowArr
+          break
+        case 3:
+          this.setArr = this.newsArr
+          break
+      }
+      this.openSlide = false
+      this.page = 1
+      this.getData(this.page, true)
     },
-    navLogo () {
-      this.isShow = true
-      this.ctrlLogo = true
+    handleSlide () {
+      this.openSlide = !this.openSlide
+      this.ctrlLogo = this.openSlide
     },
     closeLogo (val) {
       console.log('val', val)
-      this.isShow = val
+      this.openSlide = false
       this.ctrlLogo = val
+    },
+    elActive (val) {
+      if (this.slideActive === val) return
+      this.slideActive = val
+      this.sortedBy = val
+      this.openSlide = false
+      this.ctrlLogo = false
+      this.page = 1
+      // 如果是酒类
+      if (this.navData.elIndex === 0) {
+        if (val === 1) {
+          this.ifWine = true
+        } else {
+          this.ifWine = false
+        }
+      }
+      this.getData(this.page, true)
+      // switch (val) {
+      //   case 0:
+      //     this.setArr = this.goodsArr
+      //     break
+      // }
+    },
+    customArray (arr) {
+      return JSON.parse(arr)
+    },
+    handleScroll (fn) {
+      let Switch = true
+      return function () {
+        if (!Switch) return
+        Switch = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          Switch = true
+        }, 250)
+      }
+    },
+    setImgUrl (url) {
+      return url.indexOf('imageslim') !== -1 ? url.split('?')[0] + '?imageView2/5/w/480/h/480' : url + '?imageView2/5/w/480/h/480'
     }
   }
 }
@@ -218,15 +462,14 @@ export default {
 <style lang="less" scoped>
 .search {
   .u-restout;
-  padding-top: 70px;
+  // padding-top: 80px;
   position: relative;
 
   &-head {
     border: 1PX solid #F5F5F5;
-    z-index: 3000;
-    position: absolute;
-    top: 0;
-    left: 0;
+    // box-shadow: 0px -3px 7px 1px #000;
+    z-index: 100;
+    position: relative;
     background: #fff;
     .padlr20;
     .inputmdl {
@@ -341,11 +584,13 @@ export default {
   }
 
   &-result {
-    .padlr20;
+    height: ~'calc(100vh - 86px)';
+    overflow: scroll;
+    font-size: 0;
 
-    .goods {
-
-      &-hot {
+    .search-index {
+      padding: 0 20px;
+      .goods-hot {
         padding-top: 15px;
         padding-bottom: 15px;
         border-bottom: 1PX solid #F5F5F5;
@@ -368,7 +613,7 @@ export default {
             font-size: 16px;
             font-family: PingFang-SC-Medium;
             font-weight: 500;
-            color: #333333;
+            color: #333;
             margin: 15px 0;
             padding-left: 20px;
             position: relative;
@@ -396,10 +641,9 @@ export default {
             }
           }
         }
-
       }
 
-      &-history {
+      .goods-history {
         .history-tip {
           padding: 15px 0;
           font-size: 14px;
@@ -423,8 +667,6 @@ export default {
 
           &_item {
             font-size: 15px;
-            font-family: PingFangSC-Semibold;
-            font-weight: 600;
             color: rgba(195, 199, 205, 1);
             padding: 8px 34px 8px 10px;
             background: #F8F8F8;
@@ -448,8 +690,12 @@ export default {
           }
         }
       }
+    }
+
+    .goods {
 
       .goods-details {
+        padding: 0 20px;
         .list {
           &-item {
             display: flex;
@@ -500,6 +746,7 @@ export default {
     }
 
     .definitions {
+      padding: 0 20px;
       &-list {
         &_item {
           margin-top: 30px;
@@ -608,6 +855,7 @@ export default {
     }
 
     .news {
+      padding: 0 20px;
       &-item {
         margin: 27px 0;
         background: rgba(255, 255, 255, 1);
@@ -674,6 +922,32 @@ export default {
           font-weight: 500;
           color: rgba(153, 153, 153, 1);
           line-height: 24px;
+        }
+      }
+    }
+  }
+
+  // 下拉
+  .drop-wrapper {
+    &-option {
+      width: 100%;
+      position: fixed;
+      z-index: 31;
+      top: 80px;
+      left: 0;
+      background: white;
+    }
+    
+    &-body {
+      padding: 15px 0;
+      .option-item {
+        text-align: center;
+        font-size: 13px;
+        color: @cor_999;
+        padding: 16px 0;
+        &.active {
+          color: @cor_333;
+          font-weight: bold;
         }
       }
     }
@@ -763,8 +1037,142 @@ export default {
       font-family: PingFang-SC-Regular;
       font-weight: 400;
       color: rgba(153, 153, 153, 1);
+      margin-left: 3px;
     }
 
+  }
+}
+
+.u-share-articel {
+  margin-top: 20px;
+  padding: 0 20px;
+  &-list {
+    background: #fff;
+    border-radius: 8px;
+    min-height: 50px;
+    border: 1PX solid #EAEAEA;
+    padding: 15px 20px 20px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  &-item {
+    padding: 0 20px;
+    margin-top: 20px;
+
+    h3 {
+      font-size: 16px;
+      color: rgba(51, 51, 51, 1);
+      line-height: 22px;
+      max-height: 46px;
+      overflow: hidden;
+      text-align: justify;
+    }
+
+    .time {
+      font-size: 12px;
+      color: #999;
+      margin: 12px 0;
+      position: relative;
+      padding-left: 20px;
+
+      &:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 14px;
+        height: 14px;
+        margin-top: -8px;
+        background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+        .bg_cover;
+      }
+    }
+
+    .tips {
+      font-size: 12px;
+      font-family: PingFang-SC-Regular;
+      font-weight: 400;
+      color: rgba(153, 153, 153, 1);
+      line-height: 12px;
+      margin: 10px 0;
+      &_one {
+        margin-right: 10px;
+      }
+    }
+
+    .artcon {
+      margin: 10px 0;
+      font-size: 14px;
+      color: #999;
+      line-height: 24px;
+      text-align: justify;
+      &>p {
+        width: 100%;
+      }
+      img {
+        display: inline-block;
+        max-width: 100%;
+      }
+    }
+
+    .imglist {
+      margin: 10px 0;
+      flex-wrap: wrap;
+      .flex_between;
+
+      .imgitem {
+        border-radius: 8px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        overflow: hidden;
+        width: 140px;
+        height: 140px;
+        margin-bottom: 18px;
+        &.big {
+          width: 100%;
+          height: 150px;
+        }
+        &.small {
+          width: 88px;
+          height: 88px;
+        }
+      }
+    }
+
+    .ctrls {
+      display: flex;
+      margin-left: -25px;
+      font-size: 0;
+
+      .ctrl {
+        margin-left: 25px;
+
+        &>img {
+          display: inline-flex;
+          width: 18px;
+          height: 18px;
+        }
+
+        &>span {
+          padding-left: 3px;
+          font-size: 12px;
+          font-family: PingFang-SC-Regular;
+          font-weight: 400;
+          color: rgba(153, 153, 153, 1);
+        }
+      }
+    }
+
+    .video-box {
+      position: relative;
+      .video-player {
+        width: 100%;
+        max-height: 180px;
+        border-radius: 5px;
+        margin: 5px 0;
+      }
+    }
   }
 }
 </style>
