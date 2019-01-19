@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多活动'}}</div>
-      <null-data v-if="activeList.length === 0"></null-data>
+      <null-data tips="暂无您想要的活动" v-if="activeList.length === 0"></null-data>
       <a class="apply-add" href="/community/apply">
         <span class="apply_icon">+</span>
         <span class="apply_word">申请</span>

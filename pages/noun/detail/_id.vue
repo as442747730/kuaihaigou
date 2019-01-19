@@ -17,8 +17,8 @@
         </div>
       </div>
       <div class="lynav">
-        <div class="lynav_item" :class="{active: lynavIndex === 0}" @click="lynavFn(0)">{{getType}}介绍</div>
-        <div class="lynav_item" :class="{active: lynavIndex === 1}" @click="lynavFn(1)">{{getType}}图片
+        <div class="lynav_item" :class="{active: lynavIndex === 0}" @click="lynavFn(0)">{{instype}}介绍</div>
+        <div class="lynav_item" :class="{active: lynavIndex === 1}" @click="lynavFn(1)">{{instype}}图片
           <span>（{{imagesArr.length}}）</span>
         </div>
       </div>
@@ -83,8 +83,10 @@ export default {
     let objDet = {}
     let _imgArr = []
     let encyType
+    let _instype
     if (queryNum === '0') {
       encyType = '4'
+      _instype = '品种'
       const { code, data } = await encyApi.serverVarietyList(encyId, req)
       if (code === 200) {
         objDet = data
@@ -92,6 +94,7 @@ export default {
       }
     } else if (queryNum === '1') {
       encyType = '5'
+      _instype = '产区'
       const { code, data } = await encyApi.serverAreaDetail(encyId, req)
       if (code === 200) {
         objDet = data
@@ -99,6 +102,7 @@ export default {
       }
     } else if (queryNum === '2') {
       encyType = '6'
+      _instype = '酒庄'
       const { code, data } = await encyApi.serverWineryDetail(encyId, req)
       if (code === 200) {
         objDet = data
@@ -106,7 +110,7 @@ export default {
       }
     }
     console.log(objDet)
-    return { objDetail: objDet, imagesArr: _imgArr, articelType: encyType, navIndex: queryNum }
+    return { objDetail: objDet, imagesArr: _imgArr, articelType: encyType, navIndex: queryNum, instype: _instype }
   },
   data () {
     return {
@@ -115,20 +119,8 @@ export default {
       imagesArr: [],
       imgsArray: [],
       lynavIndex: 0,
-      navIndex: null
-    }
-  },
-  computed: {
-    getType () {
-      if (this.navIndex === 0) {
-        return '品种'
-      } else if (this.navIndex === 1) {
-        return '产区'
-      } else if (this.navIndex === 2) {
-        return '酒庄'
-      } else {
-        return '品种'
-      }
+      navIndex: null,
+      instype: ''
     }
   },
   methods: {
