@@ -3,13 +3,15 @@
   <div class="u-menu">
     <div class="menu-wrapper">
       <div class="menu-ul">
-        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key" @click="linkTo(m.url)">{{ m.name }}</div>
+        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key" @click="linkTo(m.url)" v-if="m.key !== 'out'">{{ m.name }}</div>
+        <div v-else :class="['menu-li', m.key]" :key="m.key" @click='loginOut'>{{ m.name }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import { userApi } from '@/api/users'
   export default {
     name: 'u-menu',
     data () {
@@ -22,14 +24,24 @@
           { name: '售后记录', key: 'after', url: '/aftersale/list' },
           { name: '账号管理', key: 'account', url: '/account/mgnumber' },
           { name: '资质认证', key: 'certif', url: '/prove' },
-          { name: '打赏记录', key: 'reward', url: '' },
-          { name: '服务中心', key: 'service', url: '' }
+          { name: '打赏记录', key: 'reward', url: '/mine/reward' },
+          { name: '服务中心', key: 'service', url: '' },
+          { name: '退出登录', key: 'out', url: 'javascript:void(0)' }
         ]
       }
     },
     methods: {
       linkTo (val) {
         window.location.href = val
+      },
+      async loginOut () {
+        const { code } = await userApi.loginOut()
+        if (code === 200) {
+          this.$toast('登出成功')
+          setTimeout(() => {
+            window.location.reload()
+          }, 1000)
+        }
       }
     }
   }

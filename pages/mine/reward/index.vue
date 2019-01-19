@@ -3,25 +3,50 @@
     <div class="u-reward-info">
       <div class="u-reward-info-box">
         <span>赏金余额</span>
-        <b>¥ 928.15</b>
+        <b>¥ {{ formatMoney(rewardTotal) }}</b>
         <p>我有一樽酒，欲以赠远人～多分享好内容哦～</p>
       </div>
     </div>
     <div class="depart-line"></div>
     <div class="tab">
-      <span class="cur">知音打赏我</span>
-      <span>我打赏他人</span>
-      <span>消费记录</span>
+      <span :class="{'cur': setType === 1}" @click='changeType(1)'>知音打赏我</span>
+      <span :class="{'cur': setType === 2}" @click='changeType(2)'>我打赏他人</span>
+      <span :class="{'cur': setType === 3}" @click='changeType(3)'>消费记录</span>
     </div>
     <div class="u-reward-content">
-      <ul class="u-reward-item">
+      <!-- 知音打赏我 -->
+      <ul class="u-reward-item" v-if='setType === 1'>
         <li class="u-reward-list" v-for='($v, $k) in rewardData' :key='$k'>
-          <div class="pro" :style="'background:url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
+          <a :href="'/user?uid=' + $v.personalInfoResp.id">
+            <div class="pro" :style="'background:url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
+          </a>
           <div class="desc">
             <span class="font_hight">{{ $v.personalInfoResp.nickname }}</span>
             <p>于{{ $v.createdAt }}打赏您</p>
           </div>
-          <div class="price font_hight">+{{ $v.rewardAmount }}.00元</div>
+          <div class="price font_hight">+{{ formatMoney($v.rewardAmount) }}元</div>
+        </li>
+      </ul>
+      <!-- 我打赏他人 -->
+      <ul class="u-reward-item" v-if='setType === 2'>
+        <li class="u-reward-list" v-for='($v, $k) in rewardData' :key='$k'>
+          <a :href="'/user?uid=' + $v.personalInfoResp.id">
+            <div class="pro" :style="'background:url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
+          </a>
+          <div class="desc">
+            <span class="font_hight">{{ $v.personalInfoResp.nickname }}</span>
+            <p>您于{{ $v.createdAt }}打赏{{ $v.personalInfoResp.nickname }}</p>
+          </div>
+          <div class="price font_hight">-{{ formatMoney($v.rewardAmount) }}元</div>
+        </li>
+      </ul>
+
+      <!-- 消费记录 -->
+      <ul class="u-reward-item" v-if='setType === 3'>
+        <li class="u-reward-record" v-for='($v, $k) in rewardData' :key='$k'>
+          <h3 class="font_hight">订单编号：{{ $v.orderIdentify }}</h3>
+          <p>下单时间：{{ $v.submitOrderTime }}</p>
+          <span>-{{ formatMoney($v.hiCoinReduction) }}元</span>
         </li>
       </ul>
 
@@ -38,6 +63,8 @@
 </template>
 <script>
 import { userApi } from '~/api/users'
+import tools from '~/utils/tools'
+
 export default {
   head () {
     return {
@@ -48,22 +75,27 @@ export default {
     }
   },
   async asyncData (req) {
-    const { code, data } = await userApi.serveRewardToMe({ page: 1, count: 5 }, req)
-    console.log(code)
-    if (code === 200) {
-      console.log(data)
+    const { code: code1, data: data1 } = await userApi.serveRewardToMe({ page: 1, count: 5 }, req)
+    const { code: code2, data: data2 } = await userApi.serveGetTotal(req)
+    if (code1 === 200 && code2 === 200) {
       let pageEmpty = false
-      pageEmpty = data.total <= 5
+      pageEmpty = data1.total <= 5
       return {
-        rewardData: data.array || {},
+        rewardTotal: data2 || 0,
+        rewardData: data1.array || {},
         pageEmpty: pageEmpty,
-        pageTotal: data.total
+        pageTotal: data1.total
       }
+    } else if (code1 === 506) {
+      req.redirect('/account/login')
     }
   },
   data () {
     return {
       rewardData: [],
+      type: 1,
+      setType: 1,
+      rewardTotal: 0,
 
       defaulthead: this.defaulthead,
 
@@ -87,6 +119,33 @@ export default {
     }))
   },
   methods: {
+    async getData (page, needClear = false, type) {
+      if (needClear) {
+        var toast1 = this.$toast.loading({ message: '数据获取中', duration: 0, mask: true })
+        this.type = type
+      }
+      this.pageLoding = true
+      const { code, data } = this.type === 1 ? await userApi.rewardToMe({ page: page, count: 5 }) : this.type === 2 ? await userApi.rewardFromMe({ page: page, count: 5 }) : await userApi.record({ page: page, count: 5 })
+      if (code === 200) {
+        if (needClear) {
+          this.rewardData = data.array
+          this.setType = type
+          toast1.clear()
+        } else {
+          this.rewardData.push(...data.array)
+        }
+        this.pageEmpty = this.page * 5 >= data.total
+      } else {
+        this.pageEmpty = false
+      }
+      this.pageLoding = false
+    },
+    changeType (val) {
+      if (this.type === val) return
+      this.page = 1
+      this.pageEmpty = false
+      this.getData(this.page, true, val)
+    },
     handleScroll (fn) {
       let Switch = true
       return function () {
@@ -97,6 +156,9 @@ export default {
           Switch = true
         }, 150)
       }
+    },
+    formatMoney (a) {
+      return tools.money(a)
     }
   }
 }
@@ -152,7 +214,7 @@ export default {
     }
   }
   &-content {
-    height: ~'calc(100vh - 210px)';
+    height: ~'calc(100vh - 222px)';
     overflow: scroll;
   }
   &-item {
@@ -193,6 +255,27 @@ export default {
       color: #FB6248;
       font-size: 15px;
       top: 25px;
+    }
+  }
+  &-record {
+    position: relative;
+    padding: 20px 0;
+    border-bottom: 1px solid #f1f1f1;
+    h3 {
+      color: #333;
+      font-size: 15px;
+    }
+    p {
+      font-size: 13px;
+      color: #666;
+      margin-top: 10px;
+    }
+    span {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-size: 15px;
+      color: #F99C00;
     }
   }
 }
