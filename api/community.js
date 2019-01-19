@@ -23,5 +23,9 @@ export const munityApi = {
   // 投票
   clicentVote (params) {
     return request.clientPostJson('/api/activity/vote', params)
+  },
+  // 报名
+  clientSignup (params) {
+    return request.clientPostJson('/api/activity/signUp', params)
   }
 }
