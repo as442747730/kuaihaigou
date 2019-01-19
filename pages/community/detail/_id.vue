@@ -470,6 +470,9 @@
           } else if (status === 5 && queryNum === '2') {
             _actstatus = '9'
           }
+          // console.log('status', status)
+          // console.log('voteStatus', voteStatus)
+          // console.log('ifVote', ifVote)
           return {
             communityId: munityId,
             detailInfo: detData,
