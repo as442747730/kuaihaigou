@@ -4,6 +4,18 @@ export const searchApi = {
   serverGetList (params, req) {
     return request.serverGet('/api/coupon/', params, req)
   },
+  // 商品
+  serverGoods (params) {
+    return request.serverGet('/api/esGoods/paginate', params)
+  },
+  // 更新搜索词热度
+  updataKeyword (params) {
+    return request.serverPostJson('/api/searchkeyword/updateSearchKeyword', params)
+  },
+  // 搜索关键词
+  listSearchKeyword (req) {
+    return request.serverGet('/api/searchkeyword/listSearchKeyword')
+  },
   /* ---------------- client ---------------------- */
   searchGoods (params) {
     return request.clientGet('/api/esGoods/paginate', params)

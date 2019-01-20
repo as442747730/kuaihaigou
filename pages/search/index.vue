@@ -1,5 +1,5 @@
 <template>
-  <div class="search" :class="{stopwineScroll: isRoll}">
+  <div class="search">
     <div class="search-head">
       <div class="inputmdl">
         <div class="inputmdl-in">
@@ -17,7 +17,7 @@
     <div class="search-result">
       <template v-if='keywords && searching'>
         <!-- 商品 -->
-        <section class="goods" v-if="navData.elIndex === 0">
+        <section class="goods" v-if="navDatanIndex === 0">
           <div class="goods-details">
             <div class="list-item" v-for="($v, $k) in searchData" :key="$k">
               <a :href="'/detail/' + $v.id" style="display: flex">
@@ -43,7 +43,7 @@
           </div>
         </section>
         <!-- 名词解释 -->
-        <section class="definitions" v-if="navData.elIndex === 1">
+        <section class="definitions" v-if="navDatanIndex === 1">
           <div class="definitions-list">
             <div class="definitions-list_item varity" v-for="($v, $k) in searchData" :key="$k">
               <a :href="'/noun/detail/' + $v.attrid + '?num=' + ($v.type - 4)">
@@ -65,7 +65,7 @@
           </div>
         </section>
         <!-- 知识分享 -->
-        <section class="u-share-articel-item" v-if='navData.elIndex === 2'>
+        <section class="u-share-articel-item" v-if='navDatanIndex === 2'>
           <div class="u-share-articel-list" v-for="($v, $k) in searchData" :key="$k">
             <a :href="'/knowledge/detail/' + $v.id + '?type=' + $v.articleType">
               <h3 class="font_hight">{{ $v.title }}</h3>
@@ -103,7 +103,7 @@
           </div>
         </section>
         <!-- 新闻资讯 -->
-        <section class="news" v-if="navData.elIndex === 3">
+        <section class="news" v-if="navDatanIndex === 3">
           <div class="news-item" v-for="($v, $k) in searchData" :key="$k">
             <a :href="'/hotspot/detail/' + $v.id">
               <div class="news_head">
@@ -142,28 +142,20 @@
           <div class="goods-hot">
             <h3 class="hot-tip">热门搜索</h3>
             <ul class="hot-words">
-              <li class="hot-words_item" v-for="(v, index) in 10">
-                <span :class="[{w1: index === 0}, {w2: index === 1}, {w3: index === 2}]">{{index + 1}}.</span>
-                拉菲珍宝红葡萄酒
+              <li class="hot-words_item" v-for="($v2, $k2) in hotSerach">
+                <span :class="[{w1: $k2 === 0}, {w2: $k2 === 1}, {w3: $k2 === 2}]">{{ $k2 + 1 }}.</span>
+                <a :href="'/search?keyword=' + $v2.keyword + '&kid=' + $v2.id">{{ $v2.keyword }}</a>
               </li>
             </ul>
           </div>
-          <div class="goods-history">
+          <div class="goods-history" v-if='localKeyword.length !== 0'>
             <h3 class="history-tip">
-              <i class="icon_dustbin"></i>
+              <i class="icon_dustbin" @click='clearHistory'></i>
               历史搜索
             </h3>
             <ul class="history-list">
-              <li class="history-list_item">
-                干红
-                <i class="icon_close"></i>
-              </li>
-              <li class="history-list_item">
-                红葡萄酒
-                <i class="icon_close"></i>
-              </li>
-              <li class="history-list_item">
-                干白
+              <li class="history-list_item" v-for='(item, index) in localKeyword' :key='index' @click='searchHistory(item)'>
+                {{ item }}
                 <i class="icon_close"></i>
               </li>
             </ul>
@@ -187,10 +179,7 @@
   </div>
 </template>
 <script>
-import bkImg from '~/assets/img/green_wine.jpg'
-import bkImg2 from '~/assets/img/bk1.png'
-import Imgs from '~/assets/img/foot/ic_home_ele@2x.png'
-import tools from '~/utils/tools.js'
+// import tools from '~/utils/tools.js'
 import { searchApi } from '@/api/search'
 export default {
   head () {
@@ -201,27 +190,42 @@ export default {
       ]
     }
   },
+
+  async asyncData (req) {
+    const { code: code1, data: data1 } = await searchApi.listSearchKeyword()
+    const { code: code2, data: data2 } = await searchApi.serverGoods({ page: 1, count: 5, goodsName: req.query.keyword, sortedBy: 1, ifWine: true, ifSellOut: false, ifExclusive: false })
+    if (req.query.kid) {
+      await searchApi.updataKeyword(req.query.kid)
+    }
+    if (code1 === 200) {
+      let searchData = []
+      let pageEmpty = false
+      if (code2 === 200) {
+        searchData = data2.array
+        pageEmpty = data2.total < 5
+      }
+      return {
+        hotSerach: data1 || [],
+        keywords: req.query.keyword,
+        searching: req.query.keyword !== '',
+        searchData: searchData,
+        pageEmpty: pageEmpty
+      }
+    }
+  },
+
   data () {
     return {
-      isRoll: false,
+      hotSerach: [], // 热门搜索
+
       keywords: '',
-      bkImg: bkImg,
-      bkImg2: bkImg2,
-      Imgs: Imgs,
+
       navData: {
         list: ['商品', '名词解释', '知识分享', '新闻资讯'],
         elIndex: 0
       },
+      navDatanIndex: 0,
       ctrlLogo: false,
-      postSearch: {
-        list: ['最新', '最热门', '评论最多', '点赞最多'],
-        elIndex: 3
-      },
-      listSearch: ['最新', '最热门', '评论最多', '点赞最多'],
-      classify: {
-        elIndex: null,
-        nowList: []
-      },
 
       searchData: [],
 
@@ -281,7 +285,9 @@ export default {
 
       pageEmpty: false,
       page: 1, // 当前页
-      pageLoding: false // 加载ing
+      pageLoding: false, // 加载ing,
+
+      localKeyword: []
     }
   },
 
@@ -309,14 +315,19 @@ export default {
         this.getData(this.page)
       }
     }))
+    this.localKeyword = JSON.parse(localStorage.getItem('localKeyword')) || []
   },
 
   methods: {
     search () {
-      this.searching = true
+      // this.searching = true
       this.getData(this.page, true)
+      // 设置历史记录
+      this.setLocalStore(this.keywords)
     },
     async getData (page, needClear = false) {
+      if (!this.keywords) return
+      const toast1 = this.$toast.loading({ message: '数据获取中', duration: 0, mask: true })
       this.pageLoding = true
       let fn = null
       let param = {}
@@ -368,20 +379,24 @@ export default {
         } else {
           this.searchData.push(...data.array)
         }
+        this.searching = true
         this.pageEmpty = this.page * 5 >= data.total
       } else {
         this.pageEmpty = false
       }
+      toast1.clear()
+      this.navDatanIndex = this.navData.elIndex
       this.pageLoding = false
     },
     toWinecenter () {
-      let id = tools.getUrlQues('id')
-      console.log('id', id)
-      if (id === 'others') {
-        window.location.href = '/winecenter/others'
-      } else if (id === 'winecenter') {
-        window.location.href = '/winecenter'
-      }
+      // let id = tools.getUrlQues('id')
+      // console.log('id', id)
+      // if (id === 'others') {
+      //   window.location.href = '/winecenter/others'
+      // } else if (id === 'winecenter') {
+      //   window.location.href = '/winecenter'
+      // }
+      window.location.href = '/home'
     },
     elNavlist (index) {
       if (this.navData.elIndex === index) return
@@ -433,14 +448,33 @@ export default {
         }
       }
       this.getData(this.page, true)
-      // switch (val) {
-      //   case 0:
-      //     this.setArr = this.goodsArr
-      //     break
-      // }
     },
     customArray (arr) {
       return JSON.parse(arr)
+    },
+    // 设置历史记录
+    setLocalStore (val) {
+      if (this.setWord === this.keywords || !this.keywords) return
+      this.setWord = val
+      let cache = []
+      if (this.localKeyword.length <= 5) {
+        cache.unshift(this.keywords)
+        this.localKeyword = cache.concat(this.localKeyword)
+      } else {
+        this.localKeyword.pop()
+        this.localKeyword.unshift(this.keywords)
+      }
+      localStorage.setItem('localKeyword', JSON.stringify(this.localKeyword))
+    },
+    searchHistory (val) {
+      this.keywords = val
+      this.page = 1
+      this.pageEmpty = false
+      this.getData(this.page, true)
+    },
+    clearHistory () {
+      this.localKeyword = []
+      localStorage.setItem('localKeyword', JSON.stringify(this.localKeyword))
     },
     handleScroll (fn) {
       let Switch = true

@@ -92,6 +92,27 @@ export default {
     }
     return axios(options).then(checkStatus).then(checkCode)
   },
+  serverPostJson (url, data, req) {
+    const options = {
+      method: 'post',
+      url: target + url,
+      data: data,
+      timeout: 30000,
+      withCredentials: false,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+    }
+    if (req && req.req.headers.cookie) {
+      var cookies = []
+      _.each(req.req.headers.cookie, function (value, key) {
+        cookies.push(`${value}`)
+      })
+      options.headers.Cookie = cookies.join('')
+    }
+    return axios(options).then(checkStatus).then(checkCode)
+  },
   serverGet (url, params, req) {
     const options = {
       method: 'get',
