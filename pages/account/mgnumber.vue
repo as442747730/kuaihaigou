@@ -11,6 +11,10 @@
         <list-two @okSwitch="okSwitch" @noSwitch="noSwitch"  l_one="微信" type="wx" :l_two="userInfo.wxNickname" :vsw="bindWx"></list-two>
         <list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="QQ" type="qq" :l_two="userInfo.qqNickname" :vsw="bindQQ"></list-two>
       	<list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="微博" type="wb" :l_two="userInfo.wbNickname" :vsw="bindWb"></list-two>
+        <div class="depart-line"></div>
+        <div class="login-out" @click='loginOut'>
+          退出登录
+        </div>
       </section>
     </div>
   </div>
@@ -129,6 +133,19 @@ export default {
         this.getInfo()
         this.$toast('解绑成功')
       }
+    },
+    loginOut () {
+      this.$dialog.confirm({
+        message: '确定要退出吗？'
+      }).then(async () => {
+        const { code } = await userApi.loginOut()
+        if (code === 200) {
+          this.$toast('登出成功')
+          setTimeout(() => {
+            window.location.href = '/account/login'
+          }, 1000)
+        }
+      })
     }
   }
 }
@@ -145,6 +162,17 @@ export default {
     font-weight: 600;
     color: rgba(153, 153, 153, 1);
     padding: 0 20px;
+  }
+  .mange-in {
+    font-size: 0;
+  }
+  .login-out {
+    display: flex;
+    align-items: center;
+    height: 67px;
+    padding: 0 20px;
+    font-size: 15px;
+    border-bottom: 1px solid #F5F5F5;
   }
 }
 </style>
