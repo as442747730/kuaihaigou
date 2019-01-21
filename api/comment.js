@@ -1,5 +1,5 @@
 import request from '~/utils/request'
-// 购物车
+// 评论
 export const commentApi = {
   // 创建评论
   createComent (params) {

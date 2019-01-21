@@ -2,8 +2,8 @@
   <main class="u-detail">
     <section class="u-detail_header">
       <van-nav-bar title="商品详情" left-arrow @click-left="historyBack">
-        <van-icon name="fenxiang" slot="right" />
-        <van-icon name="collect" slot="right" />
+        <!-- <van-icon name="fenxiang" slot="right" /> -->
+        <van-icon :name="ifCollection ? 'star' : 'collect'" slot="right" @click='handleCollect' />
       </van-nav-bar>
     </section>
 
@@ -265,21 +265,28 @@ export default {
     let detailFn = goodsApi.getDetail(id, req)
     let topSaleFn = goodsApi.getTopSales(req)
     let userInfoFn = userApi.serverPostInfo(req)
+    let collectFn = goodsApi.getCollect(id, req)
     const {code: detCode, data: detData} = await detailFn
     const {code: hotCode, data: hotData} = await topSaleFn
     const {code: userCode} = await userInfoFn
+    const { code: colCode, data: colData } = await collectFn
     let no = detData.ifWine ? 2 : 1
     const {code: frequeCode, data: frequeData} = await goodsApi.frequently(no)
     if (detCode === 200) {
       let hotlist = []
       let isLogin = false
+      let ifCollection = false
       if (hotCode === 200) {
         hotlist = hotData
       }
       if (userCode === 200) {
         isLogin = true
       }
-      console.log('detData', detData)
+      console.log(colCode)
+      if (colCode === 200) {
+        console.log(colData)
+        ifCollection = colData.ifCollection
+      }
       let { imgList, goodsName, actualPrice, introduce, promotionResp } = detData
       let topData = {
         imgList: imgList,
@@ -313,7 +320,6 @@ export default {
       if (frequeCode === 200) {
         frequeList = frequeData
       }
-      console.log('frequeList', frequeList)
       let commentParams = {
         satisfactionNum: satisfactionNum,
         satisfactionDegree: satisfactionDegree,
@@ -349,7 +355,8 @@ export default {
         afterSale: afterSale,
         commentParams: commentParams,
         hotlist: hotlist || [],
-        singleObj: singleObj
+        singleObj: singleObj,
+        ifCollection: ifCollection
       }
     }
   },
@@ -371,6 +378,8 @@ export default {
           }
         }
       },
+      ifCollection: false, // 是否收藏
+
       topGoods: {}, // 上部商品详情数据
       turePrice: 0,
       skuAttrList: [], // 商品规格
@@ -463,6 +472,7 @@ export default {
   },
 
   async created (req) {
+    console.log(this.ifCollection)
     this.viewData = this.goodsList
     const {code, data} = await goodsApi.getProvince('86')
     if (code === 200) {
@@ -843,6 +853,21 @@ export default {
         }
       } else {
         this.$toast(setData)
+      }
+    },
+    // 去收藏
+    async handleCollect () {
+      if (!this.isLogin) return this.$toast('请先登录！')
+      let fn = null
+      if (this.ifCollection) {
+        fn = goodsApi.cancelCollect(this.goodsId)
+      } else {
+        fn = goodsApi.toCollect(this.goodsId)
+      }
+      const { code } = await fn
+      if (code === 200) {
+        this.ifCollection = !this.ifCollection
+        this.$toast(this.ifCollection ? '收藏成功' : '取消收藏成功')
       }
     },
     onClickefu () {
@@ -1418,5 +1443,10 @@ export default {
     font-size: 17px;
     color: #000;
   }
+}
+.van-icon.van-icon-star {
+  font-size: 21px;
+  color: #333;
+  margin-right: 4px;
 }
 </style>
