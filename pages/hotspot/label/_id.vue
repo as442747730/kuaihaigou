@@ -105,7 +105,7 @@
     },
     methods: {
       async fetchData (isMore) {
-        this.$toast.loading('加载中...')
+        // this.$toast.loading('加载中...')
         this.loadTxt = '加载中'
         if (isMore) {
           this.curPage += 1

@@ -69,7 +69,7 @@
               @click="worldFn(world)"
               :key="index"><span>{{world.name}}</span></div>
           </div>
-          <div :data-counId="elAreas.countryid" :class="['areas-country', {maxhight: elAreas.countryid || elAreas.countryid === '-1'}]">
+          <div :data-counId="elAreas.countryid" :class="['areas-country', {maxhight: elAreas.countryid || elAreas.countryid === -1}]">
             <ul class="country-l" :class="[{lb_ok: elAreas.countryid}]">
               <li
                 :data-val="areaContryList.length"
@@ -97,8 +97,8 @@
             <div class="items-head">地区级</div>
             <ul class="items_uls">
               <li
-                :class="{active: elAreas.twoAreaId === -2}"
-                @click="districtFn(-2)">
+                :class="{active: elAreas.twoAreaId === -1}"
+                @click="districtFn(-1)">
                   <span>全部</span>
                 </li>
               <li
@@ -114,8 +114,8 @@
             <div class="items-head">子区级</div>
             <ul class="items_uls">
               <li
-                :class="{active: elAreas.threeAreaId === -3}"
-                @click="subFn(-3)">
+                :class="{active: elAreas.threeAreaId === -1}"
+                @click="subFn(-1)">
                   <span>全部</span>
                 </li>
               <li
@@ -132,8 +132,8 @@
             <ul class="items_uls">
               <li
                 v-if="navIndex === 2"
-                :class="{active: elAreas.fourAreaId === -4}"
-                @click="smallFn(-4)">
+                :class="{active: elAreas.fourAreaId === -1}"
+                @click="smallFn(-1)">
                   <span>全部</span>
                 </li>
               <li
@@ -200,14 +200,14 @@ export default {
       elGrape: {},
       isVariey: false,
       elAreas: {
-        classify: '-1',
-        countryid: '-1',
+        classify: -1,
+        countryid: null,
         oneAreaId: null,
         twoAreaId: null,
         threeAreaId: null,
         fourAreaId: null
       },
-      worlds: [{name: '全部', id: '-1'}, {name: '新世界', id: '1'}, {name: '旧世界', id: '2'}],
+      worlds: [{name: '全部', id: -1}, {name: '新世界', id: 1}, {name: '旧世界', id: 2}],
       bigList: [], // 大产区
       districtList: [], // 地产区
       subList: [], // 子产区
@@ -260,20 +260,20 @@ export default {
     bigFn (areaid) {
       // 大区
       this.elAreas.oneAreaId = areaid
-      this.elAreas.twoAreaId = null
-      this.nextArea(areaid, 0)
       this.restAreaId('big')
+      this.nextArea(areaid, 1)
     },
     districtFn (areaid) {
       // 地区
       this.elAreas.twoAreaId = areaid
-      this.elAreas.threeAreaId = null
-      this.nextArea(areaid, 1)
+      this.restAreaId('district')
+      this.nextArea(areaid, 2)
     },
     subFn (areaid) {
       // 子区
       this.elAreas.threeAreaId = areaid
-      this.nextArea(areaid, 2)
+      this.restAreaId()
+      this.nextArea(areaid, 3)
     },
     smallFn (areaid) {
       // 小子区
@@ -324,13 +324,15 @@ export default {
       if (twoAreaId === null) twoAreaId = '-1'
       if (threeAreaId === null) threeAreaId = '-1'
       if (fourAreaId === null) fourAreaId = '-1'
+      let areaLevel = num
       let params = {
         classify: classify,
         countryid: countryid,
         oneAreaId: oneAreaId,
         twoAreaId: twoAreaId,
         threeAreaId: threeAreaId,
-        fourAreaId: fourAreaId
+        fourAreaId: fourAreaId,
+        areaLevel: areaLevel
       }
       let nextAreaFn
       if (this.navIndex === 1) {
@@ -341,13 +343,13 @@ export default {
       const { code, data } = await nextAreaFn
       if (code === 200) {
         switch (num) {
-          case 0:
+          case 1:
             this.districtList = data
             break
-          case 1:
+          case 2:
             this.subList = data
             break
-          case 2:
+          case 3:
             this.smallList = data
             break
         }

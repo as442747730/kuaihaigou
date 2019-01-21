@@ -49,7 +49,11 @@
         </div>
       </div>
       <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多活动'}}</div>
-      <null-data v-else></null-data>
+      <null-data tips="暂无您想要的活动" v-if="activeList.length === 0"></null-data>
+      <a class="apply-add" href="/community/apply">
+        <span class="apply_icon">+</span>
+        <span class="apply_word">申请</span>
+      </a>
     </section>
   </div>
 </template>
@@ -75,7 +79,7 @@ export default {
     if (navstatus && navstatus !== '0') _themes = navstatus
     const params = {
       page: 1,
-      count: 3,
+      count: 5,
       themeType: _themes
     }
     const defparams = Object.assign({}, params)
@@ -464,6 +468,32 @@ export default {
     font-size: 12px;
     background: @cor_border;
     color: @cor_666;
+  }
+  .apply-add {
+    position: fixed;
+    right: 36px;
+    bottom: 100px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #03A1CD;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .apply_icon {
+      font-size:20px;
+      font-family:PingFangSC-Semibold;
+      font-weight:600;
+      color:rgba(255,255,255,1);
+    }
+    .apply_word {
+      font-size:12px;
+      font-family:PingFangSC-Semibold;
+      font-weight:600;
+      color:rgba(255,255,255,1);
+      line-height: 16px;
+    }
   }
 }
 </style>
