@@ -3,34 +3,36 @@
     <div class="label-top">
       <span class="label_item">{{labels}}</span>
     </div>
-    <div class="label-list" v-if="newsList.length !== 0">
-      <div class="list" v-for="(item, index) in newsList" :key="index" @click="todetail(item)">
-        <div class="content">
-          <div class="content-head">
-            <p>{{item.title}}</p>
+    <div class="label-lists">
+      <div class="label-list" v-if="newsList.length !== 0">
+        <div class="list" v-for="(item, index) in newsList" :key="index" @click="todetail(item)">
+          <div class="content">
+            <div class="content-head">
+              <p>{{item.title}}</p>
+            </div>
+            <div class="content-time">{{item.createdAt}}</div>
+            <div class="content-other">
+              <span>作者：{{item.author || '佚名'}}</span>
+              <span v-if="item.sourceAddress">来源：{{item.sourceAddress}}</span>
+              <span v-if="item.classificationId >= 0">分类：{{circlenavList[item.classificationId]}}</span>
+            </div>
+            <div class="content-labels">
+              <span
+                class="label"
+                v-for="(lab, labIndex) in item.labels"
+                @click.stop="tolabel(lab)"
+                :key="labIndex">{{lab.labelName}}</span>
+            </div>
+            <div class="imgs">
+              <img class="imgtwo" v-lazy="item.imgPath" />
+            </div>
+            <div class="article">{{item.summary}}</div>
           </div>
-          <div class="content-time">{{item.createdAt}}</div>
-          <div class="content-other">
-            <span>作者：{{item.author || '佚名'}}</span>
-            <span v-if="item.sourceAddress">来源：{{item.sourceAddress}}</span>
-            <span v-if="item.classificationId >= 0">分类：{{circlenavList[item.classificationId]}}</span>
-          </div>
-          <div class="content-labels">
-            <span
-              class="label"
-              v-for="(lab, labIndex) in item.labels"
-              @click.stop="tolabel(lab)"
-              :key="labIndex">{{lab.labelName}}</span>
-          </div>
-          <div class="imgs">
-            <img class="imgtwo" v-lazy="item.imgPath" />
-          </div>
-          <div class="article">{{item.summary}}</div>
         </div>
+        <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多资讯'}}</div>
       </div>
-      <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多资讯'}}</div>
+      <null-data v-else></null-data>
     </div>
-    <null-data v-else></null-data>
   </div>
 </template>
 <script>
@@ -140,33 +142,42 @@
 </script>
 <style lang="less" scoped>
 .hotlabel {
+  background: #F5F5F5;
   .label-top {
-    padding: 10px 20px 20px;
+    padding: 15px 20px;
     background: #fff;
     display: flex;
-    flex-wrap: wrap;
-    margin-left: -15px;
+    align-items: center;
 
     .label_item {
-      margin-top: 5px;
-      padding: 5px 10px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 10px;
+      height: 23px;
       font-size: 12px;
       font-family: PingFang-SC-Regular;
       font-weight: 400;
       color: rgba(3, 161, 205, 1);
-      line-height: 12px;
       border: 1PX solid #03A1CD;
       border-radius: 20px;
-      margin-left: 15px;
+      box-sizing: border-box;
     }
   }
 
+  .label-lists {
+    background: #fff;
+    padding: 0 20px;
+    height: calc(100vh - 73px);
+    overflow: auto;
+    margin-top: 20px;
+  }
+
   .label-list {
-  	padding: 0 20px;
     .list {
       border-radius: 8px;
       border: 1PX solid #eaeaea;
       box-sizing: border-box;
+      margin: 20px 0;
       .users {
         padding: 0 20px;
         height: 80px;
@@ -253,17 +264,23 @@
         &-other {
           display: flex;
           align-items: center;
-          margin-top: 10px;
           flex-wrap: wrap;
 
           &>span {
+            display: inline-flex;
             font-size: 12px;
             font-family: PingFang-SC-Regular;
             font-weight: 400;
             color: rgba(153, 153, 153, 1);
-
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            padding-right: 20px;
+            margin-top: 10px;
             &+span {
-              margin-left: 20px;
+              padding-right: 0;
             }
           }
         }
@@ -368,6 +385,16 @@
           .bg_cover;
         }
       }
+    }
+    .load-more {
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      font-size: 12px;
+      background: @cor_border;
+      color: @cor_666;
+      padding-bottom: 50px;
     }
   }
 }

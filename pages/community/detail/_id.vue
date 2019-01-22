@@ -338,13 +338,13 @@
         <div class="signup-item">
           <div class="item_l">姓名</div>
           <div class="item_r">
-            <input type="text"  v-model="signName" placeholder="请输入姓名" />
+            <input type="text" :class="{r_input: signName !== ''}"  v-model="signName" placeholder="请输入姓名" />
           </div>
         </div>
         <div class="signup-item">
           <div class="item_l">联系号码</div>
           <div class="item_r">
-            <input type="text" v-model="signPhone" placeholder="请输入联系号码" />
+            <input type="text" :class="{r_input: signPhone !== ''}" v-model="signPhone" placeholder="请输入联系号码" />
           </div>
         </div>
         <div class="signup-btn" @click="signupfn">确定</div>
@@ -442,7 +442,7 @@
            * 进行中
            * status = 3 && voteStatus = 1
            * 参与投票
-           * status = 3 && voteStatus = 2 && ifVote = false
+           * status = 3 && voteStatus = 2 && ifVote = false && 登陆
            * 已投票
            * status = 3 && voteStatus = 2 && ifVote = true
            * 投票结束
@@ -642,6 +642,9 @@
         font-family:PingFang-SC-Medium;
         font-weight:500;
         color:rgba(199,199,199,1);
+        .r_input {
+          color: #000;
+        }
       }
     }
     &-btn {
