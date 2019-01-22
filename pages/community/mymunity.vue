@@ -11,8 +11,8 @@
             <span class="theme" v-if="item.themeType === 2">合作<br>活动</span>
             <span class="theme" v-if="item.themeType === 3">酒展</span>
 
-            <span class="status sign" v-if="item.status === 1">报名中</span>
-            <span class="status carry" v-if="item.status === 2 || item.status === 3">进行中</span>
+            <span class="status sign" v-if="item.status === 1 || item.status === 2">未开始</span>
+            <span class="status carry" v-if="item.status === 3">进行中</span>
             <span class="status ends" v-if="item.status === 4">已结束</span>
           </div>
           <div class="actlist-head">
