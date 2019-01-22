@@ -30,6 +30,7 @@
       </div>
       <div class="icon-close" @click='closeBlur'></div>
     </div>
+
   </div>
 </template>
 <script>
@@ -74,6 +75,7 @@ export default {
       window.location.href = '/knowledge/add?type=2'
     },
     jumpDrink () {
+      window.location.href = '/poetryedit'
     }
   }
 }
