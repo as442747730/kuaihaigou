@@ -303,14 +303,21 @@ export default {
           &-other {
             display: flex;
             align-items: center;
-            margin-top: 10px;
+            flex-wrap: wrap;
             &>span {
               font-size:12px;
               font-family:PingFang-SC-Regular;
               font-weight:400;
               color:rgba(153,153,153,1);
-              & + span {
-                margin-left: 20px;
+              max-width: 100%;
+              box-sizing: border-box;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              padding-right: 20px;
+              margin-top: 10px;
+              &+span {
+                padding-right: 0;
               }
             }
           }

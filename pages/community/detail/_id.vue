@@ -165,42 +165,41 @@
                     <div class="mdlbar" v-if="buygoods.acidity">
                       <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
                       <div class="mdlbar_r">
-                        <div class="mdlbar_r-top w30"></div>
+                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.acidity"></div>
                       </div>
                     </div>
                     <div class="mdlbar" v-if="buygoods.bitterness">
                       <div class="mdlbar_l">苦度：{{buygoods.bitterness}}分</div>
                       <div class="mdlbar_r">
-                        <div class="mdlbar_r-top w30"></div>
+                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.bitterness"></div>
                       </div>
                     </div>
                     <div class="mdlbar" v-if="buygoods.astringency">
                       <div class="mdlbar_l">涩度：{{buygoods.astringency}}分</div>
                       <div class="mdlbar_r">
-                        <div class="mdlbar_r-top w30"></div>
+                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.astringency"></div>
                       </div>
                     </div>
                     <div class="mdlbar" v-if="buygoods.fruity">
                       <div class="mdlbar_l">果香：{{buygoods.fruity}}分</div>
                       <div class="mdlbar_r">
-                        <div class="mdlbar_r-top w30"></div>
+                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.fruity"></div>
                       </div>
                     </div>
                     <div class="mdlbar" v-if="buygoods.tannin">
                       <div class="mdlbar_l">单宁：{{buygoods.tannin}}分</div>
                       <div class="mdlbar_r">
-                        <div class="mdlbar_r-top w30"></div>
+                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.tannin"></div>
                       </div>
                     </div>
                     <div class="mdlbar" v-if="buygoods.complexity">
                       <div class="mdlbar_l">复杂度：{{buygoods.complexity}}分</div>
                       <div class="mdlbar_r">
-                        <div class="mdlbar_r-top w30"></div>
+                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.complexity"></div>
                       </div>
                     </div>
                     <div class="prices">
                       <span class="actual">¥{{buygoods.actualPrice}}</span>
-                      <!-- <span class="market">市场价：¥ 499</span> -->
                     </div>
                   </div>
                 </div>
@@ -533,6 +532,12 @@
       }
     },
     mounted () {
+      this.$nextTick(() => {
+        let bars = this.$refs.mdlbars
+        bars.map(v => {
+          v.style.width = v.getAttribute('data-bar') + '%'
+        })
+      })
     },
     methods: {
       toSignup () {
@@ -580,7 +585,7 @@
     }
   }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .munitydeatil {
   height: 100vh;
   &.defscroll {
@@ -1463,6 +1468,10 @@
     &-html {
       padding-top: 15px;
       font-size: 14px;
+      img {
+        display: inline-block;
+        max-width: 100%;
+      }
     }
   }
 
