@@ -1081,6 +1081,7 @@ export default {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        line-height: 15px;
         &:last-child {
           padding-right: 0;
         }

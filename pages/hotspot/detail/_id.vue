@@ -116,6 +116,7 @@ export default {
       text-overflow: ellipsis;
       padding-right: 20px;
       margin-top: 10px;
+      line-height: 14px;
       &+.infos-sub {
         padding-right: 0;
       }

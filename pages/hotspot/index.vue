@@ -59,7 +59,7 @@
           <div class="article">{{item.summary}}</div>
         </div>
       </div>
-      <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多资讯'}}</div>
+      <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多热点'}}</div>
     </div>
     <null-data v-else></null-data>
   </div>
@@ -106,7 +106,8 @@
             curPage: firstpage,
             moreData: moreData,
             circleIndex: classificationId,
-            transmit: params
+            transmit: params,
+            hasScroll: !moreData
           }
         }
       }).catch(err => {
@@ -506,6 +507,7 @@
             text-overflow: ellipsis;
             padding-right: 20px;
             margin-top: 10px;
+            line-height: 14px;
             &+span {
               padding-right: 0;
             }

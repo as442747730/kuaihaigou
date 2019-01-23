@@ -29,7 +29,7 @@
             <div class="article">{{item.summary}}</div>
           </div>
         </div>
-        <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多资讯'}}</div>
+        <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多热点'}}</div>
       </div>
       <null-data v-else></null-data>
     </div>

@@ -135,13 +135,12 @@ export default {
       }
       return { letter: objInit, objDetail: objVariety, imagesArr: _imgArr, navIndex: 0, showone: true }
     } else if (queryNum === '1') {
-      // let { classify, countryid, oneAreaId, twoAreaId, threeAreaId, fourAreaId } = req.query
-      // let { isshow } = req.query
-      const params = { classify: '-1' }
+      let { classify, countryid, oneAreaId, twoAreaId, threeAreaId, fourAreaId } = req.query
+      const params = { classify, countryid, oneAreaId, twoAreaId, threeAreaId, fourAreaId }
       const { code, data } = await encyApi.serverCountry(params, req)
       if (code === 200) {
         let countrys = data.baikeCountryCountRespList
-        return { countryList: countrys, navIndex: 1, showone: true }
+        return { countryList: countrys, navIndex: 1 }
       }
     } else if (queryNum === '2') {
       const params = { classify: '-1' }
@@ -217,7 +216,7 @@ export default {
   },
   methods: {
     elNavs (index) {
-      window.location.href = 'noun?num=' + index
+      window.location.href = '/encys/detail/' + index
     },
     winerySortFn (sorts) {
       let params = { sortedBy: sorts.sortkey }
@@ -289,19 +288,24 @@ export default {
         }
         this.selectVarietyId = _id
       } else if (this.navIndex === 1) {
-        // let str = ''
-        // for (let [key, val] of Object.entries(obj)) {
-        //   let keyval = key + '=' + val + '&'
-        //   str += keyval
-        // }
+        let str = ''
+        for (let [key, val] of Object.entries(obj)) {
+          let keyval = key + '=' + val + '&'
+          str += keyval
+        }
+        str += 'isshow=1'
         // console.log('str', str)
-        // window.location.href = '/noun?num=1&' + str
-        console.log(obj)
-        let { classify, countryid, oneAreaId, twoAreaId, threeAreaId, fourAreaId } = obj
-        let _areaId = fourAreaId && fourAreaId !== -1 ? fourAreaId : threeAreaId && threeAreaId !== -1 ? threeAreaId : twoAreaId && twoAreaId !== -1 ? twoAreaId : oneAreaId && oneAreaId !== -1 ? oneAreaId : countryid && countryid !== -1 ? countryid : classify && classify !== -1 ? classify : 1
-        console.log('_areaId', _areaId)
-        this.selectAreaId = _areaId
-        this.getAreaDetail()
+        window.location.href = '/noun?num=1&' + str
+        // let { classify, countryid, oneAreaId, twoAreaId, threeAreaId, fourAreaId } = obj
+        // let _areaId = fourAreaId && fourAreaId !== '-1' && fourAreaId !== 'null'
+        //   ? fourAreaId : threeAreaId && threeAreaId !== '-1' && threeAreaId !== 'null'
+        //     ? threeAreaId : twoAreaId && twoAreaId !== '-1' && twoAreaId !== 'null'
+        //     ? twoAreaId : oneAreaId && oneAreaId !== '-1' && oneAreaId !== 'null'
+        //     ? oneAreaId : countryid && countryid !== '-1' && countryid !== 'null'
+        //     ? countryid : classify && classify !== '-1' && classify !== 'null'
+        //     ? classify : 1
+        // this.selectAreaId = _areaId
+        // this.getAreaDetail()
       } else if (this.navIndex === 2) {
         /**
          * 全部 -1
