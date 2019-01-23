@@ -351,24 +351,24 @@
           this.$toast('请输入正确的手机号码')
           return false
         }
-        // if (!this.comsingup) {
-        //   let { signUpStartTime, signUpEndTime } = this.froms
-        //   let objempty = { signUpStartTime, signUpEndTime }
-        //   tipsFn(objempty)
-        // }
-        // if (!this.comactive) {
-        //   let { startTime, endTime } = this.froms
-        //   let objempty = { startTime, endTime }
-        //   tipsFn(objempty)
-        // }
-        // if (!this.comaddress) {
-        //   let { provinceTxt, cityTxt, districtTxt, address } = this
-        //   let objempty = { provinceTxt, cityTxt, districtTxt, address }
-        //   tipsFn(objempty)
-        // }
-        // if (this.forms.activityType === 2 && this.forms.company === '') {
-        //   this.$toast('企业名不能为空')
-        // }
+        if (!this.comsingup) {
+          let { signUpStartTime, signUpEndTime } = this.froms
+          let objempty = { signUpStartTime, signUpEndTime }
+          tipsFn(objempty)
+        }
+        if (!this.comactive) {
+          let { startTime, endTime } = this.froms
+          let objempty = { startTime, endTime }
+          tipsFn(objempty)
+        }
+        if (!this.comaddress) {
+          let { provinceTxt, cityTxt, districtTxt, address } = this
+          let objempty = { provinceTxt, cityTxt, districtTxt, address }
+          tipsFn(objempty)
+        }
+        if (this.forms.activityType === 2 && this.forms.company === '') {
+          this.$toast('企业名不能为空')
+        }
       },
       async onSubmit () {
         console.log('this.froms onSubmit', this.froms)
