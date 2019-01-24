@@ -89,7 +89,7 @@ export default {
 .help-center {
   font-size: 0;
   .background {
-    height: 160px;
+    height: 115px;
     background: -o-linear-gradient(-45deg, #4FEDEF, #00A1F0);
     background: -o-linear-gradient(135deg, #4FEDEF, #00A1F0);
     background: linear-gradient(-45deg, #4FEDEF, #00A1F0);
