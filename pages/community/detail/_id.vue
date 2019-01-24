@@ -299,10 +299,11 @@
               <!-- 活动类型 -->
               <span class="theme" v-if="past.themeType === 1">官方<br>活动</span>
               <span class="theme" v-if="past.themeType === 2">合作<br>活动</span>
-              <span class="theme" v-if="past.themeType === 3">酒展</span>
+              <span class="theme" v-if="past.themeType === 3">酒会<br>酒展</span>
               <!-- 活动状态 -->
               <span class="status sign" v-if="past.status === 1">报名中</span>
-              <span class="status carry" v-if="past.status === 2 || past.status === 3">进行中</span>
+              <span class="status sign" v-if="item.status === 2">报名已结束</span>
+              <span class="status carry" v-if="past.status === 3">进行中</span>
               <span class="status ends" v-if="past.status === 4">已结束</span>
             </div>
             <div class="actlist-head">

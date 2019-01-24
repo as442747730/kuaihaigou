@@ -97,7 +97,7 @@
     <div class="apply-submit oks" v-else @click="onSubmit">确认提交</div>
 
     <van-popup v-model="isopen" position="bottom">
-      <van-datetime-picker show-toolbar v-model="curdate" type="date" :min-date="mindate" @confirm="dateConfirm" @cancel="dateCancel"></van-datetime-picker>
+      <van-datetime-picker show-toolbar v-model="curdate" type="datetime" :min-date="mindate" @confirm="dateConfirm" @cancel="dateCancel"></van-datetime-picker>
     </van-popup>
     <van-popup v-model="popupShow" position="bottom">
       <van-picker ref="areaPicker" :columns="columns" show-toolbar @change="handleChange" @cancel="onCancel" @confirm="onConfirm" />
@@ -544,6 +544,7 @@
     }
 
     .acttype {
+      margin-top: 10px;
       padding: 0 20px;
       background: #fff;
 
