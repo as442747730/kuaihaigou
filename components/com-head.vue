@@ -70,6 +70,9 @@ export default {
         case '/prove':
           window.location.href = '/mine'
           break
+        case '/message':
+          window.location.href = '/mine'
+          break
         default:
           console.log('未知页面')
           break

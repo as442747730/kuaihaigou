@@ -488,6 +488,10 @@ export default {
               font-size: 13px;
               color: @cor_666;
               margin-bottom: 5px;
+              max-width: 200px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
               span {
                 color: @cor_333;
                 display: inline-block;

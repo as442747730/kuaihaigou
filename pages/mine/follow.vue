@@ -212,6 +212,8 @@ export default {
           .name-world {
             width: 60%;
             overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
 
           .ic-name {

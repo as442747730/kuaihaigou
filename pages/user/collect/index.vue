@@ -169,7 +169,7 @@ export default {
 .recommended {
   &-item {
     font-size: 0;
-    text-align: center;
+    padding: 0 20px;
     margin-top: 20px;
   }
   &-list {
