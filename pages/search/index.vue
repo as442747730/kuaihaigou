@@ -179,7 +179,6 @@
   </div>
 </template>
 <script>
-// import tools from '~/utils/tools.js'
 import { searchApi } from '@/api/search'
 export default {
   head () {
@@ -207,7 +206,7 @@ export default {
       return {
         hotSerach: data1 || [],
         keywords: req.query.keyword,
-        searching: req.query.keyword !== '',
+        searching: !!req.query.keyword,
         searchData: searchData,
         pageEmpty: pageEmpty
       }
@@ -301,6 +300,7 @@ export default {
 
   created () {
     this.setArr = this.goodsArr
+    console.log(this.searching)
   },
 
   mounted () {
