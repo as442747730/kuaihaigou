@@ -209,12 +209,14 @@
             break
           case 2:
             Object.assign(objtime, { signUpEndTime: value })
+            this.curdate = new Date()
             break
           case 3:
             Object.assign(objtime, { startTime: value })
             break
           case 4:
             Object.assign(objtime, { endTime: value })
+            this.curdate = new Date()
             break
         }
         Object.assign(this.froms, objtime)
@@ -353,7 +355,7 @@
             this.$toast('请选择活动类型')
           } else {
             if (activityType === 2 && company === '') {
-              this.$toast('请填写公司名')
+              this.$toast('请填写企业名')
             }
           }
           return
@@ -397,7 +399,7 @@
           provinceTxt: '省份不能为空',
           cityTxt: '城市不能为空',
           districtTxt: '地区不能为空',
-          address: '具体不能为空'
+          address: '具体地址不能为空'
         }
         for (let [key, val] of Object.entries(obj)) {
           console.log(key)
@@ -416,7 +418,7 @@
         let otherparams = {}
         if (activityType === 2) {
           let { company } = this.froms
-          Object.assign(otherparams, company)
+          Object.assign(otherparams, { company })
         }
         if (ifUndetermineSignUp) {
           let { signUpStartTime, signUpEndTime } = this.froms
@@ -438,11 +440,15 @@
           Object.assign(otherparams, objaddress)
         }
         Object.assign(allparams, baesparams, otherparams)
+        console.log('allparams', allparams)
         const {code, data} = await munityApi.clientApply(allparams)
         if (code === 200) {
           console.log(data)
           this.$toast.success('活动提交成功')
-          this.clearFrom()
+          let timer = setTimeout(() => {
+            window.location.href = '/community?status=0'
+            window.clearInterval(timer)
+          }, 2000)
         }
       },
       clearFrom () {
