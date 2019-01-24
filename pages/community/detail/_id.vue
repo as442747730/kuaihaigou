@@ -1,5 +1,5 @@
 <template>
-  <div class="munitydeatil" :class="{defscroll: showsignup}">
+  <div class="munitydeatil">
     <div class="comDetail">
       <div class="specific">
         <div class="specific-bk" v-lazy:background-image="detailInfo.background"></div>
@@ -299,10 +299,11 @@
               <!-- 活动类型 -->
               <span class="theme" v-if="past.themeType === 1">官方<br>活动</span>
               <span class="theme" v-if="past.themeType === 2">合作<br>活动</span>
-              <span class="theme" v-if="past.themeType === 3">酒展</span>
+              <span class="theme" v-if="past.themeType === 3">酒会<br>酒展</span>
               <!-- 活动状态 -->
               <span class="status sign" v-if="past.status === 1">报名中</span>
-              <span class="status carry" v-if="past.status === 2 || past.status === 3">进行中</span>
+              <span class="status sign" v-if="item.status === 2">报名已结束</span>
+              <span class="status carry" v-if="past.status === 3">进行中</span>
               <span class="status ends" v-if="past.status === 4">已结束</span>
             </div>
             <div class="actlist-head">
@@ -319,17 +320,17 @@
       <div class="btnitem btncor1" v-if="activeStatus === '0'" @click="toSignup">立即报名</div>
       <div class="btnitem btncor2" v-if="activeStatus === '1'">已报名</div>
       <div class="btnitem btncor3" v-if="activeStatus === '2'">报名结束</div>
-      <div class="btnitem btncor3" v-if="activeStatus === '3'">未开始</div>
-      <div class="btnitem btncor2" v-if="activeStatus === '4'">进行中</div>
+      <div class="btnitem btncor3" v-if="activeStatus === '3'" @click="tovote">未开始</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '4'" @click="tovote">进行中</div>
       <div class="btnitem btncor4" v-if="activeStatus === '5'" @click="tovote">参与投票</div>
       <div class="btnitem btncor5" v-if="activeStatus === '6'">已投票</div>
       <div class="btnitem btncor6" v-if="activeStatus === '7'">投票结束</div>
-      <div class="btnitem btncor7" v-if="activeStatus === '8'">活动结束</div>
-      <div class="btnitem btncor7" v-if="activeStatus === '9'">活动已下线</div>
+      <div class="btnitem btncor7" v-if="activeStatus === '8'">活动已结束</div>
+      <div class="btnitem btncor7" v-if="activeStatus === '9'">已下线</div>
     </div>
     <!-- 报名弹窗 satart -->
     <transition name="slide-bottom">
-      <div class="signup" v-show="showsignup">
+      <div class="signup" v-show="showsignup"  @touchmove.prevent>
         <div class="signup-head">
           活动报名
           <div class="singup_close" @click="hidefn"></div>
@@ -350,13 +351,14 @@
       </div>
     </transition>
     <transition name="fade">
-      <div class="modal" v-show="showsignup" @click="hidefn"></div>
+      <div class="modal" @touchmove.prevent v-show="showsignup" @click="hidefn"></div>
     </transition>
     <!-- 报名弹窗 end -->
   </div>
 </template>
 <script>
   import { munityApi } from '~/api/community'
+  import { userApi } from '~/api/users'
   import tools from '~/utils/tools'
   export default {
     asyncData (req) {
@@ -368,11 +370,13 @@
           const detData = detRes.data
           // 流程, 盲品， 大咖
           let { processReqList, blindTastingRespList, activityPersonRespList } = detData
-          processReqList = processReqList.map(item => {
-            const { startProcess, endProcess } = item
-            item._strTime = tools.concatDate(startProcess, endProcess)
-            return item
-          })
+          if (Array.isArray(processReqList)) {
+            processReqList = processReqList.map(item => {
+              const { startProcess, endProcess } = item
+              item._strTime = tools.concatDate(startProcess, endProcess)
+              return item
+            })
+          }
           // 酒款
           const { goodsMinimalRespList, activityOtherGoodsRespList } = detData
           // 报名截止时间, 报名须知
@@ -534,15 +538,26 @@
     mounted () {
       this.$nextTick(() => {
         let bars = this.$refs.mdlbars
-        bars.map(v => {
-          v.style.width = v.getAttribute('data-bar') + '%'
-        })
+        if (Array.isArray(bars)) {
+          bars.map(v => {
+            v.style.width = v.getAttribute('data-bar') + '%'
+          })
+        }
       })
     },
     methods: {
-      toSignup () {
+      defmovefn () {
+        console.log(123)
+      },
+      async toSignup () {
         // 去报名
-        this.showsignup = true
+        // this.showsignup = true
+        const { code } = await userApi.userDetail()
+        if (code === 506) {
+          window.location.href = '/account/login'
+        } else {
+          this.showsignup = true
+        }
       },
       hidefn () {
         this.showsignup = false
@@ -973,7 +988,7 @@
           &:before {
             position: absolute;
             left: 0;
-            bottom: -12px;
+            bottom: -10px;
             content: '';
             width: 0;
             height: 0;
@@ -985,7 +1000,7 @@
           &:after {
             position: absolute;
             right: 0;
-            bottom: -12px;
+            bottom: -10px;
             content: '';
             width: 0;
             height: 0;
@@ -1505,6 +1520,7 @@
           display: inline-block;
           height: 50px;
           width: auto;
+          max-width: 100%;
         }
       }
     }

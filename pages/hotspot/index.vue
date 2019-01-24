@@ -85,7 +85,7 @@
       const classificationId = 0
       const firstpage = 1
       const params = {
-        count: 5,
+        count: 3,
         page: firstpage,
         classificationId: classificationId
       }
@@ -106,8 +106,7 @@
             curPage: firstpage,
             moreData: moreData,
             circleIndex: classificationId,
-            transmit: params,
-            hasScroll: !moreData
+            transmit: params
           }
         }
       }).catch(err => {
@@ -293,7 +292,7 @@
           font-family: PingFangSC-Semibold;
           font-weight: 600;
           color: rgba(51, 51, 51, 1);
-          line-height: 14px;
+          line-height: 16px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
