@@ -2,7 +2,7 @@
   <div class="mine" ref="scrollElem">
     <header>
       <div class="hd-head">
-        <div class="hd_l" data-val="123" @click="openMenu"></div>
+        <div class="hd_l" @click="openMenu"></div>
         <div class="hd_c">我的</div>
         <div class="hd_r"></div>
       </div>
@@ -79,7 +79,7 @@
       </div>
     </div>
     <van-popup class="vanpopup" v-model="showmenu" position="left">
-      <left-menu></left-menu>
+      <left-menu :notifyNum='notifyNum'></left-menu>
     </van-popup>
   </div>
 </template>
@@ -159,11 +159,10 @@ export default {
 
       // pageEmpty: false,
       // pageLoding: false,
-      isFirst: true
+      isFirst: true,
+      ifFirst: true,
+      notifyNum: 0
     }
-  },
-  created () {
-    // this.getArts()
   },
   mounted () {
     console.log(this.artMore)
@@ -216,6 +215,10 @@ export default {
     },
     openMenu () {
       this.showmenu = !this.showmenu
+      if (this.ifFirst) {
+        this.getInfo()
+        this.ifFirst = false
+      }
     },
     async getArts () {
       this.artLoad = true
@@ -251,6 +254,14 @@ export default {
         this.poetrys.push(...poeArr)
       }
       this.poesLoad = false
+    },
+    // 获取系统消息
+    async getInfo () {
+      const { code, data } = await userApi.getNotifyNum()
+      if (code === 200) {
+        this.notifyNum = data.total
+        console.log(this.notifyNum)
+      }
     }
   }
 }

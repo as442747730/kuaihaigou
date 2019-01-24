@@ -242,6 +242,11 @@ export default {
       span {
         color: #333;
         font-size: 15px;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
       }
       p {
         font-size: 13px;

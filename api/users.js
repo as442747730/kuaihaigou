@@ -26,6 +26,10 @@ export const userApi = {
   serveGetTotal (req) {
     return request.serverGet('/api/reward/getTotalActualAmount/', null, req)
   },
+  // 系统通知数量
+  serveGetNotifyNum (req) {
+    return request.serverGet('/api/systeminformation/getSystemInformationNumber/', null, req)
+  },
   /* ------------------- lient ------------------- */
   // 获取用户详情
   userDetail () {
@@ -100,6 +104,10 @@ export const userApi = {
   // 登出
   loginOut (params) {
     return request.clientPost('/api/logout')
+  },
+  // 系统通知数量
+  getNotifyNum () {
+    return request.clientGet('/api/systeminformation/getSystemInformationNumber/')
   }
 }
 
