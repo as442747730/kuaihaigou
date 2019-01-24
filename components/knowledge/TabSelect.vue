@@ -164,13 +164,14 @@
         background-repeat: no-repeat;
         opacity: 0.5;
         transition: .2s;
+        transform: rotate(180deg);
       }
       &.active {
         color: @cor_333;
         font-weight: bold;
         &:after {
           opacity: 1;
-          transform: rotate(180deg);
+          transform: none;
         }
       }
     }
@@ -211,12 +212,14 @@
     .drop-wrapper-body {
       background: white;
       padding: 20px 10px 20px 10px;
-      display: flex;
-      flex-wrap: wrap;
+      min-height: 300px;
+      // display: flex;
+      // flex-wrap: wrap;
       .label {
         width: 100px;
         margin: 0 9px;
         margin-bottom: 15px;
+        display: inline-block;
         &.small {
           width: 70px;
         }
