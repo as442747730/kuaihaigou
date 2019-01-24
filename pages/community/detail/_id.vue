@@ -1,5 +1,5 @@
 <template>
-  <div class="munitydeatil" :class="{defscroll: showsignup}">
+  <div class="munitydeatil">
     <div class="comDetail">
       <div class="specific">
         <div class="specific-bk" v-lazy:background-image="detailInfo.background"></div>
@@ -329,7 +329,7 @@
     </div>
     <!-- 报名弹窗 satart -->
     <transition name="slide-bottom">
-      <div class="signup" v-show="showsignup">
+      <div class="signup" v-show="showsignup"  @touchmove.prevent>
         <div class="signup-head">
           活动报名
           <div class="singup_close" @click="hidefn"></div>
@@ -350,7 +350,7 @@
       </div>
     </transition>
     <transition name="fade">
-      <div class="modal" v-show="showsignup" @click="hidefn"></div>
+      <div class="modal" @touchmove.prevent v-show="showsignup" @click="hidefn"></div>
     </transition>
     <!-- 报名弹窗 end -->
   </div>
@@ -368,11 +368,13 @@
           const detData = detRes.data
           // 流程, 盲品， 大咖
           let { processReqList, blindTastingRespList, activityPersonRespList } = detData
-          processReqList = processReqList.map(item => {
-            const { startProcess, endProcess } = item
-            item._strTime = tools.concatDate(startProcess, endProcess)
-            return item
-          })
+          if (Array.isArray(processReqList)) {
+            processReqList = processReqList.map(item => {
+              const { startProcess, endProcess } = item
+              item._strTime = tools.concatDate(startProcess, endProcess)
+              return item
+            })
+          }
           // 酒款
           const { goodsMinimalRespList, activityOtherGoodsRespList } = detData
           // 报名截止时间, 报名须知
@@ -534,12 +536,17 @@
     mounted () {
       this.$nextTick(() => {
         let bars = this.$refs.mdlbars
-        bars.map(v => {
-          v.style.width = v.getAttribute('data-bar') + '%'
-        })
+        if (Array.isArray(bars)) {
+          bars.map(v => {
+            v.style.width = v.getAttribute('data-bar') + '%'
+          })
+        }
       })
     },
     methods: {
+      defmovefn () {
+        console.log(123)
+      },
       toSignup () {
         // 去报名
         this.showsignup = true
@@ -973,7 +980,7 @@
           &:before {
             position: absolute;
             left: 0;
-            bottom: -12px;
+            bottom: -10px;
             content: '';
             width: 0;
             height: 0;
@@ -985,7 +992,7 @@
           &:after {
             position: absolute;
             right: 0;
-            bottom: -12px;
+            bottom: -10px;
             content: '';
             width: 0;
             height: 0;
@@ -1505,6 +1512,7 @@
           display: inline-block;
           height: 50px;
           width: auto;
+          max-width: 100%;
         }
       }
     }

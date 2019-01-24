@@ -8,7 +8,8 @@
             <div class="item-logo">
               <span>0{{index + 1}}</span>
             </div>
-            <img class="item_img" v-lazy="require('~/assets/img/bitmap.png')" />
+            <!-- <img class="item_img" v-lazy="require('~/assets/img/bitmap.png')" /> -->
+            <img class="item_img" v-lazy="item.showImg" />
           </div>
             <div class="list-r">
               <div class="r-head">

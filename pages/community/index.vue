@@ -36,9 +36,10 @@
             <span class="theme" v-if="item.themeType === 2">合作<br>活动</span>
             <span class="theme" v-if="item.themeType === 3">酒展</span>
 
-            <span class="status sign" v-if="item.status === 1">报名中</span>
-            <span class="status carry" v-if="item.status === 2 || item.status === 3">进行中</span>
-            <span class="status ends" v-if="item.status === 4">已结束</span>
+            <span class="status sign" v-if="item.status === 1">活动报名中</span>
+            <span class="status sign" v-if="item.status === 2">报名已结束</span>
+            <span class="status carry" v-if="item.status === 3">活动进行中</span>
+            <span class="status ends" v-if="item.status === 4">活动已结束</span>
           </div>
           <div class="actlist-head">
             <span class="head">第{{item.period}}期 | {{item.theme}}</span>
@@ -192,10 +193,24 @@ export default {
         this.curPage = page
         this.totalPage = totalPageNo
         this.moreData = page < totalPageNo
+        let _actList = array.map(v => {
+        // 处理地址
+          let { province, city, district, address } = v
+          const _province = tools.getStrIndex(province)
+          const _city = tools.getStrIndex(city)
+          const _district = tools.getStrIndex(district)
+          const _dz = _province + _city + _district + address
+          let { createdAt, endTime } = v
+          // 处理时间
+          const _strTime = tools.concatDate(createdAt, endTime)
+          v._dz = _dz
+          v._strTime = _strTime
+          return v
+        })
         if (isMore) {
-          this.activeList.push(...array)
+          this.activeList.push(..._actList)
         } else {
-          this.activeList = array
+          this.activeList = _actList
         }
         this.loadOk = true
       }

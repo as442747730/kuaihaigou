@@ -269,6 +269,7 @@
           &>span {
             display: inline-flex;
             font-size: 12px;
+            line-height: 14px;
             font-family: PingFang-SC-Regular;
             font-weight: 400;
             color: rgba(153, 153, 153, 1);
