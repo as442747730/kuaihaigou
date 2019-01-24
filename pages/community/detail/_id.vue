@@ -319,13 +319,13 @@
       <div class="btnitem btncor1" v-if="activeStatus === '0'" @click="toSignup">立即报名</div>
       <div class="btnitem btncor2" v-if="activeStatus === '1'">已报名</div>
       <div class="btnitem btncor3" v-if="activeStatus === '2'">报名结束</div>
-      <div class="btnitem btncor3" v-if="activeStatus === '3'">未开始</div>
-      <div class="btnitem btncor2" v-if="activeStatus === '4'">进行中</div>
+      <div class="btnitem btncor3" v-if="activeStatus === '3'" @click="tovote">未开始</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '4'" @click="tovote">进行中</div>
       <div class="btnitem btncor4" v-if="activeStatus === '5'" @click="tovote">参与投票</div>
       <div class="btnitem btncor5" v-if="activeStatus === '6'">已投票</div>
       <div class="btnitem btncor6" v-if="activeStatus === '7'">投票结束</div>
-      <div class="btnitem btncor7" v-if="activeStatus === '8'">活动结束</div>
-      <div class="btnitem btncor7" v-if="activeStatus === '9'">活动已下线</div>
+      <div class="btnitem btncor7" v-if="activeStatus === '8'">活动已结束</div>
+      <div class="btnitem btncor7" v-if="activeStatus === '9'">已下线</div>
     </div>
     <!-- 报名弹窗 satart -->
     <transition name="slide-bottom">
@@ -357,6 +357,7 @@
 </template>
 <script>
   import { munityApi } from '~/api/community'
+  import { userApi } from '~/api/users'
   import tools from '~/utils/tools'
   export default {
     asyncData (req) {
@@ -547,9 +548,15 @@
       defmovefn () {
         console.log(123)
       },
-      toSignup () {
+      async toSignup () {
         // 去报名
-        this.showsignup = true
+        // this.showsignup = true
+        const { code } = await userApi.userDetail()
+        if (code === 506) {
+          window.location.href = '/account/login'
+        } else {
+          this.showsignup = true
+        }
       },
       hidefn () {
         this.showsignup = false

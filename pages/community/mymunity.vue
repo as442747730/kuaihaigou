@@ -116,7 +116,7 @@ export default {
       let { height, top } = scrollChild.getBoundingClientRect()
       let _top = Math.abs(top)
       let bottomH = height - (_top + sctop + allH)
-      console.log('bottomH', bottomH)
+      // console.log('bottomH', bottomH)
       if (bottomH <= 100 && this.loadOk && this.moreData) {
         this.loadOk = false
         this.fetchData(true)

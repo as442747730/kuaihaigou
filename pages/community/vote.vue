@@ -192,6 +192,7 @@ export default {
             display: inline-block;
             width: 83px;
             height: 85px;
+            border: none;
           }
         }
 

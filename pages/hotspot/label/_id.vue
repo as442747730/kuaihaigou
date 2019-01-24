@@ -29,9 +29,9 @@
             <div class="article">{{item.summary}}</div>
           </div>
         </div>
-        <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多热点'}}</div>
       </div>
-      <null-data v-else></null-data>
+      <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多热点'}}</div>
+      <null-data v-if="newsList.length === 0"></null-data>
     </div>
   </div>
 </template>
@@ -66,12 +66,14 @@
           const labels = array[0].labels.find(v => v.id === labelId)
           _label = labels.labelName
         }
+        let _moredata = page < totalPageNo
         return {
           curPage: page,
           totalPage: totalPageNo,
           transmit: params,
           newsList: array,
-          labels: _label
+          labels: _label,
+          moreData: _moredata
         }
       }
     },
@@ -166,13 +168,13 @@
 
   .label-lists {
     background: #fff;
-    padding: 0 20px;
     height: calc(100vh - 73px);
     overflow: auto;
     margin-top: 20px;
   }
 
   .label-list {
+    padding: 0 20px;
     .list {
       border-radius: 8px;
       border: 1PX solid #eaeaea;
@@ -387,16 +389,15 @@
         }
       }
     }
-    .load-more {
-      width: 100%;
-      height: 50px;
-      line-height: 50px;
-      text-align: center;
-      font-size: 12px;
-      background: @cor_border;
-      color: @cor_666;
-      padding-bottom: 50px;
-    }
+  }
+  .load-more {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 12px;
+    background: @cor_border;
+    color: @cor_666;
   }
 }
 </style>

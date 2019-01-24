@@ -52,7 +52,7 @@
       <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多活动'}}</div>
       <null-data tips="暂无您想要的活动" v-if="activeList.length === 0"></null-data>
       <a class="apply-add" href="/community/apply">
-        <span class="apply_icon">+</span>
+        <span class="apply_word">活动</span>
         <span class="apply_word">申请</span>
       </a>
     </section>
@@ -169,7 +169,7 @@ export default {
       let { height, top } = scrollChild.getBoundingClientRect()
       let _top = Math.abs(top)
       let bottomH = height - (_top + sctop + allH)
-      console.log('bottomH', bottomH)
+      // console.log('bottomH', bottomH)
       if (bottomH <= 100 && this.loadOk && this.moreData) {
         this.loadOk = false
         this.fetchData(true)
