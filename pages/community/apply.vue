@@ -96,21 +96,18 @@
     <div class="apply-submit" v-if="!comoks" @click="notSubmit">确认提交</div>
     <div class="apply-submit oks" v-else @click="onSubmit">确认提交</div>
 
-    <select-date :isopen="isopen" @transTime="transDate" @closeTime="closeDate"></select-date>
-
+    <van-popup v-model="isopen" position="bottom">
+      <van-datetime-picker show-toolbar v-model="curdate" type="date" :min-date="mindate" @confirm="dateConfirm" @cancel="dateCancel"></van-datetime-picker>
+    </van-popup>
     <van-popup v-model="popupShow" position="bottom">
       <van-picker ref="areaPicker" :columns="columns" show-toolbar @change="handleChange" @cancel="onCancel" @confirm="onConfirm" />
     </van-popup>
   </div>
 </template>
 <script>
-  import selectDate from '~/components/community/selectDate'
   import { addressApi } from '~/api/address'
   import { munityApi } from '~/api/community'
   export default {
-    components: {
-      selectDate
-    },
     async asyncData (req) {
       return addressApi.getAreaList(86, req).then((res) => {
         if (res.code === 200) {
@@ -121,6 +118,8 @@
     data () {
       return {
         isopen: false,
+        mindate: new Date(),
+        curdate: new Date(),
         timetype: null,
         froms: {
           name: '',
@@ -200,6 +199,51 @@
       this.districtId = this.districtList[0].id
     },
     methods: {
+      dateConfirm (val) {
+        let value = this.fromDate(val)
+        console.log(value)
+        let objtime = {}
+        switch (this.timetype) {
+          case 1:
+            Object.assign(objtime, { signUpStartTime: value })
+            break
+          case 2:
+            Object.assign(objtime, { signUpEndTime: value })
+            this.curdate = new Date()
+            break
+          case 3:
+            Object.assign(objtime, { startTime: value })
+            break
+          case 4:
+            Object.assign(objtime, { endTime: value })
+            this.curdate = new Date()
+            break
+        }
+        Object.assign(this.froms, objtime)
+        this.isopen = false
+        this.timetype = null
+      },
+      fromDate (objDate) {
+        const date1 = new Date(objDate)
+        const addZero = val => {
+          if (+val < 10) {
+            return '0' + val
+          }
+          return val
+        }
+        const y1 = date1.getFullYear()
+        const m1 = addZero(date1.getMonth() + 1)
+        const d1 = addZero(date1.getDate())
+        const h1 = addZero(date1.getHours())
+        const minut1 = addZero(date1.getMinutes())
+        // 符号
+        const [sep1, sep2] = ['-', ':']
+        return y1 + sep1 + m1 + sep1 + d1 + ' ' + h1 + sep2 + minut1
+      },
+      dateCancel () {
+        this.isopen = false
+        this.timetype = null
+      },
       signupfn (bol) {
         if (!bol) {
           this.froms.signUpStartTime = null
@@ -285,31 +329,6 @@
         this.timetype = num
         this.isopen = true
       },
-      transDate (value) {
-        console.log('value', value)
-        let objtime = {}
-        switch (this.timetype) {
-          case 1:
-            Object.assign(objtime, { signUpStartTime: value })
-            break
-          case 2:
-            Object.assign(objtime, { signUpEndTime: value })
-            break
-          case 3:
-            Object.assign(objtime, { startTime: value })
-            break
-          case 4:
-            Object.assign(objtime, { endTime: value })
-            break
-        }
-        Object.assign(this.froms, objtime)
-        this.isopen = false
-        this.timetype = null
-      },
-      closeDate (bol) {
-        this.isopen = false
-        this.timetype = null
-      },
       wineparty (num) {
         if (num === 1) {
           const company = { company: '' }
@@ -336,7 +355,7 @@
             this.$toast('请选择活动类型')
           } else {
             if (activityType === 2 && company === '') {
-              this.$toast('请填写公司名')
+              this.$toast('请填写企业名')
             }
           }
           return
@@ -380,7 +399,7 @@
           provinceTxt: '省份不能为空',
           cityTxt: '城市不能为空',
           districtTxt: '地区不能为空',
-          address: '具体不能为空'
+          address: '具体地址不能为空'
         }
         for (let [key, val] of Object.entries(obj)) {
           console.log(key)
@@ -399,7 +418,7 @@
         let otherparams = {}
         if (activityType === 2) {
           let { company } = this.froms
-          Object.assign(otherparams, company)
+          Object.assign(otherparams, { company })
         }
         if (ifUndetermineSignUp) {
           let { signUpStartTime, signUpEndTime } = this.froms
@@ -421,11 +440,15 @@
           Object.assign(otherparams, objaddress)
         }
         Object.assign(allparams, baesparams, otherparams)
+        console.log('allparams', allparams)
         const {code, data} = await munityApi.clientApply(allparams)
         if (code === 200) {
           console.log(data)
           this.$toast.success('活动提交成功')
-          this.clearFrom()
+          let timer = setTimeout(() => {
+            window.location.href = '/community?status=0'
+            window.clearInterval(timer)
+          }, 2000)
         }
       },
       clearFrom () {

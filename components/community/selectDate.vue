@@ -1,6 +1,6 @@
 <template>
   <van-popup v-model="isopen" position="bottom">
-    <van-datetime-picker show-toolbar v-model="curdate" type="datetime" :min-date="mindate" @confirm="confirmfn" @cancel="canclefn"></van-datetime-picker>
+    <van-datetime-picker show-toolbar v-model="curdate" type="date" :min-date="mindate" @confirm="confirmfn" @cancel="canclefn"></van-datetime-picker>
   </van-popup>
 </template>
 <script>

@@ -36,9 +36,10 @@
             <span class="theme" v-if="item.themeType === 2">合作<br>活动</span>
             <span class="theme" v-if="item.themeType === 3">酒展</span>
 
-            <span class="status sign" v-if="item.status === 1">报名中</span>
-            <span class="status carry" v-if="item.status === 2 || item.status === 3">进行中</span>
-            <span class="status ends" v-if="item.status === 4">已结束</span>
+            <span class="status sign" v-if="item.status === 1">活动报名中</span>
+            <span class="status sign" v-if="item.status === 2">报名已结束</span>
+            <span class="status carry" v-if="item.status === 3">活动进行中</span>
+            <span class="status ends" v-if="item.status === 4">活动已结束</span>
           </div>
           <div class="actlist-head">
             <span class="head">第{{item.period}}期 | {{item.theme}}</span>
@@ -51,7 +52,7 @@
       <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多活动'}}</div>
       <null-data tips="暂无您想要的活动" v-if="activeList.length === 0"></null-data>
       <a class="apply-add" href="/community/apply">
-        <span class="apply_icon">+</span>
+        <span class="apply_word">活动</span>
         <span class="apply_word">申请</span>
       </a>
     </section>
@@ -168,7 +169,7 @@ export default {
       let { height, top } = scrollChild.getBoundingClientRect()
       let _top = Math.abs(top)
       let bottomH = height - (_top + sctop + allH)
-      console.log('bottomH', bottomH)
+      // console.log('bottomH', bottomH)
       if (bottomH <= 100 && this.loadOk && this.moreData) {
         this.loadOk = false
         this.fetchData(true)
@@ -192,10 +193,24 @@ export default {
         this.curPage = page
         this.totalPage = totalPageNo
         this.moreData = page < totalPageNo
+        let _actList = array.map(v => {
+        // 处理地址
+          let { province, city, district, address } = v
+          const _province = tools.getStrIndex(province)
+          const _city = tools.getStrIndex(city)
+          const _district = tools.getStrIndex(district)
+          const _dz = _province + _city + _district + address
+          let { createdAt, endTime } = v
+          // 处理时间
+          const _strTime = tools.concatDate(createdAt, endTime)
+          v._dz = _dz
+          v._strTime = _strTime
+          return v
+        })
         if (isMore) {
-          this.activeList.push(...array)
+          this.activeList.push(..._actList)
         } else {
-          this.activeList = array
+          this.activeList = _actList
         }
         this.loadOk = true
       }
