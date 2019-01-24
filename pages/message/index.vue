@@ -186,13 +186,13 @@
                 </a>
               </div>
             </template>
-            <!-- 神评,精彩绝伦,酒坛 -->
-            <template v-if="$v.serialNumber === 10 || $v.serialNumber === 12">
+            <!-- 神评 -->
+            <template v-if="$v.serialNumber === 10">
               <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
-                <p v-html='$v.content'>
-                  
+                <p>
+                  亲爱的快海购用户，你的参与的文章《<a :href="setSystemHref($v)">{{ $v.articleName }}</a>》的评论：“{{ $v.content }}”被选为神评论，为您增加{{ $v.systemInfo.experiencePoints }}积分经验，并置顶显示该评论。
                 </p>
               </div>
             </template>
@@ -201,7 +201,15 @@
               <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
-                <p>亲爱的快海购用户，您发表的文章<a :href="'/share/detail?id=' + $v.no + '&type=' + $v.systemInfo.type">《{{ $v.articleName }}》</a>被选为精彩绝伦，为您增加[增加经验点数]积分经验。</p>
+                <p>亲爱的快海购用户，您发表的文章<a :href="setSystemHref($v)">《{{ $v.articleName }}》</a>被选为精彩绝伦，为您增加{{ $v.systemInfo.experiencePoints }}积分经验。</p>
+              </div>
+            </template>
+            <!-- 酒坛诗社 -->
+            <template v-if="$v.serialNumber === 12">
+              <time>{{ changeTime($v.createdAt) }}</time>
+              <div class="system-info-wrap">
+                <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                <p v-html='$v.content'></p>
               </div>
             </template>
             <!-- 热门评论 -->
@@ -209,7 +217,9 @@
               <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
-                <p v-html='$v.content'></p>
+                <p>
+                  亲爱的快海购用户，你的发表的商品评论：“<a :href="'/detail/' + $v.no">{{ $v.content }}</a>”被推荐为热门评论，为您增加{{ $v.systemInfo.experiencePoints }}积分经验，并置顶显示该评论
+                </p>
               </div>
             </template>
             <!-- 独立对用户推送 -->
@@ -371,7 +381,7 @@ export default {
       switch (obj.systemInfo.articleTypeEnum) {
         case 'SHARING_KNOWLEDGE':
           // 知识分享
-          href = '/knowledge/detail/' + obj.no + '&type=' + obj.systemInfo.type
+          href = '/knowledge/detail/' + obj.no + '?type=' + obj.systemInfo.type
           break
         case 'NEWS':
           // 行业热点

@@ -8,14 +8,16 @@
 
         <div class="article-item" v-for="item in articleList" :key="item.id">
           <div class="author-info">
-            <div class="avatar" :style="'background-image: url(' + (item.userResp.headimgurl ? item.userResp.headimgurl : require('~/assets/img/defaultImg.png')) + ')'"></div>
-            <div class="info">
-              <div class="nickname">
-                <span>{{ item.userResp.nickname }}</span>
-                <user-lab :level='String(item.userResp.userGradeNumber)' type='1' :profess='String(item.userResp.category)'></user-lab>
+            <a :href="'/user?uid=' + item.userResp.id">
+              <div class="avatar" :style="'background-image: url(' + (item.userResp.headimgurl ? item.userResp.headimgurl : require('~/assets/img/defaultImg.png')) + ')'"></div>
+              <div class="info">
+                <div class="nickname">
+                  <span>{{ item.userResp.nickname }}</span>
+                  <user-lab :level='String(item.userResp.userGradeNumber)' type='1' :profess='String(item.userResp.category)'></user-lab>
+                </div>
+                <p class="date">{{ item.userResp.createdAt }}</p>
               </div>
-              <p class="date">{{ item.userResp.createdAt }}</p>
-            </div>
+            </a>
           </div>
           <div class="content" @click="gotodetail(item)">
             <p class="content-title" style="-webkit-box-orient: vertical;">{{ item.title }}</p>
@@ -251,6 +253,9 @@ export default {
           padding-bottom: 20px;
           border-bottom: 1PX solid #EAEAEA;
           display: flex;
+          &>a {
+            display: flex;
+          }
           .avatar {
             width: 40px;
             height: 40px;
