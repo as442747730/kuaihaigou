@@ -141,7 +141,7 @@
                     <div class="bars">
                       <div class="bars-left">复杂：{{pick.goodsMinimalResp.complexity}}分</div>
                       <div class="bars-right">
-                        <span class="bars-right_top w30"></span>
+                        <span class="bars-right_top" ref="ubars" :data-bar="pick.goodsMinimalResp.complexity"></span>
                       </div>
                     </div>
                   </div>
@@ -225,15 +225,17 @@
           <li
             class="community_home-list type_1 noing"
             v-for="(munity, index) in munityList"
+            @click="toDetail(munity.id)"
             :key="index">
             <div class="pro">
               <div class="full bg munity_bk" v-lazy:background-image="munity.cover">
                 <span class="theme" v-if="munity.themeType === 1">官方<br>活动</span>
                 <span class="theme" v-if="munity.themeType === 2">合作<br>活动</span>
-                <span class="theme" v-if="munity.themeType === 3">酒展</span>
+                <span class="theme" v-if="munity.themeType === 3">酒会<br>酒展</span>
 
                 <span class="status sign" v-if="munity.status === 1">报名中</span>
-                <span class="status carry" v-if="munity.status === 2 || munity.status === 3">进行中</span>
+                <span class="status sign" v-if="munity.status === 2">报名已结束</span>
+                <span class="status carry" v-if="munity.status === 3">进行中</span>
                 <span class="status ends" v-if="munity.status === 4">已结束</span>
               </div>
             </div>
@@ -408,6 +410,16 @@ export default {
       }
     }
   },
+  created () {
+    this.$nextTick(() => {
+      let bars = this.$refs.ubars
+      if (Array.isArray(bars)) {
+        bars.map(v => {
+          v.style.width = v.getAttribute('data-bar') + '%'
+        })
+      }
+    })
+  },
   async mounted () {
     // 美酒推荐，每5秒切换为下一个场景
     const { code: scenCode, data: scenData } = await wineApi.clicentScener()
@@ -474,6 +486,9 @@ export default {
     },
     toSearch () {
       window.location.href = '/search'
+    },
+    toDetail (id) {
+      window.location.href = './community/detail/' + id + '?page=1'
     }
   }
 }
