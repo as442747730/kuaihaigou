@@ -101,6 +101,7 @@ export default {
     display: flex;
     align-items: center;
     padding-top: 10px;
+    flex-wrap: wrap;
 
     &-sub {
       font-size: 12px;
@@ -108,11 +109,17 @@ export default {
       font-weight: 400;
       color: #999999;
       line-height: 12px;
-
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding-right: 20px;
+      margin-top: 10px;
+      line-height: 14px;
       &+.infos-sub {
-        margin-left: 20px;
+        padding-right: 0;
       }
-
       .sub_child {
         color: #999999;
       }

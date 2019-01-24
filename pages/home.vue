@@ -909,7 +909,8 @@ export default {
       font-size: 12px;
       margin: 10px 0 15px;
       span:first-child {
-        margin-right: 20px;
+        padding-right: 20px;
+
       }
     }
     .content_summary {
@@ -1071,12 +1072,18 @@ export default {
     .tips {
       margin: 6px 0 16px;
       span {
+        display: inline-block;
         font-size: 12px;
         color: #999;
-        display: inline-block;
-        margin-right: 20px;
+        max-width: 100%;
+        padding-right: 20px;
+        box-sizing: border-box;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        line-height: 15px;
         &:last-child {
-          margin-right: 0;
+          padding-right: 0;
         }
       }
     }

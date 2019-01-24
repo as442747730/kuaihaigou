@@ -11,10 +11,12 @@
             <img class="item_img" v-lazy="require('~/assets/img/bitmap.png')" />
           </div>
             <div class="list-r">
-              <div :class="['lab', {lab2: index === elIndex}]" @click="elblind(index)">
-                <span class="lab_icon"></span>
+              <div class="r-head">
+                <h3>我的估价<span>（非必填）</span></h3>
+                <div :class="['lab', {lab2: index === elIndex}]" @click="elblind(index)">
+                  <span class="lab_icon"></span>
+                </div>
               </div>
-              <h3>我的估价<span>（非必填）</span></h3>
               <div class="inpbox">
                 <span class="rmb">¥</span>
                 <input :class="['inps', {inpafter: item.evaluate !== ''}]" type="text" placeholder="请输入您的估价" v-model="item.evaluate" />
@@ -197,47 +199,48 @@ export default {
           height: 90px;
           margin-left: 10px;
           position: relative;
-
-          .lab {
+          .r-head {
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            position: absolute;
-            top: 2px;
-            right: 0;
-
-            .lab_icon {
-              width: 20px;
-              height: 20px;
-              border: 2PX solid #ccc;
-              box-sizing: border-box;
-              border-radius: 50%;
-            }
-
-            &.lab2 {
+            justify-content: space-between;
+            .lab {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 30px;
+              height: 30px;
+              
               .lab_icon {
-                border: none;
-                background-image: url('~/assets/img/Icons/ic_check_bule_20x20@2x.png');
-                background-repeat: no-repeat;
-                background-position: center center;
-                background-size: 20px 20px;
+                width: 20px;
+                height: 20px;
+                border: 2PX solid #ccc;
+                box-sizing: border-box;
+                border-radius: 50%;
+              }
+
+              &.lab2 {
+                .lab_icon {
+                  border: none;
+                  background-image: url('~/assets/img/Icons/ic_check_bule_20x20@2x.png');
+                  background-repeat: no-repeat;
+                  background-position: center center;
+                  background-size: 20px 20px;
+                }
               }
             }
-          }
 
-          &>h3 {
-            font-size: 14px;
-            font-family: PingFangSC-Semibold;
-            font-weight: 600;
-            color: rgba(51, 51, 51, 1);
-            line-height: 20px;
+            &>h3 {
+              font-size: 14px;
+              font-family: PingFangSC-Semibold;
+              font-weight: 600;
+              color: rgba(51, 51, 51, 1);
+              line-height: 20px;
 
-            &>span {
-              font-size: 12px;
-              font-family: PingFangSC-Regular;
-              color: #666666;
+              &>span {
+                font-size: 12px;
+                font-family: PingFangSC-Regular;
+                color: #666666;
+              }
             }
           }
 

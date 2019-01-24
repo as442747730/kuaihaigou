@@ -30,5 +30,8 @@ export const munityApi = {
   // 报名
   clientSignup (params) {
     return request.clientPostJson('/api/activity/signUp', params)
+  },
+  clientApply (params) {
+    return request.clientPostJson('/api/activity/activityApply', params)
   }
 }
