@@ -18,6 +18,10 @@ export const goodsApi = {
   frequently (no) {
     return request.serverGet('/api/acp/list?no=' + no)
   },
+  // 商品对比
+  compare (data) {
+    return request.serverPostJson('/api/goods/contrast', data)
+  },
   /** -------------- client ------------------- */
   // 获取商品详情
   clientDetail (goodsId) {
