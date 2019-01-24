@@ -8,7 +8,7 @@
     <div class="apply-main">
       <div class="actname">
         <div class="actname-title">活动名称</div>
-        <input :class="['actname-input', {cor: froms.name}]" v-model="froms.name" type="text" placeholder="输入活动名称" />
+        <input :class="['actname-input', {cor: froms.name}]" v-model="froms.name" :maxlength="50" type="text" placeholder="输入活动名称" />
       </div>
       <div class="acttype">
         <div class="acttype-title">活动类型</div>
@@ -18,33 +18,33 @@
         </div>
       </div>
       <div class="actselect">
-        <div :class="['actselect-top', {pbot: !froms.ifSingup}]">
+        <div :class="['actselect-top', {pbot: !froms.ifUndetermineSignUp}]">
           <div class="top_title">报名时间</div>
           <div class="top_radio">
-            <div :class="['radio-item', 'radio-one', {active: !froms.ifSingup}]" @click="signupfn(false)">待定</div>
-            <div :class="['radio-item', {active: froms.ifSingup}]" @click="signupfn(true)">指定时间</div>
+            <div :class="['radio-item', 'radio-one', {active: !froms.ifUndetermineSignUp}]" @click="signupfn(false)">待定</div>
+            <div :class="['radio-item', {active: froms.ifUndetermineSignUp}]" @click="signupfn(true)">指定时间</div>
           </div>
         </div>
-        <div class="actselect-items" v-show="froms.ifSingup">
-          <div class="actselect-item actselect-start" @click="timetypefn(1)">
-            <p v-if="!froms.signUpStartTime">选择开始时间</p>
-            <p class="cor" v-else>{{ froms.signUpStartTime }}</p>
+        <div class="actselect-items" v-show="froms.ifUndetermineSignUp">
+          <div class="actselect-item actselect-start">
+            <p v-if="!froms.signUpStartTime"  @click="timetypefn(1)">选择开始时间</p>
+            <p class="cor" v-else  @click="timetypefn(1)">{{ froms.signUpStartTime }}</p>
           </div>
-          <div class="actselect-item" @click="timetypefn(2)">
-            <p v-if="!froms.signUpEndTime">选择结束时间</p>
-            <p class="cor" v-else>{{ froms.signUpEndTime }}</p>
+          <div class="actselect-item">
+            <p v-if="!froms.signUpEndTime" @click="timetypefn(2)">选择结束时间</p>
+            <p class="cor" v-else  @click="timetypefn(2)">{{ froms.signUpEndTime }}</p>
           </div>
         </div>
       </div>
       <div class="actselect">
-        <div :class="['actselect-top', {pbot: !froms.ifActive}]">
+        <div :class="['actselect-top', {pbot: !froms.ifUndetermineTime}]">
           <div class="top_title">活动时间</div>
           <div class="top_radio">
-            <div :class="['radio-item', 'radio-one', {active: !froms.ifActive}]" @click="actTimefn(false)">待定</div>
-            <div :class="['radio-item', {active: froms.ifActive}]" @click="actTimefn(true)">指定时间</div>
+            <div :class="['radio-item', 'radio-one', {active: !froms.ifUndetermineTime}]" @click="actTimefn(false)">待定</div>
+            <div :class="['radio-item', {active: froms.ifUndetermineTime}]" @click="actTimefn(true)">指定时间</div>
           </div>
         </div>
-        <div class="actselect-items" v-show="froms.ifActive">
+        <div class="actselect-items" v-show="froms.ifUndetermineTime">
           <div class="actselect-item actselect-start" @click="timetypefn(3)">
             <p v-if="!froms.startTime">选择开始时间</p>
             <p v-else class="cor">{{ froms.startTime }}</p>
@@ -56,20 +56,20 @@
         </div>
       </div>
       <div class="actselect">
-        <div :class="['actselect-top', {pbot: !froms.ifAddress}]">
+        <div :class="['actselect-top', {pbot: !froms.ifUndetermineAddress}]">
           <div class="top_title">活动地点</div>
           <div class="top_radio">
-            <div :class="['radio-item', 'radio-one', {active: !froms.ifAddress}]" @click="addressFn(false)">待定</div>
-            <div :class="['radio-item', {active: froms.ifAddress}]" @click="addressFn(true)">指定地址</div>
+            <div :class="['radio-item', 'radio-one', {active: !froms.ifUndetermineAddress}]" @click="addressFn(false)">待定</div>
+            <div :class="['radio-item', {active: froms.ifUndetermineAddress}]" @click="addressFn(true)">指定地址</div>
           </div>
         </div>
-        <div class="actslect-items" v-show="froms.ifAddress">
+        <div class="actslect-items" v-show="froms.ifUndetermineAddress">
           <div class="actselect-item actselect-start" @click="openAreaSelect">
             <p v-if="!areaTxt">省/市/区</p>
             <p v-else class="cor">{{areaTxt}}</p>
           </div>
           <div class="actselect-item">
-            <input :class="['actselect_address', {cor: address !== ''}]" type="text" v-model="address" placeholder="详细地址">
+            <input :class="['actselect_address', {cor: address !== ''}]" type="text" v-model="address" :maxlength="50" placeholder="详细地址">
           </div>
         </div>
       </div>
@@ -81,7 +81,7 @@
       <div class="actperson">
         <div class="actperson-item">
           <div class="actperson_title">联系人</div>
-          <input :class="['actperson_inp', {cor: froms.contact}]" type="text" v-model="froms.contact" placeholder="输入联系人称呼" />
+          <input :class="['actperson_inp', {cor: froms.contact}]" type="text" v-model="froms.contact" :maxlength="25" placeholder="输入联系人称呼" />
         </div>
         <div class="actperson-item">
           <div class="actperson_title">联系电话</div>
@@ -89,14 +89,14 @@
         </div>
         <div class="actperson-item" v-if="froms.activityType === 2">
           <div class="actperson_title">企业名</div>
-          <input :class="['actperson_inp', {cor: froms.company}]" type="text" v-model="froms.company" placeholder="输入您的企业名" />
+          <input :class="['actperson_inp', {cor: froms.company}]" type="text" v-model="froms.company" :maxlength="30" placeholder="输入您的企业名" />
         </div>
       </div>
     </div>
     <div class="apply-submit" v-if="!comoks" @click="notSubmit">确认提交</div>
     <div class="apply-submit oks" v-else @click="onSubmit">确认提交</div>
 
-    <select-date :isopen="isopen" @transTime="transDate"></select-date>
+    <select-date :isopen="isopen" @transTime="transDate" @closeTime="closeDate"></select-date>
 
     <van-popup v-model="popupShow" position="bottom">
       <van-picker ref="areaPicker" :columns="columns" show-toolbar @change="handleChange" @cancel="onCancel" @confirm="onConfirm" />
@@ -125,9 +125,9 @@
         froms: {
           name: '',
           activityType: null,
-          ifSingup: false,
-          ifActive: false,
-          ifAddress: false,
+          ifUndetermineSignUp: false,
+          ifUndetermineTime: false,
+          ifUndetermineAddress: false,
           signUpStartTime: null,
           signUpEndTime: null,
           startTime: null,
@@ -176,16 +176,17 @@
         return (activityType === 1 && company === '') || (activityType === 2 && company !== '')
       },
       comsingup () {
-        let { ifSingup, signUpStartTime, signUpEndTime } = this.froms
-        return (!ifSingup && signUpStartTime === null && signUpEndTime === null) || (ifSingup && signUpStartTime !== null && signUpEndTime !== null)
+        let { ifUndetermineSignUp, signUpStartTime, signUpEndTime } = this.froms
+        return (!ifUndetermineSignUp && signUpStartTime === null && signUpEndTime === null) || (ifUndetermineSignUp && signUpStartTime !== null && signUpEndTime !== null)
       },
       comactive () {
-        let { ifActive, startTime, endTime } = this.froms
-        return (!ifActive && startTime === null && endTime === null) || (ifActive && startTime !== null && endTime !== null)
+        let { ifUndetermineTime, startTime, endTime } = this.froms
+        return (!ifUndetermineTime && startTime === null && endTime === null) || (ifUndetermineTime && startTime !== null && endTime !== null)
       },
       comaddress () {
-        let { provinceTxt, cityTxt, districtTxt, address } = this
-        return provinceTxt !== '' && cityTxt !== '' && districtTxt !== '' && address !== ''
+        let { ifUndetermineAddress } = this.froms
+        let { areaTxt, address } = this
+        return (!ifUndetermineAddress && areaTxt === '' && address === '') || (ifUndetermineAddress && areaTxt !== '' && address !== '')
       },
       comoks () {
         return this.notempty && this.isphone && this.actcompany && this.comsingup && this.comactive && this.comaddress
@@ -204,7 +205,7 @@
           this.froms.signUpStartTime = null
           this.froms.signUpEndTime = null
         }
-        let objsing = { ifSingup: bol }
+        let objsing = { ifUndetermineSignUp: bol }
         Object.assign(this.froms, objsing)
       },
       actTimefn (bol) {
@@ -212,11 +213,15 @@
           this.froms.startTime = null
           this.froms.endTime = null
         }
-        let objact = { ifActive: bol }
+        let objact = { ifUndetermineTime: bol }
         Object.assign(this.froms, objact)
       },
       addressFn (bol) {
-        let objaddress = { ifAddress: bol }
+        if (!bol) {
+          this.areaTxt = ''
+          this.address = ''
+        }
+        let objaddress = { ifUndetermineAddress: bol }
         Object.assign(this.froms, objaddress)
       },
       /* 根据上级去获取 列表
@@ -299,7 +304,11 @@
         }
         Object.assign(this.froms, objtime)
         this.isopen = false
-        this.singtype = null
+        this.timetype = null
+      },
+      closeDate (bol) {
+        this.isopen = false
+        this.timetype = null
       },
       wineparty (num) {
         if (num === 1) {
@@ -315,6 +324,48 @@
       },
       notSubmit () {
         console.log('this.froms onSubmit', this.froms)
+        if (!this.notempty) {
+          let { name, introduce, contact } = this.froms
+          let objCheck = { name, introduce, contact }
+          this.tipsfn(objCheck)
+          return
+        }
+        if (!this.actcompany) {
+          let { activityType, company } = this.froms
+          if (!activityType) {
+            this.$toast('请选择活动类型')
+          } else {
+            if (activityType === 2 && company === '') {
+              this.$toast('请填写公司名')
+            }
+          }
+          return
+        }
+        if (!this.isphone) {
+          this.$toast('请输入正确的手机号码')
+          return
+        }
+        console.log(this.comsingup, 'comsingup')
+        if (!this.comsingup) {
+          console.log('aaaaaaaa')
+          let { signUpStartTime, signUpEndTime } = this.froms
+          let objCheck = { signUpStartTime, signUpEndTime }
+          this.tipsfn(objCheck)
+          return
+        }
+        if (!this.comactive) {
+          let { startTime, endTime } = this.froms
+          let objCheck = { startTime, endTime }
+          this.tipsfn(objCheck)
+          return
+        }
+        if (!this.comaddress) {
+          let { areaTxt, address } = this
+          let objCheck = { areaTxt, address }
+          this.tipsfn(objCheck)
+        }
+      },
+      tipsfn (obj) {
         let arrtips = {
           name: '请输入活动名称',
           activityType: '请选择活动类型',
@@ -324,83 +375,78 @@
           signUpStartTime: '报名开始时间不能为空',
           signUpEndTime: '报名结束时间不能为空',
           startTime: '活动开始时间不能为空',
-          endTime: '活动结束结束时间不能为空',
-          provinceTxt: '活动结束结束时间不能为空',
-          cityTxt: '活动结束结束时间不能为空',
-          districtTxt: '活动结束结束时间不能为空',
-          address: '活动结束结束时间不能为空'
+          endTime: '活动结束时间不能为空',
+          areaTxt: '省市区不能为空',
+          provinceTxt: '省份不能为空',
+          cityTxt: '城市不能为空',
+          districtTxt: '地区不能为空',
+          address: '具体不能为空'
         }
-        const tipsfn = (obj) => {
-          for (let [key, val] of Object.entries(obj)) {
-            console.log(key)
-            if (val === '' || val === null) {
-              this.$toast(arrtips[key])
-              return false
-            }
+        for (let [key, val] of Object.entries(obj)) {
+          console.log(key)
+          if (val === '' || val === null) {
+            this.$toast(arrtips[key])
+            return false
           }
-        }
-        console.log('tipsfn', tipsfn)
-        if (!this.notempty) {
-          let { name, introduce, contact } = this.froms
-          let objempty = { name, introduce, contact }
-          tipsfn(objempty)
-          return
-        }
-        console.log(1111)
-        if (!this.isphone) {
-          this.$toast('请输入正确的手机号码')
-          return false
-        }
-        if (!this.comsingup) {
-          let { signUpStartTime, signUpEndTime } = this.froms
-          let objempty = { signUpStartTime, signUpEndTime }
-          tipsFn(objempty)
-        }
-        if (!this.comactive) {
-          let { startTime, endTime } = this.froms
-          let objempty = { startTime, endTime }
-          tipsFn(objempty)
-        }
-        if (!this.comaddress) {
-          let { provinceTxt, cityTxt, districtTxt, address } = this
-          let objempty = { provinceTxt, cityTxt, districtTxt, address }
-          tipsFn(objempty)
-        }
-        if (this.forms.activityType === 2 && this.forms.company === '') {
-          this.$toast('企业名不能为空')
         }
       },
       async onSubmit () {
         console.log('this.froms onSubmit', this.froms)
         let allparams = {}
         let { name, activityType, introduce, contact, phone } = this.froms
-        let { ifSingup, ifActive, ifAddress } = this.froms
-        let baesparams = { name, activityType, introduce, contact, phone, ifSingup, ifActive, ifAddress }
+        let { ifUndetermineSignUp, ifUndetermineTime, ifUndetermineAddress } = this.froms
+        let baesparams = { name, activityType, introduce, contact, phone, ifUndetermineSignUp, ifUndetermineTime, ifUndetermineAddress }
         let otherparams = {}
         if (activityType === 2) {
           let { company } = this.froms
           Object.assign(otherparams, company)
         }
-        if (ifSingup) {
+        if (ifUndetermineSignUp) {
           let { signUpStartTime, signUpEndTime } = this.froms
-          let objsign = { signUpStartTime, signUpEndTime }
+          let _stime = signUpStartTime + ':00'
+          let _etime = signUpEndTime + ':00'
+          let objsign = { signUpStartTime: _stime, signUpEndTime: _etime }
           Object.assign(otherparams, objsign)
         }
-        if (ifActive) {
+        if (ifUndetermineTime) {
           let { startTime, endTime } = this.froms
-          let objact = { startTime, endTime }
+          let _stime = startTime + ':00'
+          let _etime = endTime + ':00'
+          let objact = { startTime: _stime, endTime: _etime }
           Object.assign(otherparams, objact)
         }
-        if (ifAddress) {
+        if (ifUndetermineAddress) {
           let { provinceTxt, cityTxt, districtTxt } = this
-          let objaddress = { province: provinceTxt, city: cityTxt, county: districtTxt }
+          let objaddress = { province: provinceTxt, city: cityTxt, district: districtTxt, address: this.address }
           Object.assign(otherparams, objaddress)
         }
         Object.assign(allparams, baesparams, otherparams)
         const {code, data} = await munityApi.clientApply(allparams)
         if (code === 200) {
           console.log(data)
+          this.$toast.success('活动提交成功')
+          this.clearFrom()
         }
+      },
+      clearFrom () {
+        this.areaTxt = ''
+        this.address = ''
+        let restFrom = {
+          name: '',
+          activityType: null,
+          ifUndetermineSignUp: false,
+          ifUndetermineTime: false,
+          ifUndetermineAddress: false,
+          signUpStartTime: null,
+          signUpEndTime: null,
+          startTime: null,
+          endTime: null,
+          introduce: '',
+          contact: '',
+          phone: '',
+          company: ''
+        }
+        Object.assign(this.froms, restFrom)
       }
     }
   }
@@ -580,9 +626,9 @@
       }
 
       &-item {
-        padding-top: 25px;
+        padding-top: 15px;
         padding-right: 20px;
-        padding-bottom: 20px;
+        padding-bottom: 10px;
 
         &>p {
           position: relative;
@@ -591,6 +637,8 @@
           font-weight: 400;
           color: rgba(204, 204, 204, 1);
           line-height: 15px;
+          padding-top: 15px;
+          padding-bottom: 10px;
           &.cor {
             color: #000;
           }
