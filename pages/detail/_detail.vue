@@ -743,11 +743,9 @@ export default {
     async compareFn () {
       // 去对比
       let goodsId = this.goodsId
-      const {code, data} = await goodsApi.addCompare(goodsId)
+      const { code } = await goodsApi.addCompare(goodsId)
       if (code === 200) {
-        this.$toast('加入对比')
-      } else {
-        this.$toast(data)
+        this.$toast('加入对比成功')
       }
     },
     // 去购物查看
@@ -893,7 +891,8 @@ export default {
     },
 
     historyBack () {
-      window.history.go(-1)
+      // window.history.go(-1)
+      window.location.href = '/winecenter'
     }
   }
 }

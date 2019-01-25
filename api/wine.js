@@ -34,5 +34,9 @@ export const wineApi = {
   // 美酒推荐列表
   clientGoodwineList (scenesNo) {
     return request.clientGet('/api/wine/getWine/' + scenesNo)
+  },
+  // 获取加入对比的商品
+  showGoodsForContrast (id) {
+    return request.clientGet('/api/goods/showGoodsForContrast')
   }
 }
