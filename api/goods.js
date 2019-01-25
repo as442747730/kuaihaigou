@@ -22,6 +22,10 @@ export const goodsApi = {
   compare (data) {
     return request.serverPostJson('/api/goods/contrast', data)
   },
+  // 获取加入对比的商品
+  showGoodsForContrast (req) {
+    return request.serverGet('/api/goods/showGoodsForContrast', null, req)
+  },
   /** -------------- client ------------------- */
   // 获取商品详情
   clientDetail (goodsId) {
@@ -85,5 +89,9 @@ export const goodsApi = {
   // 点赞层主
   likeComment (id) {
     return request.clientPost('/api/cmt/likeCommentReply/' + id)
+  },
+  // 删除对比的商品
+  removeFromContrast (data) {
+    return request.clientPostJson('/api/goods/removeFromContrast', data)
   }
 }

@@ -131,7 +131,12 @@
       <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6 || sizerIndex === null"></div>
     </list-two>
     <!-- 刷选器 Start -->
-   
+    <!-- 去对比 -->
+    <div class="compare-btn" @click='toCompare'>
+      <div>
+        <i></i>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -236,6 +241,7 @@ export default {
     nullData
   },
   async created () {
+    this.Inertia = require('~/static/inertia')
     let params = { ifWine: true }
     const { code, data } = await wineApi.clientAttrs(params)
     if (code === 200) {
@@ -247,6 +253,8 @@ export default {
   },
   mounted () {
     this.addBarwid()
+    const compareBtn = document.querySelector('.compare-btn')
+    this.Inertia(compareBtn)
     let scrollElem = this.$refs.scrollElem
     let scrollChild = this.$refs.scrollChild
     let allH = scrollElem.clientHeight
@@ -691,6 +699,20 @@ export default {
       this.sizerTwo = this.sizerTwo.map(v => {
         return { name: v.name, iscor: false }
       })
+    },
+    // 去对比
+    async toCompare () {
+      const { code, data } = await wineApi.showGoodsForContrast()
+      if (code === 200) {
+        console.log(data)
+        if (data.length >= 2) {
+          window.location.href = '/compare'
+        } else if (data.length === 1) {
+          this.$toast('对比商品不能少于2件')
+        } else if (data.length === 0) {
+          this.$toast('您还未添加对比商品')
+        }
+      }
     }
   }
 }
@@ -918,7 +940,7 @@ export default {
       margin-top: 6px;
       width: 100%;
       height: 202px;
-      .bg_cover;
+      .bg_contain;
     }
   }
 
@@ -1088,4 +1110,24 @@ export default {
   color: #666;
 }
 
+.compare-btn {
+  position: fixed;
+  bottom: 30%;
+  padding: 0 20px;
+  z-index: 10000;
+  div {
+    padding: 10px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: #7A7A7A;
+    box-sizing: border-box;
+  }
+  i {
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    background: url('~/assets/img/Icons/ic_vs_blue_45x45@2x.png') no-repeat center/contain;
+  }
+}
 </style>
