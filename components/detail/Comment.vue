@@ -36,16 +36,16 @@
         <div class="u_comment">
           <ul>
             <li class="u_comment-list" v-for="($v, $k) in commentData">
-              <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
+              <a :href="$v.personalInfoResp ? '/user?uid=' + $v.personalInfoResp.id : 'javascript: void(0)'"><div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
               <div class="user-infor ib-middle">
-                <a class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</a>
+                <a class="ib-middle" v-if='$v.personalInfoResp' :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname || '' }}</a>
                 <a class="ib-middle" v-else>匿名用户</a>
                 <br>
                 <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
               </div>
-              <div v-if='$v.evaluationLevel >= 4' class="like_type type1">
+              <div v-if='$v.ifPopular' class="like_type type1">
                 <i></i>
-                <span>超爱</span>
+                <!-- <span>超爱</span> -->
               </div>
               <p class="desc">{{ $v.content || '此用户没有填写评论!' }}</p>
 
@@ -476,9 +476,8 @@ export default {
       text-align: center;
       i{
         display: inline-block;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
+        width: 54px;
+        height: 20px;
         background: url('~/assets/img/ic_chaoai_35x35@2x.png') no-repeat center/contain;
       }
       span {
