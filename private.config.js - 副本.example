@@ -1,0 +1,6 @@
+module.exports = {
+  target: 'http://khg.deva.wili.us/', // 接口转发地址 前端开发，生产部署时均要配置
+  pcDomain: '', // pc端域名，node层重定向时候使用
+  port: 3333, // 项目启动端口号
+  closeComment: true
+}
