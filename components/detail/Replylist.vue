@@ -9,16 +9,16 @@
       <ul>
         <!-- 楼主 -->
         <li class="u_comment-list">
-          <div class="header-img ib-middle" v-if='masterinfo.personalInfoResp' :style="'background: url(' + (masterinfo.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
+          <a :href="masterinfo.personalInfoResp ? '/user?uid=' + masterinfo.personalInfoResp.id : 'javascript: void(0)'"><div class="header-img ib-middle" v-if='masterinfo.personalInfoResp' :style="'background: url(' + (masterinfo.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
           <div class="user-infor ib-middle">
-            <a class="ib-middle" v-if='masterinfo.personalInfoResp'>{{ masterinfo.personalInfoResp.nickname || '' }}</a>
+            <a class="ib-middle" v-if='masterinfo.personalInfoResp' :href="'/user?uid=' + masterinfo.personalInfoResp.id">{{ masterinfo.personalInfoResp.nickname || '' }}</a>
             <a class="ib-middle" v-else>匿名用户</a>
             <br>
             <u-usericon v-if='masterinfo.personalInfoResp' :level='String(masterinfo.personalInfoResp.userGradeNumber)' type='1' :profess='String(masterinfo.personalInfoResp.category)' />
           </div>
-          <div v-if='masterinfo.evaluationLevel >= 4' class="like_type type1">
+          <div v-if='masterinfo.ifPopular' class="like_type type1">
             <i></i>
-            <span>超爱</span>
+            <!-- <span>超爱</span> -->
           </div>
           <p class="desc" :class="{'mb-0': masterinfo.imgs}">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
           <div class="pro" v-if='masterinfo.imgs'>
@@ -26,16 +26,16 @@
           </div>
         </li>
         <li class="u_comment-list" v-for="($v, $k) in (replyData.length === 0 ? replystr : replyData)">
-          <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
+          <a :href="'/user?uid=' + $v.personalInfoResp.id"><div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
           <div class="user-infor ib-middle">
             <template v-if='!$v.parentUsername'>
-              <a class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</a>
+              <a class="ib-middle" v-if='$v.personalInfoResp' :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname || '' }}</a>
               <a class="ib-middle" v-else>匿名用户</a>
             </template>
             <div v-else class="has-reply">
-              <a class="ib-middle">{{ $v.personalInfoResp.nickname }}</a>
+              <a class="ib-middle" :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname }}</a>
               <b class="ib-middle">回复</b>
-              <a class="ib-middle">{{ $v.parentUsername }}</a>
+              <a class="ib-middle":href="'/user?uid=' + $v.parentUserId">{{ $v.parentUsername }}</a>
             </div>
             <br>
             <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
@@ -101,7 +101,8 @@ export default {
     replystr: {
       Type: Array,
       default: []
-    }
+    },
+    islogin: Boolean
   },
   data () {
     return {
@@ -171,6 +172,13 @@ export default {
       this.listshow = false
     },
     turnToEdit (replyid, editPerson) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 500)
+        return
+      }
       console.log(replyid)
       if (replyid) {
         this.method = 'two'

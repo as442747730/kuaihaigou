@@ -104,5 +104,14 @@ export default {
     position: absolute;
     right: -40px;
     top: 0px;
+    &>i {
+      width: 22px;
+      height: 22px;
+      display: inline-block;
+      vertical-align: middle;
+      &:first-child {
+        margin-right: 5px;
+      }
+    }
   }
 </style>

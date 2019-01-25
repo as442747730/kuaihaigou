@@ -13,7 +13,7 @@
             </p>
           </div>
           <div class="item-c_sign">
-            <p>{{list.nickname }} </p>
+            <p>{{list.signature }} </p>
           </div>
           <div class="item-c_count">
             <span>创作 {{ list.worksNumber }}</span>

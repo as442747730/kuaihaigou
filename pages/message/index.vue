@@ -18,11 +18,11 @@
     <div class="tab">
       <span class="font_hight" :class="{'cur': type === 2}" @click='handleSelect(2)'>
         酒友消息
-        <i v-if='signCount !== 0'>{{ signCount }}</i>
+        <i v-if='signCount !== 0'><u>{{ signCount }}</u></i>
       </span>
       <span class="font_hight" :class="{'cur': type === 1}" @click='handleSelect(1)'>
         系统消息
-        <i v-if='systemCount !== 0'>{{ systemCount }}</i>
+        <i v-if='systemCount !== 0'><u>{{ systemCount }}</u></i>
       </span>
     </div>
     <section class="showcontents" :class="{'system' : type === 1}">
@@ -141,6 +141,7 @@
         <ul class="system-info-item">
           <li class="system-info-list" v-for="($v, $k) in msgData" :key="$k">
             <!-- 禁言 -->
+            <div class="delete-icon" @click="rDelbtn($v.id)"></div>
             <template v-if="$v.serialNumber === 1">
               <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
@@ -488,7 +489,7 @@ export default {
     span {
       display: inline-block;
       font-size: 14px;
-      padding: 0 65px;
+      padding: 0 63px;
       position: relative;
       color: #666;
       &:first-child {
@@ -512,14 +513,22 @@ export default {
         min-width: 16PX;
         height: 16PX;
         background: #ff3333;
-        border-radius: 50%;
-        font-size: 10px;
-        text-align: center;
-        line-height: 16PX;
+        border-radius: 16PX;
+        font-size: 12PX;
         color: #fff;
-        right: 30%;
-        top: -6px;
+        font-weight: lighter;
+        right: 24%;
+        top: -2px;
         transform: translateX(50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 5px;
+        box-sizing: border-box;
+        u {
+          display: inline-block;
+          transform: scale(.8);
+        }
       }
     }
   }
@@ -537,7 +546,7 @@ export default {
     }
     .del_right {
       background: #FB6248;
-      width: 100px;
+      width: 100PX;
       height: 100%;
       line-height: 44px;
       font-size: 17px;
@@ -571,16 +580,23 @@ export default {
 
           &_top {
             padding-right: 40px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
+            h4 {
+              max-width: 80px;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
+            }
             span {
-              font-size: 13px;
+              font-size: 12px;
               color: #999;
               font-weight: normal;
             }
 
             &>time {
               float: right;
+              margin-top: 2px;
               margin-right: -40px;
               font-size: 11px;
               font-family: PingFangSC-Light;
@@ -644,5 +660,17 @@ export default {
 
 [class*=van-hairline]::after {
   display: none;
+}
+
+.system-info-list{
+  position:relative;
+}
+.delete-icon{
+  position:absolute;
+  top:42px;
+  right:12px;
+  width:14px;
+  height:14px;
+  background: url('~/assets/img/ic_detele_g_14x14.png') no-repeat center/contain;
 }
 </style>
