@@ -107,6 +107,8 @@ export default {
   background: #F5F5F5;
 
   .vote-main {
+    height: calc(100vh - 50px);
+    overflow: auto;
 
     .tips {
       font-size: 13px;
@@ -116,10 +118,7 @@ export default {
       line-height: 20px;
       padding: 10px 20px;
     }
-
     .lists {
-      height: calc(100vh - 110px);
-      overflow: auto;
       padding: 0 20px;
 
       .list {
