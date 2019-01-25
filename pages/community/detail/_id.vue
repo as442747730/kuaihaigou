@@ -153,7 +153,7 @@
         <div class="wine-item wine-one" v-if="buygoodsList.length > 0">
           <div class="item-head">快海购在售</div>
           <div :class="['item-list', {marauto: buygoodsList.length === 1}]">
-            <div v-swiper:mySwiper3="swiperBuy">
+            <div v-swiper:mySwiper5="swiperSale">
               <div class="swiper-wrapper">
                 <div class="swiper-slide list_one" v-for="(buygoods, index) in buygoodsList" :key="index">
                   <div class="onemdl">
@@ -541,6 +541,10 @@
           slidesPerView: 'auto'
         },
         swiperBuy: {
+          speed: 800,
+          slidesPerView: 'auto'
+        },
+        swiperSale: {
           speed: 800,
           slidesPerView: 'auto'
         },
