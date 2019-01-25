@@ -81,14 +81,6 @@
           </tr>
           <tr>
             <th class="tbody-theme">
-              <h3>净含量</h3>
-            </th>
-            <td v-for='($v, $k) in compareData'>
-              <p>{{ getsuffix($v.redAttr.netVolume, 'ml') }}</p>
-            </td>
-          </tr>
-          <tr>
-            <th class="tbody-theme">
               <h3>产地</h3>
             </th>
             <td v-for='($v, $k) in compareData'>
@@ -291,6 +283,15 @@ export default {
     console.log(this.compareData)
   },
 
+  mounted () {
+    this.overscroll(document.querySelector('.u-compare-wrap'))
+    document.body.addEventListener('touchmove', function (evt) {
+      if (!evt._isScroller) {
+        evt.preventDefault()
+      }
+    })
+  },
+
   methods: {
     async deleteGoods (id, index) {
       if (this.compareData.length <= 2) return this.$toast('对比的商品不能少于两个')
@@ -313,6 +314,23 @@ export default {
     },
     getParnum (num) {
       return !num ? 0 : num
+    },
+    overscroll (el) {
+      el.addEventListener('touchstart', function () {
+        var top = el.scrollTop
+        var totalScroll = el.scrollHeight
+        var currentScroll = top + el.offsetHeight
+        if (top === 0) {
+          el.scrollTop = 1
+        } else if (currentScroll === totalScroll) {
+          el.scrollTop = top - 1
+        }
+      })
+      el.addEventListener('touchmove', function (evt) {
+        if (el.offsetHeight < el.scrollHeight) {
+          evt._isScroller = true
+        }
+      })
     }
   }
 }
