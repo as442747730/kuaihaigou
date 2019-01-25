@@ -15,12 +15,6 @@
         </div>
       </div>
       <div class="m-address-add-form-item">
-        <div class="item-label">备用电话</div>
-        <div class="item-content">
-          <input v-model="alternatePhone" placeholder="请输入备用电话"></input>
-        </div>
-      </div>
-      <div class="m-address-add-form-item">
         <div class="item-label">所在区域</div>
         <div class="item-content" @click="openAreaSelect">
           <input v-model="areaTxt" readonly placeholder="请选择所在省份、城市、区县"></input>
@@ -31,6 +25,12 @@
         <div class="item-label">详细地址</div>
         <div class="item-content">
           <input v-model="address" placeholder="请输入详细地址"></input>
+        </div>
+      </div>
+      <div class="m-address-add-form-item">
+        <div class="item-label">邮政编号</div>
+        <div class="item-content">
+          <input v-model="alternatePhone" placeholder="请输入邮政编号"></input>
         </div>
       </div>
       <div class="m-address-add-form-item">
@@ -232,10 +232,10 @@ export default {
         height: 30px;
       }
       .item-label {
-        width: 60px;
+        width: 70px;
         font-size: 15px;
         font-weight: 500;
-        padding-right: 25px;
+        padding-right: 15px;
       }
       .item-content {
         font-size: 15px;
