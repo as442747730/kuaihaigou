@@ -131,7 +131,7 @@
 
     <!-- 内容模块 -->
     <transition name='slide-fade2' mode="out-in">
-      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom="scrollBottom"></component>
+      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom="scrollBottom" :islogin='isLogin'></component>
     </transition>
 
     <!-- 底栏 -->

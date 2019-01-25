@@ -2,7 +2,9 @@
   <div class="mine" ref="scrollElem">
     <header>
       <div class="hd-head">
-        <div class="hd_l" @click="openMenu"></div>
+        <div class="hd_l" @click="openMenu">
+          <i v-if='OriNotifyNum !== 0'></i>
+        </div>
         <div class="hd_c">我的</div>
         <div class="hd_r"></div>
       </div>
@@ -12,8 +14,10 @@
         </div>
       </div>
       <div class="hd-name">
-        <p class="hd_world">{{ userInfo.nickname }}</p>
-        <user-lab :level='String(userInfo.userGradeNumber)' type='1' :profess='String(userInfo.professionTypeCode)'></user-lab>
+        <p class="hd_world">
+          <span>{{ userInfo.nickname }}</span>
+          <user-lab :level='String(userInfo.userGradeNumber)' type='2' :profess="String(userInfo.professionTypeCode || '')" :official='String(userInfo.officialTypeCode)' :selfmedia='String(userInfo.selfMediaType)'></user-lab>
+        </p>
       </div>
       <div class="hd-sign">
         <p>{{ userInfo.signature }}</p>
@@ -105,6 +109,7 @@ export default {
   async asyncData (req) {
     const { code: detCode, data: detData } = await userApi.serverPostInfo(req)
     const { code: artCode, data: artData } = await userApi.serveGetAartical({ page: 1, count: 5 }, req)
+    const { code: notiCode, data: notiData } = await userApi.serveGetNotifyNum(req)
     console.log(detCode)
     console.log(artCode)
     if (detCode === 506) {
@@ -113,6 +118,10 @@ export default {
       let artMore = false
       let artList = []
       let total = 0
+      let OriNotifyNum = 0
+      if (notiCode === 200) {
+        OriNotifyNum = notiData.total
+      }
       if (artData) {
         artMore = artData.total > 5
         artList = artData.array
@@ -123,7 +132,8 @@ export default {
         artList: artList,
         artMore: artMore,
         artLoad: artMore,
-        artTotalPage: total
+        artTotalPage: total,
+        OriNotifyNum: OriNotifyNum
       }
     } else {
       req.redirect('/error')
@@ -169,7 +179,8 @@ export default {
       // pageLoding: false,
       isFirst: true,
       ifFirst: true,
-      notifyNum: 0
+      notifyNum: 0,
+      OriNotifyNum: 0
     }
   },
   mounted () {
@@ -297,7 +308,17 @@ export default {
         width: 30px;
         height: 30px;
         background-image: url('~/assets/img/Icons/ic_menu_w_30x30@2x.png');
+        position: relative;
         .bg_cover;
+        i {
+          position: absolute;
+          width: 8PX;
+          height: 8PX;
+          background: #ff3333;
+          right: -2PX;
+          top: 1PX;
+          border-radius: 50%;
+        }
       }
 
       .hd_c {
@@ -310,7 +331,7 @@ export default {
       .hd_r {
         width: 30px;
         height: 30px;
-        background-image: url('~/assets/img/Icons/ic_search_w_30x30@2x.png');
+        // background-image: url('~/assets/img/Icons/ic_search_w_30x30@2x.png');
         .bg_cover;
       }
     }
@@ -337,18 +358,21 @@ export default {
       font-size: 0;
       .flex_allCenter;
       .hd_world {
-        padding-left: 60px;
-        padding-right: 2px;
         font-size: 21px;
         font-family: PingFangSC-Semibold;
         font-weight: bold;
         color: rgba(255, 255, 255, 1);
-        margin-right: 3px;
         box-sizing: border-box;
-        max-width: 250px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        max-width: 150px;
+        position: relative;
+        text-align: center;
+        span {
+          display: inline-block;
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
       .icons {
         width: 22px;

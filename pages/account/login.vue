@@ -51,11 +51,28 @@
 </template>
 <script>
 import api from '~/utils/request'
+import { userApi } from '~/api/users'
 import captchaInput from '~/components/Login-captcha.vue'
 
 export default {
   name: 'login',
   layout: 'default',
+
+  head () {
+    return {
+      title: '登录页',
+      meta: [
+        { hid: 'title', name: 'title', content: '登录页' }
+      ]
+    }
+  },
+
+  async asyncData (req) {
+    const { code } = await userApi.serverPostInfo(req)
+    if (code === 200) {
+      req.redirect('/home')
+    }
+  },
 
   data () {
     return {
@@ -93,6 +110,16 @@ export default {
         return true
       }
       return false
+    }
+  },
+
+  mounted () {
+    this.prevLink = document.referrer || window.location.href
+    if ((this.prevLink === window.location.href) || (this.prevLink === 'http://' + window.location.host + '/account/register')) {
+      this.prevLink = 'http://' + window.location.host + '/mine'
+    }
+    if (this.prevLink === 'http://' + window.location.host + '/forget') {
+      this.prevLink = 'http://' + window.location.host
     }
   },
 
@@ -141,7 +168,7 @@ export default {
         if (code === 200) {
           this.$toast('登录成功')
           setTimeout(() => {
-            window.location.href = '/home'
+            window.location.replace(this.prevLink)
           }, 500)
         } else {
           this.$toast(data)
@@ -152,7 +179,7 @@ export default {
         if (code === 200) {
           this.$toast('登录成功')
           setTimeout(() => {
-            window.location.href = '/home'
+            window.location.replace(this.prevLink)
           }, 500)
         } else {
           this.$toast(data)

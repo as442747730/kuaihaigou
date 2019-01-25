@@ -27,9 +27,9 @@
 
         <div class="detail_comment-type">
           <ul>
-            <li @click='filter(0)' :class="{'cur': checkActive === 0}">全部<span>({{ commentNum.totalNum || 0 }})</span></li>
             <li @click='filter(1)' :class="{'cur': checkActive === 1}">优先内容<span>({{ commentNum.hasContentNum || 0 }})</span></li>
             <li @click='filter(2)' :class="{'cur': checkActive === 2}">带图片<span>({{ commentNum.hasImgNum || 0 }})</span></li>
+            <li @click='filter(0)' :class="{'cur': checkActive === 0}">全部<span>({{ commentNum.totalNum || 0 }})</span></li>
           </ul>
         </div>
 
@@ -94,7 +94,7 @@
         </div>
 
         <!-- 回复 -->
-        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='comment' />
+        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='comment' :islogin='islogin' />
 
       </div>
     </transition>
@@ -121,7 +121,8 @@ export default {
   props: {
     goodsid: String,
     viewdata: Object,
-    scrollbottom: Boolean
+    scrollbottom: Boolean,
+    islogin: Boolean
   },
   components: {
     uQuestion,
@@ -131,7 +132,7 @@ export default {
 
   data () {
     return {
-      checkActive: 0,
+      checkActive: 1,
       commentShow: true,
 
       replyShow: false,
@@ -154,7 +155,7 @@ export default {
       page: 1,
       pageLoding: true,
       pageEmpty: false,
-      hasContent: false, // 优先内容
+      hasContent: true, // 优先内容
       hasImg: false, // 优先图片
 
       // 回复内容
@@ -164,7 +165,7 @@ export default {
   },
 
   created () {
-    this.getComment(1)
+    this.getComment(1, false, this.hasContent)
   },
 
   watch: {
@@ -241,6 +242,13 @@ export default {
     },
     // 点赞
     async zan (val, id, ifLike) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 500)
+        return
+      }
       console.log(ifLike)
       let likeFn = ifLike ? goodsApi.unlike(id) : goodsApi.like(id)
       const { code, data } = await likeFn

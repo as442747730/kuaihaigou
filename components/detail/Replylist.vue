@@ -101,7 +101,8 @@ export default {
     replystr: {
       Type: Array,
       default: []
-    }
+    },
+    islogin: Boolean
   },
   data () {
     return {
@@ -171,6 +172,13 @@ export default {
       this.listshow = false
     },
     turnToEdit (replyid, editPerson) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 500)
+        return
+      }
       console.log(replyid)
       if (replyid) {
         this.method = 'two'
