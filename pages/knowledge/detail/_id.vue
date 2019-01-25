@@ -253,7 +253,11 @@ export default {
       }
     },
     payOpen () {
-      if (!this.isLogin) return this.$toast('请先登录！')
+      if (!this.isLogin) {
+        this.$toast('请先登录！')
+        setTimeout(function () { window.location.href = '/account/login' }, 500)
+        return false
+      }
       if (this.isAuthor) return this.$toast('自己不能给自己打赏！')
       this.payShow = true
     },

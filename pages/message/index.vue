@@ -141,6 +141,7 @@
         <ul class="system-info-item">
           <li class="system-info-list" v-for="($v, $k) in msgData" :key="$k">
             <!-- 禁言 -->
+            <div class="delete-icon" @click="rDelbtn($v.id)"></div>
             <template v-if="$v.serialNumber === 1">
               <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
@@ -644,5 +645,17 @@ export default {
 
 [class*=van-hairline]::after {
   display: none;
+}
+
+.system-info-list{
+  position:relative;
+}
+.delete-icon{
+  position:absolute;
+  top:45px;
+  right:12px;
+  width:14px;
+  height:14px;
+  background-image:url(~/assets/img/ic_detele_g_14x14.png);
 }
 </style>
