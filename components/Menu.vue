@@ -88,6 +88,8 @@
           text-align: center;
           line-height: 16PX;
           color: #fff;
+          top:5px;
+          margin-left:5px;
         }
         &.msg {
           background-image: url('~/assets/img/me/icon-msg.png');
