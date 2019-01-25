@@ -105,17 +105,25 @@ export default {
   async asyncData (req) {
     const { code: detCode, data: detData } = await userApi.serverPostInfo(req)
     const { code: artCode, data: artData } = await userApi.serveGetAartical({ page: 1, count: 5 }, req)
+    console.log(detCode)
+    console.log(artCode)
     if (detCode === 506) {
       req.redirect('/account/login')
     } else if (detCode === 200 && artCode === 200) {
       let artMore = false
-      artMore = artData.total > 5
+      let artList = []
+      let total = 0
+      if (artData) {
+        artMore = artData.total > 5
+        artList = artData.array
+        total = artData.total
+      }
       return {
         userInfo: detData,
-        artList: artData.array,
+        artList: artList,
         artMore: artMore,
         artLoad: artMore,
-        artTotalPage: artData.total
+        artTotalPage: total
       }
     } else {
       req.redirect('/error')
@@ -242,15 +250,18 @@ export default {
       if (code === 200) {
         let { array, total } = data
         this.poetTotalPage = total
-        let poeArr = array.map(v => {
-          let { content, createdAt } = v
-          let date = new Date(createdAt)
-          let yy = date.getFullYear()
-          let mm = date.getMonth() + 1
-          let dd = date.getDate()
-          let yymm = yy + '/' + mm
-          return { content, yymm, dd }
-        })
+        let poeArr = []
+        if (array) {
+          poeArr = array.map(v => {
+            let { content, createdAt } = v
+            let date = new Date(createdAt)
+            let yy = date.getFullYear()
+            let mm = date.getMonth() + 1
+            let dd = date.getDate()
+            let yymm = yy + '/' + mm
+            return { content, yymm, dd }
+          })
+        }
         this.poetrys.push(...poeArr)
       }
       this.poesLoad = false
