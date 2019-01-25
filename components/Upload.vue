@@ -1,7 +1,7 @@
 <template>
 
   <div class="u-upload" >
-    <van-uploader :after-read="handleRead" accept="image/*" :multiple="ifMult" >
+    <van-uploader :max-size="maxSize" @oversize="oversizeFn(maxSize)" :after-read="handleRead" accept="image/*" :multiple="ifMult" >
       <slot></slot>
     </van-uploader>
   </div>
@@ -28,6 +28,10 @@ export default {
     ifMult: {
       type: Boolean,
       default: true
+    },
+    maxSize: {
+      type: Number,
+      default: 2048000
     }
   },
 
@@ -68,6 +72,12 @@ export default {
           })
         })
       }
+    },
+
+    oversizeFn (maxSize) {
+      let _M = maxSize / 1024 / 1000
+      let tips = '上传图片不超过' + _M + 'M'
+      this.$toast(tips)
     },
 
     // handleFile (file) {
