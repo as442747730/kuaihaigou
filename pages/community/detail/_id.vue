@@ -61,7 +61,7 @@
             <div class="swiper-slide list-item" v-for="(blind, index) in blindList" :key="index">
               <div class="item-logo" v-if="index < 9">0{{index + 1}}</div>
               <div class="item-logo" v-else>{{index + 1}}</div>
-              <img class="item_img" v-lazy="require('~/assets/img/Icons/img_jiu_02 copy@2x.png')" />
+              <img class="item_img swiper-lazy" :src="require('~/assets/img/Icons/img_jiu.png')" />
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@
                   </div>
                   <div class="list-r">
                     <div class="r_name">{{votes.maxUsername}}</div>
-                    <p></p>
+                    <user-lab :level='String(votes.maxScoreLevel)' type='1' :profess='String(votes.maxCertCategory)'></user-lab>
                   </div>
                 </li>
                  <li class="assess-list">
@@ -109,7 +109,7 @@
                   </div>
                   <div class="list-r">
                     <div class="r_name">{{votes.accurateUsername}}</div>
-                    <p></p>
+                    <user-lab :level='String(votes.accurateScoreLevel)' type='1' :profess='String(votes.accurateCertCategory)'></user-lab>
                   </div>
                 </li>
                  <li class="assess-list">
@@ -119,7 +119,7 @@
                   </div>
                   <div class="list-r">
                     <div class="r_name">{{votes.minUsername}}</div>
-                    <p></p>
+                    <user-lab :level='String(votes.minScoreLevel)' type='1' :profess='String(votes.minCertCategory)'></user-lab>
                   </div>
                 </li>
               </ul>
@@ -146,60 +146,62 @@
           </div>
         </div>
       </div>
-      <div class="winemoney" v-if="buygoodsList.length > 0 ||othergoodsList.length > 0">
+      <div class="winemoney" v-if="buygoodsList.length > 0 || othergoodsList.length > 0">
         <h3 class="acthead">
         活动酒款<span class="acthead_sub">ACTIVE WINE</span>
         </h3>
         <div class="wine-item wine-one" v-if="buygoodsList.length > 0">
           <div class="item-head">快海购在售</div>
-          <div :class="['item-list', {marauto: buygoodsList.length === 1}]" v-swiper:mySwiper3="swiperBuy">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide list_one" v-for="(buygoods, index) in buygoodsList" :key="index">
-                <div class="onemdl">
-                  <div class="onemdl-l" v-lazy:background-image="buygoods.cover"></div>
-                  <div class="onemdl-r">
-                    <h4>{{buygoods.variety}}</h4>
-                    <div class="tags">
-                      <span class="tagsub" v-for="(tags, tagIndex) in buygoods.tagList">{{tags}}</span>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.acidity">
-                      <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.acidity"></div>
+          <div :class="['item-list', {marauto: buygoodsList.length === 1}]">
+            <div v-swiper:mySwiper5="swiperSale">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide list_one" v-for="(buygoods, index) in buygoodsList" :key="index">
+                  <div class="onemdl">
+                    <div class="onemdl-l" v-lazy:background-image="buygoods.cover"></div>
+                    <div class="onemdl-r">
+                      <h4>{{buygoods.variety}}</h4>
+                      <div class="tags">
+                        <span class="tagsub" v-for="(tags, tagIndex) in buygoods.tagList">{{tags}}</span>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.bitterness">
-                      <div class="mdlbar_l">苦度：{{buygoods.bitterness}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.bitterness"></div>
+                      <div class="mdlbar" v-if="buygoods.acidity">
+                        <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.acidity"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.astringency">
-                      <div class="mdlbar_l">涩度：{{buygoods.astringency}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.astringency"></div>
+                      <div class="mdlbar" v-if="buygoods.bitterness">
+                        <div class="mdlbar_l">苦度：{{buygoods.bitterness}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.bitterness"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.fruity">
-                      <div class="mdlbar_l">果香：{{buygoods.fruity}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.fruity"></div>
+                      <div class="mdlbar" v-if="buygoods.astringency">
+                        <div class="mdlbar_l">涩度：{{buygoods.astringency}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.astringency"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.tannin">
-                      <div class="mdlbar_l">单宁：{{buygoods.tannin}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.tannin"></div>
+                      <div class="mdlbar" v-if="buygoods.fruity">
+                        <div class="mdlbar_l">果香：{{buygoods.fruity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.fruity"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.complexity">
-                      <div class="mdlbar_l">复杂度：{{buygoods.complexity}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.complexity"></div>
+                      <div class="mdlbar" v-if="buygoods.tannin">
+                        <div class="mdlbar_l">单宁：{{buygoods.tannin}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.tannin"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="prices">
-                      <span class="actual">¥{{buygoods.actualPrice}}</span>
+                      <div class="mdlbar" v-if="buygoods.complexity">
+                        <div class="mdlbar_l">复杂度：{{buygoods.complexity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.complexity"></div>
+                        </div>
+                      </div>
+                      <div class="prices">
+                        <span class="actual">¥{{buygoods.actualPrice}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -209,26 +211,28 @@
         </div>
         <div class="wine-item wine-two" v-if="othergoodsList.length > 0">
           <div class="item-head">其他酒款</div>
-          <div :class="['item-list', {marauto: othergoodsList.length === 1}]" v-swiper:mySwiper4="swiperOther">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide list_one" v-for="(othergoods, index) in othergoodsList" :key="index">
-                <div class="onemdl">
-                  <div class="onemdl-l" v-lazy:background-image="othergoods.img"></div>
-                  <div class="onemdl-r">
-                    <h4>{{othergoods.name}}</h4>
-                    <div class="tags">
-                      <span class="tagsub">750ml</span>
-                      <span class="tagsub">日常餐酒</span>
-                      <span class="tagsub">紧致单宁</span>
-                    </div>
-                    <div class="itemr-info">
-                      <span class="info_item icon_time">{{othergoods.year}}</span>
-                      <span class="info_item icon_address" v-if="othergoods.area">{{othergoods.country}}/{{othergoods.area}}</span>
-                      <span class="info_item icon_address" v-else>{{othergoods.country}}</span>
-                      <span class="info_item icon_variety">{{othergoods.variety}}</span>
-                    </div>
-                    <div class="prices">
-                      <span class="actual">¥{{othergoods.salePrice}}</span>
+          <div :class="['item-list', {marauto: othergoodsList.length === 1}]">
+            <div v-swiper:mySwiper4="swiperOther">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide list_one" v-for="(othergoods, index) in othergoodsList" :key="index">
+                  <div class="onemdl">
+                    <div class="onemdl-l" v-lazy:background-image="othergoods.img"></div>
+                    <div class="onemdl-r">
+                      <h4>{{othergoods.name}}</h4>
+                      <div class="tags">
+                        <span class="tagsub">750ml</span>
+                        <span class="tagsub">日常餐酒</span>
+                        <span class="tagsub">紧致单宁</span>
+                      </div>
+                      <div class="itemr-info">
+                        <span class="info_item icon_time">{{othergoods.year}}</span>
+                        <span class="info_item icon_address" v-if="othergoods.area">{{othergoods.country}}/{{othergoods.area}}</span>
+                        <span class="info_item icon_address" v-else>{{othergoods.country}}</span>
+                        <span class="info_item icon_variety">{{othergoods.variety}}</span>
+                      </div>
+                      <div class="prices">
+                        <span class="actual">¥{{othergoods.salePrice}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -280,7 +284,7 @@
             </div>
           </div>
         </div>
-        <div class="coop-one" v-if="detailInfo.coorganizer">
+        <div class="coop-one" v-if="detailInfo.coorganizer && detailInfo.coorganizer.length > 0">
           <div class="coop-head">协办方/赞助商</div>
           <div class="coop-items">
             <div class="coop_item" v-for="(coor, index) in detailInfo.coorganizer" :key="index">
@@ -358,14 +362,18 @@
 </template>
 <script>
   import { munityApi } from '~/api/community'
-  import { userApi } from '~/api/users'
   import tools from '~/utils/tools'
+  import userLab from '~/components/Usericon.vue'
   export default {
+    components: {
+      userLab
+    },
     asyncData (req) {
       const munityId = req.params.id
       const detFn = munityApi.serverDetail(munityId, req)
       const voteFn = munityApi.serverVote(munityId, req)
-      return Promise.all([detFn, voteFn]).then(([detRes, voteRes]) => {
+      const userFn = munityApi.serverpersondetail(req)
+      return Promise.all([detFn, voteFn, userFn]).then(([detRes, voteRes, userRes]) => {
         if (detRes.code === 200 && voteRes.code === 200) {
           const detData = detRes.data
           // 流程, 盲品， 大咖
@@ -427,6 +435,7 @@
             return v
           })
           /*
+           * islogin 是否登陆
            * queryNum '1' index页面； '2' mymunity
            * ----------------------------
            * ifSignUp 当前用户是否已报名
@@ -437,7 +446,7 @@
            * 立即报名
            * status = 1 && ifSignUp = false
            * 已报名
-           * (status = 1 || status = 2) && ifSignUp = true && queryNum === '1'
+           * (status = 1 || status = 2) && ifSignUp = true && islogin == true && queryNum === '1'
            * 报名结束
            * status = 2 && ifSignUp = false
            * 未开始
@@ -445,34 +454,38 @@
            * 进行中
            * status = 3 && voteStatus = 1
            * 参与投票
-           * status = 3 && voteStatus = 2 && ifVote = false && 登陆
+           * status = 3 && voteStatus = 2 && ifVote = false && islogin
            * 已投票
-           * status = 3 && voteStatus = 2 && ifVote = true
+           * status = 3 && voteStatus = 2 && ifVote = true && islogin
            * 投票结束
            * status = 3 && voteStatus = 3 && ifVote = false
            * 活动结束
            * status = 4
            * 活动已下线
-           * status = 5 && (从我的社区进入)
+           * status = 5 && && queryNum === '2'
           */
+          let islogin = false
+          if (userRes.code === 200) {
+            islogin = true
+          }
           let _actstatus = '0'
           const queryNum = req.query.page
           const { ifSignUp, status, voteStatus, ifVote } = detData
-          if (status === 1 && ifSignUp === false) {
+          if (status === 1 && !ifSignUp) {
             _actstatus = '0'
-          } else if ((status === 1 || status === 2) && ifSignUp === true && queryNum === '1') {
+          } else if ((status === 1 || status === 2) && ifSignUp && islogin && queryNum === '1') {
             _actstatus = '1'
-          } else if (status === 2 && ifSignUp === false) {
+          } else if (status === 2 && !ifSignUp) {
             _actstatus = '2'
           } else if ((status === 1 || status === 2) && queryNum === '2') {
             _actstatus = '3'
           } else if (status === 3 && voteStatus === 1) {
             _actstatus = '4'
-          } else if (status === 3 && voteStatus === 2 && ifVote === false) {
+          } else if (status === 3 && voteStatus === 2 && !ifVote && islogin) {
             _actstatus = '5'
-          } else if (status === 3 && voteStatus === 2 && ifVote === true) {
+          } else if (status === 3 && voteStatus === 2 && ifVote && islogin) {
             _actstatus = '6'
-          } else if (status === 3 && voteStatus === 3 && ifVote === false) {
+          } else if (status === 3 && voteStatus === 3 && !ifVote) {
             _actstatus = '7'
           } else if (status === 4) {
             _actstatus = '8'
@@ -483,6 +496,7 @@
           // console.log('voteStatus', voteStatus)
           // console.log('ifVote', ifVote)
           return {
+            checkLogin: islogin,
             communityId: munityId,
             detailInfo: detData,
             processList: processReqList,
@@ -501,6 +515,7 @@
     },
     data () {
       return {
+        checkLogin: false,
         communityId: '', // 活动id
         detailInfo: {}, // 全部信息
         processList: [], // 活动流程
@@ -529,6 +544,10 @@
           speed: 800,
           slidesPerView: 'auto'
         },
+        swiperSale: {
+          speed: 800,
+          slidesPerView: 'auto'
+        },
         swiperOther: {
           speed: 800,
           slidesPerView: 'auto'
@@ -551,12 +570,10 @@
       },
       async toSignup () {
         // 去报名
-        // this.showsignup = true
-        const { code } = await userApi.userDetail()
-        if (code === 506) {
-          window.location.href = '/account/login'
-        } else {
+        if (this.checkLogin) {
           this.showsignup = true
+        } else {
+          window.location.href = '/account/login'
         }
       },
       hidefn () {
