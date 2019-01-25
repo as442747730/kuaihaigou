@@ -230,6 +230,13 @@
       <van-picker ref="areaPicker" :columns="columns" show-toolbar @change="handleChange" @cancel="onCancel" @confirm="onConfirm" />
     </van-popup>
 
+    <!-- 去对比 -->
+    <div class="compare-btn" @click='toCompare'>
+      <div>
+        <i></i>
+      </div>
+    </div>
+
   </main>
 </template>
 <script>
@@ -237,6 +244,7 @@ import api from '~/utils/request'
 import { goodsApi } from '~/api/goods'
 import { userApi } from '~/api/users'
 import { cartApi } from '~/api/cart'
+import { wineApi } from '~/api/wine'
 import uGraphic from '~/components/detail/Graphic'
 import uParame from '~/components/detail/Parame'
 import uComment from '~/components/detail/Comment'
@@ -473,6 +481,7 @@ export default {
 
   async created (req) {
     console.log(this.ifCollection)
+    this.Inertia = require('~/static/inertia')
     this.viewData = this.goodsList
     const {code, data} = await goodsApi.getProvince('86')
     if (code === 200) {
@@ -511,6 +520,8 @@ export default {
   },
 
   mounted () {
+    const compareBtn = document.querySelector('.compare-btn')
+    this.Inertia(compareBtn)
     let that = this
     window.addEventListener('scroll', this.handleScroll(function () {
       this.windowHeight = document.documentElement.clientHeight || document.body.clientHeight
@@ -893,6 +904,21 @@ export default {
     historyBack () {
       // window.history.go(-1)
       window.location.href = '/winecenter'
+    },
+
+    // 去对比
+    async toCompare () {
+      const { code, data } = await wineApi.showGoodsForContrast()
+      if (code === 200) {
+        console.log(data)
+        if (data.length >= 2) {
+          window.location.href = '/compare'
+        } else if (data.length === 1) {
+          this.$toast('对比商品不能少于2件')
+        } else if (data.length === 0) {
+          this.$toast('您还未添加对比商品')
+        }
+      }
     }
   }
 }
@@ -1447,5 +1473,27 @@ export default {
   font-size: 21px;
   color: #333;
   margin-right: 4px;
+}
+
+.compare-btn {
+  position: fixed;
+  bottom: 15%;
+  right: 0;
+  padding: 0 20px;
+  z-index: 100;
+  div {
+    padding: 10px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: #7A7A7A;
+    box-sizing: border-box;
+  }
+  i {
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    background: url('~/assets/img/Icons/ic_vs_blue_45x45@2x.png') no-repeat center/contain;
+  }
 }
 </style>
