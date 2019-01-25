@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="m-address-add-form-item">
-        <div class="item-label">备用电话</div>
+        <div class="item-label">邮政编号</div>
         <div class="item-content">
           <input v-model.trim="alternatePhone" placeholder="请输入备用电话"></input>
         </div>
@@ -249,10 +249,10 @@ export default {
         height: 30px;
       }
       .item-label {
-        width: 60px;
+        width: 70px;
         font-size: 15px;
         font-weight: 500;
-        padding-right: 25px;
+        padding-right: 15px;
       }
       .item-content {
         font-size: 15px;

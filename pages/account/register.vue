@@ -1,7 +1,7 @@
 <template>
   <div class="m-register">
 
-    <h2 class="m-register-title">{{ pageTitle }}<div class="icon-close "></div></h2>
+    <h2 class="m-register-title">{{ pageTitle }}<div class="icon-close" @click='historyBack'></div></h2>
 
     <div class="u-login-input mb-30">
       <input v-model="phone" placeholder="请输入手机号码" type="phone"></input>
@@ -103,6 +103,10 @@ export default {
       } else {
         this.$toast(data)
       }
+    },
+
+    historyBack () {
+      window.history.go(-1)
     }
   }
 }

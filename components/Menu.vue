@@ -5,7 +5,7 @@
       <div class="menu-ul">
         <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key" @click="linkTo(m.url)">
           {{ m.name }}
-          <i v-if="m.num !== 0 && m.key === 'msg'">{{ m.num }}</i>
+          <i v-if="m.num !== 0 && m.key === 'msg'"></i>
         </div>
       </div>
     </div>
@@ -80,16 +80,18 @@
         position: relative;
         i {
           position: absolute;
-          min-width: 16PX;
-          height: 16PX;
+          min-width: 8PX;
+          height: 8PX;
           background: #ff3333;
           border-radius: 50%;
           font-size: 10px;
           text-align: center;
-          line-height: 16PX;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           color: #fff;
-          top:5px;
-          margin-left:5px;
+          top: 8px;
+          left: 110px;
         }
         &.msg {
           background-image: url('~/assets/img/me/icon-msg.png');
