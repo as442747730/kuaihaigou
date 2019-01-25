@@ -146,6 +146,67 @@
           </div>
         </div>
       </div>
+      <div class="actmoney">
+        <h3 class="acthead">
+          活动酒款<span class="acthead_sub">ACTIVE WINE</span>
+        </h3>
+        <div class="actitem">
+          <div class="actitem-head">快海购在售</div>
+          <div :class="['actitem-list']">
+            <div v-swiper:mySwiper3="swiperBuy">
+              <div class="swiper-wrapper">
+                <div class="actitem_one swiper-slide"  v-for="(buygoods, index) in buygoodsList" :key="index">
+                  <div class="mdlone">
+                    <div class="mdlone-l" v-lazy:background-image="buygoods.cover"></div>
+                    <div class="mdlone-r">
+                      <h4>{{buygoods.variety}}</h4>
+                      <div class="tags">
+                        <span class="tagsub"  v-for="(tags, tagIndex) in buygoods.tagList" :key="tagIndex">{{tags}}</span>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.acidity">
+                        <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.acidity"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.bitterness">
+                        <div class="mdlbar_l">苦度： {{buygoods.bitterness}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.bitterness"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.astringency">
+                        <div class="mdlbar_l">涩度： {{buygoods.astringency}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.astringency"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.fruity">
+                        <div class="mdlbar_l">果香： {{buygoods.fruity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.fruity"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.tannin">
+                        <div class="mdlbar_l">单宁： {{buygoods.tannin}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.tannin"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.complexity">
+                        <div class="mdlbar_l">复杂度： {{buygoods.complexity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.complexity"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="winemoney" v-if="buygoodsList.length > 0 || othergoodsList.length > 0">
         <h3 class="acthead">
         活动酒款<span class="acthead_sub">ACTIVE WINE</span>
@@ -259,9 +320,7 @@
          报名须知<span class="acthead_sub">REGISTRATION NOTICE</span>
         </h3>
         <ul class="notice-items">
-          <li class="notice_item">
-            {{detailInfo.notice}}
-          </li>
+          <li class="notice_item" v-html="detailInfo.notice"></li>
         </ul>
       </div>
       <!-- 其它信息 -->
@@ -1247,6 +1306,178 @@
         }
       }
     }
+  }
+
+  .actmoney {
+    background: #fff;
+    padding: 25px 0 10px;
+    margin-top: 10px;
+    .acthead {
+      padding: 0 20px;
+    }
+    .actitem {
+      padding: 20px 0;
+      &-head {
+        padding-left: 20px;
+        font-size: 14px;
+        font-family: PingFangSC-Semibold;
+        font-weight: 600;
+        color: rgba(3, 161, 205, 1);
+        line-height: 14px;
+        margin-bottom: 15px;
+      }
+      &-list {
+        padding-left: 20px;
+        .actitem_one {
+          width: 320px;
+          border-radius: 8px;
+          border: 1PX solid #EAEAEA;
+          padding: 20px 10px 10px;
+          box-sizing: border-box;
+          margin-right: 20px;
+          .mdlone {
+            display: flex;
+            align-items: center;
+            &-l {
+              width: 80px;
+              min-width: 80px;
+              max-width: 80px;
+              flex-grow: 0;
+              height: 180px;
+              .bg_cover;
+            }
+            &-r {
+              width: calc(100% - 80px);
+              flex-grow: 1;
+              margin-left: 10px;
+              h4 {
+                font-size:16px;
+                font-family:PingFangSC-Semibold;
+                font-weight:600;
+                color:rgba(51,51,51,1);
+              }
+              .tags {
+                font-size: 12px;
+                font-family: PingFang-SC-Regular;
+                font-weight: 400;
+                color: rgba(153, 153, 153, 1);
+                margin-top: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                .tagsub {
+                  margin-top: 10px;
+                  & + .tagsub {
+                    margin-left: 5px;
+                    padding-left: 5px;
+                    border-left: 1PX solid rgba(153, 153, 153, 1);
+                  }
+                }
+              }
+              .mdlbar {
+                width: 210px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 15px 0;
+                &_l {
+                  width: 80px;
+                  min-width: 80px;
+                  max-width: 80px;
+                  flex-grow: 0;
+                  font-size: 12px;
+                  font-family: PingFang-SC-Regular;
+                  font-weight: 400;
+                  color: @cor_666;
+                }
+                &_r {
+                  position: relative;
+                  width: 120px;
+                  height: 10px;
+                  background: #EFF9FC;
+                  border-radius: 5px;
+                  overflow: hidden;
+                  &-top {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 0;
+                    height: 10px;
+                    background: #59C2E1;
+                    border-radius: 5px;
+                    transition: .3s;
+                    &.w30 {
+                      width: 30px;
+                    }
+                  }
+                }
+              }
+              .ritem-info {
+                .info_item {
+                  display: inline-block;
+                  height:24px;
+                  line-height: 24px;
+                  background:#DEF3F9;
+                  border-radius:12px;
+                  padding-left: 25px;
+                  padding-right: 5px;
+                  vertical-align: middle;
+                  margin-top: 10px;
+                  position: relative;
+                  font-size:12px;
+                  font-family:PingFangSC-Semibold;
+                  font-weight:600;
+                  color: #03A1CD;
+                  margin-left: 7px;
+                  &:before {
+                    content: '';
+                    width: 24px;
+                    height: 24px;
+                    position: absolute;
+                    top: 50%;
+                    left: 0;
+                    margin-top: -12px;
+                    .bg_cover;
+                  }
+                }
+                .icon_time {
+                  &:before {
+                    background-image: url('~/assets/img/Icons/ic_time_24x24.png');
+                  }
+                }
+                .icon_address {
+                  &:before {
+                    background-image: url('~/assets/img/Icons/ic_position_24x24.png');
+                  }
+                }
+                .icon_variety {
+                  &:before {
+                    background-image: url('~/assets/img/Icons/ic_grape_24x24.png');
+                  }
+                }
+              }
+              .prices {
+                margin-top: 12px;
+                .actual {
+                  font-size:18px;
+                  font-family:Impact;
+                  color:rgba(249,156,0,1);
+                  line-height:18px;
+                }
+                .market {
+                  font-size:12px;
+                  font-family:PingFang-SC-Medium;
+                  font-weight:500;
+                  color:rgba(153,153,153,1);
+                  margin-left: 10px;
+                  text-decoration: line-through
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
   }
 
   .winemoney {
