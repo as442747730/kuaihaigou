@@ -19,6 +19,9 @@ export const munityApi = {
   serverVote (id, req) {
     return request.serverGet('/api/activity/getBlindStatistics/' + id, { activityId: id }, req)
   },
+  serverpersondetail (req) {
+    return request.serverGet('/api/user/detail', {}, req)
+  },
   /* ----------- client ------------ */
   clientActList (params) {
     return request.clientGet('/api/activity/paginateActivity', params)

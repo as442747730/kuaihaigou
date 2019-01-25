@@ -9,7 +9,7 @@
           </form>
           <i class="delete_icon" @click="clearSearch"></i>
         </div>
-        <i class="icon_buy"></i>
+        <i class="icon_buy" @click="toCart"></i>
       </div>
     </div>
     <div class="top-two">
@@ -237,6 +237,9 @@ export default {
     }))
   },
   methods: {
+    toCart () {
+      window.location.href = '/order/cart'
+    },
     toOthers () {
       window.location.href = '/winecenter/others'
     },

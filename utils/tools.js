@@ -307,13 +307,16 @@ export default {
     // 符号
     const [sep1, sep2] = ['-', ':']
     let [strstart, strend] = ['', '']
+    let _fh
     if (y1 !== y2 || m1 !== m2 || d1 !== d2) {
       strstart = y1 + sep1 + m1 + sep1 + d1 + ' ' + h1 + sep2 + minut1
       strend = y2 + sep1 + m2 + sep1 + d2 + ' ' + h2 + sep2 + minut2
+      _fh = '~'
     } else {
       strstart = y1 + sep1 + m1 + sep1 + d1
       strend = h1 + sep2 + minut1 + '~' + h2 + sep2 + minut2
+      _fh = ' '
     }
-    return strstart + '~' + strend
+    return strstart + _fh + strend
   }
 }
