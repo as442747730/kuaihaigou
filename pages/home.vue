@@ -112,7 +112,7 @@
             <h2>
               热门甄选
             </h2>
-            <a class="to-channel" href="/selection">
+            <a class="to-channel" href="/selection/?sortedBy=1">
               进入频道
               <i class="van-icon van-icon-arrow"></i>  
             </a>
