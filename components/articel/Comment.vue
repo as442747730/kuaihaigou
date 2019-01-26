@@ -39,10 +39,13 @@
           <div class="part-content-box">
 
             <div class="reply-item" v-for="(p, k) in item.replyList">
-              <div class="avatar-img" :style="'background-image: url(' + (p.personalInfoResp.headimgurl || defaulthead) + ')'"></div>
+              <a :href="'/user?uid=' + p.personalInfoResp.id"><div class="avatar-img" :style="'background-image: url(' + (p.personalInfoResp.headimgurl || defaulthead) + ')'"></div></a>
               <div class="reply-right">
-                <p class="username" v-if='p.toUserId === item.personalInfoResp.id'>{{ p.personalInfoResp.nickname }}</p>
-                <p class="username" v-else>{{ p.personalInfoResp.nickname }}<span>回复</span>{{ p.toUsername }}</p>
+                <p class="username" v-if='p.toUserId === item.personalInfoResp.id'>
+                 <a :href="'/user?uid=' + p.personalInfoResp.id">{{ p.personalInfoResp.nickname }}</a>
+                </p>
+                <p class="username" v-else>
+                  <a :href="'/user?uid=' + p.personalInfoResp.id">{{ p.personalInfoResp.nickname }}</a><span>回复</span><a :href="'/user?uid=' + p.toUserId">{{ p.toUsername }}</a></p>
                 <user-lab :level='String(p.personalInfoResp.userGradeNumber)' type='1' :profess='String(p.personalInfoResp.category)'></user-lab>
                 <p class="reply-content">{{ p.content }}</p>
                 <div class="reply-handler">
