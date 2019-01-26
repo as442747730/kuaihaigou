@@ -495,4 +495,8 @@ export default {
     }
   }
 }
+
+.van-circle__layer{
+  transform-origin:center;
+}
 </style>
