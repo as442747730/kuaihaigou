@@ -210,7 +210,7 @@
               <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
-                <p v-html='$v.content'></p>
+                <p>亲爱的快海购用户，您发表的签到：“ {{ $v.content }} ”被选为【酒坛诗社】，为您增加{{ $v.experiencePoints }}积分经验，并展示在首页轮播。</p>
               </div>
             </template>
             <!-- 热门评论 -->
