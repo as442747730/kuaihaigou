@@ -11,7 +11,7 @@
         <div class="content content-wrapper" v-html="elGood.content"></div>
         <div class="wines" v-if="elGood.goodsMinimalResp">
           <div class="picklist">
-            <div class="infos">
+            <div class="infos" @click="toDetail(elGood.goodsMinimalResp.id)">
               <div class="infos-l" v-lazy:background-image="elGood.goodsMinimalResp.cover"></div>
               <div class="infos-r">
                 <div class="rhead">{{elGood.goodsMinimalResp.goodsName}}</div>
@@ -90,6 +90,11 @@ export default {
         })
       }
     })
+  },
+  methods: {
+    toDetail (id) {
+      window.location.href = '/detail/' + id
+    }
   }
 }
 </script>

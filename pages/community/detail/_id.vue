@@ -93,31 +93,31 @@
               </div>
               <ul class="item-assess">
                 <li class="assess-list">
-                  <div class="list-l" v-lazy:background-image="votes.maxHeadimgurl">
+                  <div class="list-l ltop">
                     <div class="l_price">¥{{votes.maxPrice}}</div>
                     <p>估价最高</p>
                   </div>
-                  <div class="list-r">
+                  <div class="list-r" :style="{backgroundImage: 'url('+ votes.maxHeadimgurl +')'}">
                     <div class="r_name">{{votes.maxUsername}}</div>
                     <user-lab :level='String(votes.maxScoreLevel)' type='1' :profess='String(votes.maxCertCategory)'></user-lab>
                   </div>
                 </li>
                  <li class="assess-list">
-                  <div class="list-l" v-lazy:background-image="votes.accurateHeadimgurl">
+                  <div class="list-l lok">
                     <div class="l_price true_price">¥{{votes.accuratePrice}}</div>
                     <p>估价最准</p>
                   </div>
-                  <div class="list-r">
+                  <div class="list-r" :style="{backgroundImage: 'url('+ votes.accurateHeadimgurl +')'}">
                     <div class="r_name">{{votes.accurateUsername}}</div>
                     <user-lab :level='String(votes.accurateScoreLevel)' type='1' :profess='String(votes.accurateCertCategory)'></user-lab>
                   </div>
                 </li>
                  <li class="assess-list">
-                  <div class="list-l" v-lazy:background-image="votes.minHeadimgurl">
+                  <div class="list-l lbottom">
                     <div class="l_price">¥{{votes.minPrice}}</div>
                     <p>估价最低</p>
                   </div>
-                  <div class="list-r">
+                  <div class="list-r" :style="{backgroundImage: 'url('+ votes.minHeadimgurl +')'}">
                     <div class="r_name">{{votes.minUsername}}</div>
                     <user-lab :level='String(votes.minScoreLevel)' type='1' :profess='String(votes.minCertCategory)'></user-lab>
                   </div>
@@ -1238,6 +1238,15 @@
               background-size: 30px 30px;
               background-position: left center;
               background-repeat: no-repeat;
+              &.ltop {
+                background-image: url('~/assets/img/munity/ic_price_t_30x30@2x.png');
+              }
+              &.lok {
+                background-image: url('~/assets/img/munity/ic_price_check_30x30@2x.png');
+              }
+              &.lbottom {
+                background-image: url('~/assets/img/munity/ic_price_d_30x30@2x.png');
+              }
               .l_price {
                 font-size:18px;
                 font-family:Impact;
@@ -1261,7 +1270,6 @@
               padding-left: 42px;
               background-size: 36px 36px;
               background-position: left center;
-              background-image: url('~/assets/img/pic_touxiang_01@2x.png');
               background-repeat: no-repeat;
               .r_name {
                 max-width: 100px;

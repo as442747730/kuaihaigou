@@ -351,9 +351,11 @@ export default {
       // 进度条
       this.$nextTick(() => {
         let ubars = this.$refs.ubars
-        ubars.map(v => {
-          v.style.width = v.getAttribute('data-bar') + '%'
-        })
+        if (Array.isArray(ubars)) {
+          ubars.map(v => {
+            v.style.width = v.getAttribute('data-bar') + '%'
+          })
+        }
       })
     },
     selectCountry (info) {
