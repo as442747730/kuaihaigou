@@ -102,8 +102,8 @@ export default {
   }
   .u-icon-type2 {
     position: absolute;
-    right: -40px;
-    top: 0px;
+    right: -55px;
+    top: -5px;
     &>i {
       width: 22px;
       height: 22px;

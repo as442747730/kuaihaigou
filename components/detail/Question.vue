@@ -27,9 +27,9 @@
         <div class="u_comment u_answer">
           <ul>
             <li class="u_comment-list u_answer-list" v-for="(qest, index) in qestList" :key="index">
-              <div class="header-img ib-middle" :style="{ background: `url(${qest.personalInfoResp.headimgurl || defaulthead}) no-repeat center/cover`}"></div>
+              <a :href="'/user?uid=' + qest.personalInfoResp.id"><div class="header-img ib-middle" :style="{ background: `url(${qest.personalInfoResp.headimgurl || defaulthead}) no-repeat center/cover`}"></div></a>
               <div class="user-infor ib-middle">
-                <a class="ib-middle">{{ qest.personalInfoResp.nickname }}</a>
+                <a class="ib-middle" :href="'/user?uid=' + qest.personalInfoResp.id">{{ qest.personalInfoResp.nickname }}</a>
                 <br>
                 <u-usericon v-if='qest.personalInfoResp' :level='String(qest.personalInfoResp.userGradeNumber)' type='1' :profess='String(qest.personalInfoResp.category)' />
               </div>
@@ -97,7 +97,8 @@ export default {
   props: {
     goodsid: String,
     scrollbottom: Boolean,
-    queslist: Array
+    queslist: Array,
+    islogin: Boolean
   },
   components: {
     uUsericon,
@@ -163,6 +164,13 @@ export default {
     // },
     // 去提问
     toAsk () {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 500)
+        return
+      }
       this.quesShow = true
       window.location.hash = 'toQues'
     },

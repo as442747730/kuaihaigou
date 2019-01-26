@@ -87,11 +87,15 @@ export default {
   async asyncData (req) {
     const { code, data } = await personApi.serverCreation(req.query.uid)
     if (code === 200) {
-      let pageEmpty = false
-      if (data) pageEmpty = data.total <= 5
+      let pageEmpty = true
+      let workData = []
+      if (data) {
+        pageEmpty = data.total <= 5
+        workData = data.array
+      }
       return {
         uid: req.query.uid || null,
-        workData: data.array || {},
+        workData: workData,
         pageEmpty: pageEmpty
       }
     }

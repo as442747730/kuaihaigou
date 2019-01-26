@@ -331,7 +331,12 @@ export default {
         display: flex;
         align-items: center;
         span {
+          max-width: 120px;
           margin-right: 5px;
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
       .signature {
