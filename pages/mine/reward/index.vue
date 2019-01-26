@@ -44,9 +44,11 @@
       <!-- 消费记录 -->
       <ul class="u-reward-item" v-if='setType === 3'>
         <li class="u-reward-record" v-for='($v, $k) in rewardData' :key='$k'>
-          <h3 class="font_hight">订单编号：{{ $v.orderIdentify }}</h3>
-          <p>下单时间：{{ $v.submitOrderTime }}</p>
-          <span>-{{ formatMoney($v.hiCoinReduction) }}元</span>
+          <a :href="'/order/detail?id=' + $v.orderId">
+            <h3 class="font_hight">订单编号：{{ $v.orderIdentify }}</h3>
+            <p>下单时间：{{ $v.submitOrderTime }}</p>
+            <span>-{{ formatMoney($v.hiCoinReduction) }}元</span>
+          </a>
         </li>
       </ul>
 
