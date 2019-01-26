@@ -4,7 +4,7 @@
 
     <div class="reward-box">
       <ul class="reward-item">
-        <li class="reward-list" v-for='($v, $k) in rewardData' :key='$k' :class="['type_' + $k, rewardIndex === $k ? 'cur' : '']" @click='rewardSelect($k)'>
+        <li class="reward-list" v-for='($v, $k) in rewardData' :key='$k':class="['type_' + $k, rewardIndex === $k ? 'cur' : '']" @click='rewardSelect($k)'>
             <span><b>{{ formatMoney($v.price) }}</b>元</span>
             <p>{{ $v.desc }}</p>
         </li>
@@ -120,7 +120,7 @@ export default {
         desc: '带我飞'
       }],
 
-      rewardIndex: 0,
+      rewardIndex: null,
 
       payShow: false, // 打开支付选项
       resultWindow: false,

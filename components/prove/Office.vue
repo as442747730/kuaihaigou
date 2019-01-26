@@ -24,8 +24,7 @@
     <div class="step step2" v-show="form.officeType === '3'">
       <div class="textarea-item">
         <h3 class="title font_hight">其他平台</h3>
-        <textarea v-model="form.other" :maxlength="150" rows="6" placeholder="请填写平台请填写平台名称和媒体账号名称，例如：豆瓣（快海购），可填写多个"></textarea>
-        <span class="words">{{ form.other.length }}/150</span>
+        <textarea v-model="form.other" :maxlength="150" rows="1" placeholder="请输入其他企业类型"></textarea>
       </div>
     </div>
     <div class="depart-line"></div>
