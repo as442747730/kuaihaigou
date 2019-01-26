@@ -1,7 +1,7 @@
 <template>
 
   <div class="u-upload" >
-    <van-uploader :max-size="maxSize" @oversize="oversizeFn(maxSize)" :after-read="handleRead" accept="image/*" :multiple="ifMult" >
+    <van-uploader  :after-read="handleRead" accept="image/*" :multiple="ifMult" >
       <slot></slot>
     </van-uploader>
   </div>

@@ -13,7 +13,7 @@
     <div class="addpics">
       <div class="comhead">
         添加图片证据
-        <span class="subtip">单张不超过2M</span>
+        <span class="subtip">不超过7张</span>
       </div>
       <div class="addpics-list">
         <div class="list-item list-img" v-for="(imgs, index) in imgList" :key="index" :style="{backgroundImage: 'url(' + imgs + ')'}">
@@ -21,8 +21,8 @@
             <van-icon size="20px" color="#03A0CB" name="clear" />
           </span>
         </div>
-        <div class="list-item list-bk">
-          <Upload @on-success="handleUploadSuccess" :maxSize="2048000">
+        <div class="list-item list-bk" v-if="imgList.length < maxNum">
+          <Upload @on-success="handleUploadSuccess" :max="maxNum">
             <div class="addbtn"></div>
           </Upload>
         </div>
@@ -65,6 +65,7 @@
     },
     data () {
       return {
+        maxNum: 7,
         encyid: null,
         baikeid: null,
         type: null,
