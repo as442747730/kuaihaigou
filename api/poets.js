@@ -10,5 +10,8 @@ export const poetApi = {
   // 签到（酒坛诗社）
   createUserSign (content) {
     return request.clientPost('/api/sign/createUserSign', { content: content })
+  },
+  zanPoet (id) {
+    return request.clientPost('/api/sign/like/' + id)
   }
 }

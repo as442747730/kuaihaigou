@@ -146,7 +146,7 @@
           </div>
         </div>
       </div>
-      <div class="actmoney">
+     <!--  <div class="actmoney">
         <h3 class="acthead">
           活动酒款<span class="acthead_sub">ACTIVE WINE</span>
         </h3>
@@ -206,7 +206,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="winemoney" v-if="buygoodsList.length > 0 || othergoodsList.length > 0">
         <h3 class="acthead">
         活动酒款<span class="acthead_sub">ACTIVE WINE</span>
