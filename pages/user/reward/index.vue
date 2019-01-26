@@ -120,7 +120,7 @@ export default {
         desc: '带我飞'
       }],
 
-      rewardIndex: 0,
+      rewardIndex: null,
 
       payShow: false, // 打开支付选项
       resultWindow: false,

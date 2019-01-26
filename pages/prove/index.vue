@@ -972,4 +972,14 @@ export default {
   .mt-20 {
     margin-top: 20px;
   }
+
+.step2{
+   .textarea-item{
+        textarea{
+            padding-bottom: 18px;
+        }
+   }
+}
+
+
 </style>
