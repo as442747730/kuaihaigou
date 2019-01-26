@@ -103,7 +103,9 @@ export default {
   .u-icon-type2 {
     position: absolute;
     right: -55px;
-    top: -5px;
+    top: -2px;
+    width: 49px;
+    text-align: left;
     &>i {
       width: 22px;
       height: 22px;
