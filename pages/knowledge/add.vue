@@ -442,7 +442,7 @@ export default {
       .van-circle {
         width: 110px!important;
         .van-circle__text {
-          padding-left: 11px;
+          padding-left: 4px;
         }
       }
     }
@@ -494,5 +494,9 @@ export default {
       }
     }
   }
+}
+
+.van-circle__layer{
+  transform-origin:center;
 }
 </style>

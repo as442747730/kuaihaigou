@@ -528,12 +528,11 @@ export default {
 
   .record-section {
     height: calc(100vh - 45px);
-    display: flex;
-    flex-direction: column;
     .msg-box {
+      box-sizing:border-box;
       padding: 20px 10px;
-      flex: 1;
       overflow: scroll;
+      height: calc(100vh - 101px);
       .msg-item {
         display: flex;
         flex-wrap: wrap;
