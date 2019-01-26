@@ -17,7 +17,7 @@
 <script>
 import comHead from '~/components/com-head'
 import keyBoard from '~/components/Keyboard'
-import { userApi } from '~/api/users'
+// import { userApi } from '~/api/users'
 export default {
   components: {
     comHead,
@@ -38,17 +38,18 @@ export default {
   },
   methods: {
     async opKeyboard () {
-      this.showkey = true
-      let params = {
-        phone: this.newphone,
-        use: 2
-      }
-      const { code, data } = await userApi.getPhoneCode(params)
-      if (code === 200) {
-        this.showkey = true
-      } else {
-        this.$toast(data)
-      }
+      // this.showkey = true
+      // let params = {
+      //   phone: this.newphone,
+      //   use: 2
+      // }
+      // const { code, data } = await userApi.getPhoneCode(params)
+      // if (code === 200) {
+      //   this.showkey = true
+      // } else {
+      //   this.$toast(data)
+      // }
+      window.location.href = '/account/bindphone'
     },
     okInput (val) {
       this.updPhone(val)

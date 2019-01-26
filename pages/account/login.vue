@@ -128,7 +128,7 @@ export default {
 
   mounted () {
     this.prevLink = document.referrer || window.location.href
-    if ((this.prevLink === window.location.href) || (this.prevLink === 'http://' + window.location.host + '/account/register')) {
+    if ((this.prevLink === window.location.href) || (this.prevLink === 'http://' + window.location.host + '/account/register') || (this.prevLink === 'http://' + window.location.host + '/account/bindphone')) {
       this.prevLink = 'http://' + window.location.host + '/mine'
     }
     if (this.prevLink === 'http://' + window.location.host + '/account/forget') {
