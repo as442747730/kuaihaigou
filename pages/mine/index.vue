@@ -14,10 +14,10 @@
         </div>
       </div>
       <div class="hd-name">
-        <p class="hd_world">
+        <div class="hd_world">
           <span>{{ userInfo.nickname }}</span>
           <user-lab :level='String(userInfo.userGradeNumber)' type='2' :profess="String(userInfo.professionTypeCode || '')" :official='String(userInfo.officialTypeCode)' :selfmedia='String(userInfo.selfMediaType)'></user-lab>
-        </p>
+        </div>
       </div>
       <div class="hd-sign">
         <p>{{ userInfo.signature }}</p>

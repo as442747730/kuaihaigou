@@ -31,7 +31,8 @@ export default {
     ifLike: Boolean,
     ifCollect: Boolean,
     type: String,
-    articelId: String
+    articelId: String,
+    islogin: Boolean
   },
 
   data () {
@@ -42,11 +43,9 @@ export default {
     }
   },
 
-  mounted () {
-  },
-
   methods: {
     async handleLike () {
+      if (!this.checkLogin()) return
       if (this.likeLoding) return
       this.likeLoding = true
       let params = {
@@ -65,6 +64,7 @@ export default {
       }
     },
     async handleCollect () {
+      if (!this.checkLogin()) return
       if (this.collectLoading) return
       this.collectLoading = true
       let params = {
@@ -83,7 +83,19 @@ export default {
       }
     },
     toComment () {
+      if (!this.checkLogin()) return
       this.$emit('handleComment', !this.commentShow)
+    },
+    checkLogin () {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 500)
+        return false
+      } else {
+        return true
+      }
     }
   }
 }

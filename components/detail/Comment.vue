@@ -100,7 +100,7 @@
     </transition>
     <!-- 提问 -->
     <transition name='nav-fade' mode="out-in">
-      <u-question :goodsid="goodsid" :queslist="viewdata.frequeList" v-if='!commentShow' :scrollbottom="scrollbottom" />
+      <u-question :goodsid="goodsid" :queslist="viewdata.frequeList" v-if='!commentShow' :scrollbottom="scrollbottom" :islogin='islogin' />
     </transition>
   </article>
 </template>

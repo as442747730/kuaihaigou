@@ -101,7 +101,8 @@ export default {
     replyData: {
       Type: Array,
       default: []
-    }
+    },
+    islogin: Boolean
   },
 
   data () {
@@ -183,6 +184,13 @@ export default {
       })
     },
     turnToEdit (val, method) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 500)
+        return
+      }
       console.log(val)
       this.commentId = this.masterinfo.id
       this.toUserId = val.personalInfoResp.id
@@ -223,6 +231,13 @@ export default {
     },
     // 点赞
     async handleCommentLike (val, index) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 500)
+        return
+      }
       if (this.zanLoading) return
       this.zanLoading = true
       let { id, ifLiked } = val

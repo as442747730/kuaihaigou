@@ -140,7 +140,7 @@ export default {
         background-image: url('~/assets/img/foot/ic_mall_ele@2x.png');
       }
       &-zsfx {
-        background-image: url('~/assets/img/foot/ic_applets_nor@2x.png');
+        background-image: url('~/assets/img/foot/ic_applets_ele@2x.png');
       }
       &-my {
         background-image: url('~/assets/img/foot/ic_us_ele@2x.png');
