@@ -15,12 +15,6 @@
         </div>
       </div>
       <div class="m-address-add-form-item">
-        <div class="item-label">备用电话</div>
-        <div class="item-content">
-          <input v-model.trim="alternatePhone" placeholder="请输入备用电话"></input>
-        </div>
-      </div>
-      <div class="m-address-add-form-item">
         <div class="item-label">所在区域</div>
         <div class="item-content" @click="openAreaSelect">
           <input v-model="areaTxt" readonly placeholder="请选择所在省份、城市、区县"></input>
@@ -39,6 +33,12 @@
           <span @click='addressType = 1' :class="{'cur': addressType === 1}">家</span>
           <span @click='addressType = 2' :class="{'cur': addressType === 2}">公司</span>
           <span @click='addressType = 3' :class="{'cur': addressType === 3}">其他</span>
+        </div>
+      </div>
+      <div class="m-address-add-form-item">
+        <div class="item-label">邮政编号</div>
+        <div class="item-content">
+          <input v-model.trim="alternatePhone" placeholder="请输入邮政编号"></input>
         </div>
       </div>
     </div>
