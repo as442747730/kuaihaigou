@@ -106,7 +106,8 @@ export default {
     },
 
     historyBack () {
-      window.history.go(-1)
+      window.location.href = '/account/login'
+      // window.history.go(-1)
     }
   }
 }
