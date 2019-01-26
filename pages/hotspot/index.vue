@@ -207,6 +207,7 @@
         window.location.href = `/hotspot/label/${label.id}`
       },
       todetail (item, type = 1) {
+        console.log('item', item)
         let detailId
         if (type === 0) {
           detailId = item.newsId

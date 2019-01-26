@@ -11,7 +11,7 @@
         <div class="content content-wrapper" v-html="elGood.content"></div>
         <div class="wines" v-if="elGood.goodsMinimalResp">
           <div class="picklist">
-            <div class="infos">
+            <div class="infos" @click="toDetail(elGood.goodsMinimalResp.id)">
               <div class="infos-l" v-lazy:background-image="elGood.goodsMinimalResp.cover"></div>
               <div class="infos-r">
                 <div class="rhead">{{elGood.goodsMinimalResp.goodsName}}</div>
@@ -26,7 +26,7 @@
                 <div class="probars">
                   <div class="word">复杂：{{elGood.goodsMinimalResp.complexity}}分</div>
                   <div class="probar">
-                    <div class="probar_cors"></div>
+                    <div class="probar_cors" ref="ubars" :data-bar="elGood.goodsMinimalResp.complexity"></div>
                   </div>
                 </div>
               </div>
@@ -82,7 +82,19 @@ export default {
     }
   },
   mounted () {
-    console.log(this.articleDetail, 'articleDetail')
+    this.$nextTick(() => {
+      let bars = this.$refs.ubars
+      if (Array.isArray(bars)) {
+        bars.map(v => {
+          v.style.width = v.getAttribute('data-bar') + '%'
+        })
+      }
+    })
+  },
+  methods: {
+    toDetail (id) {
+      window.location.href = '/detail/' + id
+    }
   }
 }
 </script>

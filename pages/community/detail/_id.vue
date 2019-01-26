@@ -61,7 +61,7 @@
             <div class="swiper-slide list-item" v-for="(blind, index) in blindList" :key="index">
               <div class="item-logo" v-if="index < 9">0{{index + 1}}</div>
               <div class="item-logo" v-else>{{index + 1}}</div>
-              <img class="item_img" v-lazy="require('~/assets/img/Icons/img_jiu_02 copy@2x.png')" />
+              <img class="item_img swiper-lazy" :src="require('~/assets/img/Icons/img_jiu.png')" />
             </div>
           </div>
         </div>
@@ -93,33 +93,33 @@
               </div>
               <ul class="item-assess">
                 <li class="assess-list">
-                  <div class="list-l" v-lazy:background-image="votes.maxHeadimgurl">
+                  <div class="list-l ltop">
                     <div class="l_price">¥{{votes.maxPrice}}</div>
                     <p>估价最高</p>
                   </div>
-                  <div class="list-r">
+                  <div class="list-r" :style="{backgroundImage: 'url('+ votes.maxHeadimgurl +')'}">
                     <div class="r_name">{{votes.maxUsername}}</div>
-                    <p></p>
+                    <user-lab :level='String(votes.maxScoreLevel)' type='1' :profess='String(votes.maxCertCategory)'></user-lab>
                   </div>
                 </li>
                  <li class="assess-list">
-                  <div class="list-l" v-lazy:background-image="votes.accurateHeadimgurl">
+                  <div class="list-l lok">
                     <div class="l_price true_price">¥{{votes.accuratePrice}}</div>
                     <p>估价最准</p>
                   </div>
-                  <div class="list-r">
+                  <div class="list-r" :style="{backgroundImage: 'url('+ votes.accurateHeadimgurl +')'}">
                     <div class="r_name">{{votes.accurateUsername}}</div>
-                    <p></p>
+                    <user-lab :level='String(votes.accurateScoreLevel)' type='1' :profess='String(votes.accurateCertCategory)'></user-lab>
                   </div>
                 </li>
                  <li class="assess-list">
-                  <div class="list-l" v-lazy:background-image="votes.minHeadimgurl">
+                  <div class="list-l lbottom">
                     <div class="l_price">¥{{votes.minPrice}}</div>
                     <p>估价最低</p>
                   </div>
-                  <div class="list-r">
+                  <div class="list-r" :style="{backgroundImage: 'url('+ votes.minHeadimgurl +')'}">
                     <div class="r_name">{{votes.minUsername}}</div>
-                    <p></p>
+                    <user-lab :level='String(votes.minScoreLevel)' type='1' :profess='String(votes.minCertCategory)'></user-lab>
                   </div>
                 </li>
               </ul>
@@ -146,60 +146,123 @@
           </div>
         </div>
       </div>
-      <div class="winemoney" v-if="buygoodsList.length > 0 ||othergoodsList.length > 0">
+      <div class="actmoney">
+        <h3 class="acthead">
+          活动酒款<span class="acthead_sub">ACTIVE WINE</span>
+        </h3>
+        <div class="actitem">
+          <div class="actitem-head">快海购在售</div>
+          <div :class="['actitem-list']">
+            <div v-swiper:mySwiper3="swiperBuy">
+              <div class="swiper-wrapper">
+                <div class="actitem_one swiper-slide"  v-for="(buygoods, index) in buygoodsList" :key="index">
+                  <div class="mdlone">
+                    <div class="mdlone-l" v-lazy:background-image="buygoods.cover"></div>
+                    <div class="mdlone-r">
+                      <h4>{{buygoods.variety}}</h4>
+                      <div class="tags">
+                        <span class="tagsub"  v-for="(tags, tagIndex) in buygoods.tagList" :key="tagIndex">{{tags}}</span>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.acidity">
+                        <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.acidity"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.bitterness">
+                        <div class="mdlbar_l">苦度： {{buygoods.bitterness}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.bitterness"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.astringency">
+                        <div class="mdlbar_l">涩度： {{buygoods.astringency}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.astringency"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.fruity">
+                        <div class="mdlbar_l">果香： {{buygoods.fruity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.fruity"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.tannin">
+                        <div class="mdlbar_l">单宁： {{buygoods.tannin}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.tannin"></div>
+                        </div>
+                      </div>
+                      <div class="mdlbar" v-if="buygoods.complexity">
+                        <div class="mdlbar_l">复杂度： {{buygoods.complexity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.complexity"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="winemoney" v-if="buygoodsList.length > 0 || othergoodsList.length > 0">
         <h3 class="acthead">
         活动酒款<span class="acthead_sub">ACTIVE WINE</span>
         </h3>
         <div class="wine-item wine-one" v-if="buygoodsList.length > 0">
           <div class="item-head">快海购在售</div>
-          <div :class="['item-list', {marauto: buygoodsList.length === 1}]" v-swiper:mySwiper3="swiperBuy">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide list_one" v-for="(buygoods, index) in buygoodsList" :key="index">
-                <div class="onemdl">
-                  <div class="onemdl-l" v-lazy:background-image="buygoods.cover"></div>
-                  <div class="onemdl-r">
-                    <h4>{{buygoods.variety}}</h4>
-                    <div class="tags">
-                      <span class="tagsub" v-for="(tags, tagIndex) in buygoods.tagList">{{tags}}</span>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.acidity">
-                      <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.acidity"></div>
+          <div :class="['item-list', {marauto: buygoodsList.length === 1}]">
+            <div v-swiper:mySwiper5="swiperSale">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide list_one" v-for="(buygoods, index) in buygoodsList" :key="index">
+                  <div class="onemdl">
+                    <div class="onemdl-l" v-lazy:background-image="buygoods.cover"></div>
+                    <div class="onemdl-r">
+                      <h4>{{buygoods.variety}}</h4>
+                      <div class="tags">
+                        <span class="tagsub" v-for="(tags, tagIndex) in buygoods.tagList">{{tags}}</span>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.bitterness">
-                      <div class="mdlbar_l">苦度：{{buygoods.bitterness}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.bitterness"></div>
+                      <div class="mdlbar" v-if="buygoods.acidity">
+                        <div class="mdlbar_l">酸度： {{buygoods.acidity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.acidity"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.astringency">
-                      <div class="mdlbar_l">涩度：{{buygoods.astringency}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.astringency"></div>
+                      <div class="mdlbar" v-if="buygoods.bitterness">
+                        <div class="mdlbar_l">苦度：{{buygoods.bitterness}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.bitterness"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.fruity">
-                      <div class="mdlbar_l">果香：{{buygoods.fruity}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.fruity"></div>
+                      <div class="mdlbar" v-if="buygoods.astringency">
+                        <div class="mdlbar_l">涩度：{{buygoods.astringency}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.astringency"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.tannin">
-                      <div class="mdlbar_l">单宁：{{buygoods.tannin}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.tannin"></div>
+                      <div class="mdlbar" v-if="buygoods.fruity">
+                        <div class="mdlbar_l">果香：{{buygoods.fruity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.fruity"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mdlbar" v-if="buygoods.complexity">
-                      <div class="mdlbar_l">复杂度：{{buygoods.complexity}}分</div>
-                      <div class="mdlbar_r">
-                        <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.complexity"></div>
+                      <div class="mdlbar" v-if="buygoods.tannin">
+                        <div class="mdlbar_l">单宁：{{buygoods.tannin}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.tannin"></div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="prices">
-                      <span class="actual">¥{{buygoods.actualPrice}}</span>
+                      <div class="mdlbar" v-if="buygoods.complexity">
+                        <div class="mdlbar_l">复杂度：{{buygoods.complexity}}分</div>
+                        <div class="mdlbar_r">
+                          <div class="mdlbar_r-top" ref="mdlbars" :data-bar="buygoods.complexity"></div>
+                        </div>
+                      </div>
+                      <div class="prices">
+                        <span class="actual">¥{{buygoods.actualPrice}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -209,26 +272,28 @@
         </div>
         <div class="wine-item wine-two" v-if="othergoodsList.length > 0">
           <div class="item-head">其他酒款</div>
-          <div :class="['item-list', {marauto: othergoodsList.length === 1}]" v-swiper:mySwiper4="swiperOther">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide list_one" v-for="(othergoods, index) in othergoodsList" :key="index">
-                <div class="onemdl">
-                  <div class="onemdl-l" v-lazy:background-image="othergoods.img"></div>
-                  <div class="onemdl-r">
-                    <h4>{{othergoods.name}}</h4>
-                    <div class="tags">
-                      <span class="tagsub">750ml</span>
-                      <span class="tagsub">日常餐酒</span>
-                      <span class="tagsub">紧致单宁</span>
-                    </div>
-                    <div class="itemr-info">
-                      <span class="info_item icon_time">{{othergoods.year}}</span>
-                      <span class="info_item icon_address" v-if="othergoods.area">{{othergoods.country}}/{{othergoods.area}}</span>
-                      <span class="info_item icon_address" v-else>{{othergoods.country}}</span>
-                      <span class="info_item icon_variety">{{othergoods.variety}}</span>
-                    </div>
-                    <div class="prices">
-                      <span class="actual">¥{{othergoods.salePrice}}</span>
+          <div :class="['item-list', {marauto: othergoodsList.length === 1}]">
+            <div v-swiper:mySwiper4="swiperOther">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide list_one" v-for="(othergoods, index) in othergoodsList" :key="index">
+                  <div class="onemdl">
+                    <div class="onemdl-l" v-lazy:background-image="othergoods.img"></div>
+                    <div class="onemdl-r">
+                      <h4>{{othergoods.name}}</h4>
+                      <div class="tags">
+                        <span class="tagsub">750ml</span>
+                        <span class="tagsub">日常餐酒</span>
+                        <span class="tagsub">紧致单宁</span>
+                      </div>
+                      <div class="itemr-info">
+                        <span class="info_item icon_time">{{othergoods.year}}</span>
+                        <span class="info_item icon_address" v-if="othergoods.area">{{othergoods.country}}/{{othergoods.area}}</span>
+                        <span class="info_item icon_address" v-else>{{othergoods.country}}</span>
+                        <span class="info_item icon_variety">{{othergoods.variety}}</span>
+                      </div>
+                      <div class="prices">
+                        <span class="actual">¥{{othergoods.salePrice}}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -255,9 +320,7 @@
          报名须知<span class="acthead_sub">REGISTRATION NOTICE</span>
         </h3>
         <ul class="notice-items">
-          <li class="notice_item">
-            {{detailInfo.notice}}
-          </li>
+          <li class="notice_item" v-html="detailInfo.notice"></li>
         </ul>
       </div>
       <!-- 其它信息 -->
@@ -280,7 +343,7 @@
             </div>
           </div>
         </div>
-        <div class="coop-one" v-if="detailInfo.coorganizer">
+        <div class="coop-one" v-if="detailInfo.coorganizer && detailInfo.coorganizer.length > 0">
           <div class="coop-head">协办方/赞助商</div>
           <div class="coop-items">
             <div class="coop_item" v-for="(coor, index) in detailInfo.coorganizer" :key="index">
@@ -320,8 +383,8 @@
       <div class="btnitem btncor1" v-if="activeStatus === '0'" @click="toSignup">立即报名</div>
       <div class="btnitem btncor2" v-if="activeStatus === '1'">已报名</div>
       <div class="btnitem btncor3" v-if="activeStatus === '2'">报名结束</div>
-      <div class="btnitem btncor3" v-if="activeStatus === '3'" @click="tovote">未开始</div>
-      <div class="btnitem btncor2" v-if="activeStatus === '4'" @click="tovote">进行中</div>
+      <div class="btnitem btncor3" v-if="activeStatus === '3'">未开始</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '4'">进行中</div>
       <div class="btnitem btncor4" v-if="activeStatus === '5'" @click="tovote">参与投票</div>
       <div class="btnitem btncor5" v-if="activeStatus === '6'">已投票</div>
       <div class="btnitem btncor6" v-if="activeStatus === '7'">投票结束</div>
@@ -358,16 +421,21 @@
 </template>
 <script>
   import { munityApi } from '~/api/community'
-  import { userApi } from '~/api/users'
   import tools from '~/utils/tools'
+  import userLab from '~/components/Usericon.vue'
   export default {
+    components: {
+      userLab
+    },
     asyncData (req) {
       const munityId = req.params.id
       const detFn = munityApi.serverDetail(munityId, req)
       const voteFn = munityApi.serverVote(munityId, req)
-      return Promise.all([detFn, voteFn]).then(([detRes, voteRes]) => {
+      const userFn = munityApi.serverpersondetail(req)
+      return Promise.all([detFn, voteFn, userFn]).then(([detRes, voteRes, userRes]) => {
         if (detRes.code === 200 && voteRes.code === 200) {
           const detData = detRes.data
+          console.log('detData', detData)
           // 流程, 盲品， 大咖
           let { processReqList, blindTastingRespList, activityPersonRespList } = detData
           if (Array.isArray(processReqList)) {
@@ -427,62 +495,109 @@
             return v
           })
           /*
+           * islogin 是否登陆
            * queryNum '1' index页面； '2' mymunity
            * ----------------------------
            * ifSignUp 当前用户是否已报名
            * status 活动状态（1:报名中 2:报名结束 3:进行中 4:已结束 5:已下线）
            * voteStatus 活动投票状态（1:未开始 2:已开始 3:已结束）
            * ifVote 当前用户是否已投票
-           * -------- 判断 ------------
-           * 立即报名
-           * status = 1 && ifSignUp = false
-           * 已报名
-           * (status = 1 || status = 2) && ifSignUp = true && queryNum === '1'
-           * 报名结束
-           * status = 2 && ifSignUp = false
-           * 未开始
-           * (status = 1 || status = 2) && queryNum === '2'
-           * 进行中
-           * status = 3 && voteStatus = 1
-           * 参与投票
-           * status = 3 && voteStatus = 2 && ifVote = false && 登陆
-           * 已投票
-           * status = 3 && voteStatus = 2 && ifVote = true
-           * 投票结束
-           * status = 3 && voteStatus = 3 && ifVote = false
-           * 活动结束
-           * status = 4
-           * 活动已下线
-           * status = 5 && (从我的社区进入)
           */
-          let _actstatus = '0'
+          let islogin = false
+          if (userRes.code === 200) {
+            islogin = true
+          }
+          let _actstatus
           const queryNum = req.query.page
           const { ifSignUp, status, voteStatus, ifVote } = detData
-          if (status === 1 && ifSignUp === false) {
-            _actstatus = '0'
-          } else if ((status === 1 || status === 2) && ifSignUp === true && queryNum === '1') {
-            _actstatus = '1'
-          } else if (status === 2 && ifSignUp === false) {
-            _actstatus = '2'
-          } else if ((status === 1 || status === 2) && queryNum === '2') {
-            _actstatus = '3'
-          } else if (status === 3 && voteStatus === 1) {
-            _actstatus = '4'
-          } else if (status === 3 && voteStatus === 2 && ifVote === false) {
-            _actstatus = '5'
-          } else if (status === 3 && voteStatus === 2 && ifVote === true) {
-            _actstatus = '6'
-          } else if (status === 3 && voteStatus === 3 && ifVote === false) {
-            _actstatus = '7'
-          } else if (status === 4) {
-            _actstatus = '8'
-          } else if (status === 5 && queryNum === '2') {
-            _actstatus = '9'
+          if (queryNum === '1') {
+            if (!islogin) {
+              /*
+               * 立即报名
+               * 已报名
+               * 报名结束
+               * 进行中
+               * 活动已结束
+              */
+              switch (status) {
+                case 1:
+                  _actstatus = '0'
+                  break
+                case 2:
+                  _actstatus = '2'
+                  break
+                case 3:
+                  _actstatus = '4'
+                  break
+                case 4:
+                  _actstatus = '8'
+                  break
+                case 5:
+                  _actstatus = '9'
+                  break
+              }
+            } else {
+              /*
+               * 立即报名
+               * 已报名
+               * 进行中
+               * 参与投票
+               * 已投票
+               * 投票结束
+               * 活动已结束
+              */
+              if (status === 1 && !ifSignUp) {
+                _actstatus = '0'
+              } else if (status === 1 && ifSignUp) {
+                _actstatus = '1'
+              } else if (status === 2 && !ifSignUp) {
+                _actstatus = '2'
+              } else if (status === 2 && ifSignUp) {
+                _actstatus = '3'
+              } else if (status === 3 && voteStatus === 1) {
+                _actstatus = '4'
+              } else if (status === 3 && voteStatus === 2 && !ifVote) {
+                _actstatus = '5'
+              } else if (status === 3 && voteStatus === 2 && ifVote) {
+                _actstatus = '6'
+              } else if (status === 3 && voteStatus === 3) {
+                _actstatus = '7'
+              } else if (status === 4) {
+                _actstatus = '8'
+              } else if (status === 5) {
+                _actstatus = '9'
+              }
+            }
+          } else if (queryNum === '2') {
+            /*
+             * 未开始 (status = 1 || status = 2)
+             * 进行中 status = 3
+             * 参与投票 status = 3 && voteStatus = 2 && !ifVote
+             * 已投票  status = 3 && voteStatus = 2 && ifVote
+             * 投票结束 status = 3 && voteStatus = 3
+             * 活动结束 status = 4
+             * 已下线 status = 5
+             */
+            if (status === 1 || status === 2) {
+              _actstatus = '3'
+            } else if (status === 3 && voteStatus === 1) {
+              _actstatus = '4'
+            } else if (status === 3 && voteStatus === 2 && !ifVote) {
+              _actstatus = '5'
+            } else if (status === 3 && voteStatus === 2 && ifVote) {
+              _actstatus = '6'
+            } else if (status === 3 && voteStatus === 3) {
+              _actstatus = '7'
+            } else if (status === 3 && voteStatus === 3) {
+              _actstatus = '7'
+            } else if (status === 4) {
+              _actstatus = '8'
+            } else if (status === 5) {
+              _actstatus = '9'
+            }
           }
-          // console.log('status', status)
-          // console.log('voteStatus', voteStatus)
-          // console.log('ifVote', ifVote)
           return {
+            checkLogin: islogin,
             communityId: munityId,
             detailInfo: detData,
             processList: processReqList,
@@ -501,6 +616,7 @@
     },
     data () {
       return {
+        checkLogin: false,
         communityId: '', // 活动id
         detailInfo: {}, // 全部信息
         processList: [], // 活动流程
@@ -513,7 +629,7 @@
         regDeadtime: '', // 报名截止时间
         applicationDetail: {}, // 报名详情
         votestatus: null,
-        activeStatus: '0', // 活动状态
+        activeStatus: null, // 活动状态
         showsignup: false, // 报名弹窗
         signName: '',
         signPhone: '',
@@ -526,6 +642,10 @@
           slidesPerView: 'auto'
         },
         swiperBuy: {
+          speed: 800,
+          slidesPerView: 'auto'
+        },
+        swiperSale: {
           speed: 800,
           slidesPerView: 'auto'
         },
@@ -551,12 +671,10 @@
       },
       async toSignup () {
         // 去报名
-        // this.showsignup = true
-        const { code } = await userApi.userDetail()
-        if (code === 506) {
-          window.location.href = '/account/login'
-        } else {
+        if (this.checkLogin) {
           this.showsignup = true
+        } else {
+          window.location.href = '/account/login'
         }
       },
       hidefn () {
@@ -1120,6 +1238,15 @@
               background-size: 30px 30px;
               background-position: left center;
               background-repeat: no-repeat;
+              &.ltop {
+                background-image: url('~/assets/img/munity/ic_price_t_30x30@2x.png');
+              }
+              &.lok {
+                background-image: url('~/assets/img/munity/ic_price_check_30x30@2x.png');
+              }
+              &.lbottom {
+                background-image: url('~/assets/img/munity/ic_price_d_30x30@2x.png');
+              }
               .l_price {
                 font-size:18px;
                 font-family:Impact;
@@ -1143,7 +1270,6 @@
               padding-left: 42px;
               background-size: 36px 36px;
               background-position: left center;
-              background-image: url('~/assets/img/pic_touxiang_01@2x.png');
               background-repeat: no-repeat;
               .r_name {
                 max-width: 100px;
@@ -1230,6 +1356,178 @@
         }
       }
     }
+  }
+
+  .actmoney {
+    background: #fff;
+    padding: 25px 0 10px;
+    margin-top: 10px;
+    .acthead {
+      padding: 0 20px;
+    }
+    .actitem {
+      padding: 20px 0;
+      &-head {
+        padding-left: 20px;
+        font-size: 14px;
+        font-family: PingFangSC-Semibold;
+        font-weight: 600;
+        color: rgba(3, 161, 205, 1);
+        line-height: 14px;
+        margin-bottom: 15px;
+      }
+      &-list {
+        padding-left: 20px;
+        .actitem_one {
+          width: 320px;
+          border-radius: 8px;
+          border: 1PX solid #EAEAEA;
+          padding: 20px 10px 10px;
+          box-sizing: border-box;
+          margin-right: 20px;
+          .mdlone {
+            display: flex;
+            align-items: center;
+            &-l {
+              width: 80px;
+              min-width: 80px;
+              max-width: 80px;
+              flex-grow: 0;
+              height: 180px;
+              .bg_cover;
+            }
+            &-r {
+              width: calc(100% - 80px);
+              flex-grow: 1;
+              margin-left: 10px;
+              h4 {
+                font-size:16px;
+                font-family:PingFangSC-Semibold;
+                font-weight:600;
+                color:rgba(51,51,51,1);
+              }
+              .tags {
+                font-size: 12px;
+                font-family: PingFang-SC-Regular;
+                font-weight: 400;
+                color: rgba(153, 153, 153, 1);
+                margin-top: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                .tagsub {
+                  margin-top: 10px;
+                  & + .tagsub {
+                    margin-left: 5px;
+                    padding-left: 5px;
+                    border-left: 1PX solid rgba(153, 153, 153, 1);
+                  }
+                }
+              }
+              .mdlbar {
+                width: 210px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 15px 0;
+                &_l {
+                  width: 80px;
+                  min-width: 80px;
+                  max-width: 80px;
+                  flex-grow: 0;
+                  font-size: 12px;
+                  font-family: PingFang-SC-Regular;
+                  font-weight: 400;
+                  color: @cor_666;
+                }
+                &_r {
+                  position: relative;
+                  width: 120px;
+                  height: 10px;
+                  background: #EFF9FC;
+                  border-radius: 5px;
+                  overflow: hidden;
+                  &-top {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 0;
+                    height: 10px;
+                    background: #59C2E1;
+                    border-radius: 5px;
+                    transition: .3s;
+                    &.w30 {
+                      width: 30px;
+                    }
+                  }
+                }
+              }
+              .ritem-info {
+                .info_item {
+                  display: inline-block;
+                  height:24px;
+                  line-height: 24px;
+                  background:#DEF3F9;
+                  border-radius:12px;
+                  padding-left: 25px;
+                  padding-right: 5px;
+                  vertical-align: middle;
+                  margin-top: 10px;
+                  position: relative;
+                  font-size:12px;
+                  font-family:PingFangSC-Semibold;
+                  font-weight:600;
+                  color: #03A1CD;
+                  margin-left: 7px;
+                  &:before {
+                    content: '';
+                    width: 24px;
+                    height: 24px;
+                    position: absolute;
+                    top: 50%;
+                    left: 0;
+                    margin-top: -12px;
+                    .bg_cover;
+                  }
+                }
+                .icon_time {
+                  &:before {
+                    background-image: url('~/assets/img/Icons/ic_time_24x24.png');
+                  }
+                }
+                .icon_address {
+                  &:before {
+                    background-image: url('~/assets/img/Icons/ic_position_24x24.png');
+                  }
+                }
+                .icon_variety {
+                  &:before {
+                    background-image: url('~/assets/img/Icons/ic_grape_24x24.png');
+                  }
+                }
+              }
+              .prices {
+                margin-top: 12px;
+                .actual {
+                  font-size:18px;
+                  font-family:Impact;
+                  color:rgba(249,156,0,1);
+                  line-height:18px;
+                }
+                .market {
+                  font-size:12px;
+                  font-family:PingFang-SC-Medium;
+                  font-weight:500;
+                  color:rgba(153,153,153,1);
+                  margin-left: 10px;
+                  text-decoration: line-through
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
   }
 
   .winemoney {

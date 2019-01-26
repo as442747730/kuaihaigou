@@ -1,7 +1,7 @@
 <template>
   <div class="u-articel">
     <!-- 操作选项 -->
-    <article-operation :ifLike='artLike' :ifCollect='artCollect' :type='type' :articelId='articelId' @setLike='setLike' @setCollect='setCollect' @handleComment='handleComment'></article-operation>
+    <article-operation :ifLike='artLike' :ifCollect='artCollect' :type='type' :articelId='articelId' :islogin='islogin' @setLike='setLike' @setCollect='setCollect' @handleComment='handleComment'></article-operation>
 
     <!-- 评论列表 -->
     <div class="comment-section">
@@ -10,9 +10,11 @@
 
         <div class="part-body">
           <div class="part-body-top">
-            <div class="avatar" :style="'background-image: url(' + (item.personalInfoResp.headimgurl || defaulthead) + ')'"></div>
+            <a :href="'/user?uid=' + item.personalInfoResp.id"><div class="avatar" :style="'background-image: url(' + (item.personalInfoResp.headimgurl || defaulthead) + ')'"></div></a>
             <div class="user">
-              <p class="nickname">{{ item.personalInfoResp.nickname }}</p>
+              <p class="nickname">
+                <a :href="'/user?uid=' + item.personalInfoResp.id">{{ item.personalInfoResp.nickname }}</a>
+              </p>
               <user-lab :level='String(item.personalInfoResp.userGradeNumber)' type='1' :profess='String(item.personalInfoResp.category)'></user-lab>
             </div>
             <div class="good" v-if="item.ifGod">神评论</div>
@@ -37,10 +39,13 @@
           <div class="part-content-box">
 
             <div class="reply-item" v-for="(p, k) in item.replyList">
-              <div class="avatar-img" :style="'background-image: url(' + (p.personalInfoResp.headimgurl || defaulthead) + ')'"></div>
+              <a :href="'/user?uid=' + p.personalInfoResp.id"><div class="avatar-img" :style="'background-image: url(' + (p.personalInfoResp.headimgurl || defaulthead) + ')'"></div></a>
               <div class="reply-right">
-                <p class="username" v-if='p.toUserId === item.personalInfoResp.id'>{{ p.personalInfoResp.nickname }}</p>
-                <p class="username" v-else>{{ p.personalInfoResp.nickname }}<span>回复</span>{{ p.toUsername }}</p>
+                <p class="username" v-if='p.toUserId === item.personalInfoResp.id'>
+                 <a :href="'/user?uid=' + p.personalInfoResp.id">{{ p.personalInfoResp.nickname }}</a>
+                </p>
+                <p class="username" v-else>
+                  <a :href="'/user?uid=' + p.personalInfoResp.id">{{ p.personalInfoResp.nickname }}</a><span>回复</span><a :href="'/user?uid=' + p.toUserId">{{ p.toUsername }}</a></p>
                 <user-lab :level='String(p.personalInfoResp.userGradeNumber)' type='1' :profess='String(p.personalInfoResp.category)'></user-lab>
                 <p class="reply-content">{{ p.content }}</p>
                 <div class="reply-handler">
@@ -73,7 +78,7 @@
 
     <!-- 回复 -->
     <van-popup class='to-comment-wrap' v-model="replyShow" position="right" :overlay="true">
-      <articel-reply :masterinfo='masterInfo' :replyData='replyData' @setReplyData='setReplyData' @renderData='renderData' />
+      <articel-reply :masterinfo='masterInfo' :replyData='replyData' :islogin='islogin' @setReplyData='setReplyData' @renderData='renderData' />
     </van-popup>
 
     <!-- 去评论弹框 -->
@@ -91,6 +96,7 @@ import userLab from '@/components/Usericon.vue'
 import articelReply from '@/components/articel/Reply'
 import ImageHandler from '~/components/evaluation/ImageHandler'
 import { commentApi } from '~/api/comment'
+import { userApi } from '~/api/users'
 import { ImagePreview } from 'vant'
 
 export default {
@@ -112,6 +118,8 @@ export default {
 
   data () {
     return {
+      islogin: false,
+
       artLike: this.ifLike,
       artCollect: this.ifCollect,
 
@@ -158,6 +166,13 @@ export default {
     articelId (val) {
       this.getData(this.page, true, val)
       console.log(val)
+    }
+  },
+
+  async created () {
+    const { code } = await userApi.userDetail()
+    if (code === 200) {
+      this.islogin = true
     }
   },
 
@@ -235,6 +250,13 @@ export default {
     },
     // 评论点赞
     async handleCommentLike (val, index) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 500)
+        return
+      }
       if (this.zanLoading) return
       this.zanLoading = true
       let { id, ifLiked } = val

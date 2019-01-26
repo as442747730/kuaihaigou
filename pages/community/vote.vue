@@ -20,7 +20,7 @@
               </div>
               <div class="inpbox">
                 <span class="rmb">¥</span>
-                <input :class="['inps', {inpafter: item.evaluate !== ''}]" type="text" placeholder="请输入您的估价" v-model="item.evaluate" />
+                <input :class="['inps', {inpafter: item.evaluate !== ''}]" type="number" placeholder="请输入您的估价" v-model="item.evaluate" @blur="blurFn(index)" />
               </div>
             </div>
           </div>
@@ -50,9 +50,6 @@ export default {
   data () {
     return {
       communityId: '',
-      evaluate1: '',
-      evaluate2: '',
-      evaluate3: '',
       elIndex: null,
       blindList: [],
       ifVote: false
@@ -61,6 +58,12 @@ export default {
   methods: {
     elblind (index) {
       this.elIndex = index
+    },
+    blurFn (index) {
+      let _evalute = this.blindList[index].evaluate
+      let getprice = Number(_evalute).toFixed(2)
+      let price = { evaluate: getprice }
+      Object.assign(this.blindList[index], price)
     },
     async voteFn () {
       if (!this.elIndex && this.elIndex !== 0) {
@@ -107,6 +110,8 @@ export default {
   background: #F5F5F5;
 
   .vote-main {
+    height: calc(100vh - 50px);
+    overflow: auto;
 
     .tips {
       font-size: 13px;
@@ -116,10 +121,7 @@ export default {
       line-height: 20px;
       padding: 10px 20px;
     }
-
     .lists {
-      height: calc(100vh - 110px);
-      overflow: auto;
       padding: 0 20px;
 
       .list {

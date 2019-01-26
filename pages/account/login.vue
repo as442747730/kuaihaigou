@@ -17,7 +17,7 @@
       <div class="m-login-handler">
         <!-- <a class="u-link active-status" href="">创建账号</a> -->
         <nuxt-link class="u-link active-status" to="/account/register">注册账号</nuxt-link>
-        <nuxt-link class="u-link active-status" to="">忘记密码？</nuxt-link>
+        <nuxt-link class="u-link active-status" to="/account/forget">忘记密码？</nuxt-link>
       </div>
     </section>
 
@@ -51,11 +51,32 @@
 </template>
 <script>
 import api from '~/utils/request'
+import { userApi } from '~/api/users'
 import captchaInput from '~/components/Login-captcha.vue'
 
 export default {
   name: 'login',
   layout: 'default',
+
+  head () {
+    return {
+      title: '登录页',
+      meta: [
+        { hid: 'title', name: 'title', content: '登录页' }
+      ]
+    }
+  },
+
+  async asyncData (req) {
+    const { code } = await userApi.serverPostInfo(req)
+    console.log(code)
+    if (code === 200) {
+      req.redirect('/home')
+      return {
+        islogin: true
+      }
+    }
+  },
 
   data () {
     return {
@@ -79,8 +100,17 @@ export default {
       if (val.length > 6) {
         this.captcha = val.substring(0, 6)
       }
+    },
+    phone (val) {
+      if (val.length === 1) {
+        val = val.replace(/[^1-9]/g, '')
+      } else {
+        val = val.replace(/\D/g, '')
+      }
+      this.phone = val
     }
   },
+
   computed: {
     loginTypeText () {
       return this.loginType === 1 ? '手机登录' : '验证码登录'
@@ -93,6 +123,16 @@ export default {
         return true
       }
       return false
+    }
+  },
+
+  mounted () {
+    this.prevLink = document.referrer || window.location.href
+    if ((this.prevLink === window.location.href) || (this.prevLink === 'http://' + window.location.host + '/account/register')) {
+      this.prevLink = 'http://' + window.location.host + '/mine'
+    }
+    if (this.prevLink === 'http://' + window.location.host + '/account/forget') {
+      this.prevLink = 'http://' + window.location.host
     }
   },
 
@@ -141,7 +181,7 @@ export default {
         if (code === 200) {
           this.$toast('登录成功')
           setTimeout(() => {
-            window.location.href = '/home'
+            window.location.replace(this.prevLink)
           }, 500)
         } else {
           this.$toast(data)
@@ -152,7 +192,7 @@ export default {
         if (code === 200) {
           this.$toast('登录成功')
           setTimeout(() => {
-            window.location.href = '/home'
+            window.location.replace(this.prevLink)
           }, 500)
         } else {
           this.$toast(data)
@@ -171,7 +211,8 @@ export default {
 .m-login {
   background: white;
   height: 100vh;
-  min-height: 550px;
+  min-height: 610px;
+  max-height: 650px;
   padding: 60px 30px 20px 30px;
   box-sizing: border-box;
   position: relative;

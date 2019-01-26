@@ -13,7 +13,7 @@
           </form>
           <i class="delete_icon" @click="clearSearch"></i>
         </div>
-        <i class="icon_buy"></i>
+        <i class="icon_buy" @click="toCart"></i>
       </div>
     </div>
     <div class="top-two">
@@ -31,93 +31,100 @@
     <div class="winecenter-content" ref="scrollElem">
       <section class="novice" ref="scrollChild">
         <div class="com-item" v-for="(good, index) in goodsList" :key="index">
-          <div class="item_l">
-            <a :href="'/detail/' + good.id">
+          <a :href="'/detail/' + good.id">
+            <div class="item_l">
               <div class="item_l_bk" v-lazy:background-image="good.imgUrl"></div>
-            </a>
-          </div>
-          <div class="item_r" v-if="!isNovice">
-            <h3>{{good.goodsName}}</h3>
-            <p>
-              <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
-            </p>
-            <div class="itemr-info">
-              <span class="info_item icon_time">{{good.year}}</span>
-              <span class="info_item icon_address">{{good.country}}／{{good.area}}</span>
-              <span class="info_item icon_variety">{{good.variety}}</span>
             </div>
-            <div class="u-bars">
-              <div class="bars">
-                <div class="bars-left">复杂：{{good.complexity}} <span v-if="good.complexity">分</span></div>
-                <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar="good.complexity"></span>
+            <div class="item_r" v-if="!isNovice">
+              <h3 class="font_hight">{{good.goodsName}}</h3>
+              <p>
+                <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">
+                  <template v-if='tagIndex === customArray(good.tagListJson).length - 1'>
+                    {{ tag }}
+                  </template>
+                  <template v-else>
+                    {{ tag + ' | ' }}
+                  </template>
+                </span>
+              </p>
+              <div class="itemr-info">
+                <span class="info_item icon_time">{{good.year}}</span>
+                <span class="info_item icon_address">{{good.country}}／{{good.area}}</span>
+                <span class="info_item icon_variety">{{good.variety}}</span>
+              </div>
+              <div class="u-bars">
+                <div class="bars">
+                  <div class="bars-left">复杂：{{good.complexity}} <span v-if="good.complexity">分</span></div>
+                  <div class="bars-right">
+                    <span class="bars-right_top" ref="ubars" :data-bar="good.complexity"></span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="itemr-price">
-              <span class="t_price">¥ {{good.actualPrice}}</span>
-              <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
-            </div>
-          </div>
-          <div class="item_r" v-else>
-            <h3>{{good.goodsName}}</h3>
-            <p>
-              <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
-            </p>
-            <div class="u-bars" v-if="good.ifAcidityShow">
-              <div class="bars">
-                <div class="bars-left">酸度：{{good.acidity}}<span>分</span></div>
-                <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar='good.acidity'></span>
-                </div>
+              <div class="itemr-price">
+                <span class="t_price">¥ {{good.actualPrice}}</span>
+                <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
               </div>
             </div>
-            <div class="u-bars" v-if="good.ifBitternessShow">
-              <div class="bars">
-                <div class="bars-left">苦度：{{good.bitterness}}<span>分</span></div>
-                <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar="good.bitterness"></span>
+            <div class="item_r" v-else>
+              <h3 class="font_hight">{{good.goodsName}}</h3>
+              <p>
+                <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
+              </p>
+              <div class="u-bars" v-if="good.ifAcidityShow">
+                <div class="bars">
+                  <div class="bars-left">酸度：{{good.acidity}}<span>分</span></div>
+                  <div class="bars-right">
+                    <span class="bars-right_top" ref="ubars" :data-bar='good.acidity'></span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="u-bars" v-if="good.ifAstringencyShow">
-              <div class="bars">
-                <div class="bars-left">涩度：{{good.astringency}}<span>分</span></div>
-                <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar="good.astringency"></span>
+              <div class="u-bars" v-if="good.ifBitternessShow">
+                <div class="bars">
+                  <div class="bars-left">苦度：{{good.bitterness}}<span>分</span></div>
+                  <div class="bars-right">
+                    <span class="bars-right_top" ref="ubars" :data-bar="good.bitterness"></span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="u-bars" v-if="good.ifFruityShow">
-              <div class="bars">
-                <div class="bars-left">果香：{{good.fruity}} <span>分</span></div>
-                <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar="good.fruity"></span>
+              <div class="u-bars" v-if="good.ifAstringencyShow">
+                <div class="bars">
+                  <div class="bars-left">涩度：{{good.astringency}}<span>分</span></div>
+                  <div class="bars-right">
+                    <span class="bars-right_top" ref="ubars" :data-bar="good.astringency"></span>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div class="u-bars" v-if="good.ifTanninShow">
-              <div class="bars">
-                <div class="bars-left">单宁：{{good.tannin}} <span>分</span></div>
-                <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar='good.tannin'></span>
+              <div class="u-bars" v-if="good.ifFruityShow">
+                <div class="bars">
+                  <div class="bars-left">果香：{{good.fruity}} <span>分</span></div>
+                  <div class="bars-right">
+                    <span class="bars-right_top" ref="ubars" :data-bar="good.fruity"></span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="u-bars">
-              <div class="bars">
-                <div class="bars-left">复杂：{{good.complexity}} <span>分</span></div>
-                <div class="bars-right">
-                  <span class="bars-right_top" ref="ubars" :data-bar='good.complexity'></span>
+              
+              <div class="u-bars" v-if="good.ifTanninShow">
+                <div class="bars">
+                  <div class="bars-left">单宁：{{good.tannin}} <span>分</span></div>
+                  <div class="bars-right">
+                    <span class="bars-right_top" ref="ubars" :data-bar='good.tannin'></span>
+                  </div>
                 </div>
               </div>
+              <div class="u-bars">
+                <div class="bars">
+                  <div class="bars-left">复杂：{{good.complexity}} <span>分</span></div>
+                  <div class="bars-right">
+                    <span class="bars-right_top" ref="ubars" :data-bar='good.complexity'></span>
+                  </div>
+                </div>
+              </div>
+              <div class="itemr-price">
+                <span class="t_price">¥ {{good.actualPrice}}</span>
+                <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
+              </div>
             </div>
-            <div class="itemr-price">
-              <span class="t_price">¥ {{good.actualPrice}}</span>
-              <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
-            </div>
-          </div>
+          </a>
         </div>
         <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多商品'}}</div>
       </section>
@@ -131,7 +138,12 @@
       <div slot="foot" v-if="sizerIndex === 2 || sizerIndex === 6 || sizerIndex === null"></div>
     </list-two>
     <!-- 刷选器 Start -->
-   
+    <!-- 去对比 -->
+    <div class="compare-btn" @click='toCompare'>
+      <div>
+        <i></i>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -236,6 +248,8 @@ export default {
     nullData
   },
   async created () {
+    console.log(this.goodsList)
+    this.Inertia = require('~/static/inertia')
     let params = { ifWine: true }
     const { code, data } = await wineApi.clientAttrs(params)
     if (code === 200) {
@@ -247,6 +261,8 @@ export default {
   },
   mounted () {
     this.addBarwid()
+    const compareBtn = document.querySelector('.compare-btn')
+    this.Inertia(compareBtn)
     let scrollElem = this.$refs.scrollElem
     let scrollChild = this.$refs.scrollChild
     let allH = scrollElem.clientHeight
@@ -264,6 +280,9 @@ export default {
     }))
   },
   methods: {
+    toCart () {
+      window.location.href = '/order/cart'
+    },
     toOthers () {
       window.location.href = '/winecenter/otherone'
     },
@@ -332,9 +351,11 @@ export default {
       // 进度条
       this.$nextTick(() => {
         let ubars = this.$refs.ubars
-        ubars.map(v => {
-          v.style.width = v.getAttribute('data-bar') + '%'
-        })
+        if (Array.isArray(ubars)) {
+          ubars.map(v => {
+            v.style.width = v.getAttribute('data-bar') + '%'
+          })
+        }
       })
     },
     selectCountry (info) {
@@ -598,7 +619,7 @@ export default {
       this.countryIndex = null
     },
     customArray (arr) {
-      if (!Array.isArray(arr)) return false
+      // if (!Array.isArray(arr)) return false
       return JSON.parse(arr)
     },
     getProplist () {
@@ -691,6 +712,20 @@ export default {
       this.sizerTwo = this.sizerTwo.map(v => {
         return { name: v.name, iscor: false }
       })
+    },
+    // 去对比
+    async toCompare () {
+      const { code, data } = await wineApi.showGoodsForContrast()
+      if (code === 200) {
+        console.log(data)
+        if (data.length >= 2) {
+          window.location.href = '/compare'
+        } else if (data.length === 1) {
+          this.$toast('对比商品不能少于2件')
+        } else if (data.length === 0) {
+          this.$toast('您还未添加对比商品')
+        }
+      }
     }
   }
 }
@@ -904,10 +939,11 @@ export default {
 }
 // 选酒公共
 .com-item {
-
-  .flex_between;
   .padlr20;
   margin: 20px 0;
+  & > a {
+    .flex_between;
+  }
 
   .item_l {
     width: 120px;
@@ -918,7 +954,7 @@ export default {
       margin-top: 6px;
       width: 100%;
       height: 202px;
-      .bg_cover;
+      .bg_contain;
     }
   }
 
@@ -930,10 +966,6 @@ export default {
 
       font-size: 15px;
 
-      font-family: PingFangSC-Medium;
-
-      font-weight: 500;
-
       color: rgba(51, 51, 51, 1);
 
       line-height: 21px;
@@ -942,6 +974,8 @@ export default {
 
     &>p {
       .u-mltip;
+      line-height: 18px;
+      padding-bottom: 0;
     }
 
     .itemr-price {
@@ -1088,4 +1122,25 @@ export default {
   color: #666;
 }
 
+.compare-btn {
+  position: fixed;
+  bottom: 30%;
+  right: 0;
+  padding: 0 20px;
+  z-index: 10000;
+  div {
+    padding: 10px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: #7A7A7A;
+    box-sizing: border-box;
+  }
+  i {
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    background: url('~/assets/img/Icons/ic_vs_blue_45x45@2x.png') no-repeat center/contain;
+  }
+}
 </style>

@@ -27,25 +27,25 @@
 
         <div class="detail_comment-type">
           <ul>
-            <li @click='filter(0)' :class="{'cur': checkActive === 0}">全部<span>({{ commentNum.totalNum || 0 }})</span></li>
             <li @click='filter(1)' :class="{'cur': checkActive === 1}">优先内容<span>({{ commentNum.hasContentNum || 0 }})</span></li>
             <li @click='filter(2)' :class="{'cur': checkActive === 2}">带图片<span>({{ commentNum.hasImgNum || 0 }})</span></li>
+            <li @click='filter(0)' :class="{'cur': checkActive === 0}">全部<span>({{ commentNum.totalNum || 0 }})</span></li>
           </ul>
         </div>
 
         <div class="u_comment">
           <ul>
             <li class="u_comment-list" v-for="($v, $k) in commentData">
-              <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
+              <a :href="$v.personalInfoResp ? '/user?uid=' + $v.personalInfoResp.id : 'javascript: void(0)'"><div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
               <div class="user-infor ib-middle">
-                <a class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</a>
+                <a class="ib-middle" v-if='$v.personalInfoResp' :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname || '' }}</a>
                 <a class="ib-middle" v-else>匿名用户</a>
                 <br>
                 <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
               </div>
-              <div v-if='$v.evaluationLevel >= 4' class="like_type type1">
+              <div v-if='$v.ifPopular' class="like_type type1">
                 <i></i>
-                <span>超爱</span>
+                <!-- <span>超爱</span> -->
               </div>
               <p class="desc">{{ $v.content || '此用户没有填写评论!' }}</p>
 
@@ -94,13 +94,13 @@
         </div>
 
         <!-- 回复 -->
-        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='comment' />
+        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='comment' :islogin='islogin' />
 
       </div>
     </transition>
     <!-- 提问 -->
     <transition name='nav-fade' mode="out-in">
-      <u-question :goodsid="goodsid" :queslist="viewdata.frequeList" v-if='!commentShow' :scrollbottom="scrollbottom" />
+      <u-question :goodsid="goodsid" :queslist="viewdata.frequeList" v-if='!commentShow' :scrollbottom="scrollbottom" :islogin='islogin' />
     </transition>
   </article>
 </template>
@@ -121,7 +121,8 @@ export default {
   props: {
     goodsid: String,
     viewdata: Object,
-    scrollbottom: Boolean
+    scrollbottom: Boolean,
+    islogin: Boolean
   },
   components: {
     uQuestion,
@@ -131,7 +132,7 @@ export default {
 
   data () {
     return {
-      checkActive: 0,
+      checkActive: 1,
       commentShow: true,
 
       replyShow: false,
@@ -154,7 +155,7 @@ export default {
       page: 1,
       pageLoding: true,
       pageEmpty: false,
-      hasContent: false, // 优先内容
+      hasContent: true, // 优先内容
       hasImg: false, // 优先图片
 
       // 回复内容
@@ -164,7 +165,7 @@ export default {
   },
 
   created () {
-    this.getComment(1)
+    this.getComment(1, false, this.hasContent)
   },
 
   watch: {
@@ -241,6 +242,13 @@ export default {
     },
     // 点赞
     async zan (val, id, ifLike) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 500)
+        return
+      }
       console.log(ifLike)
       let likeFn = ifLike ? goodsApi.unlike(id) : goodsApi.like(id)
       const { code, data } = await likeFn
@@ -476,9 +484,8 @@ export default {
       text-align: center;
       i{
         display: inline-block;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
+        width: 54px;
+        height: 20px;
         background: url('~/assets/img/ic_chaoai_35x35@2x.png') no-repeat center/contain;
       }
       span {

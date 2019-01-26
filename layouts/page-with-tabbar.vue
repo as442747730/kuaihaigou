@@ -31,8 +31,8 @@ export default {
     }
   },
 
-  mounted () {
-    this.activePath = this.$route.path
+  created () {
+    this.activePath = this.$route.path === '/' ? '/home' : this.$route.path
   },
 
   components: {
