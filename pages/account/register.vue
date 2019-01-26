@@ -9,7 +9,7 @@
 
     <div class="captcha-wrapper mb-30">
       <div class="u-login-input noborder">
-        <input v-model="captcha" placeholder="请输入验证码"></input>
+        <input v-model="captcha" placeholder="请输入验证码" type="number"></input>
         <captchaInput :captchaData="captcha"></captchaInput>
       </div>
       <div class="u-button small captcha-btn" v-show="!sending" @click="sendCaptcha">获取验证码</div>

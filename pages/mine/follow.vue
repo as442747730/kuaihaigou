@@ -3,7 +3,9 @@
     <com-head :titleConfig="getTitle"></com-head>
     <div class="follow-items">
       <div class="follow-item" v-for="(list, index) in lists" :key="index">
-        <div class="item-l" :style="{background: `url(${list.headimgurl}) no-repeat center/cover`}"></div>
+        <a :href="'/user?uid=' + list.id">
+          <div class="item-l" :style="{background: `url(${list.headimgurl}) no-repeat center/cover`}"></div>
+        </a>
         <div class="item-c">
           <div class="item-c_name">
             <p class="name-world">{{ list.nickname }}</p>
@@ -206,7 +208,6 @@ export default {
           font-family: PingFangSC-Semibold;
           font-weight: 600;
           color: rgba(51, 51, 51, 1);
-          line-height: 15px;
           align-items: center;
           margin-bottom: 8px;
           .name-world {
