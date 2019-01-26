@@ -4,11 +4,11 @@
     <div class="mange-in">
     	<section class="manage_sec">
 	      <list-one @click.native="updPhone" list_left="手机号" :list_right="userInfo.phone"></list-one>
-	      <list-one list_left="修改密码"></list-one>
+	      <list-one list_left="修改密码" @click.native='toComfim'></list-one>
     	</section>
       <div class="manage_title">账号绑定</div>
       <section class="manage_sec">
-        <list-two @okSwitch="okSwitch" @noSwitch="noSwitch"  l_one="微信" type="wx" :l_two="userInfo.wxNickname" :vsw="bindWx"></list-two>
+        <list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="微信" type="wx" :l_two="userInfo.wxNickname" :vsw="bindWx"></list-two>
         <list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="QQ" type="qq" :l_two="userInfo.qqNickname" :vsw="bindQQ"></list-two>
       	<list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="微博" type="wb" :l_two="userInfo.wbNickname" :vsw="bindWb"></list-two>
         <div class="depart-line"></div>
@@ -146,6 +146,10 @@ export default {
           }, 1000)
         }
       })
+    },
+    // 去修改密码
+    toComfim () {
+      window.location.href = '/account/forget?type=modify'
     }
   }
 }

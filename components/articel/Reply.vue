@@ -9,16 +9,16 @@
       <ul>
         <!-- 楼主 -->
         <li class="u_comment-list">
-          <div class="header-img ib-middle" v-if='masterinfo.personalInfoResp' :style="'background: url(' + (masterinfo.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
+          <a v-if='masterinfo.personalInfoResp' :href="'/user?uid=' + masterinfo.personalInfoResp.id"><div class="header-img ib-middle" :style="'background: url(' + (masterinfo.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
           <div class="user-infor ib-middle">
-            <a class="ib-middle">{{ masterinfo.personalInfoResp.nickname }}</a>
+            <a class="ib-middle" :href="'/user?uid=' + masterinfo.personalInfoResp.id">{{ masterinfo.personalInfoResp.nickname }}</a>
             <br>
             <u-usericon v-if='masterinfo.personalInfoResp' :level='String(masterinfo.personalInfoResp.userGradeNumber)' type='1' :profess='String(masterinfo.personalInfoResp.category)' />
           </div>
-          <div v-if='masterinfo.evaluationLevel >= 4' class="like_type type1">
+          <!-- <div v-if='masterinfo.evaluationLevel >= 4' class="like_type type1">
             <i></i>
             <span>超爱</span>
-          </div>
+          </div> -->
           <p class="desc" :class="{'mb-0': masterinfo.imgs}">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
           <div class="pro" v-if='masterinfo.imgs'>
             <div v-for="(item, index) in masterinfo.imgs" class="pro-item" :style="'background: url(' + item + ') no-repeat center/cover'" @click='showBigImg(index, masterinfo.imgs)'></div>            
@@ -26,15 +26,15 @@
         </li>
         <!-- 一般回复 -->
         <li class="u_comment-list" v-for="($v, $k) in replyData">
-          <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div>
+          <a v-if='$v.personalInfoResp' :href="'/user?uid=' + $v.personalInfoResp.id"><div class="header-img ib-middle" :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
           <div class="user-infor ib-middle">
             <template v-if='masterinfo.personalInfoResp.id === $v.toUserId'>
-              <a class="ib-middle">{{ $v.personalInfoResp.nickname || '' }}</a>
+              <a class="ib-middle" :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname || '' }}</a>
             </template>
             <div v-else class="has-reply">
-              <a class="ib-middle">{{ $v.personalInfoResp.nickname }}</a>
+              <a class="ib-middle" :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname }}</a>
               <b class="ib-middle">回复</b>
-              <a class="ib-middle">{{ $v.toUsername }}</a>
+              <a class="ib-middle" :href="'/user?uid=' + $v.toUserId">{{ $v.toUsername }}</a>
             </div>
             <br>
             <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />

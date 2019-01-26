@@ -15,7 +15,7 @@
       <div class="part-top-title">
         <h3 class="font_hight">
           <span class="ib-middle">{{ userInfo.nickname }}</span>
-          <user-lab class="ib-middle" :level='String(userInfo.userGradeNumber)' type='1' :profess='String(userInfo.category)'></user-lab>
+          <user-lab class="ib-middle" :level='String(userInfo.userGradeNumber)' type='2' :profess='String(userInfo.category)'></user-lab>
         </h3>
         <p>{{ userInfo.signature }}</p>
       </div>
@@ -205,20 +205,22 @@ export default {
     &-title {
       text-align: center;
       h3 {
-        font-size: 21px;
         color: #333;
         margin-top: 20px;
+        font-size: 21px;
+        box-sizing: border-box;
+        max-width: 150px;
+        position: relative;
+        display: inline-block;
         span {
-          font-size: 21px;
-          color: #333;
           display: inline-block;
-          max-width: 150px;
+          width: 100%;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          padding-left: 60px;
-          box-sizing: border-box;
-          margin-right: 5px;
+        }
+        .u-icon-type2 {
+          top: 0;
         }
       }
       p {
