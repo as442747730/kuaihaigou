@@ -1,10 +1,10 @@
 <template>
   <div class="selection">
     <div class="newhots">
-      <div class="newhot" :class="{active: sortedNum === 1}" @click="sortedBy(1)">
+      <div class="newhot" :class="{active: sortedNum === '1'}" @click="sortedBy(1)">
         <p class="newp">最新</p>
       </div>
-      <div class="newhot" :class="{active: sortedNum === 2}" @click="sortedBy(2)">
+      <div class="newhot" :class="{active: sortedNum === '2'}" @click="sortedBy(2)">
         <p>最热</p>
       </div>
     </div>
@@ -27,7 +27,7 @@
               <div class="probars">
                 <div class="word">复杂：{{item.goodsMinimalResp.complexity}}分</div>
                 <div class="probar">
-                  <div class="probar_cors"></div>
+                  <div class="probar_cors" ref="ubars" :data-bar="item.goodsMinimalResp.complexity"></div>
                 </div>
               </div>
             </div>
@@ -37,9 +37,9 @@
             <p class="content">{{ item.summary }}</p>
           </div>
         </div>
-        <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多资讯'}}</div>
       </div>
-      <null-data v-else></null-data>
+      <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多资讯'}}</div>
+      <null-data v-if="pickList.length === 0"></null-data>
     </section>
   </div>
 </template>
@@ -60,10 +60,11 @@ export default {
     nullData
   },
   async asyncData (req) {
+    let { sortedBy } = req.query
     const params = {
       page: 1,
       count: 5,
-      sortedBy: 1
+      sortedBy: sortedBy
     }
     const selectFn = selectApi.serverPagelist(params, req)
     const { code: selectCode, data: selectData } = await selectFn
@@ -76,7 +77,8 @@ export default {
         totalPage: totalPageNo,
         transmit: params,
         moreData: ismore,
-        pickList: array
+        pickList: array,
+        sortedNum: sortedBy
       }
     }
   },
@@ -90,11 +92,18 @@ export default {
       hasScroll: false, // 是否有滚动
       loadTxt: '下拉加载更多',
       pickList: [],
-      sortedNum: 1
+      sortedNum: '1'
     }
   },
   mounted () {
-    // tools.throttel()
+    this.$nextTick(() => {
+      let bars = this.$refs.ubars
+      if (Array.isArray(bars)) {
+        bars.map(v => {
+          v.style.width = v.getAttribute('data-bar') + '%'
+        })
+      }
+    })
     let scrollElem = this.$refs.scrollElem
     let scrollChild = this.$refs.scrollChild
     let allH = scrollElem.clientHeight
@@ -103,6 +112,7 @@ export default {
       let { height, top } = scrollChild.getBoundingClientRect()
       let _top = Math.abs(top)
       let bottomH = height - (_top + sctop + allH)
+      this.hasScroll = true
       if (bottomH <= 100 && this.loadOk && this.moreData) {
         this.loadOk = false
         this.fetchData(true)
@@ -111,14 +121,12 @@ export default {
   },
   methods: {
     async fetchData (isMore) {
-      this.$toast.loading('加载中...')
+      // this.$toast.loading('加载中...')
       this.loadTxt = '加载中'
       if (isMore) {
         this.curPage += 1
-        this.hasScroll = true
       } else {
         this.curPage = 1
-        this.hasScroll = false
       }
       Object.assign(this.transmit, { page: this.curPage })
       const { code, data } = await selectApi.clientPagelist(this.transmit)
@@ -136,13 +144,14 @@ export default {
       }
     },
     sortedBy (num) {
-      this.sortedNum = num
-      this.transmit = {
-        page: 1,
-        count: 5,
-        sortedBy: num
-      }
-      this.fetchData(false)
+      // this.sortedNum = num
+      // this.transmit = {
+      //   page: 1,
+      //   count: 5,
+      //   sortedBy: num
+      // }
+      // this.fetchData(false)
+      window.location.href = '/selection?sortedBy=' + num
     },
     detFn (item) {
       window.location.href = `/selection/detail/${item.id}`
@@ -207,10 +216,10 @@ export default {
   }
 
   .section {
-    padding: 0 20px;
     height: calc(100vh - 40px);
     overflow: auto;
     .list {
+      padding: 0 20px;
       .picklist {
         margin-top: 20px;
         margin-bottom: 20px;
@@ -328,7 +337,7 @@ export default {
 
                 &_cors {
                   position: absolute;
-                  width: 30%;
+                  width: 0;
                   height: 10px;
                   background: rgba(0, 230, 127, 1);
                   border-radius: 6px;
@@ -340,7 +349,7 @@ export default {
         }
 
         .articles {
-          background: #EAEAEA;
+          background: #FBFBFB;
           border-top: 1PX solid #eaeaea;
           padding: 15px 20px 10px;
 
@@ -363,6 +372,14 @@ export default {
       }
     }
   }
-
+  .load-more {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 12px;
+    background: @cor_border;
+    color: @cor_666;
+  }
 }
 </style>

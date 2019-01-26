@@ -3,7 +3,7 @@
     <header class="noun-head">
       <div class="ic_back" @click="goback"></div>
       <div class="title">百科详情</div>
-      <div class="zy_btn">我要质疑</div>
+      <div class="zy_btn" @click="quefn">我要质疑</div>
     </header>
     <!-- 详情 start -->
     <section class="noun-main">
@@ -109,11 +109,15 @@ export default {
         _imgArr = data.imgs
       }
     }
+    // 百科ID
+    const baikeid = objDet.id
     console.log(objDet)
-    return { objDetail: objDet, imagesArr: _imgArr, articelType: encyType, navIndex: queryNum, instype: _instype }
+    return { encyId: encyId, baikeId: baikeid, objDetail: objDet, imagesArr: _imgArr, articelType: encyType, navIndex: queryNum, instype: _instype }
   },
   data () {
     return {
+      encyId: null, // 产区，品种Id
+      baikeId: null,
       objDetail: {}, // 页面详情
       articelType: '4', // 文章类型
       imagesArr: [],
@@ -163,6 +167,12 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    quefn () {
+      let type = this.navIndex
+      let baikeid = this.baikeId
+      let encyid = this.encyId
+      window.location.href = '/noun/question?encyid=' + encyid + '&baikeid=' + baikeid + '&type=' + type
     }
   }
 }

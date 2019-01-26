@@ -26,7 +26,7 @@
                 <div class="probars">
                   <div class="word">复杂：{{elGood.goodsMinimalResp.complexity}}分</div>
                   <div class="probar">
-                    <div class="probar_cors"></div>
+                    <div class="probar_cors" ref="ubars" :data-bar="elGood.goodsMinimalResp.complexity"></div>
                   </div>
                 </div>
               </div>
@@ -82,7 +82,14 @@ export default {
     }
   },
   mounted () {
-    console.log(this.articleDetail, 'articleDetail')
+    this.$nextTick(() => {
+      let bars = this.$refs.ubars
+      if (Array.isArray(bars)) {
+        bars.map(v => {
+          v.style.width = v.getAttribute('data-bar') + '%'
+        })
+      }
+    })
   }
 }
 </script>

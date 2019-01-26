@@ -383,8 +383,8 @@
       <div class="btnitem btncor1" v-if="activeStatus === '0'" @click="toSignup">立即报名</div>
       <div class="btnitem btncor2" v-if="activeStatus === '1'">已报名</div>
       <div class="btnitem btncor3" v-if="activeStatus === '2'">报名结束</div>
-      <div class="btnitem btncor3" v-if="activeStatus === '3'" @click="tovote">未开始</div>
-      <div class="btnitem btncor2" v-if="activeStatus === '4'" @click="tovote">进行中</div>
+      <div class="btnitem btncor3" v-if="activeStatus === '3'">未开始</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '4'">进行中</div>
       <div class="btnitem btncor4" v-if="activeStatus === '5'" @click="tovote">参与投票</div>
       <div class="btnitem btncor5" v-if="activeStatus === '6'">已投票</div>
       <div class="btnitem btncor6" v-if="activeStatus === '7'">投票结束</div>
@@ -435,6 +435,7 @@
       return Promise.all([detFn, voteFn, userFn]).then(([detRes, voteRes, userRes]) => {
         if (detRes.code === 200 && voteRes.code === 200) {
           const detData = detRes.data
+          console.log('detData', detData)
           // 流程, 盲品， 大咖
           let { processReqList, blindTastingRespList, activityPersonRespList } = detData
           if (Array.isArray(processReqList)) {
@@ -501,59 +502,100 @@
            * status 活动状态（1:报名中 2:报名结束 3:进行中 4:已结束 5:已下线）
            * voteStatus 活动投票状态（1:未开始 2:已开始 3:已结束）
            * ifVote 当前用户是否已投票
-           * -------- 判断 ------------
-           * 立即报名
-           * status = 1 && ifSignUp = false
-           * 已报名
-           * (status = 1 || status = 2) && ifSignUp = true && islogin == true && queryNum === '1'
-           * 报名结束
-           * status = 2 && ifSignUp = false
-           * 未开始
-           * (status = 1 || status = 2) && queryNum === '2'
-           * 进行中
-           * status = 3 && voteStatus = 1
-           * 参与投票
-           * status = 3 && voteStatus = 2 && ifVote = false && islogin
-           * 已投票
-           * status = 3 && voteStatus = 2 && ifVote = true && islogin
-           * 投票结束
-           * status = 3 && voteStatus = 3 && ifVote = false
-           * 活动结束
-           * status = 4
-           * 活动已下线
-           * status = 5 && && queryNum === '2'
           */
           let islogin = false
           if (userRes.code === 200) {
             islogin = true
           }
-          let _actstatus = '0'
+          let _actstatus
           const queryNum = req.query.page
           const { ifSignUp, status, voteStatus, ifVote } = detData
-          if (status === 1 && !ifSignUp) {
-            _actstatus = '0'
-          } else if ((status === 1 || status === 2) && ifSignUp && islogin && queryNum === '1') {
-            _actstatus = '1'
-          } else if (status === 2 && !ifSignUp) {
-            _actstatus = '2'
-          } else if ((status === 1 || status === 2) && queryNum === '2') {
-            _actstatus = '3'
-          } else if (status === 3 && voteStatus === 1) {
-            _actstatus = '4'
-          } else if (status === 3 && voteStatus === 2 && !ifVote && islogin) {
-            _actstatus = '5'
-          } else if (status === 3 && voteStatus === 2 && ifVote && islogin) {
-            _actstatus = '6'
-          } else if (status === 3 && voteStatus === 3 && !ifVote) {
-            _actstatus = '7'
-          } else if (status === 4) {
-            _actstatus = '8'
-          } else if (status === 5 && queryNum === '2') {
-            _actstatus = '9'
+          if (queryNum === '1') {
+            if (!islogin) {
+              /*
+               * 立即报名
+               * 已报名
+               * 报名结束
+               * 进行中
+               * 活动已结束
+              */
+              switch (status) {
+                case 1:
+                  _actstatus = '0'
+                  break
+                case 2:
+                  _actstatus = '2'
+                  break
+                case 3:
+                  _actstatus = '4'
+                  break
+                case 4:
+                  _actstatus = '8'
+                  break
+                case 5:
+                  _actstatus = '9'
+                  break
+              }
+            } else {
+              /*
+               * 立即报名
+               * 已报名
+               * 进行中
+               * 参与投票
+               * 已投票
+               * 投票结束
+               * 活动已结束
+              */
+              if (status === 1 && !ifSignUp) {
+                _actstatus = '0'
+              } else if (status === 1 && ifSignUp) {
+                _actstatus = '1'
+              } else if (status === 2 && !ifSignUp) {
+                _actstatus = '2'
+              } else if (status === 2 && ifSignUp) {
+                _actstatus = '3'
+              } else if (status === 3 && voteStatus === 1) {
+                _actstatus = '4'
+              } else if (status === 3 && voteStatus === 2 && !ifVote) {
+                _actstatus = '5'
+              } else if (status === 3 && voteStatus === 2 && ifVote) {
+                _actstatus = '6'
+              } else if (status === 3 && voteStatus === 3) {
+                _actstatus = '7'
+              } else if (status === 4) {
+                _actstatus = '8'
+              } else if (status === 5) {
+                _actstatus = '9'
+              }
+            }
+          } else if (queryNum === '2') {
+            /*
+             * 未开始 (status = 1 || status = 2)
+             * 进行中 status = 3
+             * 参与投票 status = 3 && voteStatus = 2 && !ifVote
+             * 已投票  status = 3 && voteStatus = 2 && ifVote
+             * 投票结束 status = 3 && voteStatus = 3
+             * 活动结束 status = 4
+             * 已下线 status = 5
+             */
+            if (status === 1 || status === 2) {
+              _actstatus = '3'
+            } else if (status === 3 && voteStatus === 1) {
+              _actstatus = '4'
+            } else if (status === 3 && voteStatus === 2 && !ifVote) {
+              _actstatus = '5'
+            } else if (status === 3 && voteStatus === 2 && ifVote) {
+              _actstatus = '6'
+            } else if (status === 3 && voteStatus === 3) {
+              _actstatus = '7'
+            } else if (status === 3 && voteStatus === 3) {
+              _actstatus = '7'
+            } else if (status === 4) {
+              _actstatus = '8'
+            } else if (status === 5) {
+              _actstatus = '9'
+            }
           }
-          // console.log('status', status)
-          // console.log('voteStatus', voteStatus)
-          // console.log('ifVote', ifVote)
           return {
             checkLogin: islogin,
             communityId: munityId,
@@ -587,7 +629,7 @@
         regDeadtime: '', // 报名截止时间
         applicationDetail: {}, // 报名详情
         votestatus: null,
-        activeStatus: '0', // 活动状态
+        activeStatus: null, // 活动状态
         showsignup: false, // 报名弹窗
         signName: '',
         signPhone: '',

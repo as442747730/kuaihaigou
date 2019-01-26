@@ -82,5 +82,9 @@ export const encyApi = {
   // 酒庄详情
   getWineryDetail (id) {
     return request.clientGet('/api/baike/getWineryDetail/' + id)
+  },
+  // 质疑
+  questEncy (params) {
+    return request.clientPostJson('/api/baike/submitBaikeQuestion', params)
   }
 }
