@@ -86,6 +86,7 @@
               <div
                 class="swiper-slide commend-list"
                 v-for="(wine, index) in wineList"
+                @click="goWinedet(wine.id)"
                 :key="index">
                 <div class="pro">
                   <img v-lazy="wine.cover" />
@@ -123,6 +124,7 @@
             <div
               class="swiper-slide hot-list"
               v-for="(pick, index) in selectList"
+              @click="goselect(pick.id)"
               :key="index">
               <div class="hot-list-box" v-if="pick.goodsMinimalResp">
                 <div class="pro ib-top" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
@@ -162,7 +164,7 @@
             <h2>
               知识分享
             </h2>
-            <a class="to-channel" href="/selection">
+            <a class="to-channel" href="/knowledge">
               进入频道
               <i class="van-icon van-icon-arrow"></i>  
             </a>
@@ -176,14 +178,14 @@
               v-for="(share, index) in knowList"
               :key="index">
               <div class="share-list-box">
-                <div class="share_home-user" v-if="share.userResp">
+                <div class="share_home-user" v-if="share.userResp" @click="gomine(share.userResp.id)">
                   <u class="ib-middle" v-lazy:background-image="share.userResp.headimgurl"></u>
                   <div class="ib-middle">
                     <span>{{ share.userResp.nickname }}</span>
                     <p>{{ share.userResp.createdAt }}</p>
                   </div>
                 </div>
-                <div class="share_home-content">
+                <div class="share_home-content" @click="goknowdetail(share)">
                   <h3 class="content_title">
                     <p>{{ share.title }}</p>
                   </h3>
@@ -265,6 +267,7 @@
             <div
               class="swiper-slide news-list"
               v-for="(news, index) in newsList"
+              @click="gohostpot(news)"
               :key="index">
               <div class="news-list-box">
                 <h3 class="box_title">
@@ -487,8 +490,24 @@ export default {
     toSearch () {
       window.location.href = '/search'
     },
+    goWinedet (id) {
+      window.location.href = '/detail/' + id
+    },
+    goselect (id) {
+      window.location.href = '/selection/detail/' + id
+    },
+    gomine (id) {
+      window.location.href = '/user?uid=' + id
+    },
+    goknowdetail (val) {
+      window.location.href = `/knowledge/detail/${val.id}?type=${val.articleType}`
+    },
     toDetail (id) {
       window.location.href = './community/detail/' + id + '?page=1'
+    },
+    gohostpot (val) {
+      let detailId = val.id
+      window.location.href = `/hotspot/detail/${detailId}`
     }
   }
 }

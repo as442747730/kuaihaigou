@@ -48,16 +48,16 @@
           </li>
         </ul>
       </section>
-      <!--
-        文章评论
-        type -> 文章类型
-        articelId -> 文章id
-        ifLike -> 是否喜欢
-        ifCollect -> 是否收藏
-      -->
-      <articel-comment :type='articelType' :articelId='objDetail.id' :ifLike='objDetail.ifLike' :ifCollect='objDetail.ifCollect'></articel-comment>
     </section>
     <!-- 详情 end -->
+    <!--
+      文章评论
+      type -> 文章类型
+      articelId -> 文章id
+      ifLike -> 是否喜欢
+      ifCollect -> 是否收藏
+    -->
+    <articel-comment :type='articelType' :articelId='objDetail.id' :ifLike='objDetail.ifLike' :ifCollect='objDetail.ifCollect'></articel-comment>
   </div>
 </template>
 <script>
