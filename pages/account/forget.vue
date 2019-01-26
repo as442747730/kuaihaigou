@@ -111,10 +111,6 @@ export default {
     }
   },
 
-  mounted () {
-    console.log(this.type)
-  },
-
   methods: {
     togglePwd () {
       this.pwdType = this.pwdType === 'password' ? 'text' : 'password'
@@ -171,7 +167,11 @@ export default {
     },
 
     historyBack () {
-      window.history.go(-1)
+      if (this.type === 'modify') {
+        window.location.href = '/account/mgnumber'
+      } else {
+        window.location.href = '/account/login'
+      }
     }
   }
 }
