@@ -807,12 +807,12 @@ export default {
       .inpbox {
         width: 130px;
         height: 13px;
-        padding: 5px 0;
         background: transparent;
         box-sizing: content-box;
       }
       input::-webkit-search-cancel-button{
         display: none;
+        line-height: 28px;
       }
     }
     .icon_buy {
