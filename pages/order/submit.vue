@@ -651,6 +651,7 @@ export default {
         margin: 0.4rem 0 0.53333rem 0;
         font-size: 0.4rem;
         line-height: 1.5;
+        color:#333;
       }
       span {
         color: #C7C7C7;
