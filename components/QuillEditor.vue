@@ -4,7 +4,7 @@
       <p id="up" style="font-size: 12px;">upload</p>
     </Upload> -->
     <form action="" method="post" enctype="multipart/form-data" id="uploadFormMulti">
-      <input style="display: none" id="up" type="file" name="file" accept="image/jpg,image/jpeg,image/png,image/gif" @change="uploadImg()" />
+      <input style="display: none" id="up" type="file" name="file" accept="image/jpg,image/jpeg,image/png,image/gif" @change="uploadImg" />
     </form>
 
     <quill-editor :options="editorOption" ref="QuillEditor"
@@ -143,6 +143,9 @@ export default {
 <style lang="less">
 .u-editor {
   .quill-editor {
+    u {
+      text-decoration: underline !important;
+    }
     img {
       display: block;
       margin: 0 auto;

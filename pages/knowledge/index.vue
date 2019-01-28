@@ -48,7 +48,7 @@
                 <span class="sub view">{{ item.readNumber }}</span>
               </div>
               <!-- !!! TODO !!! -->
-              <div class="more"></div>
+              <!-- <div class="more"></div> -->
             </div>
           </div>
         </div>

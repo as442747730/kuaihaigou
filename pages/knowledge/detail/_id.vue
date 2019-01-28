@@ -30,9 +30,9 @@
         <p class="desc date">{{ detailObj.createdAt }}</p>
       </div>
 
-      <div class="content-wrapper" v-if="detailObj.articleType === 1" v-html="detailObj.content"></div>
+      <div class="content_wrapper ql-editor" v-if="detailObj.articleType === 1" v-html="detailObj.content"></div>
 
-      <div class="content-wrapper" v-if="detailObj.articleType === 2">
+      <div class="content_wrapper" v-if="detailObj.articleType === 2">
         <video controls :src="detailObj.videoPath"></video>
       </div>
 
@@ -117,6 +117,8 @@ import userLab from '@/components/Usericon.vue'
 import uAuthor from '@/components/knowledge/Author'
 import articelComment from '@/components/articel/Comment'
 import payReward from '@/components/Pay-reward'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
 
 export default {
   name: '',
@@ -304,7 +306,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .m-konwledge-detail {
   background: white;
   padding-bottom: 50px;
@@ -412,10 +414,13 @@ export default {
     .info-wrapper {
       margin-bottom: 25px;
     }
-    .content-wrapper {
-      line-height: 25px;
-      font-size: 14px;
-      color: @cor_999;
+    .content_wrapper {
+      // line-height: 25px;
+      // font-size: 14px;
+      // color: @cor_999;
+      u {
+        text-decoration: underline!important;
+      }
       img {
         max-width: 100%!important;
         height: auto!important;
