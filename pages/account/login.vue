@@ -16,15 +16,15 @@
 
       <div class="m-login-handler">
         <!-- <a class="u-link active-status" href="">创建账号</a> -->
-        <nuxt-link class="u-link active-status" to="/account/register">注册账号</nuxt-link>
-        <nuxt-link class="u-link active-status" to="/account/forget">忘记密码？</nuxt-link>
+        <a class="u-link active-status" href="/account/register">注册账号</a>
+        <a class="u-link active-status" href="/account/forget">忘记密码？</a>
       </div>
     </section>
 
     <!-- 短信验证码登录 -->
     <section class="captcha-wrapper" v-show="loginType === 2">
       <div class="u-login-input noborder">
-        <input v-model="captcha" placeholder="请输入验证码" type="number"></input>
+        <input v-model="captcha" placeholder="请输入验证码"></input>
         <captchaInput :captchaData="captcha"></captchaInput>
       </div>
       <div class="u-button small captcha-btn" v-show="!sending" @click="sendCaptcha">获取验证码</div>
@@ -97,9 +97,16 @@ export default {
 
   watch: {
     captcha (val) {
-      if (val.length > 6) {
-        this.captcha = val.substring(0, 6)
+      // if (val.length > 6) {
+      //   this.captcha = val.substring(0, 6)
+      // }
+      if (val.length === 1) {
+        val = val.replace(/[^1-9]/g, '')
+      } else {
+        val = val.replace(/\D/g, '')
       }
+      this.captcha = val
+      console.log(this.captcha)
     },
     phone (val) {
       if (val.length === 1) {

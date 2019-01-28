@@ -4,6 +4,7 @@
     <div class="model-item">
       <a :href="'/user?uid=' + uid">知识分享</a>
       <a :href="'/user/drink?uid=' + uid" class="cur">酒坛诗社</a>
+      <a href="javascript:void(0)"></a>
     </div>
     
     <div class="jarsclub">
@@ -144,7 +145,11 @@ export default {
 
 <style lang="less" scoped>
 .model-item {
-  padding: 20px 100px;
+  // padding: 20px 100px;
+  a:last-child {
+    display: inline-block;
+    width: 40px;
+  }
 }
 .jars {
   display: flex;

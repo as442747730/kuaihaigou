@@ -9,6 +9,9 @@
     <li class="tab-item-list" :class="{'cur': index === 2}">
       <a :href="'/user/reward?uid=' + uid">给Ta的打赏</a>
     </li>
+    <li class="tab-item-list" :class="{'cur': index === 3}">
+      <a :href="'/user/infor?uid=' + uid">Ta的信息</a>
+    </li>
   </ul>
 </template>
 <script>

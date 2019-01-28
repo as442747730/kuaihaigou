@@ -17,7 +17,7 @@
       <div class="m-address-add-form-item">
         <div class="item-label">邮政编号</div>
         <div class="item-content">
-          <input v-model.trim="alternatePhone" placeholder="请输入备用电话"></input>
+          <input v-model.trim="alternatePhone" placeholder="请输入邮政编号"></input>
         </div>
       </div>
       <div class="m-address-add-form-item">
@@ -127,7 +127,7 @@ export default {
       districtList: [],
       // 地址分类
       addressType: 1,
-      ifDefault: false,
+      // ifDefault: false,
 
       popupShow: false,
       columns: [{ values: [] }, { values: [] }, { values: [] }]
