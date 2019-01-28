@@ -327,7 +327,7 @@ export default {
     },
     async getData (page, needClear = false) {
       if (!this.keywords) return
-      const toast1 = this.$toast.loading({ message: '数据获取中', duration: 0, mask: true })
+      const toast1 = this.$toast.loading({ message: '数据获取中', duration: 0, mask: false })
       this.pageLoding = true
       let fn = null
       let param = {}

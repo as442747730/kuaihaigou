@@ -69,5 +69,9 @@ export const knowApi = {
   },
   homePage (params, req) {
     return request.serverGet('/api/sk/homePage', params, req)
+  },
+  // 举报
+  report (obj) {
+    return request.clientPost('/api/sk/report', obj)
   }
 }
