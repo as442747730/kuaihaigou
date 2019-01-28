@@ -87,42 +87,54 @@
                   </div>
                   <div class="overlike">
                     <i class="overicon"></i>
-                    最喜欢（{{votes.likeNum}}）
+                    最喜欢（{{(votes.likeNum || 0)}}）
                   </div>
                 </div>
               </div>
-              <ul class="item-assess">
-                <li class="assess-list">
-                  <div class="list-l ltop">
-                    <div class="l_price">¥{{votes.maxPrice}}</div>
-                    <p>估价最高</p>
+              <div class="item-appre">
+                <div class="appre-list" v-if="!votes.isNull">
+                  <div class="appre-item">
+                    <div class="appre_head">估价最高 | ¥{{votes.maxPrice}}</div>
+                    <div class="appre_info">
+                      <div class="info_auth">
+                        <span class="auth_icon" :style="{backgroundImage: 'url('+ (votes.maxHeadimgurl ? votes.maxHeadimgurl : require('~/assets/img/defaultImg.png')) +')'}"></span>
+                        <p>{{votes.maxUsername}}</p>
+                      </div>
+                      <div class="info_icon">
+                        <user-lab :level='String(votes.maxScoreLevel)' type='1' :profess='String(votes.maxCertCategory)'></user-lab>
+                      </div>
+                    </div>
                   </div>
-                  <div class="list-r" :style="{backgroundImage: 'url('+ votes.maxHeadimgurl +')'}">
-                    <div class="r_name">{{votes.maxUsername}}</div>
-                    <user-lab :level='String(votes.maxScoreLevel)' type='1' :profess='String(votes.maxCertCategory)'></user-lab>
+                   <div class="appre-item">
+                    <div class="appre_head">估价最低 | ¥{{votes.minPrice}}</div>
+                    <div class="appre_info">
+                      <div class="info_auth">
+                        <span class="auth_icon" :style="{backgroundImage: 'url('+ (votes.minHeadimgurl ? votes.minHeadimgurl : require('~/assets/img/defaultImg.png')) +')'}"></span>
+                        <p>{{votes.minUsername}}</p>
+                      </div>
+                      <div class="info_icon">
+                        <user-lab :level='String(votes.minScoreLevel)' type='1' :profess='String(votes.minCertCategory)'></user-lab>
+                      </div>
+                    </div>
                   </div>
-                </li>
-                 <li class="assess-list">
-                  <div class="list-l lok">
-                    <div class="l_price true_price">¥{{votes.accuratePrice}}</div>
-                    <p>估价最准</p>
+                   <div class="appre-item">
+                    <div class="appre_head">估价最准 | ¥{{votes.accuratePrice}}</div>
+                    <div class="appre_info">
+                      <div class="info_auth">
+                        <span class="auth_icon" :style="{backgroundImage: 'url('+ (votes.accurateHeadimgurl ? votes.accurateHeadimgurl : require('~/assets/img/defaultImg.png')) +')'}"></span>
+                        <p>{{votes.accurateUsername}}</p>
+                      </div>
+                      <div class="info_icon">
+                        <user-lab :level='String(votes.accurateScoreLevel)' type='1' :profess='String(votes.accurateCertCategory)'></user-lab>
+                      </div>
+                    </div>
                   </div>
-                  <div class="list-r" :style="{backgroundImage: 'url('+ votes.accurateHeadimgurl +')'}">
-                    <div class="r_name">{{votes.accurateUsername}}</div>
-                    <user-lab :level='String(votes.accurateScoreLevel)' type='1' :profess='String(votes.accurateCertCategory)'></user-lab>
-                  </div>
-                </li>
-                 <li class="assess-list">
-                  <div class="list-l lbottom">
-                    <div class="l_price">¥{{votes.minPrice}}</div>
-                    <p>估价最低</p>
-                  </div>
-                  <div class="list-r" :style="{backgroundImage: 'url('+ votes.minHeadimgurl +')'}">
-                    <div class="r_name">{{votes.minUsername}}</div>
-                    <user-lab :level='String(votes.minScoreLevel)' type='1' :profess='String(votes.minCertCategory)'></user-lab>
-                  </div>
-                </li>
-              </ul>
+                </div>
+                <div class="appre-null" v-else>
+                  <div class="nullbk"></div>
+                  <p>此款商品暂无估价</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -384,7 +396,7 @@
       <div class="btnitem btncor2" v-if="activeStatus === '1'">已报名</div>
       <div class="btnitem btncor3" v-if="activeStatus === '2'">报名结束</div>
       <div class="btnitem btncor3" v-if="activeStatus === '3'">未开始</div>
-      <div class="btnitem btncor2" v-if="activeStatus === '4'">进行中</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '4'" @click="tovote">进行中</div>
       <div class="btnitem btncor4" v-if="activeStatus === '5'" @click="tovote">参与投票</div>
       <div class="btnitem btncor5" v-if="activeStatus === '6'">已投票</div>
       <div class="btnitem btncor6" v-if="activeStatus === '7'">投票结束</div>
@@ -487,11 +499,16 @@
           const { blindStatisticsRespList } = voteData
           let _votelist = []
           _votelist = blindStatisticsRespList.map((v, index) => {
+            let isNull = false
+            if (JSON.stringify(v) === '{}') {
+              isNull = true
+            }
             let { showImg, name, priceRmb, priceForeign } = blindTastingRespList[index]
             v.showImg = showImg
             v.name = name
             v.priceRmb = priceRmb
             v.priceForeign = priceForeign
+            v.isNull = isNull
             return v
           })
           /*
@@ -1151,14 +1168,15 @@
       .list-item {
         width: 280px;
         width:280px;
-        background: #fff;
         border-radius:8px;
         margin-right: 20px;
+        overflow: hidden;
 
         .item-info {
           padding: 10px 20px 20px 10px;
           display: flex;
           align-items: center;
+          background: #fff;
           .info-bk {
             flex-grow: 0;
             width: 80px;
@@ -1226,6 +1244,90 @@
             }
           }
         }
+        .item-appre {
+          margin-top: 10px;
+          background: #fff;
+          .appre-list {
+            .appre-item {
+              padding: 0 15px;
+              border-bottom: 1PX solid #F5F5F5;
+              &.last-child {
+                border-bottom: none;
+              }
+              .appre_head {
+                font-size:15px;
+                font-family:PingFangSC-Semibold;
+                font-weight:600;
+                color:rgba(3,161,205,1);
+                line-height: 15px;
+                padding-top: 20px;
+                padding-bottom: 10px;
+              }
+              .appre_info {
+                display: flex;
+                align-items: center;
+                height: 20px;
+                padding-bottom: 17px;
+                .info_auth {
+                  display: inline-flex;
+                  flex-grow: 1;
+                  max-width: calc(100% - 40px);
+                  height: 20px;
+                  align-items: center;
+                  .auth_icon {
+                    width: 20px;
+                    height: 20px;
+                    margin-right: 5px;
+                    border-radius: 50%;
+                    overflow: hidden;
+                    .bg_cover;
+                  }
+                  &>p {
+                    max-width: calc(100% - 25px);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    font-size:13px;
+                    font-family:PingFang-SC-Regular;
+                    font-weight:400;
+                    color:rgba(51,51,51,1);
+                  }
+                }
+                .info_icon {
+                  flex-grow: 0;
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: flex-end;
+                  flex-wrap: nowrap;
+                  width: 50px;
+                  min-width: 50px;
+                  max-width: 50px;
+                  height: 20px;
+                }
+              }
+            }
+          }
+          .appre-null {
+            height: 248px;
+            padding-top: 27px;
+            box-sizing: border-box;
+            .nullbk {
+              width: 160px;
+              height: 160px;
+              margin: 0 auto;
+              background-image: url('~/assets/img/munity/picno.png');
+              .bg_cover;
+            }
+            &>p {
+              text-align: center;
+              font-size:14px;
+              font-family:PingFang-SC-Regular;
+              font-weight:400;
+              color:rgba(153,153,153,1);
+              line-height:14px;
+            }
+          }
+        }
         .item-assess {
           border-top: 1PX solid #D8D8D8;
           padding-left: 20px;
@@ -1238,15 +1340,6 @@
               background-size: 30px 30px;
               background-position: left center;
               background-repeat: no-repeat;
-              &.ltop {
-                background-image: url('~/assets/img/munity/ic_price_t_30x30@2x.png');
-              }
-              &.lok {
-                background-image: url('~/assets/img/munity/ic_price_check_30x30@2x.png');
-              }
-              &.lbottom {
-                background-image: url('~/assets/img/munity/ic_price_d_30x30@2x.png');
-              }
               .l_price {
                 font-size:18px;
                 font-family:Impact;
@@ -1561,10 +1654,12 @@
           width: 320px;
           border-radius: 8px;
           border: 1PX solid #EAEAEA;
-          padding: 20px 10px 10px;
+          padding-top: 20px;
+          padding-bottom: 10px;
           box-sizing: border-box;
           margin-right: 20px;
           .onemdl {
+            padding-right: 10px;
             display: flex;
             align-items: center;
             &-l {
@@ -1591,25 +1686,14 @@
                 font-weight: 400;
                 color: rgba(153, 153, 153, 1);
                 margin-top: 10px;
-
+                display: flex;
+                flex-wrap: wrap;
                 .tagsub {
                   margin-top: 10px;
-
-                  &+.tagsub {
+                  & + .tagsub {
                     margin-left: 5px;
                     padding-left: 5px;
-                    position: relative;
-                    &:before {
-                      content: '';
-                      width: 1PX;
-                      height: 12px;
-                      background: pink;
-                      position: absolute;
-                      top: 50%;
-                      left: -1PX;
-                      margin-top: -6px;
-                      background: rgba(153,153,153,1);
-                    }
+                    border-left: 1PX solid rgba(153, 153, 153, 1);
                   }
                 }
               }

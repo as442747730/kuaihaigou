@@ -30,7 +30,6 @@
             <div class="gz_level wgz_level"></div>
             <p>关注</p>
           </div>
-          
         </div>
       </div>
     </div>
