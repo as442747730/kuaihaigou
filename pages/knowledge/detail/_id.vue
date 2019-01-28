@@ -4,7 +4,7 @@
     </van-nav-bar>
 
     <div class="author-section">
-      <div class="avatar" :style="'background-image: url(' + (detailObj.userResp.headimgurl ? detailObj.userResp.headimgurl : require('~/assets/img/defaultImg.png') ) + ')'" @click="showAuthorInfo"></div>
+      <div class="avatar" :style="'background-image: url(' + (detailObj.userResp.headimgurl ? detailObj.userResp.headimgurl : require('~/assets/img/defaultImg.png') ) + ')'" @click="showAuthorInfo(detailObj.userResp.id)"></div>
       <div class="info">
         <div class="nickname">
           <span>{{ detailObj.userResp.nickname }}</span>
@@ -223,14 +223,15 @@ export default {
     onSelect () {
       this.handleSubscribe()
     },
-    async showAuthorInfo () {
-      this.showInfo = true
-      setTimeout(() => {
-        this.setClass = true
-      }, 100)
-      Object.assign(this.authObj, this.detailObj.userResp.personalInfoResp, this.detailObj.userResp.sharingKnowledgeContentUserResps[0])
-      this.authObj.ifFollow = this.detailObj.userResp.checkAttention
-      this.authObj.userId = this.detailObj.userId
+    async showAuthorInfo (id) {
+      window.location.href = '/user?uid=' + id
+      // this.showInfo = true
+      // setTimeout(() => {
+      //   this.setClass = true
+      // }, 100)
+      // Object.assign(this.authObj, this.detailObj.userResp.personalInfoResp, this.detailObj.userResp.sharingKnowledgeContentUserResps[0])
+      // this.authObj.ifFollow = this.detailObj.userResp.checkAttention
+      // this.authObj.userId = this.detailObj.userId
       // const { code, data } = await knowApi.getAuthorInfo({ id: this.detailObj.userResp.id })
       // if (code === 200) {
       //   this.authObj = data
