@@ -17,7 +17,8 @@
       去评论
     </div>
     <div class="btn-item" @click="handleCollect">
-      <img src="~/assets/img/knowledge/icon-star.png" :class="['icon-btn', ifCollect ? 'active' : '']" alt="">
+      <img src="~/assets/img/knowledge/icon-star.png" :class="['icon-btn', ifCollect ? 'active' : '']" alt="" v-if="ifCollect">
+      <img src="~/assets/img/knowledge/ic_collection_nor_16x16@2x.png" :class="['icon-btn', ifCollect ? 'active' : '']" alt="" v-if="!ifCollect">
       收藏
     </div>
   </div>

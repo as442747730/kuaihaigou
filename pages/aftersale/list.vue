@@ -215,6 +215,7 @@ export default {
       background: #FAFAFA;
       border-radius: 14px;
       height: 28px;
+      line-height: 28px;
       margin-right: 22px;
       padding-left: 50px;
       padding-right: 16px;

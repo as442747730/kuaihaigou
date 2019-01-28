@@ -37,17 +37,50 @@
     <div class="parama_detail margin-30">
       <h3 class="title">详细信息</h3>
       <div class="wrap">
-        <a :href="info.link" class="parama_detail-item" v-for="(info, index) in infos" :key="index">
-          <div class="pro ib-middle" :style="{background: 'url(' + info.icon + ') no-repeat center/cover'}"></div>
-          <div class="pd_type ib-middle">
-            <p>
-              <span>{{ info.name }}</span>
-              <span>（{{ info.mark }}）</span>
-            </p>
-            <em>{{ info.text }}</em>
-          </div>
-          <i class="van-icon van-icon-arrow"></i>
-        </a>
+        <div class="parama_detail-item" v-for="(info, index) in infos" :key="index">
+          <!-- 产区 -->
+          <template v-if="info.name === '产区'">
+            <div class="pro ib-middle" :style="{background: 'url(' + info.icon + ') no-repeat center/cover'}"></div>
+            <div class="pd_type ib-middle">
+              <p>
+                <span>{{ info.name }}</span>
+                <span>（{{ info.mark }}）</span>
+              </p>
+              <a :href="'/noun/detail/' + $v.areaid + '?num=1'" v-for='($v, $k) in info.text'>
+                {{ $k === info.text.length - 1 ? $v.areaName : $v.areaName + '>' }}
+              </a>
+            </div>
+            <!-- <i class="van-icon van-icon-arrow"></i> -->
+          </template>
+          <!-- 品种 -->
+          <template v-else-if="info.name === '品种'">
+            <a :href="info.link">
+              <div class="pro ib-middle" :style="{background: 'url(' + info.icon + ') no-repeat center/cover'}"></div>
+              <div class="pd_type ib-middle">
+                <p>
+                  <span>{{ info.name }}</span>
+                  <span>（{{ info.mark }}）</span>
+                </p>
+                <em>{{ info.text }}</em>
+              </div>
+              <i class="van-icon van-icon-arrow"></i>
+            </a>
+          </template>
+          <!-- 常规 -->
+          <template v-else>
+            <a :href="info.link">
+              <div class="pro ib-middle" :style="{background: 'url(' + info.icon + ') no-repeat center/cover'}"></div>
+              <div class="pd_type ib-middle">
+                <p>
+                  <span>{{ info.name }}</span>
+                  <span>（{{ info.mark }}）</span>
+                </p>
+                <em>{{ info.text }}</em>
+              </div>
+              <i class="van-icon van-icon-arrow"></i>
+            </a>
+          </template>
+        </div>
       </div>
     </div>
 
@@ -172,7 +205,7 @@ export default {
   },
   computed: {
     infos: function () {
-      console.log(this.redAttr)
+      console.log('this.redAttr', this.redAttr)
       let { typeIcon, typeRemark, typeUrl, type } = this.redAttr
       let typeobj = this.setObj('类型', typeIcon, typeRemark, type, typeUrl)
 
@@ -182,17 +215,17 @@ export default {
       let { areaIcon, areaRemark, areaList } = this.redAttr
       console.log('areaList', areaList)
       areaList = !areaList ? [] : areaList
-      let areaArray = areaList.map(v => {
-        return v.areaName
-      })
-      let areaStr = areaArray.join(',')
-      let areaobj = this.setObj('产区', areaIcon, areaRemark, areaStr)
+      // let areaArray = areaList.map(v => {
+      //   return v.areaName
+      // })
+      // let areaStr = areaArray.join(',')
+      let areaobj = this.setObj('产区', areaIcon, areaRemark, areaList)
 
       let { yearIcon, yearRemark, year } = this.redAttr
       let yearobj = this.setObj('年份', yearIcon, yearRemark, year)
 
-      let { varietyIcon, varietyRemark, varietyUrl, variety } = this.redAttr
-      let varietyobj = this.setObj('品种', varietyIcon, varietyRemark, variety, varietyUrl)
+      let { varietyIcon, varietyRemark, variety, varietyid } = this.redAttr
+      let varietyobj = this.setObj('品种', varietyIcon, varietyRemark, variety, '/noun/detail/' + varietyid + '?num=0')
 
       let { alcoholDegreeIcon, alcoholDegreeRemark, alcoholDegree } = this.redAttr
       let alcohobj = this.setObj('酒精度', alcoholDegreeIcon, alcoholDegreeRemark, alcoholDegree)
@@ -313,6 +346,13 @@ export default {
           // margin-right: 15px;
         }
         .pd_type {
+          font-size: 0;
+          a {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: bolder;
+            margin-top: 7px;
+          }
          
           p {
             font-size: 12px;

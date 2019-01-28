@@ -807,18 +807,18 @@ export default {
       .inpbox {
         width: 130px;
         height: 13px;
-        padding: 5px 0;
         background: transparent;
         box-sizing: content-box;
       }
       input::-webkit-search-cancel-button{
         display: none;
+        line-height: 28px;
       }
     }
     .icon_buy {
       width: 30px;
       height: 30px;
-      background-image: url("~/assets/img/Icons/ic_shop_b_30x30.png");
+      background-image: url("~/assets/img/Icons/ic_shop_b_30x30@2x.png");
       .bg_cover;
     }
   }
@@ -850,7 +850,7 @@ export default {
       height: 5px;
       background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
       opacity: 0.5;
-      transform: rotate(0);
+      transform: rotate(180deg);
       transition: 0.2s;
       // background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
       .bg_cover;
@@ -869,7 +869,7 @@ export default {
 
     &:after {
       opacity: 1;
-      transform: rotate(180deg);
+      transform: rotate(0);
       background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
     }
   }
