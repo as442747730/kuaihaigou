@@ -92,6 +92,44 @@ export default {
     }
   },
 
+  async asyncData (req) {
+    return api.all([
+      knowApi.getTopicList(req),
+      knowApi.getTypeList(req),
+      knowApi.getVariety(req),
+      api.serverGet('/api/sk/paginate', { page: 1, count: 10, channelNumber: req.query.channelid || '', topicId: req.query.topicid || '', typeId: req.query.typeid || '', varietyId: req.query.varietyid || '', order: req.query.order }, req)
+    ])
+      .then(api.spread(function (res1, res2, res3, res4) {
+        if (res1.code !== 200 || res2.code !== 200 || res3.code !== 200 || res4.code !== 200) {
+          req.redirect('/error')
+        }
+        let articleArr = []
+        let total = 0
+        if (res4.data && res4.data.array) {
+          articleArr = res4.data.array
+          total = res4.data.total
+        }
+        let _channelid = req.query.channelid
+        if (_channelid) {
+          _channelid = Number(_channelid)
+        }
+        console.log(req.query.topicid, 'topicid')
+        return {
+          channelId: _channelid || null,
+          topicId: req.query.topicid || '',
+          typeId: req.query.typeid || null,
+          varietyId: req.query.varietyid || null,
+          order: +req.query.order || 1,
+          topicLs: res1.data.map(n => { return { id: n.id, name: n.topicName } }),
+          typeLs: res2.data.map(n => { return { id: n.id, name: n.typeName } }),
+          varietyLs: res3.data.map(n => { return { id: n.id, name: n.varietyName } }),
+          articleList: articleArr,
+          total: total,
+          hasMore: total > 10
+        }
+      }))
+  },
+
   mounted () {
     this.$refs.tabSelect.setSelect({ channelId: this.channelId, topicId: this.topicId, typeId: this.typeId, varietyId: this.varietyId, order: this.order })
     if (this.articleList.length === 0) return
@@ -122,42 +160,6 @@ export default {
     }))
   },
 
-  async asyncData (req) {
-    return api.all([
-      knowApi.getTopicList(req),
-      knowApi.getTypeList(req),
-      knowApi.getVariety(req),
-      api.serverGet('/api/sk/paginate', { page: 1, count: 10, channelNumber: req.query.channelid || '', topicId: req.query.topicid || '', typeId: req.query.typeid || '', varietyId: req.query.varietyid || '', order: req.query.order }, req)
-    ])
-      .then(api.spread(function (res1, res2, res3, res4) {
-        if (res1.code !== 200 || res2.code !== 200 || res3.code !== 200 || res4.code !== 200) {
-          req.redirect('/error')
-        }
-        let articleArr = []
-        if (res4.data && res4.data.array) {
-          articleArr = res4.data.array
-        }
-        let _channelid = req.query.channelid
-        if (_channelid) {
-          _channelid = Number(_channelid)
-        }
-        console.log(req.query.topicid, 'topicid')
-        return {
-          channelId: _channelid || 0,
-          topicId: req.query.topicid || '',
-          typeId: req.query.typeid || null,
-          varietyId: req.query.varietyid || null,
-          order: +req.query.order || 1,
-          topicLs: res1.data.map(n => { return { id: n.id, name: n.topicName } }),
-          typeLs: res2.data.map(n => { return { id: n.id, name: n.typeName } }),
-          varietyLs: res3.data.map(n => { return { id: n.id, name: n.varietyName } }),
-          articleList: articleArr,
-          total: articleArr.length,
-          hasMore: articleArr.length > 10
-        }
-      }))
-  },
-
   data () {
     return {
       loadTxt: '下拉加载更多',
@@ -167,7 +169,7 @@ export default {
       varietyLs: [],
       total: 0,
 
-      channelId: 0,
+      channelId: null,
       topicId: '',
       typeId: '',
       varietyId: '',

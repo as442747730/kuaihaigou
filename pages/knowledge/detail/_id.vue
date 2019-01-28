@@ -25,6 +25,7 @@
         <p class="desc">
           <span class="gut">频道：{{ detailObj.channelName }}</span>
           <span>话题：{{ detailObj.topicName }}</span>
+          <span class="from" v-if='detailObj.address' style="display: block">文章来源：<a :href="detailObj.address">{{ detailObj.author }}</a></span>
         </p>
         <p class="desc date">{{ detailObj.createdAt }}</p>
       </div>
@@ -399,6 +400,12 @@ export default {
       }
       .gut {
         margin-right: 20px;
+      }
+      .from {
+        margin-top: 10px;
+        a {
+          color: #03A1CD;
+        }
       }
     }
 
