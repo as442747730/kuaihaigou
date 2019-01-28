@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <template>
   <div class="follow" ref="scrollElem">
     <com-head :titleConfig="getTitle"></com-head>
