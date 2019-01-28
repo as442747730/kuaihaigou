@@ -458,6 +458,10 @@ export default {
       if (this.goodsNoSend.length !== 0) {
         return this.$toast('您的订单中含有不在配送范围内商品，请返回购物车修改')
       }
+      // 如果是hi币全额支付
+      // if (this.payable === 0 && this.rewardMoney) {
+      //   this.payHimoney = true
+      // }
       let obj = {
         shippingAddressId: this.addressSelected.id, // 收货地址id
         remark: this.msg, // 留言
