@@ -433,15 +433,13 @@ export default {
       let nowIndex = 0
       let len = proResult.length
       let isChange = true
-      setInterval(() => {
-        if (isChange) {
-          nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
-          const { cover, scenesName, goodsList } = proResult[nowIndex].data
-          this.wineBk = cover
-          this.wineSence = scenesName
-          this.wineList = goodsList
-        }
-      }, 5000)
+      if (isChange) {
+        nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
+        const { cover, scenesName, goodsList } = proResult[nowIndex].data
+        this.wineBk = cover
+        this.wineSence = scenesName
+        this.wineList = goodsList
+      }
       // 换一批
       const chEl = document.querySelector('#changeNew')
       let _this = this
@@ -618,6 +616,7 @@ export default {
   .home_in {
     position: relative;
     height: 60px;
+    border-radius:30px;
   }
   i {
     width: 30px;
@@ -1008,7 +1007,7 @@ export default {
           &:before {
             position: absolute;
             left: 0;
-            bottom: -6px;
+            bottom: -5px;
             content: '';
             width: 0;
             height: 0;
@@ -1020,7 +1019,7 @@ export default {
           &:after {
             position: absolute;
             right: 0;
-            bottom: -6px;
+            bottom: -5px;
             content: '';
             width: 0;
             height: 0;

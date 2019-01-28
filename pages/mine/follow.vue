@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <template>
   <div class="follow" ref="scrollElem">
     <com-head :titleConfig="getTitle"></com-head>
@@ -210,7 +211,7 @@ export default {
           align-items: center;
           margin-bottom: 8px;
           .name-world {
-            width: 60%;
+            max-width: 60%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -261,4 +262,3 @@ export default {
   }
 }
 </style>
-

@@ -14,6 +14,7 @@
           <div class="fans-ins"><p>{{ user.attentionNumber }}</p>关注</div>
           <div class="fans-ins"><p>{{ user.fanNumber }}</p>粉丝</div>
           <div class="follow" :class="[checkFollow ? 'dark' : '']" @click="handleSubscribe">
+            <van-icon class='ib-middle' :name="checkFollow ? 'success' : 'cross'" />
             {{ checkFollow ? '已关注' : '关注' }}
           </div>
         </div>
@@ -268,4 +269,9 @@ export default {
     }
   }
 }
+</style>
+<style lang='less'>
+        .van-icon-cross {
+          transform: rotate(45deg);
+        }
 </style>
