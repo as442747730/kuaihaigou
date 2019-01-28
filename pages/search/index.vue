@@ -513,6 +513,7 @@ export default {
       &-in {
         width: 292px;
         height: 28px;
+        line-height: 28px;
         border-radius: 14px;
         background: rgba(250, 250, 250, 1);
         text-indent: 50px;

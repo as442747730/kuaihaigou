@@ -254,7 +254,6 @@ export default {
         height: 30px;
       }
       .item-label {
-        width: 60px;
         font-size: 15px;
         font-weight: 500;
         padding-right: 25px;
