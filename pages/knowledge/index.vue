@@ -35,7 +35,7 @@
               </div>
               <!-- 视频 -->
               <div class="video-box" v-if="item.articleType === 2">
-                <video ref="refvideo" class="video-player" controls autobuffer>
+                <video ref="refvideo" class="video-player" controls>
                   <source :src="item.videoPath" type="video/mp4">
                 </video>
               </div>
@@ -48,7 +48,7 @@
                 <span class="sub view">{{ item.readNumber }}</span>
               </div>
               <!-- !!! TODO !!! -->
-              <div class="more"></div>
+              <!-- <div class="more"></div> -->
             </div>
           </div>
         </div>
@@ -132,14 +132,6 @@ export default {
 
   mounted () {
     this.$refs.tabSelect.setSelect({ channelId: this.channelId, topicId: this.topicId, typeId: this.typeId, varietyId: this.varietyId, order: this.order })
-    // this.$nextTick(() => {
-    //   let videos = this.$refs.refvideo
-    //   if (Array.isArray(videos)) {
-    //     videos.map(v => {
-    //       v.played
-    //     })
-    //   }
-    // })
     if (this.articleList.length === 0) return
     const v = this
     const pullEl = document.querySelector('.van-pull')

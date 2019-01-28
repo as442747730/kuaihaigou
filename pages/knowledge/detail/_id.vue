@@ -9,7 +9,7 @@
     </van-nav-bar>
 
     <div class="author-section">
-      <div class="avatar" :style="'background-image: url(' + (detailObj.userResp.headimgurl ? detailObj.userResp.headimgurl : require('~/assets/img/defaultImg.png') ) + ')'" @click="showAuthorInfo"></div>
+      <div class="avatar" :style="'background-image: url(' + (detailObj.userResp.headimgurl ? detailObj.userResp.headimgurl : require('~/assets/img/defaultImg.png') ) + ')'" @click="showAuthorInfo(detailObj.userResp.id)"></div>
       <div class="info">
         <div class="nickname">
           <span>{{ detailObj.userResp.nickname }}</span>
@@ -35,9 +35,9 @@
         <p class="desc date">{{ detailObj.createdAt }}</p>
       </div>
 
-      <div class="content-wrapper" v-if="detailObj.articleType === 1" v-html="detailObj.content"></div>
+      <div class="content_wrapper ql-editor" v-if="detailObj.articleType === 1" v-html="detailObj.content"></div>
 
-      <div class="content-wrapper" v-if="detailObj.articleType === 2">
+      <div class="content_wrapper" v-if="detailObj.articleType === 2">
         <video controls :src="detailObj.videoPath"></video>
       </div>
 
@@ -163,6 +163,8 @@ import userLab from '@/components/Usericon.vue'
 import uAuthor from '@/components/knowledge/Author'
 import articelComment from '@/components/articel/Comment'
 import payReward from '@/components/Pay-reward'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
 
 export default {
   name: '',
@@ -275,14 +277,15 @@ export default {
     onSelect () {
       this.handleSubscribe()
     },
-    async showAuthorInfo () {
-      this.showInfo = true
-      setTimeout(() => {
-        this.setClass = true
-      }, 100)
-      Object.assign(this.authObj, this.detailObj.userResp.personalInfoResp, this.detailObj.userResp.sharingKnowledgeContentUserResps[0])
-      this.authObj.ifFollow = this.detailObj.userResp.checkAttention
-      this.authObj.userId = this.detailObj.userId
+    async showAuthorInfo (id) {
+      window.location.href = '/user?uid=' + id
+      // this.showInfo = true
+      // setTimeout(() => {
+      //   this.setClass = true
+      // }, 100)
+      // Object.assign(this.authObj, this.detailObj.userResp.personalInfoResp, this.detailObj.userResp.sharingKnowledgeContentUserResps[0])
+      // this.authObj.ifFollow = this.detailObj.userResp.checkAttention
+      // this.authObj.userId = this.detailObj.userId
       // const { code, data } = await knowApi.getAuthorInfo({ id: this.detailObj.userResp.id })
       // if (code === 200) {
       //   this.authObj = data
@@ -373,7 +376,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .m-konwledge-detail {
   background: white;
   padding-bottom: 50px;
@@ -481,10 +484,13 @@ export default {
     .info-wrapper {
       margin-bottom: 25px;
     }
-    .content-wrapper {
-      line-height: 25px;
-      font-size: 14px;
-      color: @cor_999;
+    .content_wrapper {
+      // line-height: 25px;
+      // font-size: 14px;
+      // color: @cor_999;
+      u {
+        text-decoration: underline!important;
+      }
       img {
         max-width: 100%!important;
         height: auto!important;

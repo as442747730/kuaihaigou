@@ -299,7 +299,7 @@ export default {
     margin-top: 10px;
 
     .list-switch {
-      margin-left: 10px;
+      // margin-left: 10px;
       .van-switch--on {
         background-color: #03A1CD;
       }
@@ -329,6 +329,6 @@ export default {
 </style>
 <style lang='less'>
 .list-l_name {
-  width: 60px;
+  width: 70px;
 }  
 </style>
