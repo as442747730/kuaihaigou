@@ -187,6 +187,7 @@
   padding: 30px 20px 10px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+  background: #fff;
   &-top {
     text-align: center;
     h3 {
