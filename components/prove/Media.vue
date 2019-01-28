@@ -128,6 +128,10 @@ export default {
     }
   },
 
+  created () {
+    if (this.selfMediaType) this.form.mediaType = String(this.form.mediaType)
+  },
+
   methods: {
     uploadFront (data) {
       this.form.frontImg = data.url

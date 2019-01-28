@@ -188,6 +188,7 @@ export default {
     async createInfo () {
       // todo validate
       const req = {
+        ifDefault: this.ifDefault,
         address: this.address,
         addressType: 1,
         alternatePhone: this.alternatePhone,
@@ -197,6 +198,7 @@ export default {
         name: this.name,
         phone: this.phone
       }
+      console.log(req)
       const { code } = await addressApi.createAddress(req)
       if (code === 200) {
         this.$toast.success('新增成功')
