@@ -35,10 +35,10 @@
           </div>
         </div>
         <!-- 官方认证的icon显示 -->
-        <div v-if='userInfo.officialTypeName' class="office-item">
+        <div v-if='proveMethod === 32' class="office-item">
           <div class="icon u-office"></div>
           <span>官方认证</span>
-          <p>{{ userInfo.officialTypeName }}</p>
+          <p>{{ userInfo.certificationName }}</p>
         </div>
 
         <div class="depart-line"></div>
@@ -118,7 +118,7 @@
 
     <!-- 媒体认证 -->
     <transition name="slide">
-      <media v-if='showMedia'></media>
+      <media v-if='showMedia' :selfMediaType='userInfo.selfMediaType'></media>
     </transition>
 
     <!-- 企业认证 -->
@@ -404,7 +404,7 @@ export default {
       }).then(async () => {
         if (this.userInfo.professionTypeResps) {
           fn = proveApi.cancelMajor(this.majorId)
-        } else if (this.userInfo.officialTypeName) {
+        } else if (this.proveMethod === 32) {
           fn = proveApi.cancelOffice()
         }
         const { code, data } = await fn
