@@ -73,6 +73,10 @@ export default {
         case '/message':
           window.location.href = '/mine'
           break
+        case '/account/bindphone':
+          // window.location.href = '/account/mgphone'
+          window.history.go(-1)
+          break
         default:
           console.log('未知页面')
           break

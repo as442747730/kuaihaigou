@@ -43,6 +43,16 @@ export default {
       }
     }
   },
+  watch: {
+    newphone (val) {
+      if (val.length === 1) {
+        val = val.replace(/[^1-9]/g, '')
+      } else {
+        val = val.replace(/\D/g, '')
+      }
+      this.newphone = val
+    }
+  },
   methods: {
     async opKeyboard () {
       this.showkey = true
@@ -69,7 +79,10 @@ export default {
       console.log('code', code)
       if (code === 200) {
         this.showkey = false
-        window.location.href = '/account/login'
+        this.$toast('修改成功！')
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 600)
       } else {
         this.$toast(data)
       }
