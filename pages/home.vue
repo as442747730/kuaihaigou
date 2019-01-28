@@ -49,7 +49,7 @@
               :key="index">
               <i class="ib-middle" :style="{backgroundImage: 'url('+ poet.headimgurl +')'}"></i>
               <p class="ib-middle">{{poet.content}}</p>
-              <div class="notify_home-icon ib-middle bg"></div>
+              <div class="notify_home-icon ib-middle bg" @click="poetZan(poet)"></div>
             </div>
           </div>
         </div>
@@ -485,6 +485,15 @@ export default {
         }).then(() => {
           window.location.href = '/account/login'
         }).catch(() => {})
+      }
+    },
+    async poetZan (poet) {
+      // console.log('poet', poet)
+      const { code, data } = await poetApi.zanPoet(poet.id)
+      if (code === 200) {
+        this.$toast.success('点赞成功')
+      } else {
+        this.$toast(data)
       }
     },
     toSearch () {

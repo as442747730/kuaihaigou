@@ -765,6 +765,7 @@
         font-family: PingFangSC-Regular;
         font-weight: 400;
         color: rgba(204, 204, 204, 1);
+        background: transparent;
         &.cor {
           color: #000;
         }
