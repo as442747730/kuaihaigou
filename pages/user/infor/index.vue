@@ -8,10 +8,10 @@
           <p>{{ inforData.nickname }}</p>
         </div>
       </div>
-      <div class="user-infor-item">
-        <span class="ib-middle">XX认证</span>
+      <div class="user-infor-item" v-if='inforData.name || professTitle'>
+        <span class="ib-middle">{{ proveTxt[inforData.certCategory - 1] }}</span>
         <div class="ib-middle">
-          <p>广州XX公司</p>
+          <p>{{ inforData.name || professTitle }}</p>
         </div>
       </div>
       <div class="user-infor-item">
@@ -104,12 +104,33 @@ export default {
   data () {
     return {
       uid: null, // 用户id
-      inforData: []
+      inforData: [],
+      proveTxt: ['专业认证', '自媒体认证', '官方认证'],
+      professTxt: [
+        {key: 'CMS_IS', title: 'CMS一级(IS)'},
+        {key: 'CMS_CS', title: 'CMS二级(CS)'},
+        {key: 'CMS_AS', title: 'CMS三级(AS)'},
+        {key: 'CMS_MS', title: 'MS'},
+        {key: 'WSRT_2ND', title: 'WSET二级'},
+        {key: 'WSRT_3TH', title: 'WSET三级'},
+        {key: 'WSRT_DIP', title: 'WSET Diploma'},
+        {key: 'WSRT_MW', title: 'MW'},
+        {key: 'ISG_2ND', title: 'ISG二级侍酒师'},
+        {key: 'ISG_3TH', title: 'ISG三级侍酒师'},
+        {key: 'ISG_DIP', title: 'ISG Diploma'},
+        {key: 'STATE_3TH', title: '国家三级品酒师'},
+        {key: 'STATE_2ND', title: '国家二级品酒师'},
+        {key: 'STATE_1ST', title: '国家一级品酒师'},
+        {key: 'OTHER', title: '其他'}
+      ]
     }
   },
 
   mounted () {
     console.log(this.inforData)
+    if (this.professTxt.find(v => v.key === this.inforData.category)) {
+      this.professTitle = this.professTxt.find(v => v.key === this.inforData.category).title
+    }
   },
 
   methods: {
@@ -122,14 +143,14 @@ export default {
   padding: 0 20px;
   &-item {
     padding: 25px 0px;
-    font-size: 15px;
-    border-bottom: 1px solid #f1f1f1;
+    font-size: 13px;
+    border-bottom: 1PX solid #f1f1f1;
     &:last-child {
       border-bottom: 0;
     }
     span {
       color: #666;
-      width: 60px;
+      width: 70px;
       text-align: left;
       margin-right: 30px;
     }
@@ -159,11 +180,11 @@ export default {
       margin-top: 25px;
     }
     strong {
-      font-size: 15px;
+      font-size: 13px;
       display: block;
       color: #333;
-      padding: 5px 0 25px;
-      border-bottom: 1px solid #f1f1f1;
+      padding: 10px 0 25px;
+      border-bottom: 1PX solid #f1f1f1;
     }
   }
 }
