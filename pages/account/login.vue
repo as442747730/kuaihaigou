@@ -131,7 +131,7 @@ export default {
     if ((this.prevLink === window.location.href) || (this.prevLink === 'http://' + window.location.host + '/account/register') || (this.prevLink === 'http://' + window.location.host + '/account/bindphone')) {
       this.prevLink = 'http://' + window.location.host + '/mine'
     }
-    if (this.prevLink === 'http://' + window.location.host + '/account/forget') {
+    if (this.prevLink === 'http://' + window.location.host + '/account/forget' || this.prevLink === 'http://' + window.location.host + '/account/forget?type=modify') {
       this.prevLink = 'http://' + window.location.host
     }
   },

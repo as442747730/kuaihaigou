@@ -64,7 +64,7 @@
           <i></i>
           <p>{{ form.backImg ? '重新上传' : '上传国徽面' }}</p>
         </div> -->
-        <div v-if="form.mediaType !== '0'" class="upload-box" :class="{'success': form.backImg}" :style="'background: url(' + (form.backImg || frontDefault ) + ') no-repeat center/contain'">
+        <div v-if="form.mediaType !== '0'" class="upload-box" :class="{'success': form.backImg}" :style="'background: url(' + (form.backImg || backDefault ) + ') no-repeat center/contain'">
           <i></i>
           <p>{{ form.backImg ? '重新上传' : '上传国徽面' }}</p>
         </div>
@@ -98,6 +98,10 @@ import { proveApi } from '~/api/prove'
 
 export default {
   name: 'm-media',
+
+  props: {
+    selfMediaType: Number
+  },
 
   components: { Upload, uImghandler },
 
@@ -134,11 +138,19 @@ export default {
       this.form.backKey = data.key
     },
     handlerMedia (val) {
-      this.form.frontImg = null
-      this.form.frontKey = null
-      this.form.backImg = null
-      this.form.backKey = null
-      this.form.imgList = []
+      if (this.selfMediaType === 0 && val === '1') {
+        this.form.mediaType = '0'
+        this.$toast('您当前通过认证的媒体为企业媒体，无法进行个人自媒体认证')
+      } else if (this.selfMediaType === 1 && val === '0') {
+        this.form.mediaType = '1'
+        this.$toast('您当前通过认证的媒体为个人自媒体，无法进行企业媒体认证')
+      } else {
+        this.form.frontImg = null
+        this.form.frontKey = null
+        this.form.backImg = null
+        this.form.backKey = null
+        this.form.imgList = []
+      }
     },
     async submit () {
       if (this.validate(this.form.mediaName, '请填写自媒体名称')) {
