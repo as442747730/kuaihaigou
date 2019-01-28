@@ -29,27 +29,44 @@
       <div class="user-infor-item">
         <span class="ib-middle">居住地</span>
         <div class="ib-middle">
-          <p>{{ inforData.residenceProvince + inforData.residenceCity }}</p>
+          <p>{{ inforData.userInfo.residenceProvince + inforData.userInfo.residenceCity }}</p>
         </div>
       </div>
       <div class="user-infor-item">
-        <span class="ib-middle"></span>
+        <span class="ib-middle">微信号</span>
         <div class="ib-middle">
-          <p>{{ inforData.nickname }}</p>
+          <p>{{ inforData.userInfo.wechat }}</p>
         </div>
       </div>
       <div class="user-infor-item">
-        <span class="ib-middle">昵称</span>
+        <span class="ib-middle">QQ号</span>
         <div class="ib-middle">
-          <p>{{ inforData.nickname }}</p>
+          <p>{{ inforData.userInfo.qq }}</p>
         </div>
       </div>
       <div class="user-infor-item">
-        <span class="ib-middle">昵称</span>
+        <span class="ib-middle">个性签名</span>
         <div class="ib-middle">
-          <p>{{ inforData.nickname }}</p>
+          <p>{{ inforData.signature }}</p>
         </div>
       </div>
+    </div>
+    <div class="depart-line"></div>
+    <div class="user-infor-other">
+      <span>什么时候开始喝葡萄酒</span>
+      <strong class="font_hight">{{ inforData.userInfo.wineWhen || '暂无信息' }}</strong>
+    </div>
+    <div class="user-infor-other">
+      <span>最喜欢什么产区的葡萄酒</span>
+      <strong>{{ inforData.userInfo.wineArea || '暂无信息' }}</strong>
+    </div>
+    <div class="user-infor-other">
+      <span>最喜欢什么品种的葡萄酒</span>
+      <strong>{{ inforData.userInfo.wineVariety || '暂无信息' }}</strong>
+    </div>
+    <div class="user-infor-other">
+      <span>每个月喝多少瓶葡萄酒</span>
+      <strong>{{ inforData.userInfo.wineHowMany || '暂无信息' }}</strong>
     </div>
   </div>
 </template>
@@ -102,10 +119,14 @@ export default {
 
 <style lang="less" scoped>
 .user-infor {
+  padding: 0 20px;
   &-item {
-    padding: 25px 20px;
+    padding: 25px 0px;
     font-size: 15px;
     border-bottom: 1px solid #f1f1f1;
+    &:last-child {
+      border-bottom: 0;
+    }
     span {
       color: #666;
       width: 60px;
@@ -123,6 +144,26 @@ export default {
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+    }
+  }
+  &-other {
+    padding: 0 20px;
+    overflow: hidden;
+    &:last-child {
+      margin-bottom: 40px;
+    }
+    span {
+      font-size: 13px;
+      color: #999;
+      display: block;
+      margin-top: 25px;
+    }
+    strong {
+      font-size: 15px;
+      display: block;
+      color: #333;
+      padding: 5px 0 25px;
+      border-bottom: 1px solid #f1f1f1;
     }
   }
 }
