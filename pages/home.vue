@@ -352,19 +352,21 @@ export default {
     }
     if (munityCode === 200) {
       let { array } = munityData
-      _munitys = array.map(v => {
-        // 时间
-        const { startTime, endTime } = v
-        const newtimes = tools.concatDate(startTime, endTime)
-        v._times = newtimes
-        // 地址
-        const { province, city, district, address } = v
-        const _provice = tools.getStrIndex(province)
-        const _city = tools.getStrIndex(city)
-        const _district = tools.getStrIndex(district)
-        v._dz = _provice + _city + _district + address
-        return v
-      })
+      if (Array.isArray(array)) {
+        _munitys = array.map(v => {
+          // 时间
+          const { startTime, endTime } = v
+          const newtimes = tools.concatDate(startTime, endTime)
+          v._times = newtimes
+          // 地址
+          const { province, city, district, address } = v
+          const _provice = tools.getStrIndex(province)
+          const _city = tools.getStrIndex(city)
+          const _district = tools.getStrIndex(district)
+          v._dz = _provice + _city + _district + address
+          return v
+        })
+      }
     }
     return {
       wineBk: _winebk,
@@ -427,32 +429,34 @@ export default {
     // 美酒推荐，每5秒切换为下一个场景
     const { code: scenCode, data: scenData } = await wineApi.clicentScener()
     if (scenCode === 200) {
-      const promises = scenData.map(v => wineApi.clientGoodwineList(v.id))
-      const proResult = await Promise.all(promises)
-      console.log(proResult)
-      let nowIndex = 0
-      let len = proResult.length
-      let isChange = true
-      if (isChange) {
-        nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
-        const { cover, scenesName, goodsList } = proResult[nowIndex].data
-        this.wineBk = cover
-        this.wineSence = scenesName
-        this.wineList = goodsList
-      }
-      // 换一批
-      const chEl = document.querySelector('#changeNew')
-      let _this = this
-      chEl.onclick = function () {
-        console.time('chEl')
-        isChange = false
-        nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
-        const { cover, scenesName, goodsList } = proResult[nowIndex].data
-        _this.wineBk = cover
-        _this.wineSence = scenesName
-        _this.wineList = goodsList
-        isChange = true
-        console.timeEnd('chEl')
+      if (Array.isArray(scenData)) {
+        const promises = scenData.map(v => wineApi.clientGoodwineList(v.id))
+        const proResult = await Promise.all(promises)
+        console.log(proResult)
+        let nowIndex = 0
+        let len = proResult.length
+        let isChange = true
+        if (isChange) {
+          nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
+          const { cover, scenesName, goodsList } = proResult[nowIndex].data
+          this.wineBk = cover
+          this.wineSence = scenesName
+          this.wineList = goodsList
+        }
+        // 换一批
+        const chEl = document.querySelector('#changeNew')
+        let _this = this
+        chEl.onclick = function () {
+          console.time('chEl')
+          isChange = false
+          nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
+          const { cover, scenesName, goodsList } = proResult[nowIndex].data
+          _this.wineBk = cover
+          _this.wineSence = scenesName
+          _this.wineList = goodsList
+          isChange = true
+          console.timeEnd('chEl')
+        }
       }
     }
   },

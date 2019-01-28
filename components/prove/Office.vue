@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="depart-line"></div>
-    <div class="step step2" v-show="form.officeType === '3'">
+    <div class="step step2" v-if="form.officeType === '3'">
       <div class="textarea-item">
         <h3 class="title font_hight">其他平台</h3>
         <textarea v-model="form.other" :maxlength="150" rows="1" placeholder="请输入其他企业类型"></textarea>
@@ -220,6 +220,13 @@ export default {
   .step5 {
     .upload-box {
       margin-bottom: 0!important;
+    }
+    span {
+      font-size: 13px;
+      color: #666;
+      em {
+        color: #333
+      }
     }
   }
   .van-radio {

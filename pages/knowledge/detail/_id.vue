@@ -32,7 +32,7 @@
 
       <div class="content_wrapper ql-editor" v-if="detailObj.articleType === 1" v-html="detailObj.content"></div>
 
-      <div class="content_wrapper" v-if="detailObj.articleType === 2">
+      <div class="content-wrapper" v-if="detailObj.articleType === 2">
         <video controls :src="detailObj.videoPath"></video>
       </div>
 
@@ -415,12 +415,19 @@ export default {
       margin-bottom: 25px;
     }
     .content_wrapper {
-      // line-height: 25px;
-      // font-size: 14px;
-      // color: @cor_999;
       u {
         text-decoration: underline!important;
       }
+      img {
+        max-width: 100%!important;
+        height: auto!important;
+        margin: 5px 0;
+      }
+    }
+    .content-wrapper {
+      line-height: 25px;
+      font-size: 14px;
+      color: @cor_999;
       img {
         max-width: 100%!important;
         height: auto!important;
