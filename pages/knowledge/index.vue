@@ -1,9 +1,9 @@
 <template>
   <div class="m-knowledge">
 
-    <tab-select ref="tabSelect" :topicList="topicLs" :typeList="typeLs" :breedList="varietyLs" :total="total" @getFilterData="getFilterFetch"></tab-select>
+    <tab-select ref="tabSelect" :topicList="topicLs" :channelId=channelId :topicId="topicId" :typeId="typeId" :varietyId="varietyId" :typeList="typeLs" :breedList="varietyLs" :total="total" @getFilterData="getFilterFetch"></tab-select>
 
-    <van-pull-refresh class="van-pull" v-model="refreshing" @refresh="geRefresh" :loading-text="'刷新中'">
+    <van-pull-refresh class="van-pull" v-if="articleList.length > 0" v-model="refreshing" @refresh="geRefresh" :loading-text="'刷新中'">
       <div class="article-ul">
 
         <div class="article-item" v-for="item in articleList" :key="item.id">
@@ -35,7 +35,9 @@
               </div>
               <!-- 视频 -->
               <div class="video-box" v-if="item.articleType === 2">
-                <video class="video-player" controls :src="item.videoPath"></video>
+                <video ref="refvideo" class="video-player" controls autobuffer>
+                  <source :src="item.videoPath" type="video/mp4">
+                </video>
               </div>
             </div>
 
@@ -57,6 +59,9 @@
 
     </van-pull-refresh>
 
+    <null-data v-else></null-data>
+
+
     <div class="to-top" :class="{'show': showBtn}">
       <van-icon name="upgrade" color="#03A00C8" @click="backToTop"></van-icon>
     </div>
@@ -69,13 +74,14 @@ import api from '~/utils/request'
 import { knowApi } from '~/api/knowledge'
 import TabSelect from '@/components/knowledge/TabSelect.vue'
 import userLab from '@/components/Usericon.vue'
+import nullData from '~/components/nullData'
 
 export default {
   name: 'knowledge',
 
   layout: 'page-with-tabbar',
 
-  components: { TabSelect, userLab },
+  components: { TabSelect, userLab, nullData: nullData },
 
   head () {
     return {
@@ -88,12 +94,19 @@ export default {
 
   mounted () {
     this.$refs.tabSelect.setSelect({ channelId: this.channelId, topicId: this.topicId, typeId: this.typeId, varietyId: this.varietyId, order: this.order })
-
+    // this.$nextTick(() => {
+    //   let videos = this.$refs.refvideo
+    //   if (Array.isArray(videos)) {
+    //     videos.map(v => {
+    //       v.played
+    //     })
+    //   }
+    // })
+    if (this.articleList.length === 0) return
     const v = this
     const pullEl = document.querySelector('.van-pull')
     const ulEl = document.querySelector('.article-ul')
     const bt = document.querySelector('.load-more')
-
     function throttle (fn, interval = 300) {
       let canRun = true
       return function () {
@@ -105,7 +118,6 @@ export default {
         }, interval)
       }
     }
-
     pullEl.addEventListener('scroll', throttle(function (e) {
       if (pullEl.scrollTop > pullEl.offsetHeight) {
         v.showBtn = true
@@ -129,19 +141,27 @@ export default {
         if (res1.code !== 200 || res2.code !== 200 || res3.code !== 200 || res4.code !== 200) {
           req.redirect('/error')
         }
-        console.log(res4.data.array)
+        let articleArr = []
+        if (res4.data && res4.data.array) {
+          articleArr = res4.data.array
+        }
+        let _channelid = req.query.channelid
+        if (_channelid) {
+          _channelid = Number(_channelid)
+        }
+        console.log(req.query.topicid, 'topicid')
         return {
-          channelId: req.query.channelid || null,
-          topicId: req.query.topicid || null,
+          channelId: _channelid || 0,
+          topicId: req.query.topicid || '',
           typeId: req.query.typeid || null,
           varietyId: req.query.varietyid || null,
           order: +req.query.order || 1,
           topicLs: res1.data.map(n => { return { id: n.id, name: n.topicName } }),
           typeLs: res2.data.map(n => { return { id: n.id, name: n.typeName } }),
           varietyLs: res3.data.map(n => { return { id: n.id, name: n.varietyName } }),
-          articleList: res4.data.array,
-          total: res4.data.total,
-          hasMore: res4.data.total > 10
+          articleList: articleArr,
+          total: articleArr.length,
+          hasMore: articleArr.length > 10
         }
       }))
   },
@@ -155,10 +175,10 @@ export default {
       varietyLs: [],
       total: 0,
 
-      channelId: null,
-      topicId: null,
-      typeId: null,
-      varietyId: null,
+      channelId: 0,
+      topicId: '',
+      typeId: '',
+      varietyId: '',
       order: 1,
 
       refreshing: false,
@@ -201,8 +221,8 @@ export default {
       this.varietyId = val.vareity
       this.order = val.order
       window.location.search = `?order=${this.order}` + (this.channelId ? `&channelid=${this.channelId}` : '') + (this.topicId ? `&topicid=${this.topicId}` : '') + (this.typeId ? `&typeid=${this.typeId}` : '') + (this.varietyId ? `&varietyid=${this.varietyId}` : '')
-      this.currentPage = 1
-      this.fetchData(false)
+      // this.currentPage = 1
+      // this.fetchData(false)
     },
     async geRefresh () {
       this.refreshing = true

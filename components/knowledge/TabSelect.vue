@@ -1,10 +1,10 @@
 <template>
   <div class="u-tab-select">
     <div class="select-wrapper">
-      <div :class="['select-item', tabActive === 'channel' ? 'active' : '']" @click="handleTab('channel')">频道</div>
-      <div :class="['select-item', tabActive === 'topic' ? 'active' : '']" @click="handleTab('topic')">话题</div>
-      <div :class="['select-item', tabActive === 'type' ? 'active' : '']" @click="handleTab('type')">葡萄酒类型</div>
-      <div :class="['select-item', tabActive === 'breed' ? 'active' : '']" @click="handleTab('breed')">葡萄品种</div>
+      <div :class="['select-item', tabActive === 'channel' ? 'active' : '', {active: channelId !== 0}]" @click="handleTab('channel')">频道</div>
+      <div :class="['select-item', tabActive === 'topic' ? 'active' : '', {active: topicId}]" @click="handleTab('topic')">话题</div>
+      <div :class="['select-item', tabActive === 'type' ? 'active' : '', {active: typeId}]" @click="handleTab('type')">葡萄酒类型</div>
+      <div :class="['select-item', tabActive === 'breed' ? 'active' : '', {active: varietyId}]" @click="handleTab('breed')">葡萄品种</div>
     </div>
     <div class="filter-wrapper">
       <span>{{ total }}条</span>
@@ -17,7 +17,7 @@
           <div :class="{
             'label': true,
             'small': tabActive === 'type' || tabActive === 'breed',
-            'active': item.id === $data[`${tabActive}Active`]
+            'active': (item.id === $data[`${tabActive}Active` || item.id === channelId])
           }" v-for="(item, index) in labelList" :key="index" @click="selectLabel(item.id)">{{ item.name }}</div>
         </div>
         <div class="drop-wrapper-bottom">
@@ -46,6 +46,10 @@
     name: 'TabSelect',
 
     props: {
+      channelId: Number,
+      topicId: String,
+      typeId: String,
+      varietyId: String,
       topicList: Array,
       typeList: Array,
       breedList: Array,
@@ -100,11 +104,16 @@
       },
 
       selectLabel (id) {
-        this[`${this.tabActive}Active`] = id
+        let lastid = this[`${this.tabActive}Active`]
+        if (lastid !== id) {
+          this[`${this.tabActive}Active`] = id
+        } else {
+          this[`${this.tabActive}Active`] = ''
+        }
       },
 
       reset () {
-        this[`${this.tabActive}Active`] = ''
+        window.location.href = '/knowledge'
       },
       submit () {
         this.$emit('getFilterData', { channelId: this.channelActive, topicId: this.topicActive, typeId: this.typeActive, vareity: this.breedActive, order: this.optionActive })
@@ -115,7 +124,10 @@
         this.expanded = !this.expanded
       },
       selectNew (type) {
-        if (type === this.optionActive) return
+        if (type === this.optionActive) {
+          this.expanded = false
+          return
+        }
         this.optionActive = type
         this.$emit('getFilterData', { channelId: this.channelActive, topicId: this.topicActive, typeId: this.typeActive, vareity: this.breedActive, order: this.optionActive })
         this.expanded = false
