@@ -158,20 +158,21 @@
         width: 12px;
         height: 13px;
         vertical-align: top;
-        background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
+        background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
         background-size: 80% auto;
         background-position: center;
         background-repeat: no-repeat;
         opacity: 0.5;
         transition: .2s;
-        transform: rotate(180deg);
+        transform: rotate(0);
       }
       &.active {
         color: @cor_333;
         font-weight: bold;
         &:after {
           opacity: 1;
-          transform: none;
+          transform: rotate(0);
+          background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
         }
       }
     }
