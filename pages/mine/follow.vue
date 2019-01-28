@@ -187,13 +187,15 @@ export default {
           }
         }
         .item-wgz {
-          background: #cccccc;
-        }
-        .item-ygz {
+          // background: #cccccc;
           background: #03A1CD;
         }
+        .item-ygz {
+          // background: #03A1CD;
+        }
         .item-xhgz {
-          background: #cccccc;
+          // background: #cccccc;
+          background: #03A1CD;
         }
       }
 
