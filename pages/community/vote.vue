@@ -251,7 +251,7 @@ export default {
           .inpbox {
             display: flex;
             width: 173px;
-            height: 32px;
+            // height: 32px;
             margin-top: 10px;
             background: rgba(245, 245, 245, 1);
             border-radius: 16px;
@@ -274,8 +274,9 @@ export default {
               font-family: PingFang-SC-Medium;
               font-weight: 500;
               color: rgba(199, 199, 199, 1);
-              line-height: 13px;
               background: rgba(245, 245, 245, 1);
+              height: 13px;
+              padding: 9px 0;
 
               &.inpafter {
                 font-size: 15px;
