@@ -2,8 +2,8 @@
   <article class="u-goods-comment">
     <div class="detail_comment-tab">
       <ul>
-        <li @click='commentShow = true' :class="{'cur': commentShow}">客户评价</li>
-        <li @click='commentShow = false' :class="{'cur': !commentShow}">客户提问</li>
+        <li @click='handleComment(true)' :class="{'cur': commentShow}">客户评价</li>
+        <li @click='handleComment(false)' :class="{'cur': !commentShow}">客户提问</li>
       </ul>
     </div>
     <!-- 评价 -->
@@ -217,6 +217,15 @@ export default {
         onClose () {
         }
       })
+    },
+    handleComment (val) {
+      this.commentShow = val
+      let ctn = document.querySelector('.compare-btn')
+      if (!val) {
+        ctn.style.display = 'none'
+      } else {
+        ctn.style.display = 'block'
+      }
     },
     // 回复
     async reply (commentid, val) {

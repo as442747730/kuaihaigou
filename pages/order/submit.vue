@@ -312,6 +312,7 @@ export default {
         this.couponShow = false
         this.invoinceShow = false
         this.fullScreen = false
+        this.navTitle = ''
       } else if (to.hash === '#address') {
         this.addressShow = true
       } else if (to.hash === '#coupon') {

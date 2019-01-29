@@ -282,15 +282,19 @@ export default {
         font-weight: normal;
       }
       i {
-        position: absolute;
-        right: 0;
-        top: -5px;
+        // position: absolute;
+        position: fixed;
+        z-index: 99;
+        // right: 0;
+        right: 24px;
+        top: 484px;
+        // top: -5px;
         width: 45px;
         height: 45px;
         background: url('~/assets/img/detail/ic_wen_blue_45x45@2x.png') no-repeat center/contain;
-        &.tp-5 {
-          top: -18px;
-        }
+        // &.tp-5 {
+        //   top: -18px;
+        // }
       }
     }
   }
