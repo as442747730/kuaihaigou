@@ -31,17 +31,18 @@
         </div>
       </section>
       <section class="list" v-else-if="navIndex === 2">
-        <div class="list-item list-used" v-for="n in 5">
+        <div class="list-item list-used" v-for="(oldcou, index) in oldcouponlist" :key="index">
           <div class="item-l">
-            <div class="price use_used">￥<span class="price_weight">10</span></div>
-            <p class="useok use_used">满100元可用</p>
+            <div class="price use_used">￥<span class="price_weight">{{oldcou.faceValue}}</span></div>
+            <p class="useok use_used">满{{oldcou.useThreshold}}元可用</p>
           </div>
           <div class="item-r">
             <h4 class="r_name use_used">全品类通用券</h4>
-            <p class="use_used">有效期：2018-4-30至2018-12-30</p>
+            <p class="use_used">有效期：{{oldcou.startTimeDesc}}至{{oldcou.endTimeDesc}}</p>
           </div>
         </div>
       </section>
+      <null-data tips="暂无你想要的优惠券" v-if="listNull"></null-data>
     </div>
     <div class="explain" v-if="navIndex === 0">
       <a href="/coupon/explain">优惠券说明</a>
@@ -50,6 +51,7 @@
 </template>
 <script>
 import comHead from '~/components/com-head'
+import nullData from '~/components/nullData'
 import { couponApi } from '~/api/coupon'
 export default {
   head () {
@@ -61,14 +63,14 @@ export default {
     }
   },
   components: {
-    comHead
+    comHead,
+    nullData
   },
   async asyncData (req) {
     let params = { page: 1, count: 10, ifUsed: false }
     const { code, data } = await couponApi.serverGetList(params, req)
-    console.log('code', code)
     if (code === 200) {
-      console.log(data)
+      // console.log(data)
       return { wsylist: data.array }
     }
   },
@@ -77,6 +79,7 @@ export default {
       configtitle: '我的优惠券',
       navlist: ['未使用', '使用记录', '已过期'],
       navIndex: 0,
+      // 未使用
       wsylist: [],
       curWsy: {
         page: 1,
@@ -85,6 +88,7 @@ export default {
       wsyTotalpage: 1,
       wsyLoad: true,
       wsyMore: true,
+      // 使用记录
       recordlist: [],
       curRecord: {
         page: 1,
@@ -92,7 +96,14 @@ export default {
       },
       recordTotalpage: 1,
       recordLoad: true,
-      recordMore: true
+      recordMore: true,
+      // 已过期
+      oldcouponlist: []
+    }
+  },
+  computed: {
+    listNull () {
+      return (this.navIndex === 0 && this.wsylist.length === 0) || (this.navIndex === 1 && this.recordlist.length === 0) || (this.navIndex === 2 && this.oldcouponlist.length === 0)
     }
   },
   mounted () {
@@ -134,9 +145,12 @@ export default {
         this.wsyFn()
       } else if (index === 1) {
         this.recordFn()
+      } else if (index === 2) {
+        this.oldcoupon()
       }
     },
     async wsyFn () {
+      // 未使用
       let params = {
         ifUsed: false
       }
@@ -151,6 +165,7 @@ export default {
       this.wsyLoad = true
     },
     async recordFn () {
+      // 使用记录
       let params = {
         ifUsed: true
       }
@@ -163,6 +178,16 @@ export default {
         this.recordlist = array
       }
       this.recordLoad = true
+    },
+    async oldcoupon () {
+      // 过期优惠券
+      const { code, data } = await couponApi.getOldCoupon()
+      if (code === 200) {
+        // console.log(data)
+        this.oldcouponlist = data
+      } else if (code === 506) {
+        window.location.href = '/account/login'
+      }
     }
   }
 }
