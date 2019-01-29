@@ -182,7 +182,7 @@
                   <u class="ib-middle" v-lazy:background-image="share.userResp.headimgurl"></u>
                   <div class="ib-middle">
                     <span>{{ share.userResp.nickname }}</span>
-                    <p>{{ share.userResp.createdAt }}</p>
+                    <p>{{ share.createdAt }}</p>
                   </div>
                 </div>
                 <div class="share_home-content" @click="goknowdetail(share)">

@@ -15,7 +15,7 @@
                   <span>{{ item.userResp.nickname }}</span>
                   <user-lab :level='String(item.userResp.userGradeNumber)' type='1' :profess='String(item.userResp.category)'></user-lab>
                 </div>
-                <p class="date">{{ item.userResp.createdAt }}</p>
+                <p class="date">{{ item.createdAt }}</p>
               </div>
             </a>
           </div>
