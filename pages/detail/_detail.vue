@@ -765,6 +765,7 @@ export default {
     },
     // 去购物查看
     onClickMiniBtn () {
+      if (!this.isLogin) return this.jumpLogin()
       window.location.href = '/order/cart'
     },
     // 加入购物车
