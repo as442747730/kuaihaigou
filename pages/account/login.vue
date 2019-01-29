@@ -41,9 +41,9 @@
     <div class="m-login-bottom">
       <p class="m-login-bottom-title">第三方账号直接登录</p>
       <div class="m-login-bottom-flex">
-        <div class="m-login-bottom-flex-item weibo"></div>
-        <div class="m-login-bottom-flex-item qq"></div>
-        <div class="m-login-bottom-flex-item wechat"></div>
+        <div class="m-login-bottom-flex-item weibo" @click="loginClient('wb')"></div>
+        <div class="m-login-bottom-flex-item qq" @click="loginClient('qq')"></div>
+        <!-- <div class="m-login-bottom-flex-item wechat"></div> -->
       </div>
     </div>
 
@@ -209,6 +209,17 @@ export default {
 
     gotoIndex () {
       window.location.href = '/'
+    },
+
+    loginClient (method) {
+      switch (method) {
+        case 'qq':
+          window.location.href = '/api/authorize/qq?returnUrl=' + this.prevLink
+          break
+        case 'wb':
+          window.location.href = '/api/authorize/wb?returnUrl=' + this.prevLink
+          break
+      }
     }
   }
 
@@ -323,7 +334,7 @@ export default {
       margin-top: 40px;
       display: flex;
       justify-content: space-between;
-      padding: 0 38px;
+      padding: 0 76px;
       &-item {
         width: 50px;
         height: 50px;
