@@ -108,7 +108,7 @@ export default {
       }).then((res) => {
         if (res.status === 200) {
           Toast.clear()
-          return res.data.data.url
+          return res.data.data.url + '?imageslim'
         } else {
           Toast.fail(res.statusText)
           return res.statusText
