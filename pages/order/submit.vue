@@ -321,6 +321,7 @@ export default {
         this.invoinceShow = false
         this.fullScreen = false
         this.navTitle = ''
+        this.navTxt = ''
       } else if (to.hash === '#address') {
         this.addressShow = true
       } else if (to.hash === '#coupon') {

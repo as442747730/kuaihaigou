@@ -36,7 +36,7 @@ module.exports = {
     // { src: './plugins/wechat.js', ssr: false },
     { src: './plugins/vant.js', ssr: true },
     { src: './plugins/vue-bus.js', ssr: true },
-    { src: './plugins/vconsole.js', ssr: false },
+    // { src: './plugins/vconsole.js', ssr: false },
     { src: './plugins/filter.js', ssr: true },
     { src: './plugins/upload.js', ssr: true },
     { src: './plugins/nuxt-quill.js', ssr: true }
