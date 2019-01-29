@@ -113,17 +113,17 @@
 <style lang="less" scoped>
 .u-coupon {
   background: @cor_border;
-  height: 100vh;
-  padding: 10px 20px;
   font-size: 0;
-  padding-bottom: 50px;
   box-sizing: border-box;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  overflow: scroll;
+  height: 100vh;
+  padding: 10px 20px;
+  padding-bottom: 50px;
   padding-top: 56px;
+  overflow: scroll;
   &-cell {
     padding: 15px;
     background: white;

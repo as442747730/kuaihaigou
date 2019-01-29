@@ -1,7 +1,7 @@
 <template>
   <div class="m-order-submit" :class="{'fullScreen': fullScreen}">
 
-    <van-nav-bar :title="navTitle || '填写订单'" left-arrow :right-text="navTxt" @click-left='historyBack' @click-right="jump">
+    <van-nav-bar :title="clearHead || '填写订单'" left-arrow :right-text="navTxt" @click-left='historyBack' @click-right="jump">
     </van-nav-bar>
 
     <div class="m-section-position more-link" @click="openAddress">
@@ -139,7 +139,7 @@
     <div class="m-section-cell">
       <div class="msg">
         <h4>订单留言</h4>
-        <textarea v-model="msg" class="reason-content" :maxlength="150" rows="5" placeholder="请输入留言内容"></textarea>
+        <textarea v-model="msg" class="reason-content" :maxlength="150" rows="5" placeholder="请输入留言内容" @blur="ioskeyborad"></textarea>
         <span class="words">{{ msg.length }}/150</span>
       </div>
     </div>
@@ -196,6 +196,14 @@ export default {
         this.maxReward = this.rewardNow
       }
       return (this.totalPrice + this.totalFreight - this.reduceFreight - c - p - s)
+    },
+    clearHead () {
+      // 防止物理返回键导致navTitle没有重置
+      let title = this.navTitle
+      if (!this.addressShow && !this.couponShow && !this.invoinceShow) {
+        title = ''
+      }
+      return title
     }
   },
 
@@ -367,6 +375,9 @@ export default {
   },
 
   methods: {
+    ioskeyborad () {
+      window.scroll(0, 0)
+    },
     openAddress () {
       this.addressShow = true
       this.fullScreen = true
