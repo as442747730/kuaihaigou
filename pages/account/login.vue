@@ -43,7 +43,7 @@
       <div class="m-login-bottom-flex">
         <div class="m-login-bottom-flex-item weibo"></div>
         <div class="m-login-bottom-flex-item qq"></div>
-        <div class="m-login-bottom-flex-item wechat"></div>
+        <!-- <div class="m-login-bottom-flex-item wechat"></div> -->
       </div>
     </div>
 
