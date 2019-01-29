@@ -458,10 +458,6 @@ export default {
       if (this.goodsNoSend.length !== 0) {
         return this.$toast('您的订单中含有不在配送范围内商品，请返回购物车修改')
       }
-      // 如果是hi币全额支付
-      // if (this.payable === 0 && this.rewardMoney) {
-      //   this.payHimoney = true
-      // }
       let obj = {
         shippingAddressId: this.addressSelected.id, // 收货地址id
         remark: this.msg, // 留言
@@ -472,14 +468,36 @@ export default {
         totalFeight: this.totalFreight - this.reduceFreight, // 实际运费
         source: 2 // 来源: 1:PC 2:移动端 3:APP
       }
-      const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
-      const { code, data } = await api.clientPostJson('/api/order/order', obj)
-      if (code === 200) {
-        toast2.clear()
-        this.payMethodShow = true
-        this.orderId = data.orderid
+      // 如果是hi币全额支付
+      if (this.payable === 0 && this.rewardMoney) {
+        // this.payHimoney = true
+        this.$dialog.confirm({
+          title: '支付提示',
+          message: '当前支付方式为hi币全额付款,是否确认付款?'
+        }).then(async () => {
+          // on confirm
+          const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
+          const { code, data } = await api.clientPostJson('/api/order/order', obj)
+          if (code === 200) {
+            toast2.clear()
+            this.orderId = data.orderid
+            window.location.href = '/order/result?orderId=' + this.orderId
+          } else {
+            this.$toast(data)
+          }
+        }).catch(() => {
+        })
       } else {
-        this.$toast(data)
+        // 非hi币，普通支付
+        const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
+        const { code, data } = await api.clientPostJson('/api/order/order', obj)
+        if (code === 200) {
+          toast2.clear()
+          this.payMethodShow = true
+          this.orderId = data.orderid
+        } else {
+          this.$toast(data)
+        }
       }
     },
 
