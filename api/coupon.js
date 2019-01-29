@@ -15,5 +15,9 @@ export const couponApi = {
   // 获取可用优惠卷
   listForUsable (params) {
     return request.clientGet('/api/coupon/listForUsable', params)
+  },
+  // 获取已过期优惠券
+  getOldCoupon () {
+    return request.clientGet('/api/coupon/paginateOldCoupon')
   }
 }
