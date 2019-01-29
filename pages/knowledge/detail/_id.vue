@@ -163,8 +163,8 @@ import userLab from '@/components/Usericon.vue'
 import uAuthor from '@/components/knowledge/Author'
 import articelComment from '@/components/articel/Comment'
 import payReward from '@/components/Pay-reward'
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
+// import 'quill/dist/quill.core.css'
+// import 'quill/dist/quill.snow.css'
 
 export default {
   name: '',
@@ -485,6 +485,8 @@ export default {
       margin-bottom: 25px;
     }
     .content_wrapper {
+      line-height: 25px;
+      font-size: 14px;
       u {
         text-decoration: underline!important;
       }
