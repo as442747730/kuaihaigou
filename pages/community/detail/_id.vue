@@ -396,7 +396,7 @@
       <div class="btnitem btncor2" v-if="activeStatus === '1'">已报名</div>
       <div class="btnitem btncor3" v-if="activeStatus === '2'">报名结束</div>
       <div class="btnitem btncor3" v-if="activeStatus === '3'">未开始</div>
-      <div class="btnitem btncor2" v-if="activeStatus === '4'" @click="tovote">进行中</div>
+      <div class="btnitem btncor2" v-if="activeStatus === '4'">进行中</div>
       <div class="btnitem btncor4" v-if="activeStatus === '5'" @click="tovote">参与投票</div>
       <div class="btnitem btncor5" v-if="activeStatus === '6'">已投票</div>
       <div class="btnitem btncor6" v-if="activeStatus === '7'">投票结束</div>
@@ -413,13 +413,13 @@
         <div class="signup-item">
           <div class="item_l">姓名</div>
           <div class="item_r">
-            <input type="text" :class="{r_input: signName !== ''}"  v-model="signName" placeholder="请输入姓名" />
+            <input type="text" :class="{r_input: signName !== ''}" @blur="onblur"  v-model="signName" placeholder="请输入姓名" />
           </div>
         </div>
         <div class="signup-item">
           <div class="item_l">联系号码</div>
           <div class="item_r">
-            <input type="text" :class="{r_input: signPhone !== ''}" v-model="signPhone" placeholder="请输入联系号码" />
+            <input type="text" :class="{r_input: signPhone !== ''}" @blur="onblur" v-model="signPhone" placeholder="请输入联系号码" />
           </div>
         </div>
         <div class="signup-btn" @click="signupfn">确定</div>
@@ -693,6 +693,10 @@
         } else {
           window.location.href = '/account/login'
         }
+      },
+      onblur () {
+        // ios移动端软键盘收起后，页面内容留白不下滑
+        window.scroll(0, 0)
       },
       hidefn () {
         this.showsignup = false

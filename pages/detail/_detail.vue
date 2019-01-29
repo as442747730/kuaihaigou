@@ -100,7 +100,7 @@
         <li class="tab-list" :class="{'cur': tabIndex === 1}" @click="chooseType(1)">
           <span>图文详情</span>
         </li>
-        <li class="tab-list" :class="{'cur': tabIndex === 2}" @click="chooseType(2)">
+        <li class="tab-list" :class="{'cur': tabIndex === 2}" v-if="sourcePage !== 'otherone'" @click="chooseType(2)">
           <span>酒评参数</span>
         </li>
         <li class="tab-list" :class="{'cur': tabIndex === 3}" @click="chooseType(3)">
@@ -117,7 +117,7 @@
         <li class="tab-list" :class="{'cur': tabIndex === 1}" @click="chooseType(1)">
           <span>图文详情</span>
         </li>
-        <li class="tab-list" :class="{'cur': tabIndex === 2}" @click="chooseType(2)">
+        <li class="tab-list" :class="{'cur': tabIndex === 2}" v-if="sourcePage !== 'otherone'" @click="chooseType(2)">
           <span>酒评参数</span>
         </li>
         <li class="tab-list" :class="{'cur': tabIndex === 3}" @click="chooseType(3)">
@@ -269,6 +269,8 @@ export default {
   async asyncData (req) {
     const goodsId = req.params.detail
     console.log(goodsId)
+    // sourcePage='otherone' 来自其它商品,去掉酒评参数
+    let sourcePage = req.query.page
     let id = goodsId
     let detailFn = goodsApi.getDetail(id, req)
     let topSaleFn = goodsApi.getTopSales(req)
@@ -352,6 +354,7 @@ export default {
       }
 
       return {
+        sourcePage: sourcePage,
         goodsId: goodsId,
         isLogin: isLogin,
         topGoods: topData,
@@ -371,6 +374,7 @@ export default {
 
   data () {
     return {
+      sourcePage: '',
       goodsId: '',
       isLogin: false,
       // 初始化数据

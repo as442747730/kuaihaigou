@@ -8,7 +8,12 @@
     <div class="apply-main">
       <div class="actname">
         <div class="actname-title">活动名称</div>
-        <input :class="['actname-input', {cor: froms.name}]" v-model="froms.name" :maxlength="50" type="text" placeholder="输入活动名称" />
+        <input :class="['actname-input', {cor: froms.name}]" 
+          v-model="froms.name"
+          :maxlength="50"
+          type="text"
+          placeholder="输入活动名称"
+          @blur="ioskeyboard" />
       </div>
       <div class="acttype">
         <div class="acttype-title">活动类型</div>
@@ -69,27 +74,51 @@
             <p v-else class="cor">{{areaTxt}}</p>
           </div>
           <div class="actselect-item">
-            <input :class="['actselect_address', {cor: address !== ''}]" type="text" v-model="address" :maxlength="50" placeholder="详细地址">
+            <input :class="['actselect_address', {cor: address !== ''}]"
+              type="text"
+              v-model="address"
+              :maxlength="50"
+              placeholder="详细地址"
+              @blur="ioskeyboard" />
           </div>
         </div>
       </div>
       <div class="actinstro">
         <div class="actinstro-title">活动简介</div>
-        <textarea :class="['actinstro-textarea', {cor: froms.introduce}]" v-model="froms.introduce" :maxlength="500" rows="6" placeholder="请填写活动简介"></textarea>
+        <textarea :class="['actinstro-textarea', {cor: froms.introduce}]"
+          v-model="froms.introduce"
+          :maxlength="500"
+          rows="6"
+          placeholder="请填写活动简介"
+          @blur="ioskeyboard"></textarea>
         <div class="actinstro-tip">{{froms.introduce.length}}/500</div>
       </div>
       <div class="actperson">
         <div class="actperson-item">
           <div class="actperson_title">联系人</div>
-          <input :class="['actperson_inp', {cor: froms.contact}]" type="text" v-model="froms.contact" :maxlength="25" placeholder="输入联系人称呼" />
+          <input :class="['actperson_inp', {cor: froms.contact}]"
+            type="text"
+            v-model="froms.contact"
+            :maxlength="25"
+            placeholder="输入联系人称呼"
+            @blur="ioskeyboard" />
         </div>
         <div class="actperson-item">
           <div class="actperson_title">联系电话</div>
-          <input :class="['actperson_inp', {cor: froms.phone}]" type="tel" v-model="froms.phone" placeholder="输入联系人电话" />
+          <input :class="['actperson_inp', {cor: froms.phone}]"
+            type="tel"
+            v-model="froms.phone"
+            placeholder="输入联系人电话"
+            @blur="ioskeyboard" />
         </div>
         <div class="actperson-item" v-if="froms.activityType === 2">
           <div class="actperson_title">企业名</div>
-          <input :class="['actperson_inp', {cor: froms.company}]" type="text" v-model="froms.company" :maxlength="30" placeholder="输入您的企业名" />
+          <input :class="['actperson_inp', {cor: froms.company}]"
+          type="text"
+          v-model="froms.company"
+          :maxlength="30"
+          placeholder="输入您的企业名"
+          @blur="ioskeyboard" />
         </div>
       </div>
     </div>
@@ -199,6 +228,10 @@
       this.districtId = this.districtList[0].id
     },
     methods: {
+      ioskeyboard () {
+        // ios移动端软键盘收起后，页面内容留白不下滑
+        window.scroll(0, 0)
+      },
       dateConfirm (val) {
         let value = this.fromDate(val)
         console.log(value)
@@ -535,7 +568,8 @@
         font-family: PingFangSC-Regular;
         font-weight: 400;
         color: rgba(204, 204, 204, 1);
-        line-height: 15px;
+        // line-height: 15px;
+        line-height: normal;
         padding-bottom: 20px;
         &.cor {
           color: #000;
@@ -687,7 +721,8 @@
           font-family:PingFangSC-Regular;
           font-weight:400;
           color:rgba(204,204,204,1);
-          line-height:15px;
+          // line-height:15px;
+          line-height: normal;
           width: 100%;
           &.cor {
             color: #000;
@@ -761,7 +796,8 @@
         padding-top: 20px;
         padding-bottom: 19px;
         font-size: 15px;
-        line-height: 15px;
+        // line-height: 15px;
+        line-height: normal;
         font-family: PingFangSC-Regular;
         font-weight: 400;
         color: rgba(204, 204, 204, 1);
