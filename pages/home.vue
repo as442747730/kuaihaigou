@@ -48,7 +48,9 @@
               v-for="(poet, index) in poetList"
               :key="index">
               <i class="ib-middle" :style="{backgroundImage: 'url('+ poet.headimgurl +')'}"></i>
-              <p class="ib-middle">{{poet.content}}</p>
+              <div class="ib-middle notify_home-word">
+                <p class="ib-middle">{{poet.content}}</p>
+              </div>
               <div class="notify_home-icon ib-middle bg" @click="poetZan(poet)"></div>
             </div>
           </div>
@@ -629,12 +631,20 @@ export default {
     margin-left: 10px;
     .bg_cover;
   }
-  p {
-    width: 215px;
-    font-size: 12px;
-    color: #333;
-    line-height: 20px;
+  &-word {
+    width: calc(100% - 120px);
     margin: 0 10px;
+    &>p {
+      font-size: 12px;
+      color: #333;
+      line-height: 20px;
+      overflow: hidden;
+      -o-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
   }
   &-icon {
     width: 60px;
