@@ -4,11 +4,11 @@
       <div class="step step-1">
         <div class="input-item">
           <h3 class="title font_hight">企业名称</h3>
-          <input class="prove-input" type="text" v-model='form.officeName' placeholder="请填写企业名称（必填）" maxlength="30">
+          <input class="prove-input" type="text" v-model='form.officeName' placeholder="请填写企业名称（必填）" maxlength="30" @blur="ioskeyboard">
         </div>
         <div class="input-item">
           <h3 class="title font_hight">企业官网</h3>
-          <input class="prove-input" type="text" v-model='form.href' placeholder="请填写官网名称（非必填）" maxlength="30">
+          <input class="prove-input" type="text" v-model='form.href' placeholder="请填写官网名称（非必填）" maxlength="30" @blur="ioskeyboard">
         </div>
         <div class="input-item">
           <h3 class="title font_hight">企业类型</h3>
@@ -25,25 +25,25 @@
       <div class="step step2" v-if="form.officeType === '3'">
         <div class="textarea-item">
           <h3 class="title font_hight">其他平台</h3>
-          <textarea v-model="form.other" :maxlength="150" rows="1" placeholder="请输入其他企业类型"></textarea>
+          <textarea v-model="form.other" :maxlength="150" rows="1" placeholder="请输入其他企业类型" @blur="ioskeyboard"></textarea>
         </div>
       </div>
       <div class="depart-line"></div>
       <div class="step">
         <div class="input-item">
           <h3 class="title font_hight">联系人</h3>
-          <input class="prove-input" type="text" v-model='form.contact' placeholder="请输入姓名（非必填）" maxlength="30">
+          <input class="prove-input" type="text" v-model='form.contact' placeholder="请输入姓名（非必填）" maxlength="30" @blur="ioskeyboard">
         </div>
         <div class="input-item">
           <h3 class="title font_hight">公司电话</h3>
-          <input class="prove-input" type="text" v-model='form.phone' placeholder="请输入企业电话（非必填）" maxlength="30">
+          <input class="prove-input" type="text" v-model='form.phone' placeholder="请输入企业电话（非必填）" maxlength="30" @blur="ioskeyboard">
         </div>
       </div>
       <div class="depart-line"></div>
       <div class="step step3">
         <div class="textarea-item">
           <h3 class="title font_hight">认证描述</h3>
-          <textarea v-model="form.desc" :maxlength="150" rows="6" placeholder="请描述一下您的媒体在红酒行业的成绩或者其他有 意义有影响力的经历……（必填）"></textarea>
+          <textarea v-model="form.desc" :maxlength="150" rows="6" placeholder="请描述一下您的媒体在红酒行业的成绩或者其他有 意义有影响力的经历……（必填）" @blur="ioskeyboard"></textarea>
           <span class="words">{{ form.desc.length }}/150</span>
         </div>
       </div>
@@ -107,11 +107,20 @@ export default {
       updDefault: updDefault
     }
   },
+  computed: {
+    fromOfficeType () {
+      return this.form.officeType
+    }
+  },
 
   methods: {
     uploadFront (data) {
       this.form.frontImg = data.url
       this.form.frontKey = data.key
+    },
+    ioskeyboard () {
+      // ios 关闭键盘，回落空白
+      window.scroll(0, 0)
     },
     async submit () {
       if (this.validate(this.form.officeName, '请填写企业名称') || this.validate(this.form.desc, '请填写认证描述') || this.validate(this.form.businessList, '请上传企业营业执照') || this.validate(this.form.imgList, '请上传资格证相关照片')) {
@@ -177,6 +186,11 @@ export default {
         return true
       }
       return false
+    }
+  },
+  watch: {
+    fromOfficeType (newval, oldval) {
+      console.log('fromOfficeType change', newval, oldval)
     }
   }
 }
