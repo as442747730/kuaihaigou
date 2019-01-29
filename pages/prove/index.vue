@@ -122,8 +122,8 @@
     </transition>
 
     <!-- 企业认证 -->
-    <transition name="slide">
-      <office v-if='showOffice'></office>
+    <transition name="slide" >
+      <office  @touchmove.prevent v-if='showOffice'></office>
     </transition>
 
     <!-- 说明弹窗 -->

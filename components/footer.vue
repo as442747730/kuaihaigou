@@ -2,10 +2,11 @@
   <div class="adapter-ipx">
     <div class="footer" :class="{'blur': $store.state.blurOpen}">
       <span
+        :postIndex="postIndex"
         class="footer-icon"
-        :class="{ cur: postIndex.includes(foot.path) }"
         @click="toPage(foot.path)"
         v-for="(foot, index) in footList"
+        :class="{ cur: postIndex === foot.path }"
         :key="index">
         <i :class="clsList[index]"></i>
         <span class="footer-txt" v-if="index !== 2">{{ foot.name }}</span>
@@ -36,7 +37,13 @@
 <script>
 export default {
   name: 'u-footer',
-  props: ['postIndex'],
+  // props: ['postIndex'],
+  props: {
+    postIndex: {
+      type: String,
+      default: '/home'
+    }
+  },
   data () {
     return {
       clsList: ['footer-icon-index', 'footer-icon-xjzx', 'footer-icon-add', 'footer-icon-zsfx', 'footer-icon-my'],
@@ -84,13 +91,11 @@ export default {
 .footer {
   font-size: 0;
   border-top: 1PX solid #eee;
-  // box-sizing: border-box;
   display: flex;
   width: 100%;
   height: 49px;
   justify-content: space-around;
   align-items: center;
-  // padding: 0 24px;
   position: fixed;
   left: 0;
   bottom: 0;

@@ -1,70 +1,72 @@
 <template>
   <div class="u-office u-prove-common">
-    <div class="step step-1">
-      <div class="input-item">
-        <h3 class="title font_hight">企业名称</h3>
-        <input class="prove-input" type="text" v-model='form.officeName' placeholder="请填写企业名称（必填）" maxlength="30">
-      </div>
-      <div class="input-item">
-        <h3 class="title font_hight">企业官网</h3>
-        <input class="prove-input" type="text" v-model='form.href' placeholder="请填写官网名称（非必填）" maxlength="30">
-      </div>
-      <div class="input-item">
-        <h3 class="title font_hight">企业类型</h3>
-        <van-radio-group v-model="form.officeType">
-          <van-radio name="1" :class="{'checked': form.officeType === '1'}"><em>红酒供应商</em></van-radio>
-          <van-radio name="2" :class="{'checked': form.officeType === '2'}"><em>酒具供应商</em></van-radio>
-          <van-radio name="4" :class="{'checked': form.officeType === '4'}"><em>红酒经销商</em></van-radio>
-          <van-radio name="5" :class="{'checked': form.officeType === '5'}"><em>酒庄</em></van-radio>
-          <van-radio name="3" :class="{'checked': form.officeType === '3'}"><em>其他</em></van-radio>
-        </van-radio-group>
-      </div>
-    </div>
-    <div class="depart-line"></div>
-    <div class="step step2" v-show="form.officeType === '3'">
-      <div class="textarea-item">
-        <h3 class="title font_hight">其他平台</h3>
-        <textarea v-model="form.other" :maxlength="150" rows="1" placeholder="请输入其他企业类型"></textarea>
-      </div>
-    </div>
-    <div class="depart-line"></div>
-    <div class="step">
-      <div class="input-item">
-        <h3 class="title font_hight">联系人</h3>
-        <input class="prove-input" type="text" v-model='form.contact' placeholder="请输入姓名（非必填）" maxlength="30">
-      </div>
-      <div class="input-item">
-        <h3 class="title font_hight">公司电话</h3>
-        <input class="prove-input" type="text" v-model='form.phone' placeholder="请输入企业电话（非必填）" maxlength="30">
-      </div>
-    </div>
-    <div class="depart-line"></div>
-    <div class="step step3">
-      <div class="textarea-item">
-        <h3 class="title font_hight">认证描述</h3>
-        <textarea v-model="form.desc" :maxlength="150" rows="6" placeholder="请描述一下您的媒体在红酒行业的成绩或者其他有 意义有影响力的经历……（必填）"></textarea>
-        <span class="words">{{ form.desc.length }}/150</span>
-      </div>
-    </div>
-    <div class="depart-line"></div>
-    <div class="step step5">
-      <h3 class="title font_hight">上传企业营业执照（最多2张）</h3>
-      <!-- <Upload class='front' @on-success="uploadFront" :max="2">
-        <div class="upload-box qiye" :class="{'success': form.frontImg}" :style="'background: url(' + (form.frontImg || updDefault ) + ') no-repeat center/contain'">
-          <p class="scp">点击上传</p>
+    <div class="office-in">
+      <div class="step step-1">
+        <div class="input-item">
+          <h3 class="title font_hight">企业名称</h3>
+          <input class="prove-input" type="text" v-model='form.officeName' placeholder="请填写企业名称（必填）" maxlength="30">
         </div>
-      </Upload> -->
-      <u-imghandler class='multigraph' :maxNum="2" v-model="form.businessList"></u-imghandler>
-    </div>
-    <div class="depart-line"></div>
-    <div class="step step5">
-      <h3 class="title font_hight">上传资格证等相关照片（最多5张）</h3>
-      <p>(仅支持JPG、PNG格式，且文件小于5M)</p>
-      <u-imghandler class='multigraph' :maxNum="5" v-model="form.imgList"></u-imghandler>
-      <span>认证即代表你已同意<em class="font_hight">《社区指导原则》</em></span>
-    </div>
-    <div class="prove-submit" @click='submit'>
-      立即认证
+        <div class="input-item">
+          <h3 class="title font_hight">企业官网</h3>
+          <input class="prove-input" type="text" v-model='form.href' placeholder="请填写官网名称（非必填）" maxlength="30">
+        </div>
+        <div class="input-item">
+          <h3 class="title font_hight">企业类型</h3>
+          <van-radio-group v-model="form.officeType">
+            <van-radio name="1" :class="{'checked': form.officeType === '1'}"><em>红酒供应商</em></van-radio>
+            <van-radio name="2" :class="{'checked': form.officeType === '2'}"><em>酒具供应商</em></van-radio>
+            <van-radio name="4" :class="{'checked': form.officeType === '4'}"><em>红酒经销商</em></van-radio>
+            <van-radio name="5" :class="{'checked': form.officeType === '5'}"><em>酒庄</em></van-radio>
+            <van-radio name="3" :class="{'checked': form.officeType === '3'}"><em>其他</em></van-radio>
+          </van-radio-group>
+        </div>
+      </div>
+      <div class="depart-line"></div>
+      <div class="step step2" v-if="form.officeType === '3'">
+        <div class="textarea-item">
+          <h3 class="title font_hight">其他平台</h3>
+          <textarea v-model="form.other" :maxlength="150" rows="1" placeholder="请输入其他企业类型"></textarea>
+        </div>
+      </div>
+      <div class="depart-line"></div>
+      <div class="step">
+        <div class="input-item">
+          <h3 class="title font_hight">联系人</h3>
+          <input class="prove-input" type="text" v-model='form.contact' placeholder="请输入姓名（非必填）" maxlength="30">
+        </div>
+        <div class="input-item">
+          <h3 class="title font_hight">公司电话</h3>
+          <input class="prove-input" type="text" v-model='form.phone' placeholder="请输入企业电话（非必填）" maxlength="30">
+        </div>
+      </div>
+      <div class="depart-line"></div>
+      <div class="step step3">
+        <div class="textarea-item">
+          <h3 class="title font_hight">认证描述</h3>
+          <textarea v-model="form.desc" :maxlength="150" rows="6" placeholder="请描述一下您的媒体在红酒行业的成绩或者其他有 意义有影响力的经历……（必填）"></textarea>
+          <span class="words">{{ form.desc.length }}/150</span>
+        </div>
+      </div>
+      <div class="depart-line"></div>
+      <div class="step step5">
+        <h3 class="title font_hight">上传企业营业执照（最多2张）</h3>
+        <!-- <Upload class='front' @on-success="uploadFront" :max="2">
+          <div class="upload-box qiye" :class="{'success': form.frontImg}" :style="'background: url(' + (form.frontImg || updDefault ) + ') no-repeat center/contain'">
+            <p class="scp">点击上传</p>
+          </div>
+        </Upload> -->
+        <u-imghandler class='multigraph' :maxNum="2" v-model="form.businessList"></u-imghandler>
+      </div>
+      <div class="depart-line"></div>
+      <div class="step step5">
+        <h3 class="title font_hight">上传资格证等相关照片（最多5张）</h3>
+        <p>(仅支持JPG、PNG格式，且文件小于5M)</p>
+        <u-imghandler class='multigraph' :maxNum="5" v-model="form.imgList"></u-imghandler>
+        <span>认证即代表你已同意<em class="font_hight">《社区指导原则》</em></span>
+      </div>
+      <div class="prove-submit" @click='submit'>
+        立即认证
+      </div>
     </div>
   </div>
 </template>
@@ -182,6 +184,9 @@ export default {
 
 <style lang="less">
 .u-office {
+  .office-in {
+    min-height: 120vh;
+  }
   .title {
     padding-top: 25px;
   }
@@ -220,6 +225,13 @@ export default {
   .step5 {
     .upload-box {
       margin-bottom: 0!important;
+    }
+    span {
+      font-size: 13px;
+      color: #666;
+      em {
+        color: #333
+      }
     }
   }
   .van-radio {
