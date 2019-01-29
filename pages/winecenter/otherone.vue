@@ -153,7 +153,7 @@ export default {
       return JSON.parse(arr)
     },
     detFn (good) {
-      window.location.href = `/detail/${good.id}`
+      window.location.href = `/detail/${good.id}?page=otherone`
     }
   }
 }

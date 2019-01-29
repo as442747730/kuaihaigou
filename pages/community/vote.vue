@@ -64,6 +64,8 @@ export default {
       let getprice = Number(_evalute).toFixed(2)
       let price = { evaluate: getprice }
       Object.assign(this.blindList[index], price)
+      // ios移动端软键盘收起后，页面内容留白不下滑
+      window.scroll(0, 0)
     },
     async voteFn () {
       if (!this.elIndex && this.elIndex !== 0) {
@@ -249,9 +251,9 @@ export default {
           }
 
           .inpbox {
+            position: relative;
             display: flex;
             width: 173px;
-            // height: 32px;
             margin-top: 10px;
             background: rgba(245, 245, 245, 1);
             border-radius: 16px;
@@ -264,7 +266,6 @@ export default {
               font-family: PingFangSC-Semibold;
               font-weight: 600;
               color: rgba(51, 51, 51, 1);
-              line-height: 13px;
             }
 
             .inps {
@@ -277,7 +278,7 @@ export default {
               background: rgba(245, 245, 245, 1);
               height: 13px;
               padding: 9px 0;
-
+              line-height: normal;
               &.inpafter {
                 font-size: 15px;
                 font-family: PingFangSC-Semibold;
