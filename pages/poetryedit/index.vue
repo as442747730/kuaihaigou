@@ -1,6 +1,6 @@
 <template>
   <div class="m-poetry-edit">
-    <van-nav-bar title="酒坛诗社" left-arrow right-text='发布' @click-left='editShow = false' @click-right="send()"></van-nav-bar>
+    <van-nav-bar title="酒坛诗社" left-arrow right-text='发布' @click-left='editShow = false' @click-right="send"></van-nav-bar>
     <textarea class="textarea" placeholder="写点东西签个到吧～有可能在首页显示哦～" v-model='editContent' :maxlength="100"></textarea>
   </div>
 </template>
@@ -46,7 +46,10 @@ export default {
 
   methods: {
     async send () {
-      if (this.editContent === '') this.$toast('请填写内容')
+      if (this.editContent === '') {
+        this.$toast('请填写内容')
+        return
+      }
       const { code } = await poetApi.createUserSign(this.editContent)
       if (code === 200) {
         this.$toast('发布成功')
