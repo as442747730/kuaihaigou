@@ -10,7 +10,7 @@
       </div>
       <div class="input-item">
         <h3 class="title font_hight">自媒体名称</h3>
-        <input class="prove-input" type="text" v-model='form.mediaName' placeholder="请填写自媒体名称" maxlength="30">
+        <input class="prove-input" type="text" v-model='form.mediaName' placeholder="请填写自媒体名称" maxlength="30" @blur="ioskeyboard" />
       </div>
     </div>
 
@@ -25,15 +25,15 @@
       </div>
       <div class="input-item">
         <h3 class="title font_hight">新浪微博</h3>
-        <input class="prove-input" type="text" v-model='form.weibo' placeholder="请填写新浪微博名称" maxlength="30">
-        <input class="prove-input mt-20" type="text" v-model='form.href' placeholder="请填微博主页链接（选填）">
+        <input class="prove-input" type="text" v-model='form.weibo' placeholder="请填写新浪微博名称" maxlength="30" @blur="ioskeyboard" />
+        <input class="prove-input mt-20" type="text" v-model='form.href' placeholder="请填微博主页链接（选填）" @blur="ioskeyboard" />
       </div>
     </div>
     <!-- <div class="depart-line"></div> -->
     <div class="step step3">
       <div class="textarea-item">
         <h3 class="title font_hight">其他平台</h3>
-        <textarea v-model="form.other" :maxlength="150" rows="6" placeholder="请填写平台请填写平台名称和媒体账号名称，例如：豆瓣（快海购），可填写多个"></textarea>
+        <textarea v-model="form.other" :maxlength="150" rows="6" placeholder="请填写平台请填写平台名称和媒体账号名称，例如：豆瓣（快海购），可填写多个" @blur="ioskeyboard"></textarea>
         <span class="words">{{ form.other.length }}/150</span>
       </div>
     </div>
@@ -41,7 +41,7 @@
     <div class="step step3">
       <div class="textarea-item">
         <h3 class="title font_hight">媒体描述</h3>
-        <textarea v-model="form.desc" :maxlength="150" rows="6" placeholder="请描述一下您的媒体在红酒行业的成绩或者其他有 意义有影响力的经历……（必填）"></textarea>
+        <textarea v-model="form.desc" :maxlength="150" rows="6" placeholder="请描述一下您的媒体在红酒行业的成绩或者其他有 意义有影响力的经历……（必填）" @blur="ioskeyboard"></textarea>
         <span class="words">{{ form.desc.length }}/150</span>
       </div>
     </div>
@@ -133,6 +133,9 @@ export default {
   },
 
   methods: {
+    ioskeyboard () {
+      window.scroll(0, 0)
+    },
     uploadFront (data) {
       this.form.frontImg = data.url
       this.form.frontKey = data.key
