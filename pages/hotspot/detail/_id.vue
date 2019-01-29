@@ -6,7 +6,11 @@
         <div class="infos-sub">
           作者：<span class="sub_child">{{articles.author || '佚名'}}</span>
         </div>
-        <div class="infos-sub" v-if="articles.sourceAddress">来源：{{articles.sourceAddress}}</div>
+        <div class="infos-sub" v-if="articles.sourceAddress || articles.sourceAuthor">来源：
+          <a v-if='articles.sourceAddress && articles.sourceAuthor' :href="articles.sourceAddress">{{ articles.sourceAuthor }}</a>
+          <a v-if='articles.sourceAddress && !articles.sourceAuthor' :href="articles.sourceAddress">链接</a>
+          <a v-if='!articles.sourceAddress && articles.sourceAuthor' href="javascript:void(0)">{{ articles.sourceAuthor }}</a>
+        </div>
         <div class="infos-sub" v-if="articles.classificationId >= 0">分类：{{circlenavList[articles.classificationId]}}</div>
       </div>
       <div class="labels">
@@ -117,7 +121,7 @@ export default {
       padding-right: 20px;
       margin-top: 10px;
       line-height: 14px;
-      &+.infos-sub {
+      & + .infos-sub + .infos-sub {
         padding-right: 0;
       }
       .sub_child {
@@ -171,8 +175,8 @@ export default {
     margin-top: 20px;
     // font-size: 12px;
     // font-weight: 500;
-    font-family: PingFang-SC-Medium;
-    color: rgba(153, 153, 153, 1);
+    // font-family: PingFang-SC-Medium;
+    // color: rgba(153, 153, 153, 1);
     line-height: 25px;
     .fl {
     	float: none !important;
