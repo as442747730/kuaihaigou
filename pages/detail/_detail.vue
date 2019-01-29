@@ -130,9 +130,11 @@
     </section>
 
     <!-- 内容模块 -->
-    <transition name='slide-fade2' mode="out-in">
-      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom="scrollBottom" :islogin='isLogin'></component>
-    </transition>
+    <div class="u-detail_content">
+      <transition name='slide-fade2' mode="out-in">
+        <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom="scrollBottom" :islogin='isLogin'></component>
+      </transition>
+    </div>
 
     <!-- 底栏 -->
     <van-goods-action>
@@ -1303,6 +1305,9 @@ export default {
   }
   .van-modal {
     z-index: 2000!important
+  }
+  &_content {
+    min-height: ~'calc(100vh - 95px)';
   }
 }
 .u-goods-content {
