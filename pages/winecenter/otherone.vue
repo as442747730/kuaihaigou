@@ -4,7 +4,9 @@
     <section class="other-content" ref="scrollElem">
       <div class="box" ref="scrollChild">
         <ul class="othList">
-          <li class="othList-item" v-for="(good, index) in goodsList" :key="index">
+          <li class="othList-item"
+            v-for="(good, index) in goodsList"
+            :key="index" @click="detFn(good)">
             <div class="top">
               <div class="top_bk" v-lazy:background-image="good.imgUrl"></div>
             </div>
@@ -149,6 +151,9 @@ export default {
     customArray (arr) {
       if (!Array.isArray(arr)) return false
       return JSON.parse(arr)
+    },
+    detFn (good) {
+      window.location.href = `/detail/${good.id}`
     }
   }
 }

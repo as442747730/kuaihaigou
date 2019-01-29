@@ -16,15 +16,15 @@
 
     <div class="u-publish" :class="{'show': $store.state.blurOpen}">
       <div class="u-publish-box">
-        <div class="u-publish-item" @click='jumpArticel()'>
+        <div class="u-publish-item" @click='jumpArticel'>
           <i></i>
           <span>发文章</span>
         </div>
-        <div class="u-publish-item" @click='jumpMedia()'>
+        <div class="u-publish-item" @click='jumpMedia'>
           <i></i>
           <span>短视频</span>
         </div>
-        <div class="u-publish-item" @click='jumpDrink()'>
+        <div class="u-publish-item" @click='jumpDrink'>
           <i></i>
           <span>酒坛诗社</span>
         </div>
@@ -35,6 +35,7 @@
   </div>
 </template>
 <script>
+import { poetApi } from '~/api/poets'
 export default {
   name: 'u-footer',
   // props: ['postIndex'],
@@ -81,8 +82,16 @@ export default {
     jumpMedia () {
       window.location.href = '/knowledge/add?type=2'
     },
-    jumpDrink () {
-      window.location.href = '/poetryedit'
+    async jumpDrink () {
+      const { code, data } = await poetApi.adjustSign()
+      if (code === 200) {
+        let { ifSign } = data
+        if (ifSign) {
+          this.$toast('今天已经签到了')
+        } else {
+          window.location.href = '/poetryedit'
+        }
+      }
     }
   }
 }

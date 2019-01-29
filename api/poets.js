@@ -13,5 +13,9 @@ export const poetApi = {
   },
   zanPoet (id) {
     return request.clientPost('/api/sign/like/' + id)
+  },
+  // 判断当前用户今天是否签到
+  adjustSign () {
+    return request.clientGet('/api/sign/checkIfSign')
   }
 }
