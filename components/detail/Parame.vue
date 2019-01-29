@@ -46,7 +46,7 @@
                 <span>{{ info.name }}</span>
                 <span>（{{ info.mark }}）</span>
               </p>
-              <a :href="'/noun/detail/' + $v.areaid + '?num=1'" v-for='($v, $k) in info.text'>
+              <a :href=" $v.areaid ? '/noun/detail/' + $v.areaid + '?num=1' : $v.areaUrl" v-for='($v, $k) in info.text'>
                 {{ $k === info.text.length - 1 ? $v.areaName : $v.areaName + '>' }}
               </a>
             </div>

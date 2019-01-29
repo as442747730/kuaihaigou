@@ -1,6 +1,11 @@
 <template>
   <div class="m-konwledge-detail">
-    <van-nav-bar title='知识分享' left-arrow @click-left='back'>
+    <van-nav-bar title='文章详情' left-arrow @click-left='back'>
+      <div class="point" slot="right" @click='reportShow = true'>
+        <i></i>
+        <i></i>
+        <i></i>
+      </div>
     </van-nav-bar>
 
     <div class="author-section">
@@ -98,6 +103,47 @@
       @select="onSelect"
     />
 
+    <!-- 举报 -->
+    <van-actionsheet
+      v-model="reportShow"
+      :actions="reportActions"
+      cancel-text="取消"
+      @select="reportSelect"
+    />
+
+    <!-- 举报原因 -->
+    <van-popup v-model="reasonShow" position="bottom">
+      <div class="reason-wrap">
+        <h3 class="font_hight">
+          举报原因
+          <van-icon name="cross" @click='closeReason' />
+        </h3>
+        <span>请选择举报的原因（必选）</span>
+        <van-radio-group v-model="radio">
+          <van-cell-group>
+            <van-cell title="垃圾营销" clickable @click="radio = '1'">
+              <van-radio name="1" />
+            </van-cell>
+            <van-cell title="淫秽色情" clickable @click="radio = '2'">
+              <van-radio name="2" />
+            </van-cell>
+            <van-cell title="违法信息" clickable @click="radio = '3'">
+              <van-radio name="3" />
+            </van-cell>
+            <van-cell title="脏话" clickable @click="radio = '4'">
+              <van-radio name="4" />
+            </van-cell>
+            <van-cell title="其他" clickable @click="radio = '5'">
+              <van-radio name="5" />
+            </van-cell>
+          </van-cell-group>
+        </van-radio-group>
+        <div class="u-button border-small" @click='reportSubmit'>
+          确定
+        </div>
+      </div>
+    </van-popup>
+
     <!-- 个人信息 -->
     <u-author :class="{'show': setClass}" v-if="showInfo" :user="authObj" @closeInfo='closeInfo' @setFollow='setFollow'></u-author>
     <!-- 蒙层 -->
@@ -183,7 +229,12 @@ export default {
       payShow: false, // 打开支付选项
       resultWindow: false,
       hasPayed: null,
-      configtitle: '知识分享'
+      configtitle: '知识分享',
+
+      reportShow: false, // 举报
+      reportActions: [{ name: '举报' }],
+      radio: '1',
+      reasonShow: false
     }
   },
 
@@ -295,6 +346,25 @@ export default {
       this.authObj.ifFollow = val
       val ? this.detailObj.userResp.personalInfoResp.fanNumber += 1 : this.detailObj.userResp.personalInfoResp.fanNumber -= 1
       val ? this.authObj.fanNumber += 1 : this.authObj.fanNumber -= 1
+    },
+    // 举报
+    reportSelect () {
+      this.reportShow = false
+      this.reasonShow = true
+    },
+    closeReason () {
+      this.reasonShow = false
+    },
+    reportSubmit () {
+      this.$dialog.confirm({
+        message: '确定要举报该文章吗？'
+      }).then(async () => {
+        const { code } = await knowApi.report({ reportContentId: this.id, reportReason: this.radio })
+        if (code === 200) {
+          this.$toast.success('举报成功')
+          this.reasonShow = false
+        }
+      })
     },
     back () {
       window.location.href = '/knowledge'
@@ -525,4 +595,82 @@ export default {
     }
   }
 }
+.reason-wrap {
+  padding: 30px 20px 15px;
+  font-size: 0;
+  h3 {
+    font-size: 17px;
+    color: #333;
+    margin-bottom: 40px;
+    text-align: center;
+    position: relative;
+    i {
+      position: absolute;
+      left: 0;
+      color: #333;
+      font-size: 18px;
+    }
+  }
+  &>span {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 38px;
+    display: inline-block;
+  }
+  .van-cell-group {
+    &:after {
+      display: none;
+    }
+  }
+  .van-radio-group {
+    span {
+      color: #333;
+      font-size: 15px;
+    }
+    .van-cell {
+      padding: 17px 0;
+      &:first-child {
+        padding-top: 0;
+      }
+      &:after {
+        display: none;
+      }
+    }
+  }
+  .u-button {
+    margin-top: 20px;
+  }
+}
+.van-popup--bottom {
+  border-radius: 6px 6px 0px 0px;
+}
+.van-nav-bar {
+  .point {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    margin-top: 10px;
+    padding-top: 12px;
+    box-sizing: border-box;
+    i {
+      position: absolute;
+      left: 0px;
+      width: 4PX;
+      height: 4PX;
+      border-radius: 50%;
+      background: #333;
+      &:nth-child(2) {
+        left: 8px;
+      }
+      &:last-child {
+        left: 16px;
+      }
+    }
+  }
+}
+</style>
+<style lang='less'>
+  .van-radio .van-icon-checked {
+    color: #03A1CD;
+  }
 </style>

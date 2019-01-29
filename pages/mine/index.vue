@@ -16,7 +16,7 @@
       <div class="hd-name">
         <div class="hd_world">
           <span>{{ userInfo.nickname }}</span>
-          <user-lab :level='String(userInfo.userGradeNumber)' type='2' :profess="String(userInfo.professionTypeCode || '')" :official='String(userInfo.officialTypeCode)' :selfmedia='String(userInfo.selfMediaType)'></user-lab>
+          <user-lab :level='String(userInfo.userGradeNumber)' type='2' :profess="String(userInfo.professionTypeCode || '')" :official="String((userInfo.certCategory === 3 && userInfo.certStage === 2) ? 3 : '')" :selfmedia='String(userInfo.selfMediaType)'></user-lab>
         </div>
       </div>
       <div class="hd-sign">
@@ -184,7 +184,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.artMore)
+    console.log(this.userInfo)
     window.addEventListener('scroll', () => {
       let winH = document.documentElement.clientHeight || document.body.clientHeight
       let elemBound = this.$refs.scrollElem.getBoundingClientRect()
