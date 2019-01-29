@@ -292,6 +292,9 @@ export default {
         width: 45px;
         height: 45px;
         background: url('~/assets/img/detail/ic_wen_blue_45x45@2x.png') no-repeat center/contain;
+        box-shadow: 0px 0px 20px 0px rgba(3, 161, 205, 0.55);
+        border-radius: 50%;
+        background-color: #59c3e1;
         // &.tp-5 {
         //   top: -18px;
         // }
