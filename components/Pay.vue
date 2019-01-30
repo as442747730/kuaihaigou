@@ -1,3 +1,7 @@
+<!-- 
+  本模块为商品打赏模块
+  在下单页面和会员中心的订单详情页有用到
+ -->
 <template>
   <van-actionsheet class='pay-methods' v-model="payMethodShow" :close-on-click-overlay='false'>
     <div class="pay-methods-top">
@@ -97,6 +101,7 @@
       async paySubmit () {
         this.payLoading = true
         if (this.payMethod === 0) {
+          // 支付宝
           let obj = {
             orderid: this.orderId,
             // returnUrl: '/order/detail?id=' + this.orderId
@@ -114,6 +119,7 @@
             this.payLoading = false
           }
         } else if (this.payMethod === 1) {
+          // 微信
           let obj = {
             orderId: this.orderId,
             redirectUrl: 'http://' + window.location.host + '/order/result?orderId=' + this.orderId
