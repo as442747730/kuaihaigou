@@ -34,40 +34,42 @@
             <p class="right">{{ statusTxt[+item.status - 1] }}</p>
           </div>
 
-          <div class="good-wrapper good-li" v-for="p in item.orderItemList">
-            <!-- 普通商品 -->
-            <div class="good-li-item flex-center box-gutter" v-if="!p.packName">
-              <div class="content">
-                <img v-lazy="p.goodsImg" alt="" width="90" height="100">
-                <div class="info">
-                  <p class="title font_medium">{{ p.goodsName }}</p>
-                  <div class="flex-jcsb" v-if="p.skuName">
-                    <span class="sku">{{ p.skuName }}</span><span class="price">￥{{ p.price }}</span>
-                  </div>
-                  <p class="num">x{{ p.num }}</p>
-                </div>
-              </div>
-            </div>
-            <!-- 套餐 -->
-            <div class="good-li-item" v-else>
-              <div class="top top-pack">
-                <div class="top-flex">
-                  <div class="top-name font_medium">{{ p.packName }}</div>
-                </div>
-                <p class="top-price">￥{{ p.packPrice }}</p>
-              </div>
-              <div class="product-wrapper">
-                <div class="content" v-for="(good, idx) in p.goodsList" :key="idx">
-                  <img v-lazy="good.goodsImg" alt="" width="90" height="100">
+          <a :href="'/order/detail?id=' + item.id">
+            <div class="good-wrapper good-li" v-for="p in item.orderItemList">
+              <!-- 普通商品 -->
+              <div class="good-li-item flex-center box-gutter" v-if="!p.packName">
+                <div class="content">
+                  <img v-lazy="p.goodsImg" alt="" width="90" height="100">
                   <div class="info">
-                    <p class="title font_medium">{{ good.goodsName }}</p>
-                    <p class="desc">{{ good.skuName }}</p>
-                    <p class="desc">{{ good.num }} 件/套</p>
+                    <p class="title font_medium">{{ p.goodsName }}</p>
+                    <div class="flex-jcsb" v-if="p.skuName">
+                      <span class="sku">{{ p.skuName }}</span><span class="price">￥{{ p.price }}</span>
+                    </div>
+                    <p class="num">x{{ p.num }}</p>
+                  </div>
+                </div>
+              </div>
+              <!-- 套餐 -->
+              <div class="good-li-item" v-else>
+                <div class="top top-pack">
+                  <div class="top-flex">
+                    <div class="top-name font_medium">{{ p.packName }}</div>
+                  </div>
+                  <p class="top-price">￥{{ p.packPrice }}</p>
+                </div>
+                <div class="product-wrapper">
+                  <div class="content" v-for="(good, idx) in p.goodsList" :key="idx">
+                    <img v-lazy="good.goodsImg" alt="" width="90" height="100">
+                    <div class="info">
+                      <p class="title font_medium">{{ good.goodsName }}</p>
+                      <p class="desc">{{ good.skuName }}</p>
+                      <p class="desc">{{ good.num }} 件/套</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </a>
 
           <div class="result">共{{ item.totalNum }}件商品 总额：￥{{ item.balanceAmount }}</div>
 
@@ -89,7 +91,7 @@
 
             <div class="u-button small inline red" v-if="item.status === 1" @click="toPay(item.id)">马上支付</div>
 
-            <div class="u-button small inline" @click="getDetail(item.id)">订单详情</div>
+            <!-- <div class="u-button small inline" @click="getDetail(item.id)">订单详情</div> -->
           </div>
         </div>
         <div class="empty" v-if="orderList.length === 0">暂无更多订单</div>

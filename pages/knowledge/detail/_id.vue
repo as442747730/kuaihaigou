@@ -30,7 +30,7 @@
         <p class="desc">
           <span class="gut">频道：{{ detailObj.channelName }}</span>
           <span>话题：{{ detailObj.topicName }}</span>
-          <span class="from" v-if='detailObj.address'>文章来源：<a :href="detailObj.address">{{ detailObj.author }}</a></span>
+          <span class="from" v-if='detailObj.address'>来源：<a :href="detailObj.address">{{ detailObj.author }}</a></span>
         </p>
         <p class="desc date">{{ detailObj.createdAt }}</p>
       </div>
