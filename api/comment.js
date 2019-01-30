@@ -26,3 +26,13 @@ export const commentApi = {
     return request.clientGet('/api/articleComment/paginateReply', params)
   }
 }
+// 会员中心评论
+export const memberCommentApi = {
+  // 分页查询我的评论
+  commentlist (param, req) {
+    return request.serverGet('/api/articleComment/paginateMyComment', param, req)
+  },
+  oriCommentGet (param) {
+    return request.clientGet('/api/articleComment/paginateMyComment', param)
+  }
+}
