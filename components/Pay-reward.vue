@@ -160,8 +160,7 @@
           console.log(obj)
           const { code, data } = await rewardApi.wechatReward(obj)
           if (code === 200) {
-            console.log(data)
-            window.location.href = data.mwebUrl + '&redirect_url=' + returnUrl
+            window.location.href = data.mwebUrl + '&redirect_url=' + encodeURIComponent(returnUrl)
           } else {
             this.$toast(data)
             this.payLoading = false
