@@ -357,8 +357,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.u-articel {
-}
 .to-comment-wrap {
   position: fixed;
   width: 100vw;
@@ -409,6 +407,10 @@ export default {
           height: 45px;
           flex: 1;
           .nickname {
+            max-width: 150px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
             color: @cor_333;
             font-size: 15px;
             color: @cor_333;

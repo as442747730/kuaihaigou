@@ -15,19 +15,10 @@
             <br>
             <u-usericon v-if='masterinfo.personalInfoResp' :level='String(masterinfo.personalInfoResp.userGradeNumber)' type='1' :profess='String(masterinfo.personalInfoResp.category)' />
           </div>
-          <!-- <div v-if='masterinfo.evaluationLevel >= 4' class="like_type type1">
-            <i></i>
-            <span>超爱</span>
-          </div> -->
+
           <p class="desc" :class="{'mb-0': masterinfo.imgs}">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
           <div class="pro" v-if='masterinfo.imgs'>
             <div v-for="(item, index) in masterinfo.imgs" class="pro-item" :style="'background: url(' + item + ') no-repeat center/cover'" @click='showBigImg(index, masterinfo.imgs)'></div>            
-          </div>
-          <div class="from" v-if='masterinfo.title'>
-            <p>
-              <span class="ib-middle">评论文章</span>
-              <a class="ib-middle" :href="masterinfo.url">《{{ masterinfo.title }}》</a>
-            </p>
           </div>
         </li>
         <!-- 一般回复 -->
@@ -107,8 +98,7 @@ export default {
     replyData: {
       Type: Array,
       default: []
-    },
-    islogin: Boolean
+    }
   },
 
   data () {
@@ -190,13 +180,6 @@ export default {
       })
     },
     turnToEdit (val, method) {
-      if (!this.islogin) {
-        this.$toast('请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 500)
-        return
-      }
       console.log(val)
       this.commentId = this.masterinfo.id
       this.toUserId = val.personalInfoResp.id
@@ -237,13 +220,6 @@ export default {
     },
     // 点赞
     async handleCommentLike (val, index) {
-      if (!this.islogin) {
-        this.$toast('请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 500)
-        return
-      }
       if (this.zanLoading) return
       this.zanLoading = true
       let { id, ifLiked } = val
@@ -370,19 +346,6 @@ export default {
       .other {
         border-bottom: 0;
         padding-bottom: 0;
-      }
-    }
-
-    .from {
-      padding-bottom: 15px;
-      margin-bottom: 15px;
-      color: #666;
-      font-size: 13px;
-      border-bottom: 1PX solid @cor_border;
-      a {
-        color: #03A1CD;
-        max-width: 260px;
-        .u-ellipsis
       }
     }
     

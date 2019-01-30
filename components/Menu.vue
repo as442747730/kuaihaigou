@@ -25,6 +25,7 @@
       return {
         menuList: [
           { name: '我的消息', key: 'msg', url: '/message', num: 0 },
+          { name: '我的评论', key: 'comment', url: '/mine/comment' },
           { name: '发票信息', key: 'invo', url: '/invoice/list' },
           { name: '地址管理', key: 'address', url: '/address/list' },
           { name: '我的优惠券', key: 'coupon', url: '/coupon/list' },

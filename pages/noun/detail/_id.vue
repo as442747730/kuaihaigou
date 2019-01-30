@@ -182,9 +182,10 @@ export default {
 @bgcor1: #fff;
 .noundetail {
   width: 100%;
-  height: 100vh;
+  // height: 100vh;
   background: #F5F5F5;
-  overflow: auto;
+  // overflow: auto;
+  margin-bottom: 50px;
   .noun-head {
     height: 45px;
     display: flex;
@@ -217,8 +218,8 @@ export default {
     }
   }
   .noun-main {
-    max-height: calc(100vh - 45px);
-    overflow-y: scroll;
+    // max-height: calc(100vh - 45px);
+    // overflow-y: scroll;
   }
   // 上部
   .top {
