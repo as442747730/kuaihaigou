@@ -195,7 +195,7 @@
                     <span>频道：{{ share.channelName }}</span>
                     <span>话题：{{ share.topicName }}</span>
                   </div>
-                  <p class="content_summary">{{ share.summary }}</p>
+                  <p class="content_summary" v-html='share.summary'></p>
                   <div class="pro">
                     <div class="content_bk" v-if="share.imgsPaht" v-lazy:background-image="share.imgsPaht[0]"></div>
                     <!-- <img v-if="share.imgsPaht" v-lazy="share.imgsPaht[0]"> -->

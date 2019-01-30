@@ -6,7 +6,7 @@ export const rewardApi = {
   },
   // 知识分享模块  微信打赏
   wechatReward (obj) {
-    return request.clientPostJson('/api/wxpay/reward/', obj)
+    return request.clientPostJson('/api/wxpay/wap/rewardPay', obj)
   },
   // 支付宝
   alipayReward (obj) {

@@ -1,7 +1,7 @@
 <template>
   <div class="m-order-submit" :class="{'fullScreen': fullScreen}">
 
-    <van-nav-bar :title="clearHead || '填写订单'" left-arrow :right-text="navTxt" @click-left='historyBack' @click-right="jump">
+    <van-nav-bar style='position: fixed' :title="clearHead || '填写订单'" left-arrow :right-text="navTxt" @click-left='historyBack' @click-right="jump">
     </van-nav-bar>
 
     <div class="m-section-position more-link" @click="openAddress">
@@ -531,14 +531,20 @@ export default {
       this.navTxt = ''
       if (this.addressShow) {
         this.addressShow = false
+        window.history.go(-1)
+        // window.location.hash = ''
         return
       }
       if (this.invoinceShow) {
         this.invoinceShow = false
+        window.history.go(-1)
+        // window.location.hash = ''
         return
       }
       if (this.couponShow) {
         this.couponShow = false
+        window.history.go(-1)
+        // window.location.hash = ''
         return
       }
       window.location.href = '/order/cart'
@@ -569,18 +575,26 @@ export default {
 }
 </script>
 <style lang="less">
+.van-nav-bar {
+  width: 100%;
+  position: fixed;
+}
 .m-order-submit {
   position: relative;
   min-height: 100vh;
   background: @cor_border;
   font-size: 0;
   padding-bottom: 50px;
+  box-sizing: border-box;
+  overflow: hidden;
   &.fullScreen {
-    height: 100vh;
+    height: 0vh;
+    min-height: 0vh;
     overflow: hidden;
     box-sizing: border-box;
   }
   .m-section-position {
+    margin-top: 46px;
     height: 65px;
     background: #FFFFFF;
     position: relative;

@@ -247,6 +247,8 @@ export default {
     padding-bottom: 30px;
   }
   &-btn {
+    position: fixed;
+    bottom: 0;
     height: 50px;
     width: 100%;
     background: #03A1CD;

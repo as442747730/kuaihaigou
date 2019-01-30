@@ -53,6 +53,8 @@ export default {
   &-ul {
     background: white;
     font-size: 0;
+    height: ~'calc(100vh - 96px)';
+    overflow: scroll;
   }
   &-li {
     padding: 20px;
@@ -98,7 +100,7 @@ export default {
   &-bottom {
     width: 100%;
     text-align: center;
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     a {
       color: #03A1CD
