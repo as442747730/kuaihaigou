@@ -448,6 +448,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
         &:last-child {
           margin-right: 0;
         }
