@@ -133,6 +133,14 @@ export default {
   mounted () {
     this.$refs.tabSelect.setSelect({ channelId: this.channelId, topicId: this.topicId, typeId: this.typeId, varietyId: this.varietyId, order: this.order })
     if (this.articleList.length === 0) return
+    document.addEventListener('WeiXinJsBridgeReady', () => {
+      this.$nextTick(() => {
+        let videos = this.$refs.refvideo
+        videos.map(v => {
+          v.play()
+        })
+      })
+    })
     const v = this
     const pullEl = document.querySelector('.van-pull')
     const ulEl = document.querySelector('.article-ul')

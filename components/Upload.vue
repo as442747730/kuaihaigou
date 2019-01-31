@@ -50,6 +50,7 @@ export default {
     },
 
     async handleRead (file) {
+      console.log('读取完成后')
       if (Array.isArray(file) && file.length > this.max) {
         return Toast.fail(`最多只可上传${this.max}张图片`)
       }
