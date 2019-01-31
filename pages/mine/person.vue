@@ -98,6 +98,8 @@ export default {
         addrshow: residenceCanSee,
         infos: allInfo
       }
+    } else if (code === 506) {
+      window.location.href = '/account/login'
     }
   },
   data () {
