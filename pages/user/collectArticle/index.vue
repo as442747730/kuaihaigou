@@ -57,7 +57,12 @@
               <div class="content-time">{{$v.createdAt}}</div>
               <div class="content-other">
                 <span>作者：{{$v.author || '佚名'}}</span>
-                <span v-if="$v.sourceAddress">来源：{{$v.sourceAddress}}</span>
+                <!-- <span v-if="$v.sourceAddress">来源：{{$v.sourceAddress}}</span> -->
+                <span v-if='$v.sourceAddress || $v.sourceAuthor'>来源：
+                  <a v-if='$v.sourceAddress && $v.sourceAuthor' :href="$v.sourceAddress">{{ $v.sourceAuthor }}</a>
+                  <a v-if='$v.sourceAddress && !$v.sourceAuthor' :href="$v.sourceAddress">链接</a>
+                  <a v-if='!$v.sourceAddress && $v.sourceAuthor' href="javascript:void(0)">{{ $v.sourceAuthor }}</a>
+                </span>
                 <span v-if="$v.classificationId >= 0">分类：{{circlenavList[$v.classificationId]}}</span>
               </div>
               <div class="content-labels">

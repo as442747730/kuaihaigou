@@ -30,7 +30,7 @@
         <p class="desc">
           <span class="gut">频道：{{ detailObj.channelName }}</span>
           <span>话题：{{ detailObj.topicName }}</span>
-          <span class="from" v-if='detailObj.address' style="display: block">文章来源：<a :href="detailObj.address">{{ detailObj.author }}</a></span>
+          <span class="from" v-if='detailObj.address'>来源：<a :href="detailObj.address">{{ detailObj.author }}</a></span>
         </p>
         <p class="desc date">{{ detailObj.createdAt }}</p>
       </div>
@@ -163,8 +163,8 @@ import userLab from '@/components/Usericon.vue'
 import uAuthor from '@/components/knowledge/Author'
 import articelComment from '@/components/articel/Comment'
 import payReward from '@/components/Pay-reward'
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
+// import 'quill/dist/quill.core.css'
+// import 'quill/dist/quill.snow.css'
 
 export default {
   name: '',
@@ -474,7 +474,9 @@ export default {
         margin-right: 20px;
       }
       .from {
-        margin-top: 10px;
+        // margin-top: 10px;
+        display: inline-block;
+        margin-left: 10px;
         a {
           color: #03A1CD;
         }
@@ -485,6 +487,8 @@ export default {
       margin-bottom: 25px;
     }
     .content_wrapper {
+      line-height: 25px;
+      font-size: 14px;
       u {
         text-decoration: underline!important;
       }

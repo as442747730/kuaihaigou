@@ -121,22 +121,22 @@
       },
       async paySubmit () {
         this.payLoading = true
+        // 支付宝
+        let obj = {
+          amount: this.amount, // 赏金
+          amountType: this.rewardIndex, // 赏金类别
+          sharingKknowledgeId: this.articelId, // 知识分享文章id
+          toUserId: this.userid // 被打赏用户ID
+        }
+        // 生成订单号
+        this.rewardId = await this.createOrder(obj)
+        let returnUrl = ''
+        if (this.articelId) {
+          returnUrl = 'http://' + window.location.host + '/knowledge/detail/' + this.articelId + '?type=' + tools.getUrlQues('type') + '&rewardId=' + this.rewardId
+        } else {
+          returnUrl = 'http://' + window.location.host + '/user/reward?uid=' + this.userid + '&rewardId=' + this.rewardId
+        }
         if (this.payMethod === 0) {
-          // 支付宝
-          let obj = {
-            amount: this.amount, // 赏金
-            amountType: this.rewardIndex, // 赏金类别
-            sharingKknowledgeId: this.articelId, // 知识分享文章id
-            toUserId: this.userid // 被打赏用户ID
-          }
-          // 生成订单号
-          this.rewardId = await this.createOrder(obj)
-          let returnUrl = ''
-          if (this.articelId) {
-            returnUrl = 'http://' + window.location.host + '/knowledge/detail/' + this.articelId + '?type=' + tools.getUrlQues('type') + '&rewardId=' + this.rewardId
-          } else {
-            returnUrl = 'http://' + window.location.host + '/user/reward?uid=' + this.userid + '&rewardId=' + this.rewardId
-          }
           const { code, data } = await rewardApi.alipayReward({
             rewardId: this.rewardId,
             returnUrl: returnUrl
@@ -154,13 +154,13 @@
         } else if (this.payMethod === 1) {
           // 微信
           let obj = {
-            orderId: this.orderId,
-            redirectUrl: 'http://' + window.location.host + '/order/result?orderId=' + this.orderId
+            rewardId: this.rewardId
+            // redirectUrl: 'http://' + window.location.host + '/order/result?orderId=' + this.orderId
           }
-          const { code, data } = await rewardApi.wxReward(obj)
+          console.log(obj)
+          const { code, data } = await rewardApi.wechatReward(obj)
           if (code === 200) {
-            console.log(data)
-            window.location.href = data
+            window.location.href = data.mwebUrl + '&redirect_url=' + encodeURIComponent(returnUrl)
           } else {
             this.$toast(data)
             this.payLoading = false

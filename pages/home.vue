@@ -183,7 +183,7 @@
                 <div class="share_home-user" v-if="share.userResp" @click="gomine(share.userResp.id)">
                   <u class="ib-middle" v-lazy:background-image="share.userResp.headimgurl"></u>
                   <div class="ib-middle">
-                    <span>{{ share.userResp.nickname }}</span>
+                    <span class="font_hight">{{ share.userResp.nickname }}</span>
                     <p>{{ share.createdAt }}</p>
                   </div>
                 </div>
@@ -195,7 +195,7 @@
                     <span>频道：{{ share.channelName }}</span>
                     <span>话题：{{ share.topicName }}</span>
                   </div>
-                  <p class="content_summary">{{ share.summary }}</p>
+                  <p class="content_summary" v-html='share.summary'></p>
                   <div class="pro">
                     <div class="content_bk" v-if="share.imgsPaht" v-lazy:background-image="share.imgsPaht[0]"></div>
                     <!-- <img v-if="share.imgsPaht" v-lazy="share.imgsPaht[0]"> -->
@@ -256,7 +256,7 @@
         <div class="margin-20">
           <div class="title_home">
             <h2>
-              新闻资讯
+              行业热点
             </h2>
             <a class="to-channel" href="/hotspot">
               进入频道
@@ -276,15 +276,19 @@
                   <p>{{ news.title }}</p>
                 </h3>
                 <div class="tips">
-                  <span>作者：{{news.author || '佚名'}}</span>
-                  <span>来源：{{ news.sourceAddress}}</span>
-                  <span>分类：{{circlenavList[news.classificationId]}}</span>
+                  <span>作者：{{ news.author || '佚名' }}</span>
+                  <span v-if='news.sourceAddress || news.sourceAuthor'>来源：
+                    <a v-if='news.sourceAddress && news.sourceAuthor' :href="news.sourceAddress">{{ news.sourceAuthor }}</a>
+                    <a v-if='news.sourceAddress && !news.sourceAuthor' :href="news.sourceAddress">链接</a>
+                    <a v-if='!news.sourceAddress && news.sourceAuthor' href="javascript:void(0)">{{ news.sourceAuthor }}</a>
+                  </span>
+                  <span>分类：{{ circlenavList[news.classificationId] }}</span>
                 </div>
                 <div class="pro">
                   <div class="bg full" v-if="news.imgPath" v-lazy:background-image="news.imgPath"></div>
                 </div>
                 <div class="desc">
-                  <p>{{ news.summary }}</p>
+                  <p v-html='news.summary'></p>
                 </div>
               </div>
             </div>
@@ -418,6 +422,7 @@ export default {
     }
   },
   created () {
+    console.log(this.newsList)
     this.$nextTick(() => {
       let bars = this.$refs.ubars
       if (Array.isArray(bars)) {
@@ -922,6 +927,10 @@ export default {
       display: block;
       font-size: 16px;
       color: #333;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     p {
       margin-top: 9px;
@@ -947,7 +956,7 @@ export default {
       color: #333;
       font-family: PingFangSC-Semibold;
       font-weight: bold;
-      height: 44px;
+      max-height: 44px;
       display: flex;
       align-items: center;
       p {
@@ -1105,12 +1114,13 @@ export default {
       box-sizing: border-box;
       padding: 20px; 
       width: 320px;
+      font-size: 0;
       // height: 408px;
     }
     .box_title {
       display: flex;
       align-items: center;
-      height: 44px;
+      max-height: 44px;
       & > p {
         line-height: 22px;
         color: #333;
@@ -1131,7 +1141,7 @@ export default {
         display: inline-block;
         font-size: 12px;
         color: #999;
-        max-width: 100%;
+        max-width: 110px;
         padding-right: 20px;
         box-sizing: border-box;
         overflow: hidden;
