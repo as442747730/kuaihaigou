@@ -1,34 +1,37 @@
 <template>
   <div class="person-vant">
     <van-popup v-model="showHead" position="bottom" @click-overlay="cancleFn">
-      <div class="vant-items pics">
-        <div class="vant-item camera">
-          <Upload @on-success="onSuccess">
-            <div>拍照</div>
-          </Upload>
+      <div>
+        <div class="vant-items pics">
+         <!--  <div class="vant-item camera">
+            <Upload @on-success="onSuccess">
+              <div>拍照</div>
+            </Upload>
+          </div> -->
+          <div class="vant-item photos">
+            <Upload @on-success="onSuccess">
+              <div>从相册中选取</div>
+            </Upload>
+          </div>
         </div>
-        <div class="vant-item photos">
-          <Upload @on-success="onSuccess">
-            <div>从相册中选取</div>
-          </Upload>
+        <div class="vant-items" @click="cancleFn">
+          <div class="vant-item">取消</div>
         </div>
-      </div>
-      <div class="vant-items" @click="cancleFn">
-        <div class="vant-item">取消</div>
       </div>
     </van-popup>
   </div>
 </template>
 <script>
 import Upload from '~/components/Upload'
-import { userApi } from '~/api/users'
 export default {
   components: {
     Upload
   },
   data () {
     return {
-      showHead: false
+      showHead: false,
+      isCrop: false,
+      imgsrc: ''
     }
   },
   mounted () {
@@ -40,15 +43,9 @@ export default {
     cancleFn () {
       this.showHead = false
     },
-    async onSuccess (val) {
-      console.log('val', val)
-      const { code, data } = await userApi.updateHeadImg(val)
-      if (code === 200) {
-        this.cancleFn()
-        this.$bus.emit('editinfoChange', true)
-      } else {
-        this.$toast(data)
-      }
+    onSuccess (val) {
+      this.imgsrc = val
+      window.location.href = `/mine/imgcrop?imgsrc=${val}`
     }
   },
   beforeDestroy () {
@@ -84,6 +81,33 @@ export default {
       border-bottom: 1PX solid @cor_border;
     }
   }
+
+  .cropbody {
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    text-align: center;
+    .cropimg {
+      display: inline-block;
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+
+.imgcrip {
+  width: 100%;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: black;
+  text-align: center;
+  font-size: 14px;
+}
+button {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: none;
 }
 
 </style>

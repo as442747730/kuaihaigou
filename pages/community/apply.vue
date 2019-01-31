@@ -435,7 +435,7 @@
           address: '具体地址不能为空'
         }
         for (let [key, val] of Object.entries(obj)) {
-          console.log(key)
+          // console.log(key)
           if (val === '' || val === null) {
             this.$toast(arrtips[key])
             return false
