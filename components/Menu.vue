@@ -97,6 +97,9 @@
         &.msg {
           background-image: url('~/assets/img/me/icon-msg.png');
         }
+        &.comment {
+          background-image: url('~/assets/img/me/ic_pinglun_26x26@2x.png');
+        }
         &.invo {
           background-image: url('~/assets/img/me/icon-invo.png');
         }

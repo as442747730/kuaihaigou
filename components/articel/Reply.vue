@@ -23,6 +23,7 @@
           <div class="pro" v-if='masterinfo.imgs'>
             <div v-for="(item, index) in masterinfo.imgs" class="pro-item" :style="'background: url(' + item + ') no-repeat center/cover'" @click='showBigImg(index, masterinfo.imgs)'></div>            
           </div>
+          <!-- 用户会员中心——文章评论展示 -->
           <div class="from" v-if='masterinfo.title'>
             <p>
               <span class="ib-middle">评论文章</span>
