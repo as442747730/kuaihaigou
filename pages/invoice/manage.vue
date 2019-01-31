@@ -1,6 +1,6 @@
 <template>
   <div class="m-invoice">
-    <com-head :titleConfig="configtitle"></com-head>
+    <com-head class="comhead" :titleConfig="configtitle"></com-head>
     <div class="m-invoice-ul">
 
       <div class="m-invoice-li" v-for="(item, index) in invoiceList">
@@ -133,6 +133,15 @@ export default {
   background: @cor_border;
   position: relative;
   box-sizing: border-box;
+  padding-bottom: 50px;
+  padding-top: 45px;
+  .comhead {
+    position: fixed !important;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 100;
+  }
   &-ul {
     flex: 1;
     overflow: scroll;
