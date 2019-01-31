@@ -73,6 +73,9 @@ export default {
         case '/message':
           window.location.href = '/mine'
           break
+        case '/mine/comment':
+          window.location.href = '/mine'
+          break
         case '/account/bindphone':
           // window.location.href = '/account/mgphone'
           window.history.go(-1)
