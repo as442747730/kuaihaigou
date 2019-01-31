@@ -4,27 +4,30 @@
       <div class="part" v-for="($v, $k) in commentData" :key="$k">
 
         <div class="part-body">
-          <div class="part-body-top">
-            <a :href="'/user?uid=' + $v.personalInfoResp.id"><div class="avatar" :style="'background-image: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ')'"></div></a>
-            <div class="user">
-              <p class="nickname">
-                <a :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname }}</a>
-              </p>
-              <user-lab :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)'></user-lab>
+          <div @click='toReply($v)'>
+            <div class="part-body-top">
+              <a :href="'/user?uid=' + $v.personalInfoResp.id"><div class="avatar" :style="'background-image: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ')'"></div></a>
+              <div class="user">
+                <p class="nickname">
+                  <a>{{ $v.personalInfoResp.nickname }}</a>
+                </p>
+                <user-lab :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)'></user-lab>
+              </div>
+              <div class="good" v-if="$v.ifGod">神评论</div>
             </div>
-            <div class="good" v-if="$v.ifGod">神评论</div>
-          </div>
-          <div class="part-body-center">{{ $v.content }}</div>
-          <!-- 图片 -->
-          <ul class="part-body-pro" v-if='$v.imgs.length !== 0'>
-            <li class="pic-list" v-for="(imgItem, imgIndex) in $v.imgs" @click='showBigImg(imgIndex, $v.imgs)' v-lazy:background-image="imgItem + '?imageView2/5/w/160/h/160'"></li>
-          </ul>
-          <!-- 文章来源 -->
-          <div class="part-body-from">
-            <p>
-              <span class="ib-middle">评论文章</span>
-              <a class="ib-middle" :href="getHref($v)">《{{ $v.title }}》</a>
-            </p>
+            <div class="part-body-center">{{ $v.content }}</div>
+            <!-- 图片 -->
+            <ul class="part-body-pro" v-if='$v.imgs.length !== 0'>
+              <!-- <li class="pic-list" v-for="(imgItem, imgIndex) in $v.imgs" @click='showBigImg(imgIndex, $v.imgs)' v-lazy:background-image="imgItem + '?imageView2/5/w/160/h/160'"></li> -->
+              <li class="pic-list" v-for="(imgItem, imgIndex) in $v.imgs" v-lazy:background-image="imgItem + '?imageView2/5/w/160/h/160'"></li>
+            </ul>
+            <!-- 文章来源 -->
+            <div class="part-body-from">
+              <p>
+                <span class="ib-middle">评论文章</span>
+                <a class="ib-middle" :href="getHref($v)">《{{ $v.title }}》</a>
+              </p>
+            </div>
           </div>
           <div class="part-body-bottom">
             <span class="time">{{ changeTime($v.createdAt) }}</span>
@@ -48,7 +51,7 @@
     </div>
 
     <!-- 回复 -->
-    <van-popup class='to-comment-wrap' v-model="replyShow" position="right" :overlay="true">
+    <van-popup class='to-comment-wrap' v-model="replyShow" position="right" :overlay="true" get-container='.m-layout'>
       <comment-reply :masterinfo='masterInfo' :replyData='replyData' :islogin='islogin' @setReplyData='setReplyData' @renderData='renderData' />
     </van-popup>
 
@@ -57,7 +60,6 @@
 <script>
 import tools from '~/utils/tools'
 import userLab from '~/components/Usericon.vue'
-// import commentReply from '@/components/mine/CommentReply'
 import commentReply from '@/components/articel/Reply'
 import { ImagePreview } from 'vant'
 import { memberCommentApi, commentApi } from '~/api/comment'
@@ -88,7 +90,8 @@ export default {
       zanLoading: false,
       replyShow: false,
       masterInfo: [],
-      replyData: []
+      replyData: [],
+      oriType: 1
     }
   },
 
@@ -101,6 +104,9 @@ export default {
       }
     },
     type (val) {
+      this.oriType = val
+    },
+    oriType (val) {
       this.page = 1
       this.pageEmpty = false
       this.getData(this.page, true)
@@ -108,7 +114,9 @@ export default {
     sortedBy (val) {
       this.page = 1
       this.pageEmpty = false
-      this.getData(this.page, true)
+      if (val !== 1) {
+        this.getData(this.page, true)
+      }
     },
     $route (to, from) {
       if (to.hash === '') {
@@ -122,19 +130,25 @@ export default {
   },
 
   async created () {
+    this.oriType = this.type
     this.commentData = this.commentGet
+    if (this.commentGet.length === 0 && this.oriType === 1) {
+      this.page = 1
+      this.pageEmpty = false
+      this.getData(this.page, true)
+    }
     this.pageEmpty = this.pageEmptyGet
-    console.log(this.commentData)
-    console.log(this.pageEmpty)
   },
   methods: {
     async getData (page, needClear = false) {
-      const toast1 = this.$toast.loading({ message: '数据获取中', duration: 0, mask: false })
+      if (needClear) {
+        var toast1 = this.$toast.loading({ message: '数据获取中', duration: 0, mask: false })
+      }
       this.pageLoding = true
       let obj = {
         page: page,
         count: 5,
-        type: this.type,
+        type: this.oriType,
         sortedBy: this.sortedBy
       }
       const { code, data } = await memberCommentApi.oriCommentGet(obj)
@@ -142,6 +156,7 @@ export default {
         if (needClear) {
           this.commentData = data.array
           this.$emit('setTotal', data.total)
+          toast1.clear()
         } else {
           this.commentData.push(...data.array)
         }
@@ -149,7 +164,6 @@ export default {
       } else {
         this.pageEmpty = false
       }
-      toast1.clear()
       this.pageLoding = false
     },
     // 回复

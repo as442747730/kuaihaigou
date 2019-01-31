@@ -9,29 +9,41 @@
       <ul>
         <!-- 楼主 -->
         <li class="u_comment-list">
-          <a v-if='masterinfo.personalInfoResp' :href="'/user?uid=' + masterinfo.personalInfoResp.id"><div class="header-img ib-middle" :style="'background: url(' + (masterinfo.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
+          <a v-if='masterinfo.personalInfoResp'><div class="header-img ib-middle" :style="'background: url(' + (masterinfo.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
           <div class="user-infor ib-middle">
-            <a class="ib-middle" :href="'/user?uid=' + masterinfo.personalInfoResp.id">{{ masterinfo.personalInfoResp.nickname }}</a>
+            <a class="ib-middle">{{ masterinfo.personalInfoResp.nickname }}</a>
             <br>
             <u-usericon v-if='masterinfo.personalInfoResp' :level='String(masterinfo.personalInfoResp.userGradeNumber)' type='1' :profess='String(masterinfo.personalInfoResp.category)' />
           </div>
-
+          <div class="hot" v-if="masterinfo.ifPopular"></div>
           <p class="desc" :class="{'mb-0': masterinfo.imgs}">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
-          <div class="pro" v-if='masterinfo.imgs'>
+          <div class="pro" v-if='getJSONArr(masterinfo.imgs).length !== 0'>
             <div v-for="(item, index) in masterinfo.imgs" class="pro-item" :style="'background: url(' + item + ') no-repeat center/cover'" @click='showBigImg(index, masterinfo.imgs)'></div>            
+          </div>
+          <div class="from">
+            <a :href="'/detail/' + masterinfo.goodsid">
+              <div class="pro ib-middle" :style="'background: url(' + masterinfo.cover + ') no-repeat center/contain'"></div>
+              <div class="desc ib-top">
+                <p class="font_hight">{{ masterinfo.goodsName }}</p>
+                <b class="font_hight">¥{{ masterinfo.actualPrice }}</b>
+              </div>
+            </a>
           </div>
         </li>
         <!-- 一般回复 -->
         <li class="u_comment-list" v-for="($v, $k) in replyData">
-          <a v-if='$v.personalInfoResp' :href="'/user?uid=' + $v.personalInfoResp.id"><div class="header-img ib-middle" :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
+          <a v-if='$v.personalInfoResp'><div class="header-img ib-middle" :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
           <div class="user-infor ib-middle">
-            <template v-if='masterinfo.personalInfoResp.id === $v.toUserId'>
-              <a class="ib-middle" :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname || '' }}</a>
+            <template v-if='masterinfo.personalInfoResp.id === $v.parentUserId'>
+              <a class="ib-middle">{{ $v.personalInfoResp.nickname || '' }}</a>
             </template>
+            <div v-else-if='!$v.parentUsername' class="has-reply" >
+              <a class="ib-middle">{{ $v.personalInfoResp.nickname }}</a>
+            </div>
             <div v-else class="has-reply">
-              <a class="ib-middle" :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname }}</a>
+              <a class="ib-middle">{{ $v.personalInfoResp.nickname }}</a>
               <b class="ib-middle">回复</b>
-              <a class="ib-middle" :href="'/user?uid=' + $v.toUserId">{{ $v.toUsername }}</a>
+              <a class="ib-middle">{{ $v.parentUsername }}</a>
             </div>
             <br>
             <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
@@ -81,7 +93,7 @@
 import tools from '~/utils/tools'
 import uUsericon from '~/components/Usericon'
 import { ImagePreview } from 'vant'
-import { commentApi } from '~/api/comment'
+import { memberCommentApi } from '~/api/comment'
 
 export default {
   name: 'u-reply',
@@ -98,7 +110,8 @@ export default {
     replyData: {
       Type: Array,
       default: []
-    }
+    },
+    islogin: Boolean
   },
 
   data () {
@@ -155,12 +168,13 @@ export default {
 
   methods: {
     async getData (page) {
+      this.pageLoding = true
       let obj = {
         page: page,
         count: 5,
-        commentId: this.masterinfo.id
+        commentid: this.masterinfo.id
       }
-      const { code, data } = await commentApi.getRelyList(obj)
+      const { code, data } = await memberCommentApi.getCommentReply(obj)
       if (code === 200) {
         if (data.array.length === 0) {
           this.pageEmpty = true
@@ -181,14 +195,15 @@ export default {
     },
     turnToEdit (val, method) {
       console.log(val)
-      this.commentId = this.masterinfo.id
-      this.toUserId = val.personalInfoResp.id
+      // this.commentId = this.masterinfo.id
+      // this.toUserId = val.personalInfoResp.id
+      this.replyid = val.replyid
       this.method = method
       this.editShow = true
       this.editPerson = val.personalInfoResp.nickname
       window.location.hash = 'replay_edit'
     },
-    async send (method) {
+    async send (method, id) {
       /*
         回复对象
         0 -> 楼主
@@ -196,10 +211,18 @@ export default {
       */
       if (this.sendLoading) return
       this.sendLoading = true
-      let params = {
-        commentid: this.commentId,
-        content: this.editContent,
-        toUserId: this.toUserId
+      let params = {}
+      if (method === 0) {
+        params = {
+          commentid: id,
+          content: this.editContent
+        }
+      } else {
+        params = {
+          parentid: this.replyid,
+          commentid: id,
+          content: this.editContent
+        }
       }
       console.log(params)
       if (this.editContent === '') {
@@ -207,7 +230,7 @@ export default {
         this.sendLoading = false
         return false
       }
-      const { code } = await commentApi.createReply(params)
+      const { code } = await memberCommentApi.addComment(params)
       if (code === 200) {
         this.$toast('发表成功！')
         this.editContent = ''
@@ -222,8 +245,8 @@ export default {
     async handleCommentLike (val, index) {
       if (this.zanLoading) return
       this.zanLoading = true
-      let { id, ifLiked } = val
-      const { code, data } = ifLiked ? await commentApi.comCancle(id) : await commentApi.comGood(id)
+      let { replyid, ifLiked } = val
+      const { code, data } = ifLiked ? await memberCommentApi.ordCancle(replyid) : await memberCommentApi.ordGood(replyid)
       if (code === 200) {
         val.ifLiked = !ifLiked
         val.likeNum = data
@@ -237,6 +260,9 @@ export default {
     changeTime (time) {
       time = new Date(time).getTime()
       return tools.timeago(time)
+    },
+    getJSONArr (strArr) {
+      return JSON.parse(strArr)
     },
     handleScroll (fn) {
       let Switch = true
@@ -311,7 +337,8 @@ export default {
     }
     &:first-child {
       margin: 30px 0 20px;
-      .desc {
+      overflow: hidden;
+      & > .desc {
         padding-bottom: 15px;
       }
     }
@@ -341,11 +368,51 @@ export default {
         font-size: 13px;
       }
     }
+    .hot {
+      float: right;
+      width: 54px;
+      height: 20px;
+      box-sizing: border-box;
+      background-image: url('~/assets/img/ic_chaoai_35x35@2x.png');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
     .user-content {
       padding-left: 54px;
       .other {
         border-bottom: 0;
         padding-bottom: 0;
+      }
+    }
+
+    .from {
+      background: #FCFCFC;
+      border: 1px solid #F1F1F1;
+      position: relative;
+      margin-bottom: 17px;
+      .pro {
+        width: 90px;
+        height: 90px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+      }
+      .desc {
+        margin: 0;
+        padding: 15px;
+        font-size: 15px;
+        color: #333;
+        width: ~'calc(100% - 90px)';
+        box-sizing: border-box;
+        p {
+          line-height: 18px;
+        }
+        b {
+          position: absolute;
+          bottom: 15px;
+          left: 105px;
+        }
       }
     }
     
