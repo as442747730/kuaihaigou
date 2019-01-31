@@ -453,6 +453,8 @@ export default {
   // overflow: hidden;
   &-list {
     position: relative;
+    margin-bottom: 30px;
+    overflow: hidden;
     &:after {
       content: '';
       position: absolute;
@@ -464,7 +466,6 @@ export default {
     &:first-child {
       margin-top: 30px;
     }
-    margin-bottom: 30px;
     .header-img {
       width: 45px;
       height: 45px;
@@ -577,7 +578,7 @@ export default {
       }
     }
     .office-comment {
-      margin-top: 15px;
+      margin: 15px 0;
       padding: 16px 10px;
       background: #fcfcfc;
       border: 1PX solid #f1f1f1;
