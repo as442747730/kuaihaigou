@@ -18,7 +18,7 @@
           <div class="hot" v-if="masterinfo.ifPopular"></div>
           <p class="desc" :class="{'mb-0': masterinfo.imgs}">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
           <div class="pro" v-if='getJSONArr(masterinfo.imgs).length !== 0'>
-            <div v-for="(item, index) in masterinfo.imgs" class="pro-item" :style="'background: url(' + item + ') no-repeat center/cover'" @click='showBigImg(index, masterinfo.imgs)'></div>            
+            <div v-for="(item, index) in getJSONArr(masterinfo.imgs)" class="pro-item" :style="'background: url(' + item + ') no-repeat center/cover'" @click='showBigImg(index, getJSONArr(masterinfo.imgs))'></div>            
           </div>
           <div class="from">
             <a :href="'/detail/' + masterinfo.goodsid">
@@ -383,6 +383,18 @@ export default {
       .other {
         border-bottom: 0;
         padding-bottom: 0;
+      }
+    }
+
+    .pro {
+      &-item {
+        width: 70px;
+        height: 70px;
+        display: inline-block;
+        margin-right: 10px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
       }
     }
 

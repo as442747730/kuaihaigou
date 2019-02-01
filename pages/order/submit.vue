@@ -592,6 +592,7 @@ export default {
     min-height: 0vh;
     overflow: hidden;
     box-sizing: border-box;
+    padding-bottom: 0;
   }
   .m-section-position {
     margin-top: 46px;

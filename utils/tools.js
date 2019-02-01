@@ -48,6 +48,11 @@ export default {
     }
     return !val === false
   },
+  // 检查微信环境
+  checkWechat () {
+    const ua = window.navigator.userAgent
+    return /MicroMessenger/.test(ua)
+  },
   // 时间格式化
   /**
    * @argument date * 时间对象
