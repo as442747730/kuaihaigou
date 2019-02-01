@@ -52,7 +52,9 @@
 <script>
 import api from '~/utils/request'
 import { userApi } from '~/api/users'
+// import { accountApi } from '~/api/account'
 import captchaInput from '~/components/Login-captcha.vue'
+import tools from '~/utils/tools'
 
 export default {
   name: 'login',
@@ -133,7 +135,15 @@ export default {
     }
   },
 
-  mounted () {
+  async mounted () {
+    // 判断微信环境
+    // console.log(tools.checkWechat())
+    // if (tools.checkWechat()) {
+    //   const { code, data } = await accountApi.loginWithWxJs({ returnUrl: 'http://' + window.location.host })
+    //   if (code === 200) {
+    //     console.log(data)
+    //   }
+    // }
     this.prevLink = document.referrer || window.location.href
     if ((this.prevLink === window.location.href) || (this.prevLink === 'http://' + window.location.host + '/account/register') || (this.prevLink === 'http://' + window.location.host + '/account/bindphone') || (this.prevLink === 'http://' + window.location.host + '/account/mgnumber')) {
       this.prevLink = 'http://' + window.location.host + '/mine'
