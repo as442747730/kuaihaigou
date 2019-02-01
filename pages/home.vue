@@ -129,11 +129,18 @@
               @click="goselect(pick.id)"
               :key="index">
               <div class="hot-list-box" v-if="pick.goodsMinimalResp">
-                <div class="pro ib-top" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
+                <div class="pro ib-middle" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
                 <div class="desc ib-middle">
                   <h3>{{pick.goodsMinimalResp.goodsName}}</h3>
                   <div class="tags">
-                    <i class="tagsub" v-for="(tags, tagIndex) in pick.goodsMinimalResp.tagList" :key="tagIndex">{{tags}}</i>
+                    <i class="tagsub" v-for="(tags, tagIndex) in pick.goodsMinimalResp.tagList" :key="tagIndex">
+                      <template v-if='tagIndex === pick.goodsMinimalResp.tagList.length - 1'>
+                        {{ tags }}
+                      </template>
+                      <template v-else>
+                        {{ tags + ' | ' }}
+                      </template>
+                    </i>
                   </div>
                   <div class="itemr-info">
                     <span class="info_item icon_time">{{pick.goodsMinimalResp.year}}</span>
@@ -785,14 +792,16 @@ export default {
       overflow: hidden;
     }
     .pro {
-      width: 100px;
-      height: 159px;
+      width: 75px;
+      height: 140px;
       text-align: center;
+      margin-left: 20px;
       .bg_cover;
     }
     .desc {
       font-size: 12px;
       width: 195px;
+      padding-left: 15px;
       &>h3 {
         font-size:15px;
         font-family: PingFangSC-Medium;
@@ -802,16 +811,14 @@ export default {
       &>p {
         padding: 10px 0;
         font-size:12px;
-        font-family: PingFang-SC-Regular;
         color:rgba(153,153,153,1);
         line-height:12px;
       }
       .tags {
         font-size: 12px;
-        font-family: PingFang-SC-Regular;
-        font-weight: 400;
+        font-weight: 300;
         color: rgba(153, 153, 153, 1);
-        margin-top: 10px;
+        margin: 10px 0 5px;
 
         .tagsub {
           margin-top: 10px;
@@ -826,6 +833,10 @@ export default {
         }
       }
 
+      .u-bars {
+        margin-bottom: 0;
+      }
+
       .info_item {
         display: inline-block;
         height:24px;
@@ -838,10 +849,9 @@ export default {
         margin-top: 10px;
         position: relative;
         font-size:12px;
-        font-family:PingFangSC-Semibold;
-        font-weight:600;
+        font-weight: 600;
         color: #03A1CD;
-        margin-left: 7px;
+        margin-right: 7px;
         &:before {
           content: '';
           width: 24px;
@@ -873,7 +883,7 @@ export default {
       margin-top: 12px;
       border-top: 1PX solid #eaeaea;
       background: #FBFBFB;
-      padding: 15px 20px 10px;
+      padding: 15px 20px;
       h3 {
         color: #333;
         font-size: 16px;
@@ -1023,31 +1033,31 @@ export default {
           font-weight: 600;
           color: rgba(255, 255, 255, 1);
           line-height: 16px;
-          padding: 3px 5px;
+          padding: 3PX 5PX;
           background: rgba(0, 0, 0, .4);
           position: relative;
 
           &:before {
             position: absolute;
             left: 0;
-            bottom: -5px;
+            bottom: -6PX;
             content: '';
             width: 0;
             height: 0;
             border-style: solid;
-            border-width: 0 0 6px 20px;
+            border-width: 0 0 6PX 20PX;
             border-color: transparent transparent transparent rgba(0, 0, 0, .4);
           }
 
           &:after {
             position: absolute;
             right: 0;
-            bottom: -5px;
+            bottom: -6PX;
             content: '';
             width: 0;
             height: 0;
             border-style: solid;
-            border-width: 0 20px 6px 0;
+            border-width: 0 20PX 6PX 0;
             border-color: transparent rgba(0, 0, 0, .4) transparent transparent;
           }
         }
