@@ -1,6 +1,9 @@
 <!-- 
-  本模块为商品打赏模块
+  本模块为商品支付模块
   在下单页面和会员中心的订单详情页有用到
+  其中,支付时分为两种情况, 微信浏览器支付和非微信浏览器支付
+  1.微信浏览器中 -> 只允许微信支付
+  2.非微信浏览器 -> 允许支付宝或者微信支付
  -->
 <template>
   <van-actionsheet class='pay-methods' v-model="payMethodShow" :close-on-click-overlay='false'>
@@ -13,7 +16,7 @@
       <span>支付金额 <b>¥{{ orderInfo.balanceAmount }}</b></span>
     </div>
     <div class="pay-methods-chose">
-      <div class="item zfb" :class="{'checked': payMethod === 0}" @click='handlePay(0)'>
+      <div class="item zfb" :class="{'checked': payMethod === 0}" @click='handlePay(0)' v-if='env === 0'>
         <i class="ib-middle"></i>
         <h4 class="ib-middle">支付宝支付</h4>
         <div class="icon-check"></div>
@@ -39,6 +42,9 @@
       },
       orderId: {
         type: String
+      },
+      env: {
+        type: Number
       }
     },
 
@@ -57,7 +63,7 @@
 
     data () {
       return {
-        payMethod: 0,
+        payMethod: this.env,
         timeCount: '00小时00分00秒',
         zfbHtml: null,
         payLoading: false,
@@ -119,7 +125,11 @@
             this.payLoading = false
           }
         } else if (this.payMethod === 1) {
-          // 微信
+          /*
+            微信支付
+            1.普通浏览器器支付
+            2.在微信浏览器中支付
+          */
           let obj = {
             orderId: this.orderId,
             redirectUrl: 'http://' + window.location.host + '/order/result?orderId=' + this.orderId

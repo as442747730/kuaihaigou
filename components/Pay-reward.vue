@@ -1,6 +1,9 @@
 <!-- 
   本模块在知识分享详情页和个人主页打赏页均有用到
   有articleId -> 知识分享，没有就是个人主页
+  其中,支付时分为两种情况, 微信浏览器支付和非微信浏览器支付
+  1.微信浏览器中 -> 只允许微信支付
+  2.非微信浏览器 -> 允许支付宝或者微信支付
  -->
 <template>
   <van-actionsheet class='pay-methods u-reward' v-model="payShow" :close-on-click-overlay='false'>
@@ -19,7 +22,7 @@
       <!-- <span>支付金额 <b>¥{{ orderInfo.balanceAmount }}</b></span> -->
     </div>
     <div class="pay-methods-chose">
-      <div class="item zfb" :class="{'checked': payMethod === 0}" @click='handlePay(0)'>
+      <div class="item zfb" :class="{'checked': payMethod === 0}" @click='handlePay(0)' v-if='env !== 1'>
         <i class="ib-middle"></i>
         <h4 class="ib-middle">支付宝支付</h4>
         <div class="icon-check"></div>
@@ -54,6 +57,9 @@
       setRewardIndex: {
         type: Number,
         default: null
+      },
+      env: {
+        type: Number
       }
     },
 
@@ -68,7 +74,7 @@
 
     data () {
       return {
-        payMethod: 0,
+        payMethod: this.env,
         type: null,
         // timeCount: '00小时00分00秒',
         zfbHtml: null,

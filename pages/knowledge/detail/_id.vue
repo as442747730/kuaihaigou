@@ -50,7 +50,9 @@
         <p class="info-title">他收到过 <span>{{ detailObj.appreciateNumber }}</span> 人打赏</p>
         <div class="re-ul" v-if='detailObj.appreciateNumber !== 0'>
           <!-- todo -->
-          <div class="re-li"></div>
+          <div class="re-li" v-for='($v, $k) in detailObj.headImgUrlList' :style="'background: url(' + $v + ') no-repeat center/contain'">
+            
+          </div>
         </div>
       </div>
     </div>
@@ -65,7 +67,7 @@
     <articel-comment type='1' :articelId='id' :ifLike='ifLike' :ifCollect='ifCollect'></articel-comment>
 
     <!-- 打赏 -->
-    <pay-reward :payShow='payShow' :articelId='id' :userid='detailObj.userResp.id' @payClose='payClose'></pay-reward>
+    <pay-reward :payShow='payShow' :articelId='id' :userid='detailObj.userResp.id' :env='env' @payClose='payClose'></pay-reward>
 
     <!-- 支付结果 -->
     <van-dialog v-model="resultWindow" :show-confirm-button="false" :closeOnClickOverlay='false' >
@@ -190,10 +192,18 @@ export default {
     ])
       .then(api.spread(function (res1, res2) {
         if (res1.code === 200) {
+          // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+          const ua = req.req.headers['user-agent']
+          let env = 0
+          if (/MicroMessenger/.test(ua)) {
+            // 检测用户设备
+            env = 1
+          }
           const sgt = res1.data.userResp.personalInfoResp.signature || '梦想还是要有的，万一实现了呢'
           const isLogin = res2.code === 200
           const isAuthor = isLogin && res1.data.userResp.id === res2.data.userId
           return {
+            env: env,
             id: req.params.id,
             detailObj: res1.data,
             ifLike: res1.data.checkIfLike,
@@ -209,6 +219,8 @@ export default {
 
   data () {
     return {
+      env: 0, // 用户浏览器
+
       id: null, // 文章id
       isLogin: false, // 是否登录
       isAuthor: false, // 观看此文章的是否作者本人

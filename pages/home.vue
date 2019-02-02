@@ -1105,6 +1105,7 @@ export default {
         font-size: 12px;
         color: #999;
         line-height: 20px;
+        font-weight: lighter;
       }
     }
   }
