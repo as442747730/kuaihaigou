@@ -40,12 +40,11 @@
   left: 0;
   width: 100%;
   // background: @cor_border;
-  background: transparent;
   height: 100vh;
   box-sizing: border-box;
   overflow: scroll;
   padding-top: 46px;
-  z-index: 100;
+  // z-index: 100;
   &-ul {
     background: white;
     font-size: 0;

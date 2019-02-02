@@ -25,7 +25,7 @@
     </div>
 
     <!-- 打赏 -->
-    <pay-reward :payShow='payShow' :setRewardIndex='rewardIndex' :userid='uid' @payClose='payClose'></pay-reward>
+    <pay-reward :payShow='payShow' :setRewardIndex='rewardIndex' :userid='uid' :env='env' @payClose='payClose'></pay-reward>
 
     <!-- 支付结果 -->
     <van-dialog v-model="resultWindow" :show-confirm-button="false" :closeOnClickOverlay='false' >
@@ -86,7 +86,15 @@ export default {
     const { code: code2 } = await userApi.serverPostInfo(req)
     if (code1 === 200) {
       let ifLogin = code2 === 200
+      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+      const ua = req.req.headers['user-agent']
+      let env = 0
+      if (/MicroMessenger/.test(ua)) {
+        // 检测用户设备
+        env = 1
+      }
       return {
+        env: env,
         uid: req.query.uid || null,
         ifLogin: ifLogin,
         rewardInfor: data1
@@ -96,6 +104,8 @@ export default {
 
   data () {
     return {
+      env: 0,
+
       ifLogin: false,
       uid: null, // 用户id
       rewardInfor: [],

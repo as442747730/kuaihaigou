@@ -195,6 +195,19 @@ export default {
       console.log('该地址没有参数')
     }
   },
+  getUrlParam (url, que) {
+    if (url.includes('?')) {
+      let dealUrl = url.split('?')[1]
+      let queArr = dealUrl.split('&')
+      let ewArr = queArr.map(v => {
+        v = v.split('=')
+        return v
+      })
+      return new Map(ewArr).get(que)
+    } else {
+      console.log('该地址没有参数')
+    }
+  },
   /**
    * ['1032464259549761537_白葡萄'] => [{name: '白葡萄', id: '1032464259549761537'}]
    **/

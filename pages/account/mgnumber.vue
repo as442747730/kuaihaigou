@@ -36,7 +36,6 @@ export default {
     if (detCode === 506) {
       req.redirect('/account/login')
     } else if (detCode === 200) {
-      console.log(detData.phone)
       let { wxNickname, qqNickname, wbNickname } = detData
       let bindWx = false
       let bindQQ = false
@@ -142,7 +141,7 @@ export default {
         if (code === 200) {
           this.$toast('登出成功')
           setTimeout(() => {
-            window.location.href = '/account/login'
+            window.location.href = '/home'
           }, 1000)
         }
       })
