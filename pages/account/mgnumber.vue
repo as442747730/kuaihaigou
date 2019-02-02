@@ -130,7 +130,11 @@ export default {
       if (code === 200) {
         console.log(data)
         this.getInfo()
+        sessionStorage.setItem('key', '')
         this.$toast('解绑成功')
+        setTimeout(() => {
+          window.location.href = '/mine'
+        }, 500)
       }
     },
     loginOut () {
@@ -141,7 +145,8 @@ export default {
         if (code === 200) {
           this.$toast('登出成功')
           setTimeout(() => {
-            window.location.href = '/home'
+            // window.location.href = '/home'
+            window.location.reload()
           }, 1000)
         }
       })

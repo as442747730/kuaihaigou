@@ -3,7 +3,7 @@
     <header>
       <h1 class="ib-middle">首页</h1>
       <div class="u-search ib-middle" @click='toSearch'>
-        <input type="text">
+        <input type="text" disabled>
         <i class="van-icon van-icon-search"></i>
       </div>
     </header>

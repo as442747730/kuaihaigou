@@ -383,9 +383,9 @@ export default {
     }
 
     .hd-sign {
-      padding: 20px 20px 50px;
+      padding: 10px 20px 50px;
       p {
-        font-size:12px;
+        font-size:13px;
         font-family:PingFang-SC-Medium;
         color:rgba(255,255,255,1);
         line-height:20px;

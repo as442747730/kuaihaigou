@@ -30,6 +30,7 @@
         </div>
       </div>
       <div class="icon-close" @click='closeBlur'></div>
+      <div class="close-mask" @click='closeBlur'></div>
     </div>
 
   </div>
@@ -197,6 +198,8 @@ export default {
     align-self: flex-end;
     width: 100%;
     padding-bottom: 90px;
+    position: relative;
+    z-index: 3;
   }
   &-item {
     transform: translateY(60px);
@@ -241,6 +244,14 @@ export default {
     bottom: 16px;
     transform: translateX(-50%;);
     background: url('~/assets/img/knowledge/icon-close-single.png') no-repeat center/contain;
+  }
+  .close-mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 2;
   }
 }
 </style>
