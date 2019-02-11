@@ -103,14 +103,14 @@
       <div class="record-section" v-if="section === 2">
         <div class="msg-box">
 
-          <div :class="['msg-item', item.userid === 0 ? 'js' : '']" v-for="(item, index) in recordList" :key="index">
+          <div :class="['msg-item', item.userid === '0' ? 'js' : '']" v-for="(item, index) in recordList" :key="index">
             <div class="time" v-if="index === 0 || getRecordTime(item.createdAt) - getRecordTime(recordList[index - 1].createdAt) > 120000">{{ item.createdAt }}</div>
-            <div class="left avatar" v-if="item.userid === '0'" style="background-image: url('~/assets/img/foot/ic_home_ele@2x.png')"></div>
+            <div class="left avatar" v-if="item.userid === '0'" :style="`background-image: url(${require('~/assets/img/defaultImg.png')})`"></div>
             <div class="center">
               <span v-if="!item.ifImg">{{ item.content }}</span>
               <img v-else :src="item.content" alt="" @click="viewPhoto(item.content)">
             </div>
-            <div class="right avatar" :style="`background-image: url(${item.headimgurl || defaulthead})`"></div>
+            <div class="right avatar" v-if="item.userid !== '0'"  :style="`background-image: url(${item.headimgurl || defaulthead})`"></div>
           </div>
 
         </div>
@@ -543,6 +543,10 @@ export default {
             margin-right: 45px;
             margin-left: 0;
           }
+          .center {
+            margin-right: 45px;
+            margin-left: 0;
+          }
         }
         &:not(:last-child) {
           margin-bottom: 30px;
@@ -560,7 +564,7 @@ export default {
           background-position: center;
           background-size: cover;
           background-repeat: no-repeat;
-          border-radius: 4px;
+          border-radius: 50%;
           &.left {
             margin-right: 10px;
           }
