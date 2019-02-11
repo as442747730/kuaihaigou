@@ -39,7 +39,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  // background: @cor_border;
+  background: @cor_border;
   height: 100vh;
   box-sizing: border-box;
   overflow: scroll;

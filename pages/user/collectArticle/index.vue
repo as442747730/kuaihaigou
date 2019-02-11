@@ -9,17 +9,27 @@
 
     <div class="u-collect-articel">
       <div class="u-collect-articel-list" v-for='($v, $k) in collectData' :key='$k'>
-        <!-- 知识百科 -->
+        <!-- 知识分享 -->
         <div class="u-share-articel-item"  v-if='$v.collectType === 1'>
           <a :href="'/knowledge/detail/' + $v.id + '?type=' + $v.articleType">
+            <div class="author-info">
+              <span class="avatar" :style="'background-image: url(' + ($v.personalInfoResp.headimgurl ? $v.personalInfoResp.headimgurl : require('~/assets/img/defaultImg.png')) + ')'"></span>
+              <div class="info">
+                <div class="nickname">
+                  <span>{{ $v.personalInfoResp.nickname }}</span>
+                  <user-lab :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)'></user-lab>
+                </div>
+                <p class="date">{{ $v.createdAt }}</p>
+              </div>
+            </div>
             <h3 class="font_hight">{{ $v.title }}</h3>
-            <div class="time">{{ $v.createdAt }}</div>
+            <!-- <div class="time">{{ $v.createdAt }}</div> -->
             <div class="tips">
               <span class="tips_one">频道：{{ channelName[$v.channelNumber - 1] }}</span>
               <span>话题：{{ $v.topicName }}</span>
             </div>
             <!-- 文章 -->
-            <div class="artcon" v-if='$v.articleType === 1' v-html='$v.summary'></div>
+            <div class="artcon" v-if='$v.articleType === 1' v-html='formatHtml($v.summary)'></div>
             <div class="imglist" v-if='$v.articleType === 1 && $v.imgsPaht'>
               <div v-for="(item, index) in $v.imgsPaht" :key="index" :class="['imgitem', $v.imgsPaht.length === 1 ? 'big' : '' , $v.imgsPaht.length % 3 === 0 ? 'small' : '', $v.imgsPaht.length === 8 ? 'small' : '', ($v.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="setImgUrl(item) + '&' + new Date().getTime()">
               </div>
@@ -156,13 +166,14 @@
 <script>
 import { personApi } from '@/api/users'
 import Tab from '@/components/user/Tab.vue'
+import userLab from '@/components/Usericon.vue'
 
 export default {
   name: '',
 
   layout: 'page-with-user',
 
-  components: { Tab },
+  components: { Tab, userLab },
 
   head () {
     return {
@@ -275,6 +286,11 @@ export default {
     },
     setImgUrl (url) {
       return url.indexOf('imageslim') !== -1 ? url.split('?')[0] + '?imageView2/5/w/480/h/480' : url + '?imageView2/5/w/480/h/480'
+    },
+    formatHtml (str) {
+      str = str.replace(/&nbsp;/g, '')
+      str = str.replace('。', '')
+      return str
     }
   }
 }

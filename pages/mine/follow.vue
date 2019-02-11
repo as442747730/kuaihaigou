@@ -4,14 +4,13 @@
     <div class="follow-items">
       <div class="follow-item" v-for="(list, index) in lists" :key="index">
         <a :href="'/user?uid=' + list.id">
-          <div class="item-l" :style="{background: `url(${list.headimgurl}) no-repeat center/cover`}"></div>
+          <div class="item-l" :style="{background: `url(${list.headimgurl || require('~/assets/img/defaultImg.png')}) no-repeat center/cover`}"></div>
         </a>
         <div class="item-c">
           <div class="item-c_name">
             <p class="name-world">{{ list.nickname }}</p>
             <p>
-              <i class="ic-name ic-member"></i>
-              <i class="ic-name ic-cms"></i>
+              <user-lab :level='String(list.userGradeNumber)' type='1' :profess='String(list.category)'></user-lab>
             </p>
           </div>
           <div class="item-c_sign">
@@ -39,6 +38,7 @@
 </template>
 <script>
 import comHead from '~/components/com-head'
+import userLab from '@/components/Usericon'
 import { userApi } from '~/api/users'
 export default {
   head () {
@@ -50,7 +50,8 @@ export default {
     }
   },
   components: {
-    comHead
+    comHead,
+    userLab
   },
   data () {
     return {
@@ -194,8 +195,8 @@ export default {
           // background: #03A1CD;
         }
         .item-xhgz {
-          // background: #cccccc;
-          background: #03A1CD;
+          background: #ccc;
+          // background: #03A1CD;
         }
       }
 
@@ -217,6 +218,7 @@ export default {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            margin-right: 10px;
           }
 
           .ic-name {
