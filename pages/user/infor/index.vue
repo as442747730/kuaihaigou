@@ -29,7 +29,7 @@
       <div class="user-infor-item">
         <span class="ib-middle">居住地</span>
         <div class="ib-middle">
-          <p>{{ inforData.userInfo.residenceProvince + inforData.userInfo.residenceCity }}</p>
+          <p>{{ inforData.userInfo.residenceProvince + inforData.userInfo.residenceCity === '保密' ? '' : inforData.userInfo.residenceCity }}</p>
         </div>
       </div>
       <div class="user-infor-item">
@@ -122,7 +122,8 @@ export default {
         {key: 'STATE_2ND', title: '国家二级品酒师'},
         {key: 'STATE_1ST', title: '国家一级品酒师'},
         {key: 'OTHER', title: '其他'}
-      ]
+      ],
+      professTitle: ''
     }
   },
 
@@ -158,6 +159,7 @@ export default {
       max-width: 240px;
     }
     p {
+      max-width: 230px;
       color: #333;
       line-height: 18px;
       overflow: hidden;

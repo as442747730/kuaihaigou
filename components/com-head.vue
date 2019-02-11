@@ -55,7 +55,7 @@ export default {
           if (this.$route.query.from === 'submit') {
             window.location.href = '/order/submit'
           } else {
-            window.location.href = '/invoice/list'
+            window.location.href = '/mine'
           }
           break
         case '/coupon/explain':

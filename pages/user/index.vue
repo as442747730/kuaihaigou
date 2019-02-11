@@ -17,7 +17,7 @@
             <span>话题：{{ $v.topicName }}</span>
           </div>
           <!-- 文章 -->
-          <div class="artcon" v-if='$v.articleType === 1' v-html='$v.summary'></div>
+          <div class="artcon" v-if='$v.articleType === 1' v-html='formatHtml($v.summary)'></div>
           <div class="imglist" v-if='$v.articleType === 1 && $v.imgsPaht'>
             <div v-for="(item, index) in $v.imgsPaht" :key="index" :class="['imgitem', $v.imgsPaht.length === 1 ? 'big' : '' , $v.imgsPaht.length % 3 === 0 ? 'small' : '', $v.imgsPaht.length === 8 ? 'small' : '', ($v.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image='setImgUrl(item)'>
             </div>
@@ -186,6 +186,11 @@ export default {
     },
     setImgUrl (url) {
       return url.indexOf('imageslim') !== -1 ? url.split('?')[0] + '?imageView2/5/w/480/h/480' : url + '?imageView2/5/w/480/h/480'
+    },
+    formatHtml (str) {
+      str = str.replace(/&nbsp;/g, '')
+      str = str.replace('。', '')
+      return str
     }
   }
 }
