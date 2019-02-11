@@ -2,11 +2,13 @@
   <div class="search">
     <div class="search-head">
       <div class="inputmdl">
-        <div class="inputmdl-in">
-          <i class="icon_fdj"></i>
-          <i class="icon_close" v-if="keywords" @click="keywords = ''"></i>
-          <input v-model="keywords" type="text" placeholder="请输入想查找的内容" @keyup.13="search" />
-        </div>
+        <form action="/" method="get" autocomplete="off" onsubmit="return false">
+          <div class="inputmdl-in">
+            <i class="icon_fdj"></i>
+            <i class="icon_close" v-if="keywords" @click="keywords = ''"></i>
+            <input v-model="keywords" type="search" name='word' placeholder="请输入想查找的内容" @keyup.13="search" autocomplete="off" autocapitalize="off" >
+          </div>
+        </form>
         <div class="inputmdl-world" @click="toWinecenter">取消</div>
       </div>
       <nav class="navmdl">
@@ -68,14 +70,24 @@
         <section class="u-share-articel-item" v-if='navDatanIndex === 2'>
           <div class="u-share-articel-list" v-for="($v, $k) in searchData" :key="$k">
             <a :href="'/knowledge/detail/' + $v.id + '?type=' + $v.articleType">
+              <div class="author-info">
+                <span class="avatar" :style="'background-image: url(' + ($v.userResp.headimgurl ? $v.userResp.headimgurl : require('~/assets/img/defaultImg.png')) + ')'"></span>
+                <div class="info">
+                  <div class="nickname">
+                    <span>{{ $v.userResp.nickname }}</span>
+                    <user-lab :level='String($v.userResp.userGradeNumber)' type='1' :profess='String($v.userResp.category)'></user-lab>
+                  </div>
+                  <p class="date">{{ $v.createdAt }}</p>
+                </div>
+              </div>
               <h3 class="font_hight">{{ $v.title }}</h3>
-              <div class="time">{{ $v.createdAt }}</div>
+              <!-- <div class="time">{{ $v.createdAt }}</div> -->
               <div class="tips">
                 <span class="tips_one">频道：{{ channelName[$v.channelNumber - 1] }}</span>
                 <span>话题：{{ $v.topicName }}</span>
               </div>
               <!-- 文章 -->
-              <div class="artcon" v-if='$v.articleType === 1' v-html='$v.summary'></div>
+              <div class="artcon" v-if='$v.articleType === 1' v-html='formatHtml($v.summary)'></div>
               <div class="imglist" v-if='$v.articleType === 1 && $v.imgsPaht'>
                 <div v-for="(item, index) in $v.imgsPaht" :key="index" :class="['imgitem', $v.imgsPaht.length === 1 ? 'big' : '' , $v.imgsPaht.length % 3 === 0 ? 'small' : '', $v.imgsPaht.length === 8 ? 'small' : '', ($v.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="setImgUrl(item)">
                 </div>
@@ -154,9 +166,9 @@
               历史搜索
             </h3>
             <ul class="history-list">
-              <li class="history-list_item" v-for='(item, index) in localKeyword' :key='index' @click='searchHistory(item)'>
-                {{ item }}
-                <i class="icon_close"></i>
+              <li class="history-list_item" v-for='(item, index) in localKeyword' :key='index'>
+                <span @click='searchHistory(item)'>{{ item }}</span>
+                <i class="icon_close" @click='clearSelect(index)'></i>
               </li>
             </ul>
           </div>
@@ -180,7 +192,10 @@
 </template>
 <script>
 import { searchApi } from '@/api/search'
+import userLab from '@/components/Usericon.vue'
 export default {
+  components: { userLab },
+
   head () {
     return {
       title: '搜索页',
@@ -327,7 +342,7 @@ export default {
     },
     async getData (page, needClear = false) {
       if (!this.keywords) return
-      const toast1 = this.$toast.loading({ message: '数据获取中', duration: 0, mask: false })
+      if (needClear) var toast1 = this.$toast.loading({ message: '数据获取中', duration: 0, mask: false })
       this.pageLoding = true
       let fn = null
       let param = {}
@@ -376,6 +391,7 @@ export default {
       if (code === 200) {
         if (needClear) {
           this.searchData = data.array
+          toast1.clear()
         } else {
           this.searchData.push(...data.array)
         }
@@ -384,7 +400,6 @@ export default {
       } else {
         this.pageEmpty = false
       }
-      toast1.clear()
       this.navDatanIndex = this.navData.elIndex
       this.pageLoding = false
     },
@@ -454,7 +469,7 @@ export default {
     },
     // 设置历史记录
     setLocalStore (val) {
-      if (this.setWord === this.keywords || !this.keywords) return
+      if (this.localKeyword.indexOf(val) !== -1 || !this.keywords) return
       this.setWord = val
       let cache = []
       if (this.localKeyword.length <= 5) {
@@ -475,6 +490,15 @@ export default {
     clearHistory () {
       this.localKeyword = []
       localStorage.setItem('localKeyword', JSON.stringify(this.localKeyword))
+    },
+    clearSelect (index) {
+      this.localKeyword.splice(index, 1)
+      localStorage.setItem('localKeyword', JSON.stringify(this.localKeyword))
+    },
+    formatHtml (str) {
+      str = str.replace(/&nbsp;/g, '')
+      str = str.replace('。', '')
+      return str
     },
     handleScroll (fn) {
       let Switch = true
@@ -523,6 +547,9 @@ export default {
         &>input {
           width: calc(100% - 90px);
           background: rgba(250, 250, 250, 1);
+          height: 100%;
+          padding: 5px 0;
+          box-sizing: border-box;
         }
 
         .icon_fdj {
@@ -993,10 +1020,10 @@ export default {
   background: #FBFBFB;
   border-radius: 8px;
   border: 1PX solid #EAEAEA;
-  .padlr20;
+  .padlr15;
 
   &-head {
-    padding: 15px 0 10px;
+    padding: 15px 0;
     font-size: 16px;
     font-family: PingFangSC-Semibold;
     font-weight: 600;
@@ -1086,9 +1113,52 @@ export default {
     border-radius: 8px;
     min-height: 50px;
     border: 1PX solid #EAEAEA;
-    padding: 15px 20px 20px;
+    padding: 20px 20px;
     overflow: hidden;
     margin-bottom: 20px;
+    .author-info {
+      padding-bottom: 20px;
+      margin-bottom: 15px;
+      border-bottom: 1PX solid #EAEAEA;
+      display: flex;
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        overflow: hidden;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-right: 15px;
+      }
+      .info {
+        .nickname {
+          font-size: 16px;
+          font-weight: bold;
+          color: @cor_333;
+          display: flex;
+          align-items: center;
+          span {
+            display: block;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-right: 5px;
+          }
+        }
+        .date {
+          margin-top: 6px;
+          font-size: 12px;
+          color: @cor_999;
+          padding-left: 18px;
+          background-image: url(~/assets/img/me/icon-clock.png);
+          background-position: left center;
+          background-size: 14px 14px;
+          background-repeat: no-repeat;
+        }
+      }
+    }
   }
   &-item {
     padding: 0 20px;
@@ -1130,6 +1200,7 @@ export default {
       color: rgba(153, 153, 153, 1);
       line-height: 12px;
       margin: 10px 0;
+      font-weight: lighter;
       &_one {
         margin-right: 10px;
       }
