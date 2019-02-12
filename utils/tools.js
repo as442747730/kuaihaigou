@@ -48,6 +48,11 @@ export default {
     }
     return !val === false
   },
+  // 检查微信环境
+  checkWechat () {
+    const ua = window.navigator.userAgent
+    return /MicroMessenger/.test(ua)
+  },
   // 时间格式化
   /**
    * @argument date * 时间对象
@@ -180,6 +185,19 @@ export default {
     console.log(webUrl)
     if (webUrl.includes('?')) {
       let dealUrl = webUrl.split('?')[1]
+      let queArr = dealUrl.split('&')
+      let ewArr = queArr.map(v => {
+        v = v.split('=')
+        return v
+      })
+      return new Map(ewArr).get(que)
+    } else {
+      console.log('该地址没有参数')
+    }
+  },
+  getUrlParam (url, que) {
+    if (url.includes('?')) {
+      let dealUrl = url.split('?')[1]
       let queArr = dealUrl.split('&')
       let ewArr = queArr.map(v => {
         v = v.split('=')

@@ -125,7 +125,11 @@ export default {
     },
 
     historyBack () {
-      window.location.href = '/account/login'
+      if (document.referrer === 'http://' + window.location.host + '/account/login?status=1') {
+        window.location.href = '/account/login?status=1'
+      } else {
+        window.location.href = '/account/login'
+      }
       // window.history.go(-1)
     }
   }

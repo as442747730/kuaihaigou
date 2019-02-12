@@ -23,3 +23,5 @@ table { border-collapse:collapse; border-spacing:0}
 .ellipsis { white-space:nowrap; text-overflow:ellipsis; overflow:hidden}
 .break { word-break:break-all; word-wrap:break-word}
 header, footer, article, section, nav, menu, hgroup {display: block;clear:all;}
+[type=search] {-webkit-appearance: none;outline-offset: -2PX;}
+input[type=search]::-webkit-search-cancel-button{-webkit-appearance: none;}

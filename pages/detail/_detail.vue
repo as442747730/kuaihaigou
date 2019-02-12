@@ -1479,6 +1479,10 @@ export default {
     color: #000;
   }
 }
+.van-actionsheet__content {
+  height: calc(77vh - 43px);
+  overflow: scroll;
+}
 .van-icon.van-icon-star {
   font-size: 21px;
   color: #333;

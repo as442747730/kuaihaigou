@@ -3,7 +3,7 @@
     <div class="follow-items">
       <div class="follow-item" v-for="($v, $k) in lists" :key="$k">
         <a :href="'/user?uid=' + $v.id">
-          <div class="item-l" :style="{background: `url(${$v.headimgurl}) no-repeat center/cover`}"></div>
+          <div class="item-l" :style="{background: `url(${$v.headimgurl || require('~/assets/img/defaultImg.png')}) no-repeat center/cover`}"></div>
         </a>
         <div class="item-c">
           <div class="item-c_name">

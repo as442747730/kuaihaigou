@@ -161,7 +161,8 @@
       <uCoupon v-show="couponShow" :amount="formatMoney(payable)" :usableList="couponArray.filter(n => { return n.useThreshold <= this.totalPrice })" :unusableList="couponArray.filter(n => { return n.useThreshold >= this.totalPrice })" @handleSelectCoupon="handleSelectCoupon" @changeCoupon='changeCoupon'></uCoupon>
     </transition>
 
-    <uPay :payMethodShow='payMethodShow' :orderId='orderId' @payClose='payClose'></uPay>
+    <!-- 支付 -->
+    <uPay :payMethodShow='payMethodShow' :orderId='orderId' :env='env' @payClose='payClose'></uPay>
 
   </div>
 </template>
@@ -220,6 +221,13 @@ export default {
         if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506) {
           return req.redirect('/account/login')
         }
+        // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+        const ua = req.req.headers['user-agent']
+        let env = 0
+        if (/MicroMessenger/.test(ua)) {
+          // 检测用户设备
+          env = 1
+        }
         let a = []
         let b = []
         if (res2.code === 200) {
@@ -242,6 +250,7 @@ export default {
         // 获取默认收货地址
         let defaultAdress = res1.data.find(v => v.ifDefault) || {}
         return {
+          env: env, // 用户浏览器环境
           addressArray: res1.data, // 所有可选的收货地址
           addressSelected: defaultAdress,
           reduceFreight: res2.data.reduceFreight || 0, //
@@ -270,6 +279,8 @@ export default {
 
   data () {
     return {
+      env: 0, // 用户浏览器,微信或者非微信
+
       fullScreen: false,
       navTitle: '',
       navTxt: '',
@@ -592,6 +603,7 @@ export default {
     min-height: 0vh;
     overflow: hidden;
     box-sizing: border-box;
+    padding-bottom: 0;
   }
   .m-section-position {
     margin-top: 46px;
@@ -852,5 +864,8 @@ export default {
       transform: translate(0, -50%);
     }
   }
+}
+.m-layout > div:first-child {
+  transition: none;
 }
 </style>

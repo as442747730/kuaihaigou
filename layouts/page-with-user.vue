@@ -126,6 +126,8 @@ export default {
     },
     async showLayer (type) {
       this.type = type
+      if (this.type === 1 && !this.userInfo.attentionNumber) return
+      if (this.type === 2 && !this.userInfo.fanNumber) return
       window.location.hash = 'layer'
       const toast1 = this.$toast.loading({ mask: true, message: '信息获取中', duration: 0 })
       const { code, data } = await personApi.followFans({ page: 1, count: 5, number: this.type, id: this.uid })

@@ -40,12 +40,18 @@
   left: 0;
   width: 100%;
   background: @cor_border;
-  min-height: 100vh;
+  height: 100vh;
   box-sizing: border-box;
+  overflow: scroll;
   padding-top: 46px;
+  // z-index: 100;
   &-ul {
     background: white;
     font-size: 0;
+    // height: ~'calc(100vh - 46px)';
+    // position: relative;
+    // top: -46px;
+    // padding-top: 46px;
   }
   &-li {
     padding: 20px 20px 15px 20px;

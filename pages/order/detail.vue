@@ -125,7 +125,7 @@
     </div>
 
     <!-- 支付 -->
-    <uPay :payMethodShow='payMethodShow' :orderId='orderId' @payClose='payClose'></uPay>
+    <uPay :payMethodShow='payMethodShow' :orderId='orderId' :env='env' @payClose='payClose'></uPay>
 
     <!-- 物流 -->
     <!-- <uLogis v-model='logisOpen' :logisData='orderDetail.deliverBillList'></uLogis> -->
@@ -166,8 +166,14 @@ export default {
       if (res1.code === 506 || res2.code === 506) {
         req.redirect('/account/login')
       }
-      // console.log(res1.data, res2.data)
       let payInfo = {}
+      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+      const ua = req.req.headers['user-agent']
+      let env = 0
+      if (/MicroMessenger/.test(ua)) {
+        // 检测用户设备
+        env = 1
+      }
       if (res1.code === 200 && res2.code === 200) {
         res1.data.orderItemList.forEach((n, i) => {
           if (!n.packName && res2.data.filter(m => m.orderItemId === n.orderItemId).length !== 0 && res2.data.filter(m => m.orderItemId === n.orderItemId)[0].num === n.num) {
@@ -195,7 +201,7 @@ export default {
         // if (req.query.type === 'pay') {
         //   payMethodShow = true
         // }
-        return { orderDetail: res1.data, orderId: req.query.id, payInfo: payInfo, type: req.query.type }
+        return { env: env, orderDetail: res1.data, orderId: req.query.id, payInfo: payInfo, type: req.query.type }
       } else {
         req.redirect('/error')
       }
@@ -220,6 +226,7 @@ export default {
 
   data () {
     return {
+      env: 0, // 用户浏览器
       orderId: null,
 
       statusTxt: ['待付款', '待发货', '发货中', '待收货', '待评价', '已完成', '已关闭'],

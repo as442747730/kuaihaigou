@@ -25,7 +25,7 @@
             <div class="part-body-from">
               <p>
                 <span class="ib-middle">评论文章</span>
-                <a class="ib-middle" :href="getHref($v)">《{{ $v.title }}》</a>
+                <a class="ib-middle" :data-href="getHref($v)">《{{ $v.title }}》</a>
               </p>
             </div>
           </div>

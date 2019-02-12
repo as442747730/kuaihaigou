@@ -35,7 +35,7 @@ export default {
           if (this.$route.query.from === 'submit') {
             window.location.href = '/order/submit'
           } else {
-            window.location.href = '/address/list'
+            window.location.href = '/mine'
           }
           break
         case '/address/add':
@@ -55,7 +55,7 @@ export default {
           if (this.$route.query.from === 'submit') {
             window.location.href = '/order/submit'
           } else {
-            window.location.href = '/invoice/list'
+            window.location.href = '/mine'
           }
           break
         case '/coupon/explain':
@@ -71,6 +71,9 @@ export default {
           window.location.href = '/mine'
           break
         case '/message':
+          window.location.href = '/mine'
+          break
+        case '/mine/comment':
           window.location.href = '/mine'
           break
         case '/account/bindphone':

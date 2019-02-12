@@ -38,7 +38,7 @@
       <span class="m-login-submit-captcha active-status" v-show="loginType === 2" @click="toggleLoginType(1)">密码登录</span>
     </div>
 
-    <div class="m-login-bottom">
+    <div class="m-login-bottom" v-if='env !== 1'>
       <p class="m-login-bottom-title">第三方账号直接登录</p>
       <div class="m-login-bottom-flex">
         <div class="m-login-bottom-flex-item weibo" @click="loginClient('wb')"></div>
@@ -52,7 +52,9 @@
 <script>
 import api from '~/utils/request'
 import { userApi } from '~/api/users'
+import { accountApi } from '~/api/account'
 import captchaInput from '~/components/Login-captcha.vue'
+import tools from '~/utils/tools'
 
 export default {
   name: 'login',
@@ -69,17 +71,36 @@ export default {
 
   async asyncData (req) {
     const { code } = await userApi.serverPostInfo(req)
-    console.log(code)
+    const ua = req.req.headers['user-agent']
+    let env = 0
+    if (/MicroMessenger/.test(ua)) {
+      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+      env = 1
+    }
+    let loginStatus = req.query.status || null // 用于检测微信端授权登陆
+    // 1-> 未绑定或未注册 2 -> 已绑定
     if (code === 200) {
-      req.redirect('/home')
+      req.redirect('/mine')
       return {
-        islogin: true
+        env: env,
+        islogin: true,
+        loginStatus: loginStatus
       }
+    } else if (code === 506) {
+      return {
+        env: env,
+        islogin: false,
+        loginStatus: loginStatus
+      }
+    } else {
+      req.redirect('/error')
     }
   },
 
   data () {
     return {
+      loginStatus: null,
+      env: 0,
       loginType: 1, // 登录方式 1：手机号码登录， 2：验证码登录
 
       phone: '',
@@ -133,13 +154,43 @@ export default {
     }
   },
 
-  mounted () {
+  async mounted () {
     this.prevLink = document.referrer || window.location.href
     if ((this.prevLink === window.location.href) || (this.prevLink === 'http://' + window.location.host + '/account/register') || (this.prevLink === 'http://' + window.location.host + '/account/bindphone') || (this.prevLink === 'http://' + window.location.host + '/account/mgnumber')) {
       this.prevLink = 'http://' + window.location.host + '/mine'
     }
     if (this.prevLink === 'http://' + window.location.host + '/account/forget' || this.prevLink === 'http://' + window.location.host + '/account/forget?type=modify') {
       this.prevLink = 'http://' + window.location.host
+    }
+    // 判断微信环境
+    if (tools.checkWechat()) {
+      if (!this.loginStatus) {
+        // 未授权
+        const { code, data } = await accountApi.loginWithWxJs({ returnUrl: window.location.href })
+        if (code === 200) {
+          sessionStorage.setItem('key', 'allow')
+          window.location.href = data.authorizeJsUrl
+        } else {
+          alert(1)
+        }
+      } else if (+this.loginStatus === 1) {
+        // 已授权，但未注册或者绑定
+        const valida = sessionStorage.getItem('key') // 保险,验证有用户是否正常访问了上级页面,以防止绕过验证直接登录
+        if (valida !== 'allow') {
+          window.location.href = '/account/login'
+          return
+        }
+        this.$dialog.confirm({
+          title: '提示',
+          message: '当前微信账号未绑定任何账号<br>您可以选择',
+          confirmButtonText: '绑定已有账号',
+          cancelButtonText: '注册新账号'
+        }).then(() => {
+          this.$dialog.close()
+        }).catch(() => {
+          window.location.href = '/account/register'
+        })
+      }
     }
   },
 
@@ -225,7 +276,7 @@ export default {
 
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .m-login {
   background: white;
   height: 100vh;
@@ -353,5 +404,11 @@ export default {
       }
     }
   }
+}
+.van-dialog__cancel {
+  color: #1989fa;
+}
+.van-dialog__message {
+  text-align: center;
 }
 </style>
