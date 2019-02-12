@@ -7,25 +7,25 @@
     <div class="hotbody">
       <transition name="slide-fade">
         <div class="hotbox" v-if='hotweek' key='1'>
-          <div class="box-item" v-for="(item, index) in hotList" :key="index">
-            <a :href="'/hotspot/detail/' + item.id">
-              <div class="box-left" v-lazy:background-image="item.imgPath"></div>
+          <div class="box-item" v-for="(item2, index) in hotList" :key="index">
+            <a :href="'/hotspot/detail/' + item2.id">
+              <div class="box-left" v-lazy:background-image="item2.imgPath"></div>
               <div class="box-right">
-                <h3 class="r_head">{{item.title}}</h3>
-                <div class="r_time">{{item.createdAt}}</div>
-                <p class="r_summary">{{item.summary}}</p>
+                <h3 class="r_head">{{item2.title}}</h3>
+                <div class="r_time">{{item2.createdAt}}</div>
+                <p class="r_summary">{{item2.summary}}</p>
               </div>
             </a>
           </div>
         </div>
         <div class="hotbox" v-else key='2'>
-          <div class="box-item" v-for="(item, index) in hotList" :key="index">
-            <a :href="'/hotspot/detail/' + item.id">
-              <div class="box-left" v-lazy:background-image="item.imgPath"></div>
+          <div class="box-item" v-for="(item2, index) in hotList" :key="index">
+            <a :href="'/hotspot/detail/' + item2.id">
+              <div class="box-left" v-lazy:background-image="item2.imgPath"></div>
               <div class="box-right">
-                <h3 class="r_head">{{item.title}}</h3>
-                <div class="r_time">{{item.createdAt}}</div>
-                <p class="r_summary">{{item.summary}}</p>
+                <h3 class="r_head">{{item2.title}}</h3>
+                <div class="r_time">{{item2.createdAt}}</div>
+                <p class="r_summary">{{item2.summary}}</p>
               </div>
             </a>
           </div>
@@ -39,7 +39,7 @@
       <div class="banners">
         <div v-swiper:mySwiper1="bannerSwiper">
           <div class="bannerlist swiper-wrapper">
-            <div class="banneritem swiper-slide" v-for="(item, index) in bannerList" :key="+new Date().getMilliseconds()" v-lazy:background-image="item.bannerPath + '?imageView2/2/w/650/h/320'" @click="todetail(item, 0)">
+            <div class="banneritem swiper-slide" v-for="(item, index) in bannerList" :key="item.bannerPath" v-lazy:background-image="item.bannerPath + '?imageView2/2/w/650/h/320'" @click="todetail(item, 0)">
               <p>{{ item.title }}</p>
             </div>
           </div>
@@ -48,9 +48,9 @@
     </div>
     <div class="list-box" v-if="newList.length !== 0">
       <div
-        class="list"
+        class="list ani_show_opacty"
         v-for="(item, index) in newList"
-        :key="index"
+        :key="item.id"
         @click="todetail(item)">
         <div class="content">
           <div class="content-head">
@@ -606,4 +606,20 @@
     color: #666;
   }
 }
+
+.ani_show_opacty {
+  animation: show_opacty ease 1s 1 both;
+}
+
+@keyframes show_opacty {
+  0%{
+    opacity: 0;
+    transform: translateY(20px)
+  }
+  100%{
+    opacity: 1;
+    transform: translateX(0px)
+  }
+}
+
 </style>
