@@ -126,18 +126,18 @@
           }
         } else if (this.payMethod === 1) {
           /*
-            微信支付
-            1.普通浏览器器支付
-            2.在微信浏览器中支付
+            微信支付 env
+            0.普通浏览器器支付
+            1.在微信浏览器中支付
           */
           let obj = {
             orderId: this.orderId,
             redirectUrl: 'http://' + window.location.host + '/order/result?orderId=' + this.orderId
           }
-          const { code, data } = await orderApi.wxReward(obj)
+          const { code, data } = this.env === 0 ? await orderApi.wxReward(obj) : await orderApi.wxOrderPay({ orderid: this.orderId })
           if (code === 200) {
             console.log(data)
-            window.location.href = data
+            // window.location.href = data
           } else {
             this.$toast(data)
             this.payLoading = false
