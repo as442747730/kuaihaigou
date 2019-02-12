@@ -72,6 +72,8 @@ export default {
     if (code === 200) {
       console.log(data)
       return { wsylist: data.array }
+    } else if (code === 506) {
+      req.redirect('/account/login')
     }
   },
   data () {
