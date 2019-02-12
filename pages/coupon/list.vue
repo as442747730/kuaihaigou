@@ -67,11 +67,13 @@ export default {
     nullData
   },
   async asyncData (req) {
-    let params = { page: 1, count: 10, ifUsed: false }
+    let params = { page: 1, count: 5, ifUsed: false }
     const { code, data } = await couponApi.serverGetList(params, req)
     if (code === 200) {
-      // console.log(data)
+      console.log(data)
       return { wsylist: data.array }
+    } else if (code === 506) {
+      req.redirect('/account/login')
     }
   },
   data () {
