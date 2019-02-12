@@ -78,20 +78,21 @@
 
         <div class="commend_home-content">
           <div class="home_bk">
-            <div class="bg" :style="{backgroundImage: 'url(' + wineBk + ')'}">
-              <div class="bg_world">{{wineSence}}</div>
+            <div class="bg ani_show_opacty2" :style="{ backgroundImage: 'url(' + wineBk + ')' }" :key='+new Date().getMilliseconds()'>
+              <div class="bg_world">{{ wineSence }}</div>
             </div>
             <!-- <div class="bg" v-lazy:background-image="wineBk"></div> -->
           </div>
           <div v-swiper:mySwiper4="swiperCommend">
             <div class="swiper-wrapper">
               <div
-                class="swiper-slide commend-list"
+                class="swiper-slide commend-list ani_show_opacty"
                 v-for="(wine, index) in wineList"
                 @click="goWinedet(wine.id)"
-                :key="index">
+                :key="+new Date().getMilliseconds() + index">
                 <div class="pro">
-                  <img v-lazy="wine.cover" />
+                  <!-- <img v-lazy="wine.cover" /> -->
+                  <img :src="wine.cover" />
                 </div>
                 <div class="desc">
                   <h3 class="font_hight">{{wine.goodsName}}</h3>
@@ -128,7 +129,7 @@
               v-for="(pick, index) in selectList"
               @click="goselect(pick.id)"
               :key="index">
-              <div class="hot-list-box" v-if="pick.goodsMinimalResp">
+              <div class="hot-list-box" v-if="pick.goodsMinimalResp" :class="{'w100': selectList.length === 1}">
                 <div class="pro ib-middle" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
                 <div class="desc ib-middle">
                   <h3>{{pick.goodsMinimalResp.goodsName}}</h3>
@@ -186,11 +187,14 @@
               class="swiper-slide share-list"
               v-for="(share, index) in knowList"
               :key="index">
-              <div class="share-list-box">
+              <div class="share-list-box" :class="{'w100': knowList.length === 1}">
                 <div class="share_home-user" v-if="share.userResp" @click="gomine(share.userResp.id)">
                   <u class="ib-middle" v-lazy:background-image="share.userResp.headimgurl"></u>
                   <div class="ib-middle">
-                    <span class="font_hight">{{ share.userResp.nickname }}</span>
+                    <span class="font_hight">
+                      {{ share.userResp.nickname }}
+                    </span>
+                    <user-lab :level='String(share.userResp.userGradeNumber)' type='1' :profess='String(share.userResp.category)'></user-lab>
                     <p>{{ share.createdAt }}</p>
                   </div>
                 </div>
@@ -202,10 +206,16 @@
                     <span>频道：{{ share.channelName }}</span>
                     <span>话题：{{ share.topicName }}</span>
                   </div>
-                  <p class="content_summary" v-html='share.summary'></p>
-                  <div class="pro">
-                    <div class="content_bk" v-if="share.imgsPaht" v-lazy:background-image="share.imgsPaht[0]"></div>
-                    <!-- <img v-if="share.imgsPaht" v-lazy="share.imgsPaht[0]"> -->
+                  <!-- 文章 -->
+                  <p class="content_summary" v-if='share.articleType === 1' v-html='formatHtml(share.summary)'></p>
+                  <div class="pro" v-if="share.imgsPaht && share.articleType === 1">
+                    <div class="content_bk" v-lazy:background-image="share.imgsPaht[0]"></div>
+                  </div>
+                  <!-- 视频 -->
+                  <div class="video-box" v-if="share.articleType === 2">
+                    <video ref="refvideo" class="video-player" controls>
+                      <source :src="share.videoPath" type="video/mp4">
+                    </video>
                   </div>
                   <div class="u-other">
                     <span class="zan"><i></i>{{ share.likeNumber }}</span>
@@ -278,7 +288,7 @@
               v-for="(news, index) in newsList"
               @click="gohostpot(news)"
               :key="index">
-              <div class="news-list-box">
+              <div class="news-list-box" :class="{'w100': newsList.length === 1}">
                 <h3 class="box_title">
                   <p>{{ news.title }}</p>
                 </h3>
@@ -313,12 +323,14 @@ import { newApi } from '~/api/news'
 import { knowApi } from '~/api/knowledge'
 import { munityApi } from '~/api/community'
 import { poetApi } from '~/api/poets'
+import userLab from '@/components/Usericon.vue'
 import tools from '~/utils/tools'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
 
 export default {
   name: 'home',
   layout: 'page-with-tabbar',
+  components: { userLab },
   async asyncData (req) {
     // 分页查询列表，第1页，前5条数据
     const params = { page: 1, count: 5 }
@@ -461,6 +473,7 @@ export default {
         const chEl = document.querySelector('#changeNew')
         let _this = this
         chEl.onclick = function () {
+          _this.wineList = []
           console.time('chEl')
           isChange = false
           nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
@@ -512,6 +525,11 @@ export default {
         this.$toast(data)
       }
     },
+    formatHtml (str) {
+      str = str.replace(/&nbsp;/g, '')
+      str = str.replace('。', '')
+      return str
+    },
     toSearch () {
       window.location.href = '/search'
     },
@@ -538,7 +556,6 @@ export default {
 }
 </script>
 <style lang="less">
-@import '../assets/css/var.less';
 .m-home {
   display: block;
   padding-bottom: 50px;
@@ -720,7 +737,7 @@ export default {
     border: 1px solid #eaeaea;
     border-radius: 8px;
     width: 150px;
-    height: 244px;
+    height: 265px;
     box-sizing: border-box;
     padding: 4px 12px 16px;
     text-align: center;
@@ -739,8 +756,11 @@ export default {
         color: #333;
         line-height: 18px;
         overflow: hidden;
+        -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
-        white-space: nowrap;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
       p {
         margin: 10px 0 4px;
@@ -920,6 +940,15 @@ export default {
       width: 320px;
       height: 514px;
     }
+    .video-box {
+      position: relative;
+      .video-player {
+        width: 100%;
+        height: 157px;
+        border-radius: 5px;
+        margin: 5px 0;
+      }
+    }
   }
   &-user {
     border-bottom: 1PX solid #f5f5f5;
@@ -930,14 +959,15 @@ export default {
       border-radius: 50%;
       overflow: hidden;
       margin-right: 17px;
-      background: #ff6c6c;
       .bg_cover;
     }
     span {
-      display: block;
+      display: inline-block;
+      vertical-align: middle;
       font-size: 16px;
       color: #333;
-      max-width: 200px;
+      max-width: 120px;
+      margin-right: 10px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -946,8 +976,6 @@ export default {
       margin-top: 9px;
       color: #999;
       font-size: 12px;
-      display: inline-block;
-      vertical-align: middle;
       &:before {
         content: '';
         display: inline-block;
@@ -977,6 +1005,7 @@ export default {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        text-align: justify;
       }
     }
     .tips{
@@ -985,7 +1014,6 @@ export default {
       margin: 10px 0 15px;
       span:first-child {
         padding-right: 20px;
-
       }
     }
     .content_summary {
@@ -1235,4 +1263,33 @@ export default {
     }
   }
 }
+
+.ani_show_opacty {
+  animation: show_opacty ease 1s 1 both;
+}
+
+.ani_show_opacty2 {
+  animation: show_opacty2 ease 1s 1 both;
+}
+
+@keyframes show_opacty {
+  0%{
+    opacity: 0;
+    transform: translateX(20px)
+  }
+  100%{
+    opacity: 1;
+    transform: translateX(0px)
+  }
+}
+
+@keyframes show_opacty2 {
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+
 </style>

@@ -52,6 +52,10 @@ export const orderApi = {
   wxReward (obj) {
     return request.clientPostJson('/api/pay/wxReward', obj)
   },
+  // 公众号支付（微信浏览器环境下）
+  wxOrderPay (obj) {
+    return request.clientPostJson('/api/wxpay/js/orderPay', obj)
+  },
   // 检测支付状态
   getOrderPayOrNot (orderId) {
     return request.clientGet('/api/order/getOrderPayOrNot/' + orderId)
