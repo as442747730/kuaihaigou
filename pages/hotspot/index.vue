@@ -1,5 +1,6 @@
 <template>
   <div class="homelist" ref="scrollElem">
+    <com-head :titleConfig="configtitle"></com-head>
     <div class="hothead">
       <div class="headitem" :class="{active: hotweek}" @click="myhotFn(0)">本周最热</div>
       <div class="headitem" :class="{active: !hotweek}" @click="myhotFn(1)">本月最热</div>
@@ -89,6 +90,8 @@
   import { newApi } from '~/api/news'
   import tools from '~/utils/tools'
   import nullData from '~/components/nullData'
+  import comHead from '~/components/com-head'
+
   export default {
     head () {
       return {
@@ -99,7 +102,8 @@
       }
     },
     components: {
-      nullData
+      nullData,
+      comHead
     },
     async asyncData (req) {
       const hottest = true
@@ -136,6 +140,7 @@
     },
     data () {
       return {
+        configtitle: '行业热点',
         hotweek: true,
         hotList: [],
         bannerList: [],

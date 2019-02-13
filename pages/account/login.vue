@@ -16,7 +16,7 @@
 
       <div class="m-login-handler">
         <!-- <a class="u-link active-status" href="">创建账号</a> -->
-        <a class="u-link active-status" href="/account/register">注册账号</a>
+        <a class="u-link active-status" href="/account/register">创建账号</a>
         <a class="u-link active-status" href="/account/forget">忘记密码？</a>
       </div>
     </section>
@@ -279,8 +279,8 @@ export default {
   background: white;
   height: 100vh;
   min-height: 610px;
-  max-height: 650px;
-  padding: 60px 30px 20px 30px;
+  max-height: 640px;
+  padding: 30px 30px 20px 30px;
   box-sizing: border-box;
   position: relative;
   &-title {

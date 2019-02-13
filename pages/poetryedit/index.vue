@@ -1,6 +1,6 @@
 <template>
   <div class="m-poetry-edit">
-    <van-nav-bar title="酒坛诗社" left-arrow right-text='发布' @click-left='editShow = false' @click-right="send"></van-nav-bar>
+    <van-nav-bar title="酒坛诗社" left-arrow right-text='发布' @click-left='backHome' @click-right="send"></van-nav-bar>
     <textarea class="textarea" placeholder="写点东西签个到吧～有可能在首页显示哦～" v-model='editContent' :maxlength="100"></textarea>
   </div>
 </template>
@@ -57,6 +57,9 @@ export default {
           window.location.href = this.prevLink
         }, 500)
       }
+    },
+    backHome () {
+      window.location.href = '/home'
     }
   }
 }

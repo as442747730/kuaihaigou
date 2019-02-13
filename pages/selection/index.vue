@@ -1,5 +1,6 @@
 <template>
   <div class="selection">
+    <com-head titleConfig='甄选文章'></com-head>
     <div class="newhots">
       <div class="newhot" :class="{active: sortedNum === '1'}" @click="sortedBy(1)">
         <p class="newp">最新</p>
@@ -47,6 +48,8 @@
 import { selectApi } from '~/api/selection'
 import tools from '~/utils/tools'
 import nullData from '~/components/nullData'
+import comHead from '~/components/com-head'
+
 export default {
   head () {
     return {
@@ -57,7 +60,8 @@ export default {
     }
   },
   components: {
-    nullData
+    nullData,
+    comHead
   },
   async asyncData (req) {
     let { sortedBy } = req.query

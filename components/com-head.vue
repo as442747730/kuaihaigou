@@ -80,6 +80,12 @@ export default {
           // window.location.href = '/account/mgphone'
           window.history.go(-1)
           break
+        case '/hotspot':
+          window.location.href = '/home'
+          break
+        case '/selection':
+          window.location.href = '/home'
+          break
         default:
           console.log('未知页面')
           break

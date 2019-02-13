@@ -10,10 +10,15 @@ html, body
   margin: 0 auto;
   -webkit-overflow-scrolling: touch;
   max-width: 800PX;
+
   &.hidden {
     height: 100%;
     overflow: hidden;
   }
+}
+
+body {
+  font-size: 62.5%;
 }
 
 #__nuxt {
@@ -353,7 +358,7 @@ input[type="text"] {
 // 按钮
 .u-button {
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   height: 45px;
   line-height: 45px;
   border-radius: 23px;
@@ -379,8 +384,8 @@ input[type="text"] {
     opacity: 0.7;
   }
   &.disabled {
-    background: #F2F2F2;
-    color: #999999;
+    background: #ccc;
+    color: #fff;
     &:active {
       opacity: 1;
     }
@@ -559,8 +564,8 @@ input[type="text"] {
 }
 
 // a
-.u-link {
-  font-size: 14px;
+a.u-link {
+  font-size: 13px;
   color: #03A1CD;
 }
 
