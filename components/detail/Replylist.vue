@@ -2,7 +2,7 @@
   <div class="u-reply">
     <section class="u-detail_header">
       <van-nav-bar title="评论详情" left-arrow @click-left='onClickLeft'>
-        <van-icon name="fenxiang" slot="right" @click='report' />
+        <!-- <van-icon name="fenxiang" slot="right" @click='report' /> -->
       </van-nav-bar>
     </section>
     <div class="u_comment" :id="'u_comment_' + replyType">
@@ -82,6 +82,7 @@
 <script>
 import tools from '~/utils/tools'
 import uUsericon from '~/components/Usericon'
+import wechatLogin from '~/utils/wechatLogin'
 import { goodsApi } from '~/api/goods'
 import { quizApi } from '~/api/quiz'
 import { ImagePreview } from 'vant'
@@ -102,7 +103,8 @@ export default {
       Type: Array,
       default: []
     },
-    islogin: Boolean
+    islogin: Boolean,
+    env: Number
   },
   data () {
     return {
@@ -174,9 +176,11 @@ export default {
     turnToEdit (replyid, editPerson) {
       if (!this.islogin) {
         this.$toast('请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 500)
+        if (this.env === 1) {
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(function () { window.location.href = '/account/login' }, 500)
+        }
         return
       }
       console.log(replyid)
@@ -246,6 +250,15 @@ export default {
     },
     // 点赞
     async zan (val) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        if (this.env === 1) {
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(function () { window.location.href = '/account/login' }, 500)
+        }
+        return
+      }
       console.log(val)
       let fn = null
       let msg = ''

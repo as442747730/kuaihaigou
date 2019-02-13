@@ -92,6 +92,7 @@ import tools from '~/utils/tools'
 import uUsericon from '~/components/Usericon'
 import { ImagePreview } from 'vant'
 import { commentApi } from '~/api/comment'
+import wechatLogin from '~/utils/wechatLogin'
 
 export default {
   name: 'u-reply',
@@ -109,7 +110,8 @@ export default {
       Type: Array,
       default: []
     },
-    islogin: Boolean
+    islogin: Boolean,
+    env: Number
   },
 
   data () {
@@ -193,9 +195,11 @@ export default {
     turnToEdit (val, method) {
       if (!this.islogin) {
         this.$toast('请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 500)
+        if (this.env === 1) {
+          setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(() => { window.location.href = '/account/login' }, 500)
+        }
         return
       }
       console.log(val)
@@ -240,9 +244,11 @@ export default {
     async handleCommentLike (val, index) {
       if (!this.islogin) {
         this.$toast('请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 500)
+        if (this.env === 1) {
+          setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(() => { window.location.href = '/account/login' }, 500)
+        }
         return
       }
       if (this.zanLoading) return

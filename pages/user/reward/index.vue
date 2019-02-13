@@ -63,6 +63,7 @@ import { personApi, userApi } from '@/api/users'
 import { rewardApi } from '@/api/reward'
 import Tab from '@/components/user/Tab.vue'
 import payReward from '@/components/Pay-reward'
+import wechatLogin from '~/utils/wechatLogin'
 import tools from '@/utils/tools'
 
 export default {
@@ -157,9 +158,11 @@ export default {
     rewardSelect (index) {
       if (!this.ifLogin) {
         this.$toast('系统检测到您尚未登录，请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 1000)
+        if (this.env === 1) {
+          setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 1000)
+        } else {
+          setTimeout(() => { window.location.href = '/account/login' }, 1000)
+        }
         return
       }
       this.payShow = true

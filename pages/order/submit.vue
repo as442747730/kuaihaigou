@@ -218,15 +218,19 @@ export default {
       api.serverGet('/api/reward/getTotalActualAmount/', null, req) // hi币总额
     ])
       .then(api.spread(function (res1, res2, res3, res4, res5) {
-        if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506) {
-          return req.redirect('/account/login')
-        }
         // 检测用户环境是否为微信浏览器,0为非微信,1为微信
         const ua = req.req.headers['user-agent']
         let env = 0
         if (/MicroMessenger/.test(ua)) {
           // 检测用户设备
           env = 1
+        }
+        if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506) {
+          if (env === 1) {
+            return req.redirect('/home')
+          } else {
+            return req.redirect('/account/login')
+          }
         }
         let a = []
         let b = []

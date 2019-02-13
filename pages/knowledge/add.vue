@@ -100,6 +100,7 @@ import api from '~/utils/request'
 import { knowApi } from '~/api/knowledge'
 import { cartApi } from '~/api/cart'
 import Queditor from '@/components/QuillEditor.vue'
+import wechatLogin from '~/utils/wechatLogin'
 
 export default {
   name: '',
@@ -135,12 +136,20 @@ export default {
         if (res1.code !== 200 || res2.code !== 200 || res3.code !== 200) {
           req.redirect('/error')
         }
+        // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+        const ua = req.req.headers['user-agent']
+        let env = 0
+        if (/MicroMessenger/.test(ua)) {
+          // 检测用户设备
+          env = 1
+        }
         const hasLogin = res4.code !== 506
         let draftData = null
         if (res5.code === 200) {
           draftData = res5.data
         }
         return {
+          env: env,
           addType: +req.query.type || 1,
           topicList: res1.data.map(n => { return { id: n.id, text: n.topicName } }),
           typeList: res2.data.map(n => { return { id: n.id, name: n.typeName } }),
@@ -153,6 +162,7 @@ export default {
 
   data () {
     return {
+      env: 0,
       addType: 1, // 1 文章， 2 视频
       uploadData: {},
 
@@ -189,9 +199,6 @@ export default {
   },
 
   created () {
-    if (!this.ifLogin) {
-      this.$notify({ message: '你尚未登录，请先登录', duration: 5000 })
-    }
     if (!this.draftData) return
     this.title = this.draftData.title
     this.content = this.draftData.content
@@ -202,6 +209,17 @@ export default {
     this.varietyIds = this.draftData.sharingKnowledgeContentVarietyResps || []
     this.auth = this.draftData.author
     this.url = this.draftData.address
+  },
+
+  mounted () {
+    if (!this.ifLogin) {
+      this.$notify({ message: '你尚未登录，请先登录', duration: 5000 })
+      if (this.env === 1) {
+        setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 3000)
+      } else {
+        setTimeout(() => { window.location.href = '/account/login' }, 3000)
+      }
+    }
   },
 
   methods: {

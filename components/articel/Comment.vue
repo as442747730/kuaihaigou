@@ -1,7 +1,7 @@
 <template>
   <div class="u-articel">
     <!-- 操作选项 -->
-    <article-operation :ifLike='artLike' :ifCollect='artCollect' :type='type' :articelId='articelId' :islogin='islogin' @setLike='setLike' @setCollect='setCollect' @handleComment='handleComment'></article-operation>
+    <article-operation :ifLike='artLike' :ifCollect='artCollect' :type='type' :articelId='articelId' :islogin='islogin' :env='env' @setLike='setLike' @setCollect='setCollect' @handleComment='handleComment'></article-operation>
 
     <!-- 评论列表 -->
     <div class="comment-section">
@@ -78,7 +78,7 @@
 
     <!-- 回复 -->
     <van-popup class='to-comment-wrap' v-model="replyShow" position="right" :overlay="true">
-      <articel-reply :masterinfo='masterInfo' :replyData='replyData' :islogin='islogin' @setReplyData='setReplyData' @renderData='renderData' />
+      <articel-reply :masterinfo='masterInfo' :replyData='replyData' :islogin='islogin' :env='env' @setReplyData='setReplyData' @renderData='renderData' />
     </van-popup>
 
     <!-- 去评论弹框 -->
@@ -95,6 +95,7 @@ import articleOperation from '@/components/articel/Operation'
 import userLab from '@/components/Usericon.vue'
 import articelReply from '@/components/articel/Reply'
 import ImageHandler from '~/components/evaluation/ImageHandler'
+import wechatLogin from '~/utils/wechatLogin'
 import { commentApi } from '~/api/comment'
 import { userApi } from '~/api/users'
 import { ImagePreview } from 'vant'
@@ -118,6 +119,7 @@ export default {
 
   data () {
     return {
+      env: 0,
       islogin: false,
 
       artLike: this.ifLike,
@@ -170,10 +172,13 @@ export default {
   },
 
   async created () {
+    // 获取登录信息
     const { code } = await userApi.userDetail()
     if (code === 200) {
       this.islogin = true
     }
+    // 判断浏览器信息
+    this.env = tools.checkWechat() ? 1 : 0
   },
 
   mounted () {
@@ -252,9 +257,11 @@ export default {
     async handleCommentLike (val, index) {
       if (!this.islogin) {
         this.$toast('请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 500)
+        if (this.env === 1) {
+          setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(() => { window.location.href = '/account/login' }, 500)
+        }
         return
       }
       if (this.zanLoading) return
