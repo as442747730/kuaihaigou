@@ -2,9 +2,13 @@
   <div class="person">
     <com-head :titleConfig="configtitle"></com-head>
     <div class="person-main">
-      <div class="person-head" @click="elheadFn">
-        <img class="headimg" :src="infos.headimgurl || defaulthead" />
-        <i class="ic_arrow"></i>
+      <div class="person-head">
+        <Upload @on-success="onSuccess" class="headupload">
+          <div class="upload-slot">
+            <img class="headimg" :src="infos.headimgurl || defaulthead" />
+            <i class="ic_arrow"></i>
+          </div>
+        </Upload>
       </div>
       <div class="person-listone">
         <div class="lists">
@@ -45,7 +49,6 @@
       </div>
     </div>
 
-    <selectHead></selectHead>
     <editinfo></editinfo>
     <el-sex></el-sex>
     <el-date></el-date>
@@ -57,20 +60,20 @@ import { userApi } from '~/api/users'
 import comHead from '~/components/com-head'
 import listOne from '~/components/mine/ListOne'
 import listTwo from '~/components/mine/ListTwo'
-import selectHead from '~/components/mine/SelectHead'
 import editinfo from '~/components/mine/Editinfo'
 import elSex from '~/components/mine/ElSex'
 import elDate from '~/components/mine/elDate'
+import Upload from '~/components/Upload'
 
 export default {
   components: {
     comHead,
     listOne,
     listTwo,
-    selectHead,
     editinfo,
     elSex,
-    elDate
+    elDate,
+    Upload
   },
   async asyncData (req) {
     const { code, data } = await userApi.serverPostInfo(req)
@@ -110,7 +113,8 @@ export default {
       qqshow: false,
       addrshow: false,
       infos: {},
-      defaulthead: this.defaulthead
+      defaulthead: this.defaulthead,
+      imgsrc: ''
     }
   },
   mounted () {
@@ -151,9 +155,10 @@ export default {
         console.log(this.infos, 'infos')
       }
     },
-    elheadFn () {
+    onSuccess (val) {
       // 选择头像
-      this.$bus.emit('headStatus', true)
+      this.imgsrc = val
+      window.location.href = `/mine/imgcrop?imgsrc=${val}`
     },
     editFn (type) {
       /**
@@ -271,7 +276,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .person {
   &-main {
     background: #F6F6F6;
@@ -281,19 +286,29 @@ export default {
     height: 94px;
     background: #fff;
     padding: 0 20px;
-    .flex_between;
-
-    .headimg {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-    }
-
-    .ic_arrow {
-      width: 7px;
-      height: 10px;
-      background: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
-      .bg_cover;
+    display: flex;
+    align-items: center;
+    .headupload {
+      display: block;
+      width: 100%;
+      .van-uploader {
+        display: block;
+      }
+      .upload-slot {
+        display: flex;
+        .flex_between;
+        .headimg {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+        }
+        .ic_arrow {
+          width: 7px;
+          height: 10px;
+          background: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
+          .bg_cover;
+        }
+      }
     }
   }
 

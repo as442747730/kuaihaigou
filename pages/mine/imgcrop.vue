@@ -1,5 +1,5 @@
 <template>
-  <div class="imgcrop"></div>
+  <div class="imgcrop" ref="imgcrop"></div>
 </template>
 <script>
 import axios from 'axios'
@@ -16,7 +16,8 @@ export default {
     return {
       imgsrc: '',
       imgwid: 200,
-      imghig: 200
+      imghig: 200,
+      dataurl: ''
     }
   },
   mounted () {
@@ -34,14 +35,15 @@ export default {
       cancel_text: '取消',
       ok: function (base64, canvas) {
         mAlloyCrop.destroy()
-        let dataurl = canvas.toDataURL('image/png')
+        that.dataurl = canvas.toDataURL('image/png')
         if (navigator.userAgent.match(/iphone/i)) {
           console.log('这是iphone设备')
           let image = new Image()
+          image.src = that.dataurl
           image.onload = function () {
-            console.log('img load success')
             let orientation = that.Orientation
             if (orientation !== '' && orientation !== 1) {
+              console.log('orientation', orientation)
               switch (orientation) {
                 case 6:
                   that.rotateImg(this, 'left', canvas)
@@ -54,13 +56,13 @@ export default {
                   that.rotateImg(this, 'right', canvas)
                   break
               }
-              dataurl = canvas.toDataURL('image/png')
+              // that.testImg()
             }
+            that.upload()
           }
-          image.src = dataurl
+        } else {
+          that.upload()
         }
-        console.log('navigator.userAgent.match(/iphone/i)', navigator.userAgent.match(/iphone/i))
-        // that.upload(dataurl)
       },
       cancel: function () {
         mAlloyCrop.destroy()
@@ -90,8 +92,9 @@ export default {
       }
       return new Blob([ab], { type: mimeType })
     },
-    async upload (base64) {
+    async upload () {
       let that = this
+      let base64 = this.dataurl
       await this.getToken()
       let data = new FormData()
       let blob = this.dataURLtoFile(base64, 'image/png')
@@ -134,7 +137,6 @@ export default {
       }
     },
     rotateImg (img, direction, canvas) {
-      console.log('enter rotateImg')
       let minStep = 0
       let maxStep = 3
       if (img === null) return
@@ -164,20 +166,33 @@ export default {
           canvas.height = height
           ctx.rotate(degree)
           ctx.drawImage(img, 0, -height)
+          this.dataurl = canvas.toDataURL('image/png')
           break
         case 2:
           canvas.width = width
           canvas.height = height
           ctx.rotate(degree)
           ctx.drawImage(img, -width, -height)
+          this.dataurl = canvas.toDataURL('image/png')
           break
         case 3:
           canvas.width = width
           canvas.height = height
           ctx.rotate(degree)
           ctx.drawImage(img, -width, 0)
+          this.dataurl = canvas.toDataURL('image/png')
           break
       }
+    },
+    testImg () {
+      let img = new Image()
+      img.crossOrigin = 'Anonymous'
+      let that = this
+      img.onload = function () {
+        let imgCrop = that.$refs.imgcrop
+        imgCrop.appendChild(img)
+      }
+      img.src = this.dataurl
     }
   }
 }
