@@ -3,7 +3,7 @@
     <header>
       <h1 class="ib-middle">首页</h1>
       <div class="u-search ib-middle" @click='toSearch'>
-        <input type="text" disabled>
+        <input type="text" placeholder="输入搜索的内容" disabled>
         <i class="van-icon van-icon-search"></i>
       </div>
     </header>
@@ -116,7 +116,7 @@
             <h2>
               热门甄选
             </h2>
-            <a class="to-channel" href="/selection/?sortedBy=1">
+            <a class="to-channel" href="/selection?sortedBy=1">
               进入频道
               <i class="van-icon van-icon-arrow"></i>  
             </a>
@@ -437,7 +437,8 @@ export default {
       swiperNews: {
         speed: 800,
         slidesPerView: 'auto'
-      }
+      },
+      Switch: true
     }
   },
   created () {
@@ -486,6 +487,23 @@ export default {
         }
       }
     }
+    const headerEle = document.querySelector('header')
+    window.addEventListener('scroll', this.handleScroll(() => {
+      this.windowHeight = document.documentElement.clientHeight || document.body.clientHeight
+      this.scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
+      let scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop
+      if (scrollTop > 80) {
+        if (this.Switch) {
+          headerEle.classList.add('change')
+          console.log('往下滚')
+        }
+        this.Switch = false
+      } else {
+        this.Switch = true
+        headerEle.classList.remove('change')
+        console.log('到顶部了')
+      }
+    }))
   },
   methods: {
     async toArrondi () {
@@ -551,6 +569,17 @@ export default {
     gohostpot (val) {
       let detailId = val.id
       window.location.href = `/hotspot/detail/${detailId}`
+    },
+    handleScroll (fn) {
+      let Switch = true
+      return function () {
+        if (!Switch) return
+        Switch = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          Switch = true
+        }, 150)
+      }
     }
   }
 }
@@ -559,13 +588,42 @@ export default {
 .m-home {
   display: block;
   padding-bottom: 50px;
+  font-size: 0;
   header {
-    padding: 0 20px 24px 20px;
-    margin: 49px 0 24px;
+    // padding: 0 20px 20px;
+    // margin: 20px 0 24px;
+    // border-bottom: 1PX solid #f5f5f5;
+    padding: 20px;
     border-bottom: 1PX solid #f5f5f5;
+    width: 100%;
+    box-sizing: border-box;
+    position: fixed;
+    background: #fff;
+    top: 0;
+    z-index: 100;
+    text-align: right;
+    transition: ease .8s;
+    transform: translateZ(0);
+    &.change {
+      padding: 10px 20px;
+      box-shadow: 0px 1PX 8PX -3PX #9c9c9c;
+      .u-search {
+        width: 36px;
+        margin-left: 103px;
+        background: #fff;
+        input {
+          background: #fff;
+        }
+      }
+      h1 {
+        font-size: 22px;
+      }
+    }
     h1 {
       font-size: 26px;
       color: #333;
+      transition: ease .8s;
+      transform: translateZ(0);
     }
     .u-search {
       width: 243px;
@@ -573,14 +631,17 @@ export default {
       margin-left: 30px;
       border-right: 6px;
       position: relative;
+      transition: ease .8s;
+      transform: translateZ(0);
       input {
         width: 100%;
         height: 100%;
-        background: #fafafa;
         color: #CCD8E6;
+        background: #fafafa;
         font-size: 14px;
         padding-left: 36px;
         box-sizing: border-box;
+        transition: ease .8s;
       }
       i {
         top: 12px;
@@ -595,12 +656,12 @@ export default {
 
 .banner_home {
   width: 335px;
-  height: 180px;
-  background: #a6e3fd;
+  overflow: hidden;
   border-radius: 6px;
-  margin-top: 20px;
-  margin-bottom: 17px;
   .bg {
+    height: 180px;
+    margin-top: 105px;
+    margin-bottom: 17px;
     .bg_cover;
   }
 }
@@ -643,15 +704,15 @@ export default {
 }
 
 .notify_home {
-  margin-top: 30px;
-  margin-bottom: 30px;
-  height: 60px;
-  background: #fef5e5;
+  overflow: hidden;
   border-radius: 30px;
   .home_in {
     position: relative;
     height: 60px;
-    border-radius:30px;
+    background: #fef5e5;
+    border-radius: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
   }
   i {
     width: 30px;

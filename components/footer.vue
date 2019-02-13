@@ -254,6 +254,7 @@ export default {
   }
   .icon-close {
     position: absolute;
+    z-index: 4;
     width: 26px;
     height: 26px;
     left: 50%;
