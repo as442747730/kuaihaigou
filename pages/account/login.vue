@@ -170,8 +170,6 @@ export default {
         if (code === 200) {
           sessionStorage.setItem('key', 'allow')
           window.location.href = data.authorizeJsUrl
-        } else {
-          alert(1)
         }
       } else if (+this.loginStatus === 1) {
         // 已授权，但未注册或者绑定
