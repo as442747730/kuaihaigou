@@ -37,6 +37,9 @@
 </template>
 <script>
 import { poetApi } from '~/api/poets'
+import wechatLogin from '~/utils/wechatLogin'
+import tools from '~/utils/tools'
+
 export default {
   name: 'u-footer',
   // props: ['postIndex'],
@@ -65,6 +68,11 @@ export default {
       if (!path) {
         // todo 发布文章入口
         this.canvalToBGblur()
+        return
+      }
+      if (path === '/mine' && tools.checkWechat()) {
+        // 如果是微信环境，并且用户点击了‘我的’选项
+        wechatLogin.wxLogin()
         return
       }
       window.location.href = path
