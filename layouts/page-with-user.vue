@@ -57,6 +57,7 @@
 import { userApi, personApi } from '@/api/users'
 import userLab from '@/components/Usericon'
 import fansFollow from '@/components/user/FansFollow'
+import wechatLogin from '~/utils/wechatLogin'
 import 'vant/lib/icon/local.css'
 import tools from '@/utils/tools'
 
@@ -64,6 +65,7 @@ export default {
 
   data () {
     return {
+      env: 0,
       uid: null,
       userInfo: {},
 
@@ -93,6 +95,8 @@ export default {
     this.uid = tools.getUrlQues2('uid')
     if (!this.uid) window.location.href = '/missing'
     this.getUserInfo()
+    // 判断浏览器信息
+    this.env = tools.checkWechat() ? 1 : 0
   },
 
   methods: {
@@ -122,6 +126,11 @@ export default {
         this.$toast.success(this.userInfo.friendSystem ? '关注成功' : '已取消关注')
       } else if (code === 506) {
         this.$toast('检测到您尚未登录，请先登录！')
+        if (this.env === 1) {
+          setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 1000)
+        } else {
+          setTimeout(() => { window.location.href = '/account/login' }, 1000)
+        }
       }
     },
     async showLayer (type) {

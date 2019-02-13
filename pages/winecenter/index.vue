@@ -152,6 +152,7 @@ import listTwo from '~/components/winecenter/listTwo'
 import nullData from '~/components/nullData'
 import { wineApi } from '~/api/wine'
 import tools from '~/utils/tools'
+import wechatLogin from '~/utils/wechatLogin'
 
 export default {
   head () {
@@ -176,10 +177,17 @@ export default {
     // 保存对象初始值
     const defparams = { ...params }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
+    const ua = req.req.headers['user-agent']
+    let env = 0
+    if (/MicroMessenger/.test(ua)) {
+      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+      env = 1
+    }
     if (goodCode === 200) {
       let { array, page, totalPageNo } = goodData
       const ismore = page < totalPageNo
       return {
+        env: env,
         tansmit: params,
         defaultTansmit: defparams,
         curPage: page,
@@ -192,6 +200,7 @@ export default {
 
   data () {
     return {
+      env: 0, // 浏览器环境
       showCountry: false, // 是否打开countryList
       showtwo: false, // 是否打开listTwo
       twoType: false,
@@ -281,7 +290,11 @@ export default {
   },
   methods: {
     toCart () {
-      window.location.href = '/order/cart'
+      if (this.env === 1) {
+        wechatLogin.wxLogin('/order/cart')
+      } else {
+        window.location.href = '/order/cart'
+      }
     },
     toOthers () {
       window.location.href = '/winecenter/otherone'

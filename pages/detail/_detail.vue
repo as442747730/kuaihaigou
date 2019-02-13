@@ -132,7 +132,7 @@
     <!-- 内容模块 -->
     <div class="u-detail_content">
       <transition name='slide-fade2' mode="out-in">
-        <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom="scrollBottom" :islogin='isLogin'></component>
+        <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom="scrollBottom" :islogin='isLogin' :env='env'></component>
       </transition>
     </div>
 
@@ -251,6 +251,7 @@ import uGraphic from '~/components/detail/Graphic'
 import uParame from '~/components/detail/Parame'
 import uComment from '~/components/detail/Comment'
 import uAfter from '~/components/detail/After'
+import wechatLogin from '~/utils/wechatLogin'
 
 export default {
   components: {
@@ -271,6 +272,12 @@ export default {
   async asyncData (req) {
     const goodsId = req.params.detail
     console.log(goodsId)
+    const ua = req.req.headers['user-agent']
+    let env = 0
+    if (/MicroMessenger/.test(ua)) {
+      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+      env = 1
+    }
     // sourcePage='otherone' 来自其它商品,去掉酒评参数
     let sourcePage = req.query.page
     let id = goodsId
@@ -356,6 +363,7 @@ export default {
       }
 
       return {
+        env: env,
         sourcePage: sourcePage,
         goodsId: goodsId,
         isLogin: isLogin,
@@ -768,7 +776,7 @@ export default {
     // 去购物查看
     onClickMiniBtn () {
       if (!this.isLogin) return this.jumpLogin()
-      window.location.href = '/order/cart'
+      // window.location.href = '/order/cart'
     },
     // 加入购物车
     async addCart () {
@@ -903,9 +911,13 @@ export default {
     // 跳转登录
     jumpLogin () {
       this.$toast('检测到您未登录，请先登录！')
-      setTimeout(() => {
-        window.location.href = '/account/login'
-      }, 1000)
+      if (this.env === 1) {
+        setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 500)
+      } else {
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 1000)
+      }
     },
 
     historyBack () {

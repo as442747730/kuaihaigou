@@ -165,6 +165,7 @@ import userLab from '@/components/Usericon.vue'
 import uAuthor from '@/components/knowledge/Author'
 import articelComment from '@/components/articel/Comment'
 import payReward from '@/components/Pay-reward'
+import wechatLogin from '~/utils/wechatLogin'
 // import 'quill/dist/quill.core.css'
 // import 'quill/dist/quill.snow.css'
 
@@ -278,7 +279,12 @@ export default {
     async handleSubscribe () {
       const { code } = await knowApi.subscribeUser({ userId: this.detailObj.userResp.id })
       if (code === 506) {
-        window.location.href = '/account/login'
+        if (this.env === 1) {
+          // 微信浏览器
+          wechatLogin.wxLogin()
+        } else {
+          window.location.href = '/account/login'
+        }
       } else if (code === 200) {
         this.ifSubscribe = !this.ifSubscribe
         this.$toast.success(this.ifSubscribe ? '关注成功' : '已取消关注')
@@ -314,7 +320,12 @@ export default {
       const method = val.ifLkie ? 'dislikeComment' : 'lkieComment'
       const { code } = knowApi[method](val.id)
       if (code === 506) {
-        window.location.href = '/account/login'
+        if (this.env === 1) {
+          // 微信浏览器
+          wechatLogin.wxLogin()
+        } else {
+          window.location.href = '/account/login'
+        }
       } else if (code === 200) {
         val.ifLkie = !val.ifLkie
       }
@@ -322,7 +333,11 @@ export default {
     payOpen () {
       if (!this.isLogin) {
         this.$toast('请先登录！')
-        setTimeout(function () { window.location.href = '/account/login' }, 500)
+        if (this.env === 1) {
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(function () { window.location.href = '/account/login' }, 500)
+        }
         return false
       }
       if (this.isAuthor) return this.$toast('自己不能给自己打赏！')

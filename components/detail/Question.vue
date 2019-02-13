@@ -85,7 +85,7 @@
 <script>
 import tools from '~/utils/tools'
 
-// import { ImagePreview } from 'vant'
+import wechatLogin from '~/utils/wechatLogin'
 
 import { quizApi } from '~/api/quiz'
 
@@ -98,7 +98,8 @@ export default {
     goodsid: String,
     scrollbottom: Boolean,
     queslist: Array,
-    islogin: Boolean
+    islogin: Boolean,
+    env: Number
   },
   components: {
     uUsericon,
@@ -166,9 +167,11 @@ export default {
     toAsk () {
       if (!this.islogin) {
         this.$toast('请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 500)
+        if (this.env === 1) {
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(function () { window.location.href = '/account/login' }, 500)
+        }
         return
       }
       this.quesShow = true
@@ -242,6 +245,15 @@ export default {
       }
     },
     async fabulous (event) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        if (this.env === 1) {
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(function () { window.location.href = '/account/login' }, 500)
+        }
+        return
+      }
       // 点赞 / 取消点赞
       let { ifLiked, consultid } = event
       let msg = !ifLiked ? '点赞成功' : '取消点赞成功'

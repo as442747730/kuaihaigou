@@ -145,8 +145,8 @@ export default {
         if (code === 200) {
           this.$toast('登出成功')
           setTimeout(() => {
-            // window.location.href = '/home'
-            window.location.reload()
+            window.location.href = '/home'
+            // window.location.reload()
           }, 1000)
         }
       })

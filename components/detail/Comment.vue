@@ -94,19 +94,22 @@
         </div>
 
         <!-- 回复 -->
-        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='comment' :islogin='islogin' />
+        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='comment' :islogin='islogin' :env='env' />
 
       </div>
     </transition>
     <!-- 提问 -->
     <transition name='nav-fade' mode="out-in">
-      <u-question :goodsid="goodsid" :queslist="viewdata.frequeList" v-if='!commentShow' :scrollbottom="scrollbottom" :islogin='islogin' />
+      <u-question :goodsid="goodsid" :queslist="viewdata.frequeList" v-if='!commentShow' :scrollbottom="scrollbottom" :islogin='islogin' :env='env' />
     </transition>
   </article>
 </template>
 <script>
 import uQuestion from './Question'
+
 import uReply from './Replylist'
+
+import wechatLogin from '~/utils/wechatLogin'
 
 import { ImagePreview } from 'vant'
 
@@ -122,7 +125,8 @@ export default {
     goodsid: String,
     viewdata: Object,
     scrollbottom: Boolean,
-    islogin: Boolean
+    islogin: Boolean,
+    env: Number
   },
   components: {
     uQuestion,
@@ -253,9 +257,11 @@ export default {
     async zan (val, id, ifLike) {
       if (!this.islogin) {
         this.$toast('请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 500)
+        if (this.env === 1) {
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(function () { window.location.href = '/account/login' }, 500)
+        }
         return
       }
       console.log(ifLike)

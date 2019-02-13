@@ -25,6 +25,8 @@
 </template>
 <script>
 import { knowApi } from '~/api/knowledge'
+import wechatLogin from '~/utils/wechatLogin'
+
 export default {
   name: 'u-operation',
 
@@ -33,7 +35,8 @@ export default {
     ifCollect: Boolean,
     type: String,
     articelId: String,
-    islogin: Boolean
+    islogin: Boolean,
+    env: Number
   },
 
   data () {
@@ -90,9 +93,11 @@ export default {
     checkLogin () {
       if (!this.islogin) {
         this.$toast('请先登录！')
-        setTimeout(() => {
-          window.location.href = '/account/login'
-        }, 500)
+        if (this.env === 1) {
+          setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 500)
+        } else {
+          setTimeout(() => { window.location.href = '/account/login' }, 500)
+        }
         return false
       } else {
         return true
