@@ -4,17 +4,33 @@
       <div class="headitem" :class="{active: hotweek}" @click="myhotFn(0)">本周最热</div>
       <div class="headitem" :class="{active: !hotweek}" @click="myhotFn(1)">本月最热</div>
     </div>
-    <div class="hotbox">
-      <div class="box-item" v-for="(item, index) in hotList" :key="index">
-        <a :href="'/hotspot/detail/' + item.id">
-          <div class="box-left" v-lazy:background-image="item.imgPath"></div>
-          <div class="box-right">
-            <h3 class="r_head">{{item.title}}</h3>
-            <div class="r_time">{{item.createdAt}}</div>
-            <p class="r_summary">{{item.summary}}</p>
+    <div class="hotbody">
+      <transition name="slide-fade">
+        <div class="hotbox" v-if='hotweek' key='1'>
+          <div class="box-item" v-for="(item2, index) in hotList" :key="index">
+            <a :href="'/hotspot/detail/' + item2.id">
+              <div class="box-left" v-lazy:background-image="item2.imgPath"></div>
+              <div class="box-right">
+                <h3 class="r_head">{{item2.title}}</h3>
+                <div class="r_time">{{item2.createdAt}}</div>
+                <p class="r_summary">{{item2.summary}}</p>
+              </div>
+            </a>
           </div>
-        </a>
-      </div>
+        </div>
+        <div class="hotbox" v-else key='2'>
+          <div class="box-item" v-for="(item2, index) in hotList" :key="index">
+            <a :href="'/hotspot/detail/' + item2.id">
+              <div class="box-left" v-lazy:background-image="item2.imgPath"></div>
+              <div class="box-right">
+                <h3 class="r_head">{{item2.title}}</h3>
+                <div class="r_time">{{item2.createdAt}}</div>
+                <p class="r_summary">{{item2.summary}}</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </transition>
     </div>
     <div class="hotcircle">
       <div class="navs items">
@@ -23,7 +39,7 @@
       <div class="banners">
         <div v-swiper:mySwiper1="bannerSwiper">
           <div class="bannerlist swiper-wrapper">
-            <div class="banneritem swiper-slide" v-for="(item, index) in bannerList" :key="index" v-lazy:background-image="item.bannerPath + '?imageView2/2/w/650/h/320'" @click="todetail(item, 0)">
+            <div class="banneritem swiper-slide" v-for="(item, index) in bannerList" :key="item.bannerPath" v-lazy:background-image="item.bannerPath + '?imageView2/2/w/650/h/320'" @click="todetail(item, 0)">
               <p>{{ item.title }}</p>
             </div>
           </div>
@@ -32,9 +48,9 @@
     </div>
     <div class="list-box" v-if="newList.length !== 0">
       <div
-        class="list"
+        class="list ani_show_opacty"
         v-for="(item, index) in newList"
-        :key="index"
+        :key="item.id"
         @click="todetail(item)">
         <div class="content">
           <div class="content-head">
@@ -228,8 +244,8 @@
 .homelist {
   overflow: hidden;
   .hothead {
-    height: 40px;
     background: #F5F5F5;
+    font-size: 0;
 
     .headitem {
       display: inline-block;
@@ -237,7 +253,6 @@
       line-height: 40px;
       text-align: center;
       font-size: 14px;
-      font-family: PingFang-SC-Regular;
       font-weight: 400;
       color: rgba(102, 102, 102, 1);
 
@@ -251,8 +266,7 @@
           left: 0;
           color: #ccc;
           transform: translateY(-50%);
-          font-family: PingFangSC-Semibold;
-          font-weight: 600;
+          font-weight: normal;
         }
       }
 
@@ -263,12 +277,18 @@
       }
     }
   }
+  .hotbody {
+    height: 330px;
+  }
 
   .hotbox {
     background: #fff;
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 10px;
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
 
     .box-item {
       margin: 20px 0;
@@ -586,4 +606,20 @@
     color: #666;
   }
 }
+
+.ani_show_opacty {
+  animation: show_opacty ease 1s 1 both;
+}
+
+@keyframes show_opacty {
+  0%{
+    opacity: 0;
+    transform: translateY(20px)
+  }
+  100%{
+    opacity: 1;
+    transform: translateX(0px)
+  }
+}
+
 </style>

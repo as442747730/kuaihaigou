@@ -126,24 +126,51 @@
           }
         } else if (this.payMethod === 1) {
           /*
-            微信支付
-            1.普通浏览器器支付
-            2.在微信浏览器中支付
+            微信支付 env
+            0.普通浏览器器支付
+            1.在微信浏览器中支付
           */
           let obj = {
             orderId: this.orderId,
             redirectUrl: 'http://' + window.location.host + '/order/result?orderId=' + this.orderId
           }
-          const { code, data } = await orderApi.wxReward(obj)
+          const { code, data } = this.env === 0 ? await orderApi.wxReward(obj) : await orderApi.wxOrderPay({ orderid: this.orderId })
           if (code === 200) {
             console.log(data)
-            window.location.href = data
+            console.log(typeof WeixinJSBridge)
+            if (this.env === 0) {
+              window.location.href = data
+            } else if (this.env === 1) {
+              /* eslint-disable */
+              WeixinJSBridge.invoke('getBrandWCPayRequest', JSON.stringify(data), (res) => {
+                if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                  // 使用以上方式判断前端返回,微信团队郑重提示：
+                  // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                  console.log('成功')
+                  window.location.href = '/order/result?orderId=' + this.orderId
+                }
+              })
+              /* eslint-enable */
+            }
           } else {
             this.$toast(data)
             this.payLoading = false
           }
         }
       }
+      /*
+        定义微信浏览器支付唤起方法
+        参考（https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6）
+      */
+      // onBridgeReady (obj) {
+      //   WeixinJSBridge.invoke('getBrandWCPayRequest', obj, (res) => {
+      //     if (res.err_msg === 'get_brand_wcpay_request:ok' ) {
+      //       // 使用以上方式判断前端返回,微信团队郑重提示：
+      //       // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+      //       console.log('成功')
+      //     }
+      //  })
+      // }
     }
   }
 </script>
