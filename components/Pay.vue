@@ -142,8 +142,9 @@
               window.location.href = data
             } else if (this.env === 1) {
               /* eslint-disable */
-              WeixinJSBridge.invoke('getBrandWCPayRequest', JSON.stringify(data), (res) => {
+              WeixinJSBridge.invoke('getBrandWCPayRequest', data, (res) => {
                 console.log(res)
+                console.log(data)
                 console.log(JSON.stringify(data))
                 if (res.err_msg === 'get_brand_wcpay_request:ok') {
                   // 使用以上方式判断前端返回,微信团队郑重提示：
