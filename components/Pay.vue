@@ -129,6 +129,8 @@
             微信支付 env
             0.普通浏览器器支付
             1.在微信浏览器中支付
+            定义微信浏览器支付唤起方法
+            参考（https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6）,注意官方文档有坑，需要自行把键名packageValue 改成 package
           */
           let obj = {
             orderId: this.orderId,
@@ -136,18 +138,16 @@
           }
           const { code, data } = this.env === 0 ? await orderApi.wxReward(obj) : await orderApi.wxOrderPay({ orderid: this.orderId })
           if (code === 200) {
-            data.package = data.packageValue
-            delete data.packageValue
-            console.log(data)
-            console.log(typeof WeixinJSBridge)
             if (this.env === 0) {
               window.location.href = data
             } else if (this.env === 1) {
+              data.package = data.packageValue
+              delete data.packageValue
+              console.log(data)
+              console.log(typeof WeixinJSBridge)
               /* eslint-disable */
               WeixinJSBridge.invoke('getBrandWCPayRequest', data, (res) => {
                 console.log(res)
-                console.log(data)
-                console.log(JSON.stringify(data))
                 if (res.err_msg === 'get_brand_wcpay_request:ok') {
                   // 使用以上方式判断前端返回,微信团队郑重提示：
                   // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
@@ -163,19 +163,6 @@
           }
         }
       }
-      /*
-        定义微信浏览器支付唤起方法
-        参考（https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6）
-      */
-      // onBridgeReady (obj) {
-      //   WeixinJSBridge.invoke('getBrandWCPayRequest', obj, (res) => {
-      //     if (res.err_msg === 'get_brand_wcpay_request:ok' ) {
-      //       // 使用以上方式判断前端返回,微信团队郑重提示：
-      //       // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-      //       console.log('成功')
-      //     }
-      //  })
-      // }
     }
   }
 </script>
