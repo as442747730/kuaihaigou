@@ -29,7 +29,14 @@
       <div class="u-detail_info-desc margin-30">
         <h2>{{topGoods.goodsName}}</h2>
         <p>
-          <span v-for="(tag, index) in topGoods.topList" :key="index">{{ tag }}</span>
+          <span v-for="(tag, index) in topGoods.tagList" :key="index">
+            <template v-if='index !== topGoods.tagList.length - 1'>
+              {{ tag.tagname + '|' }}
+            </template>
+            <template v-else>
+              {{ tag.tagname }}
+            </template>
+          </span>
         </p>
         <em class="price">
           ¥ {{ showPrice }}
@@ -306,8 +313,9 @@ export default {
         console.log(colData)
         ifCollection = colData.ifCollection
       }
-      let { imgList, goodsName, actualPrice, introduce, promotionResp } = detData
+      let { imgList, goodsName, actualPrice, introduce, promotionResp, tagList } = detData
       let topData = {
+        tagList: tagList,
         imgList: imgList,
         goodsName: goodsName,
         actualPrice: actualPrice,
@@ -494,7 +502,6 @@ export default {
   },
 
   async created (req) {
-    console.log(this.ifCollection)
     this.Inertia = require('~/static/inertia')
     this.viewData = this.goodsList
     const {code, data} = await goodsApi.getProvince('86')
@@ -617,7 +624,6 @@ export default {
       this.popupShow = false
     },
     async onConfirm (val, idx) {
-      console.log('val confirm', val)
       this.provinceId = val[0].id
       this.cityId = val[1].id
 
@@ -1135,7 +1141,6 @@ export default {
       }
       span {
         color: #333;
-        font-weight: bold;
         font-family: 'PingFang-SC-Medium'
       }
       .choose-txt {
@@ -1499,6 +1504,9 @@ export default {
   font-size: 21px;
   color: #333;
   margin-right: 4px;
+}
+.van-hairline--bottom::after {
+  border: 0!important;
 }
 
 .compare-btn {

@@ -875,6 +875,7 @@ export default {
     .pro {
       width: 75px;
       height: 140px;
+      border-radius: 4px;
       text-align: center;
       margin-left: 20px;
       .bg_cover;
