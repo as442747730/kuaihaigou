@@ -599,30 +599,30 @@ export default {
     box-sizing: border-box;
     position: fixed;
     background: #fff;
-    top: 0;
+    top: -2PX;
     z-index: 100;
     text-align: right;
-    transition: ease .8s;
+    transition: ease .5s;
     transform: translateZ(0);
     &.change {
-      padding: 10px 20px;
+      padding: 10px 20px 5px;
       box-shadow: 0px 1PX 8PX -3PX #9c9c9c;
       .u-search {
         width: 36px;
-        margin-left: 103px;
+        margin-left: 110px;
         background: #fff;
         input {
           background: #fff;
         }
       }
       h1 {
-        font-size: 22px;
+        font-size: 18px;
       }
     }
     h1 {
       font-size: 26px;
       color: #333;
-      transition: ease .8s;
+      transition: ease .5s;
       transform: translateZ(0);
     }
     .u-search {
@@ -631,7 +631,7 @@ export default {
       margin-left: 30px;
       border-right: 6px;
       position: relative;
-      transition: ease .8s;
+      transition: ease .5s;
       transform: translateZ(0);
       input {
         width: 100%;
@@ -641,10 +641,11 @@ export default {
         font-size: 14px;
         padding-left: 36px;
         box-sizing: border-box;
-        transition: ease .8s;
+        transition: ease .5s;
       }
       i {
-        top: 12px;
+        top: 50%;
+        transform: translateY(-50%);
         left: 12px;
         font-size: 16px;
         color: #CCD8E6;

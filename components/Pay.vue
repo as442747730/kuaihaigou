@@ -136,6 +136,8 @@
           }
           const { code, data } = this.env === 0 ? await orderApi.wxReward(obj) : await orderApi.wxOrderPay({ orderid: this.orderId })
           if (code === 200) {
+            data.package = data.packageValue
+            delete data.packageValue
             console.log(data)
             console.log(typeof WeixinJSBridge)
             if (this.env === 0) {
