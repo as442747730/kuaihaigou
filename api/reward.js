@@ -8,6 +8,10 @@ export const rewardApi = {
   wechatReward (obj) {
     return request.clientPostJson('/api/wxpay/wap/rewardPay', obj)
   },
+  // 微信打赏，在微信浏览器内
+  rewardPayInWx (obj) {
+    return request.clientPostJson('/api/wxpay/js/rewardPay', obj)
+  },
   // 支付宝
   alipayReward (obj) {
     return request.clientPostJson('/api/alipay/wap/reward/', obj)

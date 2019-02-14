@@ -158,15 +158,39 @@
             this.payLoading = false
           }
         } else if (this.payMethod === 1) {
-          // 微信
+          /*
+            微信支付 env
+            0.普通浏览器器支付
+            1.在微信浏览器中支付
+            定义微信浏览器支付唤起方法
+            参考（https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_7&index=6）,注意官方文档有坑，需要自行把键名packageValue 改成 package
+          */
           let obj = {
             rewardId: this.rewardId
             // redirectUrl: 'http://' + window.location.host + '/order/result?orderId=' + this.orderId
           }
           console.log(obj)
-          const { code, data } = await rewardApi.wechatReward(obj)
+          const { code, data } = this.env === 0 ? await rewardApi.wechatReward(obj) : await rewardApi.rewardPayInWx({ rewardId: this.rewardId })
           if (code === 200) {
-            window.location.href = data.mwebUrl + '&redirect_url=' + encodeURIComponent(returnUrl)
+            if (this.env === 0) {
+              // 常规微信支付
+              window.location.href = data.mwebUrl + '&redirect_url=' + encodeURIComponent(returnUrl)
+            } else {
+              // 微信浏览器内支付
+              data.package = data.packageValue
+              delete data.packageValue
+              /* eslint-disable */
+              WeixinJSBridge.invoke('getBrandWCPayRequest', data, (res) => {
+                console.log(res)
+                if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                  // 使用以上方式判断前端返回,微信团队郑重提示：
+                  // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                  console.log('成功')
+                  window.location.href = returnUrl
+                }
+              })
+              /* eslint-enable */
+            }
           } else {
             this.$toast(data)
             this.payLoading = false
