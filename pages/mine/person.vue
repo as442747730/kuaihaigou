@@ -42,10 +42,10 @@
         </div>
       </div>
       <div class="person-listtwo">
-        <list-two @ltwoFn="editFn('wineWhen')" title="什么时候开始喝葡萄酒" :content="infos.wineWhen"></list-two>
-        <list-two @ltwoFn="editFn('wineArea')" title="最喜欢什么产区的葡萄酒" :content="infos.wineArea"></list-two>
-        <list-two @ltwoFn="editFn('wineVariety')" title="最喜欢什么品种的葡萄酒" :content="infos.wineVariety"></list-two>
-        <list-two @ltwoFn="editFn('wineHowMany')" title="每个月喝多少瓶葡萄酒" :content="infos.wineHowMany"></list-two>
+        <list-two @ltwoFn="editFn('wineWhen')" title="什么时候开始喝葡萄酒" :content="infos.wineWhen || '——'"></list-two>
+        <list-two @ltwoFn="editFn('wineArea')" title="最喜欢什么产区的葡萄酒" :content="infos.wineArea || '——'"></list-two>
+        <list-two @ltwoFn="editFn('wineVariety')" title="最喜欢什么品种的葡萄酒" :content="infos.wineVariety || '——'"></list-two>
+        <list-two @ltwoFn="editFn('wineHowMany')" title="每个月喝多少瓶葡萄酒" :content="infos.wineHowMany || '——'"></list-two>
       </div>
     </div>
 

@@ -300,7 +300,7 @@ export default {
     background: linear-gradient(-45deg, #4FEDEF, #00A1F0);
 
     .hd-head {
-      padding: 0 20px;
+      padding: 5px 20px 0;
       height: 40px;
       .flex_between;
 
@@ -417,8 +417,8 @@ export default {
 
             &>span {
               font-size: 19px;
-              font-family: DINPro-BlackCondensed;
-              font-weight: normal;
+              font-family: 'DINPro';
+              font-weight: 700;
               color: rgba(51, 51, 51, 1);
             }
           }
