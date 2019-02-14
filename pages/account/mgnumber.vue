@@ -8,7 +8,8 @@
     	</section>
       <div class="manage_title">账号绑定</div>
       <section class="manage_sec">
-        <list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="微信" type="wx" :l_two="userInfo.wxNickname" :vsw="bindWx"></list-two>
+        <!-- 微信浏览器下，不允许解除绑定 -->
+        <list-two v-if='env === 0' @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="微信" type="wx" :l_two="userInfo.wxNickname" :vsw="bindWx"></list-two>
         <list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="QQ" type="qq" :l_two="userInfo.qqNickname" :vsw="bindQQ"></list-two>
       	<list-two @okSwitch="okSwitch" @noSwitch="noSwitch" l_one="微博" type="wb" :l_two="userInfo.wbNickname" :vsw="bindWb"></list-two>
         <div class="depart-line"></div>
@@ -32,6 +33,12 @@ export default {
   },
   async asyncData (req) {
     let personInfo = userApi.serverPostInfo(req)
+    const ua = req.req.headers['user-agent']
+    let env = 0
+    if (/MicroMessenger/.test(ua)) {
+      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+      env = 1
+    }
     const { code: detCode, data: detData } = await personInfo
     if (detCode === 506) {
       req.redirect('/account/login')
@@ -50,6 +57,7 @@ export default {
         bindWb = true
       }
       return {
+        env: env,
         userInfo: detData,
         bindWx: bindWx,
         bindQQ: bindQQ,
@@ -61,6 +69,7 @@ export default {
   },
   data () {
     return {
+      env: 0,
       configtitle: '账号管理',
       vanshow: true,
       userInfo: {},

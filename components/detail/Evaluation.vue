@@ -35,6 +35,9 @@ export default {
     return {
       hotList: this.hostlist
     }
+  },
+  created () {
+    console.log(this.hotList)
   }
 }
 </script>

@@ -17,7 +17,13 @@
           </div>
         </div>
 
-        <div class="placeholder" v-if="addressList.length === 0">尚无收货地址</div>
+        <!-- <div class="placeholder" v-if="addressList.length === 0">尚无收货地址</div> -->
+        <div class="default-empty full" v-if="addressList.length === 0">
+          <div>
+            <div class="bg"></div>
+            <span style="color: #999">暂时没有收货地址哦</span>
+          </div>
+        </div>
 
       </div>
     </van-pull-refresh>

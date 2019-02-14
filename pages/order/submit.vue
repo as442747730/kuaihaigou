@@ -7,7 +7,7 @@
     <div class="m-section-position more-link" @click="openAddress">
       <span v-if="!addressSelected.phone">添加收货地址</span>
       <div class="address-info" v-else>
-        <div class="head">
+        <div class="head font_hight">
           <div class="title">{{ addressSelected.name }}</div>
           <div class="title">{{ addressSelected.phone }}</div>
           <div class="default-badge" v-if="addressSelected.ifDefault">默认</div>
@@ -90,8 +90,8 @@
     <div class="m-section-cell">
       <div class="m-section-cell-item more-link small" @click="openCoupon">
         <div class="label">优惠券</div>
-        <span class="content" v-if="!couponSelected.faceValue">{{ usableCouponCount ? usableCouponCount + '张可用' : '无可用优惠券' }}</span>
-        <span class="content" v-else>￥{{ formatMoney(couponSelected.faceValue) }}</span>
+        <span class="content color_666" v-if="!couponSelected.faceValue">{{ usableCouponCount ? usableCouponCount + '张可用' : '无可用优惠券' }}</span>
+        <span class="content color_666" v-else>￥{{ formatMoney(couponSelected.faceValue) }}</span>
       </div>
       <div class="m-section-cell-item">
         <div class="label">优币抵扣<span class="tip">您有Hi币 {{ formatMoney(rewardNow) }}个</span></div>
@@ -131,12 +131,12 @@
     <div class="m-section-cell">
       <div class="m-section-cell-item more-link small" @click="openInvoice">
         <div class="label">发票信息</div>
-        <div class="content">{{ invoinceSelected.id ? (invoinceSelected.invoiceType === 1 ? '纸质' : '电子') + (invoinceSelected.headType === 1 ? '个人' : '单位') + '发票' : '不开发票' }}</div>
+        <div class="content color_666">{{ invoinceSelected.id ? (invoinceSelected.invoiceType === 1 ? '纸质' : '电子') + (invoinceSelected.headType === 1 ? '个人' : '单位') + '发票' : '不开发票' }}</div>
       </div>
     </div>
 
     <!-- 留言 -->
-    <div class="m-section-cell">
+    <div class="m-section-cell" style="margin-bottom: 0">
       <div class="msg">
         <h4>订单留言</h4>
         <textarea v-model="msg" class="reason-content" :maxlength="150" rows="5" placeholder="请输入留言内容" @blur="ioskeyborad"></textarea>
@@ -616,7 +616,7 @@ export default {
     position: relative;
     font-size: 15px;
     color: @cor_333;
-    padding-left: 67px;
+    padding-left: 60px;
     &::before {
       content: '';
       display: block;
@@ -642,6 +642,9 @@ export default {
           font-size: 15px;
           color: @cor_333;
           padding-right: 15px;
+          &:nth-child(2) {
+            padding-right: 5px;
+          }
         }
         .default-badge {
           color: #FF5B1F;
@@ -687,7 +690,11 @@ export default {
       }
       .content {
         font-size: 14px;
-        color: @cor_999;
+        color: @cor_333;
+        font-weight: lighter;
+        &.color_666 {
+          color: #666
+        }
         .badge {
           display: inline-block;
           vertical-align: bottom;
@@ -742,6 +749,11 @@ export default {
     }
 
     &-li {
+      &:last-child {
+        .m-section-product-item {
+          padding-bottom: 20px;
+        }
+      }
       .pack-title {
         border-top: 1PX solid @cor_border;
         border-bottom: 1PX solid @cor_border;
@@ -801,6 +813,9 @@ export default {
           margin-top: 6px;
           font-size: 13px;
           color: @cor_666;
+          &:last-child {
+            margin-top: 10px;
+          }
           .price {
             font-size: 17px;
             color: #F99C00;
