@@ -197,7 +197,7 @@ export default {
   left: 0;
   visibility: hidden;
   opacity: 0;
-  transition: ease .4s;
+  transition: ease .3s;
   background: rgba(255, 255, 255, 0.5);
   &.show {
     opacity: 1;
@@ -220,21 +220,21 @@ export default {
   &-item {
     transform: translateY(60px);
     opacity: 0;
-    transition: opacity .2s, transform ease .4s;
+    transition: opacity .2s, transform ease .3s;
     &:first-child {
-      transition-delay: 100ms;
+      transition-delay: 50ms;
       i {
         background: url('~/assets/img/knowledge/icon-article.png') no-repeat center/contain;
       }
     }
     &:nth-child(2) {
-      transition-delay: 200ms;
+      transition-delay: 100ms;
       i {
         background: url('~/assets/img/knowledge/icon-video.png') no-repeat center/contain;
       }
     }
     &:nth-child(3) {
-      transition-delay: 300ms;
+      transition-delay: 150ms;
       i {
         background: url('~/assets/img/knowledge/icon-club.png') no-repeat center/contain;
       }
