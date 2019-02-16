@@ -12,7 +12,7 @@
             <p class="useok">满{{wsy.useThreshold}}元可用</p>
           </div>
           <div class="item-r">
-            <h4 class="r_name">全品类通用券</h4>
+            <h4 class="r_name">{{ wsy.couponName || '' }}</h4>
             <p>有效期：{{wsy.startTimeDesc}}至{{wsy.endTimeDesc}}</p>
           </div>
         </div>
@@ -25,7 +25,7 @@
           </div>
           <div class="item-r">
             <div class="r_logo"></div>
-            <h4 class="r_name use_used r_name-logo">全品类通用券</h4>
+            <h4 class="r_name use_used r_name-logo">{{ record.couponName || '' }}</h4>
             <p class="use_used">有效期：{{record.startTimeDesc}}至{{record.endTimeDesc}}</p>
           </div>
         </div>
@@ -37,7 +37,7 @@
             <p class="useok use_used">满{{oldcou.useThreshold}}元可用</p>
           </div>
           <div class="item-r">
-            <h4 class="r_name use_used">全品类通用券</h4>
+            <h4 class="r_name use_used">{{ oldcou.couponName || '' }}</h4>
             <p class="use_used">有效期：{{oldcou.startTimeDesc}}至{{oldcou.endTimeDesc}}</p>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default {
     nullData
   },
   async asyncData (req) {
-    let params = { page: 1, count: 5, ifUsed: false }
+    let params = { page: 1, count: 8, ifUsed: false }
     const { code, data } = await couponApi.serverGetList(params, req)
     if (code === 200) {
       console.log(data)
@@ -84,8 +84,7 @@ export default {
       // 未使用
       wsylist: [],
       curWsy: {
-        page: 1,
-        count: 5
+        page: 1
       },
       wsyTotalpage: 1,
       wsyLoad: true,
@@ -93,14 +92,17 @@ export default {
       // 使用记录
       recordlist: [],
       curRecord: {
-        page: 1,
-        count: 5
+        page: 1
+      },
+      outWsy: {
+        page: 1
       },
       recordTotalpage: 1,
       recordLoad: true,
       recordMore: true,
       // 已过期
-      oldcouponlist: []
+      oldcouponlist: [],
+      toastLoaing: null
     }
   },
   computed: {
@@ -109,40 +111,41 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('scroll', () => {
-      let winH = document.documentElement.clientHeight || document.body.clientHeight
-      let elemBound = this.$refs.scrollElem.getBoundingClientRect()
-      let _top = Math.abs(elemBound.top)
-      let _height = elemBound.height
-      let bottomH = _height - (_top + winH)
-      if (bottomH <= 100) {
-        if (this.navIndex === 0) {
-          if (this.wsyLoad && this.wsyMore) {
-            if (this.wsyTotalpage > this.curWsy.page) {
-              this.wsyLoad = false
-              this.curWsy.page += 1
-              this.wsyFn()
-            } else {
-              this.wsyMore = false
-            }
-          }
-        } else if (this.navIndex === 1) {
-          if (this.recordLoad && this.recordMore) {
-            if (this.recordTotalpage > this.curRecord.page) {
-              this.recordLoad = false
-              this.curRecord.page += 1
-              this.recordFn()
-            } else {
-              this.recordMore = false
-            }
-          }
-        }
-      }
-    })
+    console.log(this.wsylist)
+    // window.addEventListener('scroll', () => {
+    //   let winH = document.documentElement.clientHeight || document.body.clientHeight
+    //   let elemBound = this.$refs.scrollElem.getBoundingClientRect()
+    //   let _top = Math.abs(elemBound.top)
+    //   let _height = elemBound.height
+    //   let bottomH = _height - (_top + winH)
+    //   if (bottomH <= 100) {
+    //     if (this.navIndex === 0) {
+    //       if (this.wsyLoad && this.wsyMore) {
+    //         if (this.wsyTotalpage > this.curWsy.page) {
+    //           this.wsyLoad = false
+    //           this.curWsy.page += 1
+    //           this.wsyFn()
+    //         } else {
+    //           this.wsyMore = false
+    //         }
+    //       }
+    //     } else if (this.navIndex === 1) {
+    //       if (this.recordLoad && this.recordMore) {
+    //         if (this.recordTotalpage > this.curRecord.page) {
+    //           this.recordLoad = false
+    //           this.curRecord.page += 1
+    //           this.recordFn()
+    //         } else {
+    //           this.recordMore = false
+    //         }
+    //       }
+    //     }
+    //   }
+    // })
   },
   methods: {
     navFn (index) {
-      this.navIndex = index
+      this.toastLoaing = this.$toast.loading({ message: '数据获取中', duration: 0, mask: false })
       if (index === 0) {
         this.wsyFn()
       } else if (index === 1) {
@@ -154,7 +157,8 @@ export default {
     async wsyFn () {
       // 未使用
       let params = {
-        ifUsed: false
+        ifUsed: false,
+        ifExpire: false
       }
       Object.assign(this.curWsy, params)
       const { code, data } = await couponApi.couponlist(this.curWsy)
@@ -165,6 +169,8 @@ export default {
         this.wsyTotalpage = totalPageNo
       }
       this.wsyLoad = true
+      this.navIndex = 0
+      this.toastLoaing.clear()
     },
     async recordFn () {
       // 使用记录
@@ -180,16 +186,24 @@ export default {
         this.recordlist = array
       }
       this.recordLoad = true
+      this.navIndex = 1
+      this.toastLoaing.clear()
     },
     async oldcoupon () {
       // 过期优惠券
-      const { code, data } = await couponApi.getOldCoupon()
+      let params = {
+        ifExpire: true
+      }
+      Object.assign(this.outWsy, params)
+      const { code, data } = await couponApi.couponlist(this.outWsy)
       if (code === 200) {
         // console.log(data)
-        this.oldcouponlist = data
+        this.oldcouponlist = data.array
       } else if (code === 506) {
         window.location.href = '/account/login'
       }
+      this.navIndex = 2
+      this.toastLoaing.clear()
     }
   }
 }
@@ -237,6 +251,7 @@ export default {
 
 .lists {
   padding: 0 20px;
+  overflow: hidden;
 
   .list {
     &-item {
