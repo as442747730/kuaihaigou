@@ -453,6 +453,8 @@ export default {
     })
   },
   async mounted () {
+    let _h = window.innerHeight
+    console.log('_h 首页window 高度', _h)
     // 美酒推荐，每5秒切换为下一个场景
     const { code: scenCode, data: scenData } = await wineApi.clicentScener()
     if (scenCode === 200) {

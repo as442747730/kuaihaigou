@@ -269,6 +269,12 @@ export default {
     }
   },
   mounted () {
+    this.$nextTick(() => {
+      setTimeout(() => {
+        let _h = window.innerHeight
+        console.log('_h winecenter window 高度', _h)
+      }, 2000)
+    })
     this.addBarwid()
     const compareBtn = document.querySelector('.compare-btn')
     this.Inertia(compareBtn)
