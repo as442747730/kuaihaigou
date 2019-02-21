@@ -19,8 +19,9 @@ export default {
       }
     }
   },
-  async wxLoginWithNoCheck () {
-    const { code, data } = await accountApi.loginWithWxJs({ returnUrl: 'http://' + window.location.host + '/account/login' })
+  async wxLoginWithNoCheck (href = null) {
+    let setHref = href === null ? href : 'http://' + window.location.host + '/account/login'
+    const { code, data } = await accountApi.loginWithWxJs({ returnUrl: setHref })
     if (code === 200) {
       sessionStorage.setItem('key', 'allow')
       window.location.href = data.authorizeJsUrl
