@@ -308,12 +308,11 @@ export default {
       if (userCode === 200) {
         isLogin = true
       }
-      console.log(colCode)
       if (colCode === 200) {
-        console.log(colData)
         ifCollection = colData.ifCollection
       }
-      let { imgList, goodsName, actualPrice, introduce, promotionResp, tagList } = detData
+      // 顶部信息
+      let { imgList, goodsName, actualPrice, introduce, promotionResp, tagList, province, city } = detData
       let topData = {
         tagList: tagList,
         imgList: imgList,
@@ -321,7 +320,8 @@ export default {
         actualPrice: actualPrice,
         introduce: introduce,
         // reductionStrategy: reductionStrategy
-        promotionResp: promotionResp
+        promotionResp: promotionResp,
+        province: province + ',' + city
       }
       let { skuAttrList, skuList, packList } = detData
 
@@ -502,6 +502,7 @@ export default {
   },
 
   async created (req) {
+    console.log('topGoods', this.topGoods)
     this.Inertia = require('~/static/inertia')
     this.viewData = this.goodsList
     const {code, data} = await goodsApi.getProvince('86')
@@ -537,6 +538,13 @@ export default {
       this.newSkuAttrs = newArr
       // 初始化规格选择
       this.getSkuFn()
+    }
+    // 如果用户处于登录状态并存在默认收货地址，则获取是否可配送
+    if (this.topGoods.city) {
+      let areaTxt = this.topGoods.province.split(',')[0]
+      console.log(areaTxt)
+      let areaId = this.topGoods.province.split(',')[1]
+      this.checkDistrFn(this.goodsId, areaId)
     }
   },
 
@@ -623,7 +631,7 @@ export default {
     onCancel () {
       this.popupShow = false
     },
-    async onConfirm (val, idx) {
+    onConfirm (val, idx) {
       this.provinceId = val[0].id
       this.cityId = val[1].id
 
@@ -637,6 +645,24 @@ export default {
 
       let goodsId = this.goodsId
       let cityId = this.cityId
+      this.checkDistrFn(goodsId, cityId)
+      // const {code, data} = await goodsApi.checkDistr(goodsId, cityId)
+      // if (code === 200) {
+      //   switch (data) {
+      //     case 1:
+      //       this.sendStatus = '可配送'
+      //       break
+      //     case 2:
+      //       this.sendStatus = '不可配送'
+      //       break
+      //     case 3:
+      //       this.sendStatus = '包邮'
+      //       break
+      //   }
+      // }
+      this.popupShow = false
+    },
+    async checkDistrFn (goodsId, cityId) {
       const {code, data} = await goodsApi.checkDistr(goodsId, cityId)
       if (code === 200) {
         switch (data) {
@@ -651,7 +677,6 @@ export default {
             break
         }
       }
-      this.popupShow = false
     },
     openSkuFn () {
       // 打开规格弹窗
@@ -782,7 +807,7 @@ export default {
     // 去购物查看
     onClickMiniBtn () {
       if (!this.isLogin) return this.jumpLogin()
-      // window.location.href = '/order/cart'
+      window.location.href = '/order/cart'
     },
     // 加入购物车
     async addCart () {
@@ -918,7 +943,7 @@ export default {
     jumpLogin () {
       this.$toast('检测到您未登录，请先登录！')
       if (this.env === 1) {
-        setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 500)
+        setTimeout(() => { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 500)
       } else {
         setTimeout(() => {
           window.location.href = '/account/login'
@@ -1038,9 +1063,11 @@ export default {
         overflow: hidden;
       }
       p {
-        font-size: 14px;
+        font-size: 13px;
         color: #999;
         margin: 12px 0 10px;
+        max-width: 220px;
+        line-height: 20px;
       }
       .price {
         font-size: 19px;

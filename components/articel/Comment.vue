@@ -243,14 +243,18 @@ export default {
         type: this.type
       }
       console.log(params)
-      const { code, data } = await commentApi.createComent(params)
+      const { code } = await commentApi.createComent(params)
       if (code === 200) {
-        console.log(data)
-        this.getData(1, true)
-        this.sendLoading = false
-        window.location.hash = ''
-        this.page = 1
-        this.pageEmpty = false
+        this.$toast('发表成功！')
+        setTimeout(() => {
+          this.getData(1, true)
+          this.sendLoading = false
+          window.location.hash = ''
+          this.page = 1
+          this.pageEmpty = false
+          this.imgList = []
+          this.commentContent = ''
+        }, 500)
       }
     },
     // 评论点赞
