@@ -4,27 +4,27 @@
       <div class="specific">
         <div class="specific-bk" v-lazy:background-image="detailInfo.background"></div>
         <div class="specific-head">
-          <span class="head">第{{detailInfo.period}}期 | {{detailInfo.theme}}</span>
+          <span class="head font_hight">第{{detailInfo.period}}期 | {{detailInfo.theme}}</span>
           <span class="subhead">{{detailInfo.title}}</span>
         </div>
       </div>
       <div class="introduction">
-        <h3 class="acthead">
+        <h3 class="acthead font_hight">
           活动简介<span class="acthead_sub">EVENT PROFILE</span>
         </h3>
-        <p>{{detailInfo.introduce}}</p>
+        <p class="text-limit">{{detailInfo.introduce}}</p>
       </div>
       <!-- 活动流程 -->
       <div class="process">
-        <h3 class="acthead">
+        <h3 class="acthead font_hight">
           活动流程<span class="acthead_sub">ACTIVITY PROCESS</span>
         </h3>
         <div class="remarks">
           <time>{{detailInfo._staEndtime}}</time>
-          <p>备注：{{detailInfo.activityRemark}}</p>
+          <p class="text-limit">备注：{{detailInfo.activityRemark}}</p>
         </div>
         <div class="process-list" v-if="processList.length > 0">
-          <div class="list-item" v-for="(process, index) in processList" :key="index">
+          <div class="list-item text-limit" v-for="(process, index) in processList" :key="index">
             <div class="list_head">
               <span class="heads">
                   <div class="heads-child">
@@ -36,7 +36,7 @@
                 </span>
             </div>
             <div class="item_time">{{process._strTime}}</div>
-            <div class="item_speack">{{process.title}}</div>
+            <div class="item_speack font_hight">{{process.title}}</div>
             <div class="item_speackword">{{process.content}}</div>
             <div class="item_sub">{{process.subTitle}}</div>
             <ul class="item_sublist" v-if="process.subProcessRespList && process.subProcessRespList.length > 0">
@@ -50,7 +50,7 @@
       </div>
       <!-- 盲品投票 前 -->
       <div class="blinds" v-if="blindList.length > 0 && votestatus !== 3">
-        <h3 class="acthead">
+        <h3 class="acthead font_hight">
           盲品投票
           <span class="acthead_sub">BLIND VOTE</span>
           <span class="acthead_right">敬请期待</span>
@@ -68,7 +68,7 @@
       </div>
       <!-- 盲品投票 后 -->
       <div class="votes" v-if="voteList.length > 0 && votestatus === 3">
-        <h3 class="acthead">
+        <h3 class="acthead font_hight">
           盲品投票
           <span class="acthead_sub">BLIND VOTE</span>
         </h3>
@@ -140,8 +140,8 @@
         </div>
       </div>
       <!-- 参与大咖 -->
-      <div class="bigshot" v-if="bigshotList.length > 0">
-        <h3 class="acthead">
+      <div class="bigshot text-limit" v-if="bigshotList.length > 0">
+        <h3 class="acthead font_hight">
           参与大咖<span class="acthead_sub">PARTICIPATE IN BIG COFFEE</span>
         </h3>
         <div class="bigshot-list">
@@ -219,8 +219,8 @@
           </div>
         </div>
       </div> -->
-      <div class="winemoney" v-if="buygoodsList.length > 0 || othergoodsList.length > 0">
-        <h3 class="acthead">
+      <div class="winemoney text-limit" v-if="buygoodsList.length > 0 || othergoodsList.length > 0">
+        <h3 class="acthead font_hight">
         活动酒款<span class="acthead_sub">ACTIVE WINE</span>
         </h3>
         <div class="wine-item wine-one" v-if="buygoodsList.length > 0">
@@ -232,7 +232,7 @@
                   <div class="onemdl">
                     <div class="onemdl-l" v-lazy:background-image="buygoods.cover"></div>
                     <div class="onemdl-r">
-                      <h4>{{buygoods.variety}}</h4>
+                      <h4 class="font_hight">{{buygoods.variety}}</h4>
                       <div class="tags">
                         <span class="tagsub" v-for="(tags, tagIndex) in buygoods.tagList">{{tags}}</span>
                       </div>
@@ -291,7 +291,7 @@
                   <div class="onemdl">
                     <div class="onemdl-l" v-lazy:background-image="othergoods.img"></div>
                     <div class="onemdl-r">
-                      <h4>{{othergoods.name}}</h4>
+                      <h4 class="font_hight">{{othergoods.name}}</h4>
                       <div class="tags">
                         <span class="tagsub">750ml</span>
                         <span class="tagsub">日常餐酒</span>
@@ -315,8 +315,8 @@
         </div>
       </div>
         <!-- 报名详情 -->
-      <div class="information">
-        <h3 class="acthead">
+      <div class="information text-limit">
+        <h3 class="acthead font_hight">
           报名详情<span class="acthead_sub">DEADLINE</span>
         </h3>
         <div class="subhead">报名截止</div>
@@ -327,8 +327,8 @@
         <div class="subitem">地址：{{applicationDetail.detAddress}}</div>
       </div>
       <!-- 报名须知 -->
-      <div class="notice" v-if="detailInfo.notice">
-        <h3 class="acthead">
+      <div class="notice text-limit" v-if="detailInfo.notice">
+        <h3 class="acthead font_hight">
          报名须知<span class="acthead_sub">REGISTRATION NOTICE</span>
         </h3>
         <ul class="notice-items">
@@ -336,15 +336,15 @@
         </ul>
       </div>
       <!-- 其它信息 -->
-      <div class="others" v-if="detailInfo.otherInfo">
-        <h3 class="acthead">
+      <div class="others text-limit" v-if="detailInfo.otherInfo">
+        <h3 class="acthead font_hight">
           其它信息<span class="acthead_sub">OTHER INFORMATION</span>
         </h3>
         <div class="others-html" v-html="detailInfo.otherInfo"></div>
       </div>
       <!-- 合作伙伴 -->
       <div class="cooperation" v-if="detailInfo.organizer || detailInfo.coorganizer">
-        <h3 class="acthead">
+        <h3 class="acthead font_hight">
           合作伙伴<span class="acthead_sub">PARTNER</span>
         </h3>
         <div class="coop-one" v-if="detailInfo.organizer && detailInfo.organizer.length > 0">
@@ -365,7 +365,7 @@
         </div>
       </div>
       <div class="period" v-if="pastActList.length > 0">
-        <h3 class="acthead">
+        <h3 class="acthead font_hight">
           往期活动<span class="acthead_sub">OTHER INFORMATION</span>
         </h3>
         <div class="period-list">
@@ -684,6 +684,7 @@
       }
     },
     mounted () {
+      console.log(this.bigshotList)
       this.$nextTick(() => {
         let bars = this.$refs.mdlbars
         if (Array.isArray(bars)) {
@@ -877,11 +878,9 @@
       font-size: 16px;
       color: rgba(51, 51, 51, 1);
       line-height: 25px;
-      font-family: PingFangSC-Semibold;
 
       .head {
         margin-right: 5px;
-        font-weight: 600;
       }
 
       .subhead {
@@ -895,9 +894,7 @@
   // 流程中的标题
   .acthead {
     font-size: 16px;
-    font-family: PingFangSC-Semibold;
-    font-weight: 600;
-    color: rgba(51, 51, 51, 1);
+    color: #333;
 
     &_sub {
       font-size: 12px;
@@ -920,7 +917,7 @@
   .introduction {
     margin: 10px 0;
     background: #fff;
-    padding: 25px 23px 37px 28px;
+    padding: 25px 23px 35px 28px;
 
     &>p {
       padding-top: 10px;
@@ -957,10 +954,8 @@
       p {
         margin: 5px 0 20px;
         font-size: 12px;
-        font-family: PingFang-SC-Regular;
-        font-weight: 400;
-        color: rgba(153, 153, 153, 1);
-        line-height: 12px;
+        font-weight: lighter;
+        color: #999;
       }
     }
 
@@ -1041,8 +1036,6 @@
       .item_speackword {
         margin: 10px 0 20px;
         font-size: 14px;
-        font-family: PingFang-SC-Regular;
-        font-weight: 400;
         color: rgba(153, 153, 153, 1);
         line-height: 24px;
         text-align: center;
@@ -1685,32 +1678,27 @@
             align-items: center;
             &-l {
               width: 80px;
-              // height: 180px;
-              min-width: 80px;
-              max-width: 80px;
-              margin-right: 10px;
+              margin-left: 22px;
               flex-grow: 0;
               .bg_cover;
             }
             &-r {
               flex-flow: 1;
-              width: 100%;
+              padding-left: 30px;
+              width: 64%;
               h4 {
                 font-size:16px;
-                font-family:PingFangSC-Semibold;
-                font-weight:600;
-                color:rgba(51,51,51,1);
+                color: #333;
+                .limit_2()
               }
               .tags {
                 font-size: 12px;
-                font-family: PingFang-SC-Regular;
-                font-weight: 400;
                 color: rgba(153, 153, 153, 1);
+                font-weight: lighter;
                 margin-top: 10px;
                 display: flex;
                 flex-wrap: wrap;
                 .tagsub {
-                  margin-top: 10px;
                   & + .tagsub {
                     margin-left: 5px;
                     padding-left: 5px;
@@ -1734,7 +1722,7 @@
                   font-family:PingFangSC-Semibold;
                   font-weight:600;
                   color: #03A1CD;
-                  margin-left: 7px;
+                  margin-right: 7px;
                   &:before {
                     content: '';
                     width: 24px;
@@ -1767,19 +1755,18 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                width: 210px;
+                width: 100%;
                 margin: 15px 0;
                 &_l {
                   width: 80px;
                   font-size: 12px;
-                  font-family: PingFang-SC-Regular;
-                  font-weight: 400;
+                  font-weight: lighter;
                   color: @cor_666;
                 }
                 &_r {
                   position: relative;
                   width: 120px;
-                  height: 10px;
+                  height: 8px;
                   background: #EFF9FC;
                   border-radius: 5px;
                   overflow: hidden;
@@ -1788,7 +1775,7 @@
                     top: 0;
                     left: 0;
                     width: 0;
-                    height: 10px;
+                    height: 8px;
                     background: #59C2E1;
                     border-radius: 5px;
                     transition: .3s;

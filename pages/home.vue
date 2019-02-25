@@ -833,7 +833,6 @@ export default {
         color: #333;
         line-height: 18px;
         overflow: hidden;
-        -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-line-clamp: 2;
