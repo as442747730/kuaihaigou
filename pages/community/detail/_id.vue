@@ -435,11 +435,18 @@
   import { munityApi } from '~/api/community'
   import tools from '~/utils/tools'
   import userLab from '~/components/Usericon.vue'
+  import wechatLogin from '~/utils/wechatLogin'
   export default {
     components: {
       userLab
     },
     asyncData (req) {
+      const ua = req.req.headers['user-agent']
+      let env = 0
+      if (/MicroMessenger/.test(ua)) {
+        // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+        env = 1
+      }
       const munityId = req.params.id
       const detFn = munityApi.serverDetail(munityId, req)
       const voteFn = munityApi.serverVote(munityId, req)
@@ -521,9 +528,11 @@
            * ifVote 当前用户是否已投票
           */
           let islogin = false
+          // console.log('userRes', userRes)
           if (userRes.code === 200) {
             islogin = true
           }
+          // console.log('islogin', islogin)
           let _actstatus
           const queryNum = req.query.page
           const { ifSignUp, status, voteStatus, ifVote } = detData
@@ -614,6 +623,7 @@
             }
           }
           return {
+            env: env,
             checkLogin: islogin,
             communityId: munityId,
             detailInfo: detData,
@@ -633,6 +643,7 @@
     },
     data () {
       return {
+        env: null,
         checkLogin: false,
         communityId: '', // 活动id
         detailInfo: {}, // 全部信息
@@ -691,7 +702,13 @@
         if (this.checkLogin) {
           this.showsignup = true
         } else {
-          window.location.href = '/account/login'
+          if (this.env === 1) {
+            setTimeout(() => { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 500)
+          } else {
+            setTimeout(() => {
+              window.location.href = '/account/login'
+            }, 1000)
+          }
         }
       },
       onblur () {

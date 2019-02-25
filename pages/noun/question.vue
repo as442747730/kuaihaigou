@@ -47,6 +47,7 @@
 <script>
   import Upload from '~/components/Upload'
   import { encyApi } from '~/api/encys'
+  import wechatLogin from '~/utils/wechatLogin'
   export default {
     head () {
       return {
@@ -60,11 +61,18 @@
       Upload
     },
     asyncData (req) {
+      const ua = req.req.headers['user-agent']
+      let env = 0
+      if (/MicroMessenger/.test(ua)) {
+        // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+        env = 1
+      }
       let { encyid, baikeid, type } = req.query
-      return { encyid: encyid, baikeid: baikeid, type: type }
+      return { encyid: encyid, baikeid: baikeid, type: type, env: env }
     },
     data () {
       return {
+        env: null,
         maxNum: 7,
         encyid: null,
         baikeid: null,
@@ -110,7 +118,13 @@
         if (code === 200) {
           this.showcpm = true
         } else if (code === 506) {
-          window.location.href = '/account/login'
+          if (this.env === 1) {
+            setTimeout(() => { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 500)
+          } else {
+            setTimeout(() => {
+              window.location.href = '/account/login'
+            }, 1000)
+          }
         }
       },
       elReason (id) {
