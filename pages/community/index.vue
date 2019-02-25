@@ -46,7 +46,7 @@
             <span class="subhead">{{item.title}}</span>
           </div>
           <div class="actlist-same">活动时间：{{item._strTime}}</div>
-          <div class="actlist-same">活动地点：{{item._dz}}</div>
+          <div class="actlist-same text-limit">活动地点：{{item._dz}}</div>
         </div>
       </div>
       <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多活动'}}</div>

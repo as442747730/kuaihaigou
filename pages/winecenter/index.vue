@@ -39,12 +39,7 @@
               <h3 class="font_hight">{{good.goodsName}}</h3>
               <p>
                 <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">
-                  <template v-if='tagIndex === customArray(good.tagListJson).length - 1'>
-                    {{ tag }}
-                  </template>
-                  <template v-else>
-                    {{ tag + ' | ' }}
-                  </template>
+                  {{ tag }}
                 </span>
               </p>
               <div class="itemr-info">
