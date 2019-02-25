@@ -168,7 +168,7 @@ export default {
       if (!this.islogin) {
         this.$toast('请先登录！')
         if (this.env === 1) {
-          setTimeout(function () { wechatLogin.wxLoginWithNoCheck() }, 500)
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 500)
         } else {
           setTimeout(function () { window.location.href = '/account/login' }, 500)
         }
@@ -248,7 +248,7 @@ export default {
       if (!this.islogin) {
         this.$toast('请先登录！')
         if (this.env === 1) {
-          setTimeout(function () { wechatLogin.wxLoginWithNoCheck() }, 500)
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 500)
         } else {
           setTimeout(function () { window.location.href = '/account/login' }, 500)
         }

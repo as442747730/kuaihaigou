@@ -321,7 +321,7 @@ export default {
         introduce: introduce,
         // reductionStrategy: reductionStrategy
         promotionResp: promotionResp,
-        province: province + ',' + city
+        province: province ? province + ',' + city : ''
       }
       let { skuAttrList, skuList, packList } = detData
 
@@ -460,7 +460,7 @@ export default {
       areaTxt: '请选择',
       // 省市区的id
       provinceId: '86',
-      cityId: '',
+      cityId: '1026342555157008385',
       // districtId: '',
       // 省市区的中文
       provinceTxt: '',
@@ -540,15 +540,20 @@ export default {
       this.getSkuFn()
     }
     // 如果用户处于登录状态并存在默认收货地址，则获取是否可配送
-    if (this.topGoods.city) {
-      let areaTxt = this.topGoods.province.split(',')[0]
-      console.log(areaTxt)
-      let areaId = this.topGoods.province.split(',')[1]
+    if (this.topGoods.province) {
+      const provinceArr = this.topGoods.province.split(',')
+      // console.log(areaTxt)
+      let areaId = provinceArr[3]
       this.checkDistrFn(this.goodsId, areaId)
+      this.areaTxt = provinceArr[0] + provinceArr[2]
     }
   },
 
-  mounted () {
+  async mounted () {
+    const { code, data } = await goodsApi.clientDetail(this.goodsId)
+    if (code === 200) {
+      console.log(data)
+    }
     const compareBtn = document.querySelector('.compare-btn')
     this.Inertia(compareBtn)
     let that = this
@@ -601,11 +606,22 @@ export default {
       let anchor = this.$el.querySelector(selector)
       document.body.scrollTop = anchor.offsetTop
     },
-    openAreaSelect () {
-      this.getArea(this.provinceId, 'city')
+    async openAreaSelect () {
+      if (this.topGoods.province) {
+        var _provinceArr = this.topGoods.province.split(',')
+        await this.getArea(_provinceArr[1], 'city')
+        setTimeout(() => {
+          this.provinceIndex = this.provinceList.findIndex(v => { return v.text === _provinceArr[0] })
+          this.cityIndex = this.cityList.findIndex(v => { return v.text === _provinceArr[2] })
+          this.$refs.areaPicker.setColumnIndex(0, this.provinceIndex)
+          this.$refs.areaPicker.setColumnIndex(1, this.cityIndex)
+        }, 100)
+      } else {
+        await this.getArea(this.cityId, 'city')
+      }
       if (this.$refs.areaPicker) {
-        this.$refs.areaPicker.setColumnValues(1, this.cityList)
-        // this.$refs.areaPicker.setColumnValues(2, this.districtList)
+        // this.$refs.areaPicker.setColumnValues(1, this.cityList)
+        // this.$refs.areaPicker.setColumnValues(1, this.districtList)
         this.$refs.areaPicker.setColumnIndex(0, this.provinceIndex)
         this.$refs.areaPicker.setColumnIndex(1, this.cityIndex)
         // this.$refs.areaPicker.setColumnIndex(2, this.districtIndex)

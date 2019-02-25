@@ -1,9 +1,9 @@
 import VConsole from 'vconsole'
 
-// let vConsole = null
-// if (process.env.NODE_ENV !== 'production') {
-//   vConsole = new VConsole()
-// }
-let vConsole = new VConsole()
+let vConsole = null
+if (process.env.NODE_ENV !== 'production') {
+  vConsole = new VConsole()
+}
+// let vConsole = new VConsole()
 
 export default vConsole

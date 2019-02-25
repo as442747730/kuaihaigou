@@ -127,7 +127,7 @@ export default {
       } else if (code === 506) {
         this.$toast('检测到您尚未登录，请先登录！')
         if (this.env === 1) {
-          setTimeout(() => { wechatLogin.wxLoginWithNoCheck() }, 1000)
+          setTimeout(() => { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 1000)
         } else {
           setTimeout(() => { window.location.href = '/account/login' }, 1000)
         }
