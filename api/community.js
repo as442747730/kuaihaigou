@@ -20,7 +20,8 @@ export const munityApi = {
     return request.serverGet('/api/activity/getBlindStatistics/' + id, { activityId: id }, req)
   },
   serverpersondetail (req) {
-    return request.serverGet('/api/user/detail', {}, req)
+    // return request.serverGet('/api/user/detail', {}, req)
+    return request.serverPost('/api/user/detail', null, req)
   },
   /* ----------- client ------------ */
   clientActList (params) {
