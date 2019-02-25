@@ -549,7 +549,11 @@ export default {
     }
   },
 
-  mounted () {
+  async mounted () {
+    const { code, data } = await goodsApi.clientDetail(this.goodsId)
+    if (code === 200) {
+      console.log(data)
+    }
     const compareBtn = document.querySelector('.compare-btn')
     this.Inertia(compareBtn)
     let that = this
@@ -603,7 +607,18 @@ export default {
       document.body.scrollTop = anchor.offsetTop
     },
     async openAreaSelect () {
-      await this.getArea(this.cityId, 'city')
+      if (this.topGoods.province) {
+        var _provinceArr = this.topGoods.province.split(',')
+        await this.getArea(_provinceArr[1], 'city')
+        setTimeout(() => {
+          this.provinceIndex = this.provinceList.findIndex(v => { return v.text === _provinceArr[0] })
+          this.cityIndex = this.cityList.findIndex(v => { return v.text === _provinceArr[2] })
+          this.$refs.areaPicker.setColumnIndex(0, this.provinceIndex)
+          this.$refs.areaPicker.setColumnIndex(1, this.cityIndex)
+        }, 100)
+      } else {
+        await this.getArea(this.cityId, 'city')
+      }
       if (this.$refs.areaPicker) {
         // this.$refs.areaPicker.setColumnValues(1, this.cityList)
         // this.$refs.areaPicker.setColumnValues(1, this.districtList)
@@ -613,11 +628,6 @@ export default {
       } else {
         this.columns[0].values = this.provinceList
         this.columns[1].values = this.cityList
-        setTimeout(() => {
-          let _provinceArr = this.topGoods.province.split(',')
-          this.$refs.areaPicker.setColumnIndex(0, this.provinceList.findIndex(v => { return v.text === _provinceArr[0] }))
-          this.$refs.areaPicker.setColumnIndex(1, this.cityList.findIndex(v => { return v.text === _provinceArr[2] }))
-        }, 1000)
         // this.columns[2].values = this.districtList
       }
       this.popupShow = true
