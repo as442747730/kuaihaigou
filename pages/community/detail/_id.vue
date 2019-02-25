@@ -521,9 +521,11 @@
            * ifVote 当前用户是否已投票
           */
           let islogin = false
+          // console.log('userRes', userRes)
           if (userRes.code === 200) {
             islogin = true
           }
+          // console.log('islogin', islogin)
           let _actstatus
           const queryNum = req.query.page
           const { ifSignUp, status, voteStatus, ifVote } = detData
