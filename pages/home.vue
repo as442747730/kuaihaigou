@@ -326,12 +326,19 @@ import { poetApi } from '~/api/poets'
 import userLab from '@/components/Usericon.vue'
 import tools from '~/utils/tools'
 import bannerImg from '~/assets/img/home/img_home_335x180@2x.png'
+import wechatLogin from '~/utils/wechatLogin'
 
 export default {
   name: 'home',
   layout: 'page-with-tabbar',
   components: { userLab },
   async asyncData (req) {
+    const ua = req.req.headers['user-agent']
+    let env = 0
+    if (/MicroMessenger/.test(ua)) {
+      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+      env = 1
+    }
     // 分页查询列表，第1页，前5条数据
     const params = { page: 1, count: 5 }
     const wineFn = wineApi.serverGoodwineList(0, req)
@@ -394,6 +401,7 @@ export default {
       }
     }
     return {
+      env: env,
       wineBk: _winebk,
       wineSence: _sence,
       wineList: _wines,
@@ -406,6 +414,7 @@ export default {
   },
   data () {
     return {
+      env: null,
       bannerImg: bannerImg,
       wineBk: '', // 美酒推荐背景图
       wineSence: '', // 美酒推荐场景
@@ -530,7 +539,13 @@ export default {
           confirmButtonText: '去登陆',
           cancelButtonText: '取消'
         }).then(() => {
-          window.location.href = '/account/login'
+          if (this.env === 1) {
+            setTimeout(() => { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 500)
+          } else {
+            setTimeout(() => {
+              window.location.href = '/account/login'
+            }, 1000)
+          }
         }).catch(() => {})
       }
     },
