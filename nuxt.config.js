@@ -39,7 +39,8 @@ module.exports = {
     { src: './plugins/vconsole.js', ssr: false },
     { src: './plugins/filter.js', ssr: true },
     { src: './plugins/upload.js', ssr: true },
-    { src: './plugins/nuxt-quill.js', ssr: true }
+    { src: './plugins/nuxt-quill.js', ssr: true },
+    { src: './plugins/common.js', ssr: false }
   ],
   css: [
     { src: './assets/css/normalize.css', lang: 'css' },

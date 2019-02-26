@@ -174,6 +174,8 @@ export default {
 
   layout: 'default',
 
+  middleware: 'checkWxStatus',
+
   components: { userLab, uAuthor, articelComment, payReward },
 
   head () {
@@ -193,18 +195,11 @@ export default {
     ])
       .then(api.spread(function (res1, res2) {
         if (res1.code === 200) {
-          // 检测用户环境是否为微信浏览器,0为非微信,1为微信
-          const ua = req.req.headers['user-agent']
-          let env = 0
-          if (/MicroMessenger/.test(ua)) {
-            // 检测用户设备
-            env = 1
-          }
           const sgt = res1.data.userResp.personalInfoResp.signature || '梦想还是要有的，万一实现了呢'
           const isLogin = res2.code === 200
           const isAuthor = isLogin && res1.data.userResp.id === res2.data.userId
           return {
-            env: env,
+            env: req.env,
             id: req.params.id,
             detailObj: res1.data,
             ifLike: res1.data.checkIfLike,
@@ -252,7 +247,6 @@ export default {
   },
 
   async mounted () {
-    console.log(this.detailObj)
     // 有rewardId，调用支付状态检测
     let getReward = tools.getUrlQues('rewardId')
     if (getReward) {
