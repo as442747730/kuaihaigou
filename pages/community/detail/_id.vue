@@ -440,13 +440,10 @@
     components: {
       userLab
     },
+
+    middleware: 'checkWxStatus',
+
     asyncData (req) {
-      const ua = req.req.headers['user-agent']
-      let env = 0
-      if (/MicroMessenger/.test(ua)) {
-        // 检测用户环境是否为微信浏览器,0为非微信,1为微信
-        env = 1
-      }
       const munityId = req.params.id
       const detFn = munityApi.serverDetail(munityId, req)
       const voteFn = munityApi.serverVote(munityId, req)
@@ -623,7 +620,7 @@
             }
           }
           return {
-            env: env,
+            env: req.env,
             checkLogin: islogin,
             communityId: munityId,
             detailInfo: detData,

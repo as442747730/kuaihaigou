@@ -263,7 +263,7 @@
             <div class="desc">
               <h3>第{{ munity.period }}期 | {{ munity.theme }} <span>{{ munity.title }}</span></h3>
               <p>活动时间：{{ munity._times }}</p>
-              <p>活动地点：{{ munity._dz }}</p>
+              <p class="text-limit">活动地点：{{ munity._dz }}</p>
             </div>
           </li>
         </ul>
