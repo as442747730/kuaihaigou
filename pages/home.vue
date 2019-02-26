@@ -332,13 +332,8 @@ export default {
   name: 'home',
   layout: 'page-with-tabbar',
   components: { userLab },
+  middleware: 'checkWxStatus',
   async asyncData (req) {
-    const ua = req.req.headers['user-agent']
-    let env = 0
-    if (/MicroMessenger/.test(ua)) {
-      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
-      env = 1
-    }
     // 分页查询列表，第1页，前5条数据
     const params = { page: 1, count: 5 }
     const wineFn = wineApi.serverGoodwineList(0, req)
@@ -401,7 +396,7 @@ export default {
       }
     }
     return {
-      env: env,
+      env: req.env,
       wineBk: _winebk,
       wineSence: _sence,
       wineList: _wines,
