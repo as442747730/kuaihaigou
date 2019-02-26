@@ -268,6 +268,8 @@ export default {
     uAfter
   },
 
+  middleware: 'checkWxStatus',
+
   head () {
     return {
       title: '商品详情',
@@ -279,12 +281,6 @@ export default {
   async asyncData (req) {
     const goodsId = req.params.detail
     console.log(goodsId)
-    const ua = req.req.headers['user-agent']
-    let env = 0
-    if (/MicroMessenger/.test(ua)) {
-      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
-      env = 1
-    }
     // sourcePage='otherone' 来自其它商品,去掉酒评参数
     let sourcePage = req.query.page
     let id = goodsId
@@ -371,7 +367,7 @@ export default {
       }
 
       return {
-        env: env,
+        env: req.env,
         sourcePage: sourcePage,
         goodsId: goodsId,
         isLogin: isLogin,

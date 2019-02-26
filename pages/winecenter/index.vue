@@ -161,6 +161,8 @@ export default {
 
   layout: 'page-with-tabbar',
 
+  middleware: 'checkWxStatus',
+
   async asyncData (req) {
     let params = {
       page: 1,
@@ -172,17 +174,11 @@ export default {
     // 保存对象初始值
     const defparams = { ...params }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
-    const ua = req.req.headers['user-agent']
-    let env = 0
-    if (/MicroMessenger/.test(ua)) {
-      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
-      env = 1
-    }
     if (goodCode === 200) {
       let { array, page, totalPageNo } = goodData
       const ismore = page < totalPageNo
       return {
-        env: env,
+        env: req.env,
         tansmit: params,
         defaultTansmit: defparams,
         curPage: page,

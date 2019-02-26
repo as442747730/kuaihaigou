@@ -82,6 +82,8 @@ export default {
   name: 'cart',
   layout: 'default',
 
+  middleware: 'checkWxStatus',
+
   head () {
     return {
       title: '我的购物车',
@@ -105,18 +107,12 @@ export default {
 
   async asyncData (req) {
     const { code, data } = await cartApi.getCart(req)
-    const ua = req.req.headers['user-agent']
-    let env = 0
-    if (/MicroMessenger/.test(ua)) {
-      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
-      env = 1
-    }
     if (code === 200) {
       data.forEach((item) => {
         item.chosen = false
       })
     } else if (code === 506) {
-      if (env === 1) {
+      if (req.env === 1) {
         req.redirect('/home')
       } else {
         req.redirect('/account/login')

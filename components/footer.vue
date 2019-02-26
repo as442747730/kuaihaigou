@@ -42,6 +42,7 @@ import tools from '~/utils/tools'
 
 export default {
   name: 'u-footer',
+
   // props: ['postIndex'],
   props: {
     postIndex: {
@@ -104,7 +105,7 @@ export default {
         this.$toast('请先登录！')
         if (tools.checkWechat()) {
           // 微信
-          setTimeout(function () { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 500)
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck() }, 500)
         } else {
           setTimeout(function () { window.location.href = '/account/login' }, 500)
         }
