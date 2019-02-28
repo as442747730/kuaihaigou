@@ -51,9 +51,10 @@
               <div class="ib-middle notify_home-word">
                 <p class="ib-middle">{{poet.content}}</p>
               </div>
-              <div class="notify_home-icon ib-middle bg" @click="poetZan(poet)"></div>
+              <div class="ib-middle notify_home-empty" @click="poetZan(poet)"></div>
             </div>
           </div>
+          <div class="notify_home-icon ib-middle bg"></div>
         </div>
       </section>
 
@@ -189,7 +190,7 @@
               :key="index">
               <div class="share-list-box" :class="{'w100': knowList.length === 1}">
                 <div class="share_home-user" v-if="share.userResp" @click="gomine(share.userResp.id)">
-                  <u class="ib-middle" v-lazy:background-image="share.userResp.headimgurl"></u>
+                  <u class="ib-middle" :style="'background-image: url('+ share.userResp.headimgurl +')'"></u>
                   <div class="ib-middle">
                     <span class="font_hight">
                       {{ share.userResp.nickname }}
@@ -209,7 +210,7 @@
                   <!-- 文章 -->
                   <p class="content_summary" v-if='share.articleType === 1' v-html='formatHtml(share.summary)'></p>
                   <div class="pro" v-if="share.imgsPaht && share.articleType === 1">
-                    <div class="content_bk" v-lazy:background-image="share.imgsPaht[0]"></div>
+                    <div class="content_bk swiper-lazy" :data-background="share.imgsPaht[0].indexOf('imageslim') !== -1 ? share.imgsPaht[0].split('?')[0] + '?imageView2/5/w/480/h/480' : share.imgsPaht[0] + '?imageView2/5/w/480/h/480'"></div>
                   </div>
                   <!-- 视频 -->
                   <div class="video-box" v-if="share.articleType === 2">
@@ -302,7 +303,7 @@
                   <span>分类：{{ circlenavList[news.classificationId] }}</span>
                 </div>
                 <div class="pro">
-                  <div class="bg full" v-if="news.imgPath" v-lazy:background-image="news.imgPath"></div>
+                  <div class="bg full swiper-lazy" v-if="news.imgPath" :data-background="news.imgPath + '?imageView2/5/w/480/h/480'"></div>
                 </div>
                 <div class="desc">
                   <p v-html='news.summary'></p>
@@ -424,7 +425,7 @@ export default {
         speed: 800,
         direction: 'vertical',
         loop: true,
-        autoplay: true
+        autoplay: false
       },
       swiperCommend: {
         speed: 800,
@@ -436,11 +437,17 @@ export default {
       },
       shareSwiper: {
         speed: 800,
-        slidesPerView: 'auto'
+        slidesPerView: 'auto',
+        lazy: {
+          loadPrevNext: true
+        }
       },
       swiperNews: {
         speed: 800,
-        slidesPerView: 'auto'
+        slidesPerView: 'auto',
+        lazy: {
+          loadPrevNext: true
+        }
       },
       Switch: true
     }
@@ -466,7 +473,7 @@ export default {
         console.log(proResult)
         let nowIndex = 0
         let len = proResult.length
-        let isChange = true
+        let isChange = false
         if (isChange) {
           nowIndex = nowIndex < (len - 1) ? nowIndex += 1 : 0
           const { cover, scenesName, goodsList } = proResult[nowIndex].data
@@ -522,7 +529,7 @@ export default {
             confirmButtonText: '去认证',
             cancelButtonText: '取消'
           }).then(() => {
-            // window.location.href = '/account/login'
+            window.location.href = '/prove'
           }).catch(() => {})
         } else {
           window.location.href = '/winecenter/arrondi'
@@ -545,6 +552,7 @@ export default {
       }
     },
     async poetZan (poet) {
+      console.log(1)
       // console.log('poet', poet)
       const { code, data } = await poetApi.zanPoet(poet.id)
       if (code === 200) {
@@ -750,7 +758,14 @@ export default {
   &-icon {
     width: 60px;
     height: 60px;
-    background-image: url('../assets/img/home/ic_like_60x60@2x.png')
+    background-image: url('../assets/img/home/ic_like_60x60@2x.png');
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  &-empty {
+    width: 60px;
+    height: 60px;
   }
 }
 
