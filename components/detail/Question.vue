@@ -73,7 +73,7 @@
 
     </div>
     <!-- 回复列表 -->
-    <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='answer' />
+    <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :islogin='islogin' :env='env' :masterinfo='masterInfo' replyType='answer' />
 
     <!-- 提问编辑框 -->
     <van-popup class='ques-wrap' v-model="quesShow" position="right" :overlay="true">
