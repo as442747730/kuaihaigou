@@ -196,7 +196,8 @@ export default {
       if (!this.islogin) {
         this.$toast('请先登录！')
         if (this.env === 1) {
-          setTimeout(() => { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 500)
+          let wl = window.location
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck(wl.origin + wl.pathname) }, 500)
         } else {
           setTimeout(() => { window.location.href = '/account/login' }, 500)
         }
@@ -245,7 +246,8 @@ export default {
       if (!this.islogin) {
         this.$toast('请先登录！')
         if (this.env === 1) {
-          setTimeout(() => { wechatLogin.wxLoginWithNoCheck(window.location.href) }, 500)
+          let wl = window.location
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck(wl.origin + wl.pathname) }, 500)
         } else {
           setTimeout(() => { window.location.href = '/account/login' }, 500)
         }
