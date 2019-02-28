@@ -425,7 +425,7 @@ export default {
         speed: 800,
         direction: 'vertical',
         loop: true,
-        autoplay: false
+        autoplay: true
       },
       swiperCommend: {
         speed: 800,
