@@ -66,8 +66,8 @@
         <p>没有更多评论了！</p>
       </div>
     </div>
-    <div class="u-reply-form" id="replay" @click='turnToEdit(null, masterinfo.personalInfoResp.nickname)'>
-      <van-field class="ib-middle" v-model="replay" type="textarea" :placeholder="'回复:' + (masterinfo.personalInfoResp ? masterinfo.personalInfoResp.nickname : '')" rows="1" autosize maxlength="40" disabled />
+    <div class="u-reply-form" id="replay" @click="turnToEdit(null, masterinfo.personalInfoResp ? masterinfo.personalInfoResp.nickname : '匿名用户')">
+      <van-field class="ib-middle" v-model="replay" type="textarea" :placeholder="'回复:' + (masterinfo.personalInfoResp ? masterinfo.personalInfoResp.nickname : '匿名用户')" rows="1" autosize maxlength="40" disabled />
       <!-- <button class="ib-middle" @click="sayFn">回复</button> -->
     </div>
     <!-- 举报 -->
