@@ -96,14 +96,16 @@
                   <img :src="wine.cover" />
                 </div>
                 <div class="desc">
-                  <h3 class="font_hight">{{wine.goodsName}}</h3>
+                  <h3 class="font_hight">{{ wine.goodsName }}</h3>
                   <p class="tags">
                     <span
                       class="subtag"
                       v-for="(mytag, tagIndex) in wine.tagList"
-                      :key="tagIndex">{{mytag}}</span>
+                      :key="tagIndex">
+                      {{ tagIndex === wine.tagList.length - 1 ? mytag : mytag + ' | ' }}
+                    </span>
                   </p>
-                  <em class="font_impact">{{wine.actualPrice}}</em>
+                  <em class="font_impact">¥{{ wine.actualPrice }}</em>
                 </div>
               </div>
             </div>
@@ -131,10 +133,10 @@
               @click="goselect(pick.id)"
               :key="index">
               <div class="hot-list-box" v-if="pick.goodsMinimalResp" :class="{'w100': selectList.length === 1}">
-                <div class="pro ib-middle" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
-                <div class="desc ib-middle">
-                  <h3>{{pick.goodsMinimalResp.goodsName}}</h3>
-                  <div class="tags">
+                <div class="desc">
+                  <h3>{{ pick.goodsMinimalResp.goodsName }}</h3>
+                  <div class="author">作者：{{ pick.auth }}</div>
+                  <!-- <div class="tags">
                     <i class="tagsub" v-for="(tags, tagIndex) in pick.goodsMinimalResp.tagList" :key="tagIndex">
                       <template v-if='tagIndex === pick.goodsMinimalResp.tagList.length - 1'>
                         {{ tags }}
@@ -143,25 +145,39 @@
                         {{ tags + ' | ' }}
                       </template>
                     </i>
-                  </div>
-                  <div class="itemr-info">
+                  </div> -->
+                  <!-- <div class="itemr-info">
                     <span class="info_item icon_time">{{pick.goodsMinimalResp.year}}</span>
                     <span class="info_item icon_address" v-if="pick.goodsMinimalResp.area">{{pick.goodsMinimalResp.country}} / {{pick.goodsMinimalResp.area}}</span>
                     <span class="info_item icon_address" v-else>{{pick.goodsMinimalResp.country}}</span>
                     <span class="info_item icon_variety">{{pick.goodsMinimalResp.variety}}</span>
-                  </div>
-                  <div class="u-bars">
+                  </div> -->
+                  <!-- <div class="u-bars">
                     <div class="bars">
                       <div class="bars-left">复杂：{{pick.goodsMinimalResp.complexity}}分</div>
                       <div class="bars-right">
                         <span class="bars-right_top" ref="ubars" :data-bar="pick.goodsMinimalResp.complexity"></span>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
-                <div class="infor">
-                  <h3>{{ pick.title }}</h3>
-                  <p>{{ pick.summary }}</p>
+                <div class="bottom">
+                  <div class="summary">{{ pick.summary }}</div>
+                  <div class="pro" v-lazy:background-image="pick.goodsMinimalResp.cover">
+                    <div class="goods-info">
+                      <div class="ib-middle goods-info-img" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
+                      <div class="ib-middle goods-info-detail">
+                        <p class="u-ellipsis">{{ pick.goodsMinimalResp.goodsName }}</p>
+                        <em class="ib-middle">¥{{ pick.goodsMinimalResp.actualPrice }}</em>
+                        <del class="ib-middle">市场价：¥{{ pick.goodsMinimalResp.marketPrice }}</del>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="u-other">
+                    <span class="zan"><i></i>{{ pick.likeNum }}</span>
+                    <span class="chat"><i></i>{{ pick.commentNum }}</span>
+                    <span class="watch"><i></i>{{ pick.browseNum }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -195,22 +211,14 @@
                     <span class="font_hight">
                       {{ share.userResp.nickname }}
                     </span>
-                    <user-lab :level='String(share.userResp.userGradeNumber)' type='1' :profess='String(share.userResp.category)'></user-lab>
-                    <p>{{ share.createdAt }}</p>
                   </div>
+                  <user-lab :level='String(share.userResp.userGradeNumber)' type='1' :profess='String(share.userResp.category)'></user-lab>
                 </div>
                 <div class="share_home-content" @click="goknowdetail(share)">
-                  <h3 class="content_title">
-                    <p>{{ share.title }}</p>
-                  </h3>
-                  <div class="tips">
-                    <span>频道：{{ share.channelName }}</span>
-                    <span>话题：{{ share.topicName }}</span>
-                  </div>
                   <!-- 文章 -->
-                  <p class="content_summary" v-if='share.articleType === 1' v-html='formatHtml(share.summary)'></p>
-                  <div class="pro" v-if="share.imgsPaht && share.articleType === 1">
-                    <div class="content_bk swiper-lazy" :data-background="share.imgsPaht[0].indexOf('imageslim') !== -1 ? share.imgsPaht[0].split('?')[0] + '?imageView2/5/w/480/h/480' : share.imgsPaht[0] + '?imageView2/5/w/480/h/480'"></div>
+                  <div class="pro" v-if="share.articleType === 1">
+                    <div v-if='share.imgsPaht' class="content_bk swiper-lazy" :data-background="share.imgsPaht[0].indexOf('imageslim') !== -1 ? share.imgsPaht[0].split('?')[0] + '?imageView2/5/w/480/h/480' : share.imgsPaht[0] + '?imageView2/5/w/480/h/480'"></div>
+                    <div v-else class="content_bk" :style="'background-image: url('+ defaultshare +')'"></div>
                   </div>
                   <!-- 视频 -->
                   <div class="video-box" v-if="share.articleType === 2">
@@ -218,6 +226,14 @@
                       <source :src="share.videoPath" type="video/mp4">
                     </video>
                   </div>
+                  <h3 class="content_title u-ellipsis">
+                    <p>{{ share.title }}</p>
+                  </h3>
+                  <div class="tips">
+                    <span>频道：{{ share.channelName }}</span>
+                    <span>话题：{{ share.topicName }}</span>
+                  </div>
+                  <time>{{ share.createdAt }}</time>
                   <div class="u-other">
                     <span class="zan"><i></i>{{ share.likeNumber }}</span>
                     <span class="chat"><i></i>{{ share.commentNumber }}</span>
@@ -412,6 +428,7 @@ export default {
     return {
       env: null,
       bannerImg: bannerImg,
+      defaultshare: this.defaultshare,
       wineBk: '', // 美酒推荐背景图
       wineSence: '', // 美酒推荐场景
       wineList: [], // 美酒
@@ -453,7 +470,8 @@ export default {
     }
   },
   created () {
-    console.log(this.newsList)
+    console.log(this.defaultshare)
+    console.log('selectList', this.selectList)
     this.$nextTick(() => {
       let bars = this.$refs.ubars
       if (Array.isArray(bars)) {
@@ -679,7 +697,7 @@ export default {
   border-radius: 6px;
   .bg {
     height: 180px;
-    margin-top: 105px;
+    margin-top: 95px;
     margin-bottom: 17px;
     .bg_cover;
   }
@@ -821,16 +839,19 @@ export default {
     }
   }
   .commend-list {
-    border: 1px solid #eaeaea;
-    border-radius: 8px;
-    width: 150px;
-    height: 265px;
-    box-sizing: border-box;
-    padding: 4px 12px 16px;
+    width: 140px;
+    height: 235px;
     text-align: center;
     margin-right: 15px;
+    &:last-child {
+      margin-right: 20px;
+    }
     .pro {
-      height: 148px;
+      border-radius: 8px;
+      box-sizing: border-box;
+      padding: 12px 13px;
+      height: 140px;
+      border: 1PX solid #eaeaea;
       img {
         max-width: 100%;
         max-height: 100%;
@@ -838,8 +859,10 @@ export default {
       }
     }
     .desc {
+      text-align: left;
       h3 {
-        font-size: 14px;
+        font-size: 13px;
+        height: 35px;
         color: #333;
         line-height: 18px;
         overflow: hidden;
@@ -847,19 +870,20 @@ export default {
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        margin: 10px 0 0;
       }
       p {
-        margin: 10px 0 4px;
+        margin: 10px 0;
         color: #999;
         font-size: 10px;
-        line-height: 18px;
+        line-height: 1;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
       em {
-        color: #F99C00;
-        font-size: 18px;
+        color: @c-price;
+        font-size: 15px;
       }
     }
   }
@@ -883,7 +907,6 @@ export default {
 
 .hot_home {
   .hot-list {
-    width: 320px;
     margin-left: 15px;
     &:last-child {
       width: 340px;
@@ -892,28 +915,34 @@ export default {
       border-radius: 8px;
       border: 1PX solid #eaeaea;
       box-sizing: border-box;
-      padding: 20px 0 0; 
       width: 320px;
-      height: 370px;
-      overflow: hidden;
+      // height: 370px;
+      // overflow: hidden;
+    }
+    .bottom {
+      padding: 10px 15px;
     }
     .pro {
-      width: 75px;
-      height: 140px;
+      margin: 10px 0 15px;
+      height: 180px;
       border-radius: 4px;
       text-align: center;
-      margin-left: 20px;
+      position: relative;
       .bg_cover;
     }
     .desc {
       font-size: 12px;
-      width: 195px;
-      padding-left: 15px;
+      border-bottom: 1PX solid #f5f5f5; 
+      padding: 15px;
       &>h3 {
-        font-size:15px;
+        font-size: 15px;
         font-family: PingFangSC-Medium;
         color:rgba(51,51,51,1);
-        line-height:21px;
+        line-height: 21px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        height: 42px;
       }
       &>p {
         padding: 10px 0;
@@ -921,94 +950,146 @@ export default {
         color:rgba(153,153,153,1);
         line-height:12px;
       }
-      .tags {
+      .author {
         font-size: 12px;
-        font-weight: 300;
-        color: rgba(153, 153, 153, 1);
-        margin: 10px 0 5px;
-
-        .tagsub {
-          margin-top: 10px;
-
-          &+.tagsub {
-            margin-left: 5px;
-            padding-left: 5px;
-            position: relative;
-
-            &:before {}
-          }
-        }
-      }
-
-      .u-bars {
-        margin-bottom: 0;
-      }
-
-      .info_item {
-        display: inline-block;
-        height:24px;
-        line-height: 24px;
-        background:#DEF3F9;
-        border-radius:12px;
-        padding-left: 25px;
-        padding-right: 5px;
-        vertical-align: middle;
-        margin-top: 10px;
-        position: relative;
-        font-size:12px;
-        font-weight: 600;
-        color: #03A1CD;
-        margin-right: 7px;
-        &:before {
-          content: '';
-          width: 24px;
-          height: 24px;
-          position: absolute;
-          top: 50%;
-          left: 0;
-          margin-top: -12px;
-          .bg_cover;
-        }
-      }
-      .icon_time {
-        &:before {
-          background-image: url('../assets/img/Icons/ic_time_24x24.png');
-        }
-      }
-      .icon_address {
-        &:before {
-          background-image: url('../assets/img/Icons/ic_position_24x24.png');
-        }
-      }
-      .icon_variety {
-        &:before {
-          background-image: url('../assets/img/Icons/ic_grape_24x24.png');
-        }
-      }
-    }
-    .infor {
-      margin-top: 12px;
-      border-top: 1PX solid #eaeaea;
-      background: #FBFBFB;
-      padding: 15px 20px;
-      h3 {
         color: #333;
-        font-size: 16px;
-        margin-bottom: 10px;
+        padding: 10px 0 0px;
+      }
+      // .tags {
+      //   font-size: 12px;
+      //   font-weight: 300;
+      //   color: rgba(153, 153, 153, 1);
+      //   margin: 10px 0 5px;
+
+      //   .tagsub {
+      //     margin-top: 10px;
+
+      //     &+.tagsub {
+      //       margin-left: 5px;
+      //       padding-left: 5px;
+      //       position: relative;
+
+      //       &:before {}
+      //     }
+      //   }
+      // }
+
+      // .u-bars {
+      //   margin-bottom: 0;
+      // }
+
+      // .info_item {
+      //   display: inline-block;
+      //   height:24px;
+      //   line-height: 24px;
+      //   background:#DEF3F9;
+      //   border-radius:12px;
+      //   padding-left: 25px;
+      //   padding-right: 5px;
+      //   vertical-align: middle;
+      //   margin-top: 10px;
+      //   position: relative;
+      //   font-size:12px;
+      //   font-weight: 600;
+      //   color: #03A1CD;
+      //   margin-right: 7px;
+      //   &:before {
+      //     content: '';
+      //     width: 24px;
+      //     height: 24px;
+      //     position: absolute;
+      //     top: 50%;
+      //     left: 0;
+      //     margin-top: -12px;
+      //     .bg_cover;
+      //   }
+      // }
+      // .icon_time {
+      //   &:before {
+      //     background-image: url('../assets/img/Icons/ic_time_24x24.png');
+      //   }
+      // }
+      // .icon_address {
+      //   &:before {
+      //     background-image: url('../assets/img/Icons/ic_position_24x24.png');
+      //   }
+      // }
+      // .icon_variety {
+      //   &:before {
+      //     background-image: url('../assets/img/Icons/ic_grape_24x24.png');
+      //   }
+      // }
+    }
+    .summary {
+      color: #666;
+      height: 68px;
+      font-size: 13px;
+      line-height: 23px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .goods-info {
+      position: absolute;
+      width: 270px;
+      bottom: 10px;
+      left: 13px;
+      padding: 5px 10px;
+      background: #f9f9f9;
+      &-img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+        .bg_cover;
+        background-color: #fff;
+      }
+      &-detail {
+        width: calc(100% - 60px);
+        text-align: left;
       }
       p {
-        color: #999;
-        font-size: 14px;
-        line-height: 24px;
-        text-align: justify;
-        overflow: hidden;
-        -o-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 5;
-        -webkit-box-orient: vertical;
-      } 
+        color: #333;
+        font-size: 11px;
+        margin-bottom: 8px;
+        font-weight: bold;
+        line-height: 1.2;
+      }
+      em {
+        color: @c-price;
+        font-size: 15px;
+      }
+      del {
+        font-size: 11px;
+        color: #666;
+        margin-left: 8px;
+      }
     }
+    // .infor {
+    //   margin-top: 12px;
+    //   border-top: 1PX solid #eaeaea;
+    //   background: #FBFBFB;
+    //   padding: 15px 20px;
+    //   h3 {
+    //     color: #333;
+    //     font-size: 16px;
+    //     margin-bottom: 10px;
+    //   }
+    //   p {
+    //     color: #999;
+    //     font-size: 14px;
+    //     line-height: 24px;
+    //     text-align: justify;
+    //     overflow: hidden;
+    //     -o-text-overflow: ellipsis;
+    //     text-overflow: ellipsis;
+    //     display: -webkit-box;
+    //     -webkit-line-clamp: 5;
+    //     -webkit-box-orient: vertical;
+    //   } 
+    // }
   }
 }
 
@@ -1021,73 +1102,61 @@ export default {
       width: 340px;
     }
     &-box {
-      border-radius: 8px;
-      border: 1PX solid #eaeaea;
       box-sizing: border-box;
       width: 320px;
-      height: 514px;
+      height: 365px;
     }
     .video-box {
       position: relative;
       .video-player {
         width: 100%;
-        height: 157px;
-        border-radius: 5px;
-        margin: 5px 0;
+        height: 200px;
+        background: #000;
+        border-radius: 0px 0px 4px 4px;
       }
     }
   }
   &-user {
+    border: 1PX solid #eaeaea;
+    border-radius: 4px 4px 0px 0px;
     border-bottom: 1PX solid #f5f5f5;
-    padding: 20px;
+    padding: 10px;
     u {
-      width: 40px;
-      height: 40px;
+      width: 25px;
+      height: 25px;
       border-radius: 50%;
       overflow: hidden;
-      margin-right: 17px;
+      margin-right: 10px;
       .bg_cover;
     }
     span {
       display: inline-block;
       vertical-align: middle;
-      font-size: 16px;
-      color: #333;
+      font-size: 13px;
+      color: #666;
       max-width: 120px;
       margin-right: 10px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      font-weight: normal;
     }
-    p {
-      margin-top: 9px;
-      color: #999;
-      font-size: 12px;
-      &:before {
-        content: '';
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 4px;
-        width: 14px;
-        height: 14px;
-        background: url('../assets/img/home/ic_time_g_14x14@2x.png') no-repeat center/contain
-      }
+    .u-icon-type1 {
+      float: right;
     }
   }
   &-content {
-    padding: 15px 20px;
     .content_title {
-      font-size: 16px;
+      font-size: 15px;
       color: #333;
       font-family: PingFangSC-Semibold;
       font-weight: bold;
-      max-height: 44px;
-      display: flex;
-      align-items: center;
+      text-align: left;
+      
+      margin: 15px 0 13px;
       p {
         line-height: 22px;
         overflow: hidden;
-        -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -1096,9 +1165,9 @@ export default {
       }
     }
     .tips{
-      color: #999;
-      font-size: 12px;
-      margin: 10px 0 15px;
+      color: #666;
+      font-size: 11px;
+      margin: 0px 0 10px;
       span:first-child {
         padding-right: 20px;
       }
@@ -1115,13 +1184,25 @@ export default {
       -webkit-line-clamp: 5;
       -webkit-box-orient: vertical;
     }
-    .pro {
-      margin: 10px 0 20px;
-    }
     .content_bk {
-      height: 150px;
-      border-radius: 10px;
+      height: 200px;
+      border-radius: 0px 0px 4px 4px;
       .bg_cover;
+    }
+    time {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: #999;
+      font-size: 11px;
+      &:before {
+        content: '';
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 4px;
+        width: 14px;
+        height: 14px;
+        background: url('../assets/img/home/ic_time_g_14x14@2x.png') no-repeat center/contain
+      }
     }
   }
 }
@@ -1310,7 +1391,7 @@ export default {
   position: relative;
   margin: 30px 0 20px;
   h2 {
-    font-size: 22px;
+    font-size: 20px;
     color: #333;
     p {
       margin-top: 10px;
@@ -1342,9 +1423,8 @@ export default {
     font-size: 14px;
     font-family: 'PingFangSC-Semibold';
     i {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
-      transform: scale(.8);
       position: relative;
       top: 1PX;
     }

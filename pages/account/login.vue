@@ -4,7 +4,7 @@
     <h2 class="m-login-title">{{ loginTypeText }}<div class="icon-close" @click='gotoIndex'></div></h2>
 
     <div class="u-login-input mb-30">
-      <input v-model="phone" placeholder="请输入手机号码" type="phone"></input>
+      <input v-model="phone" placeholder="请输入手机号码" type="tel" />
     </div>
 
 
@@ -24,7 +24,7 @@
     <!-- 短信验证码登录 -->
     <section class="captcha-wrapper" v-show="loginType === 2">
       <div class="u-login-input noborder">
-        <input v-model="captcha" placeholder="请输入验证码"></input>
+        <input v-model="captcha" placeholder="请输入验证码" type="tel" />
         <captchaInput :captchaData="captcha"></captchaInput>
       </div>
       <div class="u-button small captcha-btn" v-show="!sending" @click="sendCaptcha">获取验证码</div>
