@@ -1,4 +1,6 @@
 // 颜色
+@c-primary: #03A1CD;
+@c-price: #FB6248;
 @nice-blue: #03A1CD;
 @cor_999: #999;
 @cor_333: #333;
@@ -163,23 +165,21 @@
 }
 
 // 进度条
-.u-bars {
-  margin: 15px 0;
-
+.u-bars() {
   .bars {
+    margin: 10px 0;
     .flex_between;
 
     &-left {
       width: 75px;
       height: 12px;
-      font-size: 12px;
-      font-weight: 300;
+      font-size: 11px;
       color: @cor_666;
     }
 
     &-right {
       width: 117px;
-      height: 8px;
+      height: 5px;
       background: #EFF9FC;
       border-radius: 6px;
       position: relative;
@@ -187,7 +187,7 @@
       &_top {
         position: absolute;
         width: 0;
-        height: 8px;
+        height: 5px;
         background: #59C2E1;
         border-radius: 6px;
         transition: .3s;
@@ -201,8 +201,7 @@
 }
 
 // 750ml | 日常餐酒 | 紧致单宁
-.u-mltip {
-  padding: 10px 0;
+.u-mltip() {
   font-size: 12px;
   // font-family: PingFang-SC-Regular;
   font-weight: 300;
@@ -211,15 +210,40 @@
 
   &>span {
     position: relative;
-    margin-right: 14px;
-
+    min-width: 40px;
+    height: 13PX;
+    line-height: 15PX;
+    margin-right: 5px;
+    font-size: 9px;
+    color: @c-primary;
+    // border: 0.5PX solid @c-primary;
+    // border-image: url(data:image/gif;base64,R0lGODlhBQAFAIABAN3d3f) 2 stretch;
+    border-radius: 2px;
+    text-align: center;
+    font-weight: normal;
+    padding: 0 5px;
+    display: inline-block;
+    margin-bottom: 5px;
     &:after {
-      content: '|';
+      box-sizing: border-box;
+      content: '';
+      display: block;
       position: absolute;
+      width: 200%;
+      left: 0%;
       top: 0;
-      right: -8px;
-      height: 12px;
+      height: 200%;
+      border: 1PX solid @c-primary;
+      transform: scale(.5);
+      transform-origin: 0 0;
     }
+    // &:after {
+    //   content: '|';
+    //   position: absolute;
+    //   top: 0;
+    //   right: -8px;
+    //   height: 12px;
+    // }
   }
 
   &>span:last-child {

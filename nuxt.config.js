@@ -66,6 +66,8 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    // cache: true,
+    // parallel: true,
     babel: {
       presets: ['es2015', 'stage-0'],
       plugins: [['transform-runtime', {

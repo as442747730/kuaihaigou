@@ -100,6 +100,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.pickList)
     this.$nextTick(() => {
       let bars = this.$refs.ubars
       if (Array.isArray(bars)) {

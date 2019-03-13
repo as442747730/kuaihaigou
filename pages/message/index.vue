@@ -1,20 +1,6 @@
 <template>
   <div class="message">
     <com-head titleConfig="消息中心"></com-head>
-    <!-- <div class="topmdls">
-      <div class="topmdl">
-        <div class="topmdl-top top_bk1"></div>
-        <div class="topmdl-bottom">系统消息</div>
-      </div>
-      <div class="topmdl">
-        <div class="topmdl-top top_bk2"></div>
-        <div class="topmdl-bottom">打赏通知</div>
-      </div>
-      <div class="topmdl">
-        <div class="topmdl-top top_bk3"></div>
-        <div class="topmdl-bottom">我的券</div>
-      </div>
-    </div> -->
     <div class="tab">
       <span class="font_hight" :class="{'cur': type === 2}" @click='handleSelect(2)'>
         酒友消息
@@ -34,17 +20,26 @@
             <div class="showcontent" v-if='$v.serialNumber === 16 && $v.signInformationResp'>
               <a :href="setHref($v)">
                 <div class="vessel">
-                  <div class="vessel-l">
-                    <div class="vessel-l_bk" :style="'background: url(' + ($v.signInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
-                  </div>
-                  <div class="vessel-r">
-                    <div class="vessel-r_top">
-                      <h4 class="ib-middle">{{ $v.signInformationResp.nickname }}</h4>
-                      <span class="ib-middle">【回复了您的评论】</span>
+                  <div class="vessel-t">
+                    <div class="vessel-t_bk ib-middle" :style="'background: url(' + ($v.signInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
+                    <div class="vessel-t_user ib-middle">
+                      <h4>{{ $v.signInformationResp.nickname }}</h4>
                       <time>{{ changeTime($v.signInformationResp.createdAt) }}</time>
                     </div>
-                    <div class="vessel-r_bottom">
-                      {{ $v.content }}
+                  </div>
+                  <div class="vessel-b">
+                    <div class="form">
+                      回复了您在<em class="to-href"> 《{{ $v.articleName }}》 </em>的评论
+                    </div>
+                    <div class="reply">
+                      {{ $v.signInformationResp.replyContent }}
+                    </div>
+                    <div class="my">
+                      <div>
+                        <span class="ib-middle head-img" :style="'background: url(' + (userData.headimgurl || defaulthead) + ') no-repeat center/contain'"></span>
+                        <span class="ib-middle nick-name limit_one">{{ userData.nickname }}</span>
+                      </div>
+                      <p class="limit_one">{{ $v.content }}</p>
                     </div>
                   </div>
                 </div>
@@ -54,17 +49,26 @@
             <div class="showcontent" v-if='$v.serialNumber === 16 && $v.goodInformationResp'>
               <a :href="'/detail/' + $v.goodInformationResp.goodId">
                 <div class="vessel">
-                  <div class="vessel-l">
-                    <div class="vessel-l_bk" :style="'background: url(' + ($v.goodInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
-                  </div>
-                  <div class="vessel-r">
-                    <div class="vessel-r_top">
-                      <h4 class="ib-middle">{{ $v.goodInformationResp.nickname }}</h4>
-                      <span class="ib-middle">【回复了您的评论】</span>
+                  <div class="vessel-t">
+                    <div class="vessel-t_bk ib-middle" :style="'background: url(' + ($v.goodInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
+                    <div class="vessel-t_user ib-middle">
+                      <h4>{{ $v.goodInformationResp.nickname }}</h4>
                       <time>{{ changeTime($v.goodInformationResp.createdAt) }}</time>
                     </div>
-                    <div class="vessel-r_bottom">
-                      {{ $v.content }}
+                  </div>
+                  <div class="vessel-b">
+                    <div class="form">
+                      回复了您在<em class="to-href"> 《{{ $v.goodInformationResp.goodName }}》 </em>的评论
+                    </div>
+                    <div class="reply">
+                      {{ $v.goodInformationResp.replyContent }}
+                    </div>
+                    <div class="my">
+                      <div>
+                        <span class="ib-middle head-img" :style="'background: url(' + (userData.headimgurl || defaulthead) + ') no-repeat center/contain'"></span>
+                        <span class="ib-middle nick-name limit_one">{{ userData.nickname }}</span>
+                      </div>
+                      <p class="limit_one">{{ $v.content }}</p>
                     </div>
                   </div>
                 </div>
@@ -74,15 +78,18 @@
             <div class="showcontent" v-if='$v.serialNumber === 17'>
               <a :href="setHref($v)">
                 <div class="vessel">
-                  <div class="vessel-l">
-                    <div class="vessel-l_bk" :style="'background: url(' + ($v.signInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
-                  </div>
-                  <div class="vessel-r">
-                    <div class="vessel-r_top">
-                      <h4 class="ib-middle">{{ $v.signInformationResp.nickname }}</h4>
+                  <div class="vessel-t">
+                    <div class="vessel-t_bk ib-middle" :style="'background: url(' + ($v.signInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
+                    <div class="vessel-t_user ib-middle">
+                      <h4>{{ $v.signInformationResp.nickname }}</h4>
                       <time>{{ changeTime($v.signInformationResp.createdAt) }}</time>
                     </div>
-                    <div class="vessel-r_bottom">
+                  </div>
+                  <div class="vessel-b">
+                    <div class="form">
+                      评论了您的文章<em class="to-href"> 《{{ $v.articleName }}》 </em>
+                    </div>
+                    <div class="reply">
                       {{ $v.content }}
                     </div>
                   </div>
@@ -93,17 +100,26 @@
             <div class="showcontent" v-if='$v.serialNumber === 18'>
               <a :href="'/detail/' + $v.goodInformationResp.goodId">
                 <div class="vessel">
-                  <div class="vessel-l">
-                    <div class="vessel-l_bk" :style="'background: url(' + ($v.goodInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
-                  </div>
-                  <div class="vessel-r">
-                    <div class="vessel-r_top">
-                      <h4 class="ib-middle">{{ $v.goodInformationResp.nickname }}</h4>
-                      <span class="ib-middle">【回答了您的疑问】</span>
+                  <div class="vessel-t">
+                    <div class="vessel-t_bk ib-middle" :style="'background: url(' + ($v.goodInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
+                    <div class="vessel-t_user ib-middle">
+                      <h4>{{ $v.goodInformationResp.nickname }}</h4>
                       <time>{{ changeTime($v.goodInformationResp.createdAt) }}</time>
                     </div>
-                    <div class="vessel-r_bottom">
+                  </div>
+                  <div class="vessel-b">
+                    <div class="form">
+                      回答了您在<em class="to-href"> 《{{ $v.goodInformationResp.goodName }}》 </em>的提问
+                    </div>
+                    <div class="reply">
                       {{ $v.goodInformationResp.replyContent }}
+                    </div>
+                    <div class="my">
+                      <div>
+                        <span class="ib-middle head-img" :style="'background: url(' + (userData.headimgurl || defaulthead) + ') no-repeat center/contain'"></span>
+                        <span class="ib-middle nick-name limit_one">{{ userData.nickname }}</span>
+                      </div>
+                      <p class="limit_one">{{ $v.goodInformationResp.question }}</p>
                     </div>
                   </div>
                 </div>
@@ -113,17 +129,23 @@
             <div class="showcontent" v-if='$v.serialNumber === 19'>
               <a :href="'/mine/reward'">
                 <div class="vessel">
-                  <div class="vessel-l">
-                    <div class="vessel-l_bk" :style="'background: url(' + ($v.signInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
-                  </div>
-                  <div class="vessel-r">
-                    <div class="vessel-r_top">
-                      <h4 class="ib-middle">{{ $v.signInformationResp.nickname }}</h4>
-                      <span class="ib-middle" style="color: #FB6248">【打赏了您】</span>
+                  <div class="vessel-t">
+                    <div class="vessel-t_bk ib-middle" :style="'background: url(' + ($v.signInformationResp.headimgurl || defaulthead) + ') no-repeat center/contain'"></div>
+                    <div class="vessel-t_user ib-middle">
+                      <h4>{{ $v.signInformationResp.nickname }}</h4>
                       <time>{{ changeTime($v.signInformationResp.createdAt) }}</time>
                     </div>
-                    <div class="vessel-r_bottom">
-                      {{ $v.content }}
+                  </div>
+                  <div class="vessel-b">
+                    <div class="form">
+                      打赏了您<em class="to-price"> {{ $v.signInformationResp.amount }} </em>嗨币
+                    </div>
+                    <div class="my">
+                      <div>
+                        <span class="ib-middle head-img" :style="'background: url(' + (userData.headimgurl || defaulthead) + ') no-repeat center/contain'"></span>
+                        <span class="ib-middle nick-name limit_one">{{ userData.nickname }}</span>
+                      </div>
+                      <p class="limit_one">发表文章<i class="to-href"> 《{{ $v.articleName }}》 </i></p>
                     </div>
                   </div>
                 </div>
@@ -264,9 +286,10 @@ export default {
   },
 
   async asyncData (req) {
+    const { code: userCode, data: userData } = await userApi.serverPostInfo(req)
     const { code: code2, data: data2 } = await userApi.serveGetNotifyNum(req)
     const { code: code1, data: data1 } = await messageApi.serverSystemInfo({ page: 1, count: 6, infoType: 2 }, req)
-    if (code1 === 200) {
+    if (code1 === 200 && userCode === 200) {
       let pageEmpty = false
       let signCount = 0
       let systemCount = 0
@@ -276,6 +299,7 @@ export default {
       }
       pageEmpty = data1.total <= 6
       return {
+        userData: userData,
         msgData: data1.array || {},
         pageEmpty: pageEmpty,
         signCount: signCount,
@@ -288,7 +312,7 @@ export default {
 
   data () {
     return {
-      // Imgs: Imgs,
+      userData: {},
       type: 2,
       signCount: 0,
       systemCount: 0,
@@ -488,8 +512,8 @@ export default {
     padding: 13px 0;
     span {
       display: inline-block;
-      font-size: 14px;
-      padding: 0 63px;
+      font-size: 13px;
+      padding: 0 66px;
       position: relative;
       color: #666;
       &:first-child {
@@ -501,11 +525,12 @@ export default {
           content: '';
           position: absolute;
           left: 50%;
-          bottom: -14px;
-          width: 20px;
-          height: 2PX;
+          bottom: -9px;
+          width: 13px;
+          height: 3PX;
           margin-left: -10px;
           background: #333;
+          border-radius: 2px;
         }
       }
       i {
@@ -556,14 +581,15 @@ export default {
     }
 
     .showcontent {
-      padding-top: 32px;
-      padding-bottom: 30px;
+      padding-top: 20px;
+      padding-bottom: 20px;
       border-bottom: 1px solid #f1f1f1;
       .padlr20;
 
       .vessel {
         width: 100%;
         .flex_between;
+        flex-direction: column;
 
         &-l {
           width: 40px;
@@ -618,6 +644,73 @@ export default {
               color: #FB6248;
             }
           }
+        }
+
+        &-t {
+          width: 100%;
+          &_bk {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 6px;
+          }
+          &_user {
+            h4 {
+              font-size: 13px;
+              color: #333;
+              margin-bottom: 8px;
+            }
+            time {
+              font-size: 11px;
+              color: #999;
+            }
+          }          
+        }
+
+        &-b {
+          width: 100%;
+          .form {
+            font-size: 13px;
+            color: #333;
+            margin: 10px 0;
+            line-height: 18px;
+          }
+          .reply {
+            font-size: 13px;
+            color: #666;
+            line-height: 23px;
+          }
+          .my {
+            margin-top: 10px;
+            background: #fcfcfc;
+            padding: 15px 15px 12px;
+            .head-img {
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              margin-right: 8px;
+            }
+            .nick-name {
+              font-size: 12px;
+              color: #333;
+              max-width: 50%;
+            }
+            p {
+              margin-top: 10px;
+              color: #666;
+              font-size: 12px;
+              max-width: 50%;
+            }
+          }
+        }
+
+        .to-href {
+          color: @c-primary;
+        }
+        .to-price {
+          font-weight: bold;
+          color: #FB6248;
+          font-size: 13px;
         }
       }
     }

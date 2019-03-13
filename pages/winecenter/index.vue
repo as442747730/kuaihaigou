@@ -37,6 +37,10 @@
             </div>
             <div class="item_r" v-if="!isNovice">
               <h3 class="font_hight">{{good.goodsName}}</h3>
+              <div class="itemr-price">
+                <span class="t_price">¥ {{good.actualPrice}}</span>
+                <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
+              </div>
               <p>
                 <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">
                   {{ tag }}
@@ -55,13 +59,13 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="item_r" v-else>
+              <h3 class="font_hight">{{good.goodsName}}</h3>
               <div class="itemr-price">
                 <span class="t_price">¥ {{good.actualPrice}}</span>
                 <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
               </div>
-            </div>
-            <div class="item_r" v-else>
-              <h3 class="font_hight">{{good.goodsName}}</h3>
               <p>
                 <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
               </p>
@@ -113,10 +117,6 @@
                     <span class="bars-right_top" ref="ubars" :data-bar='good.complexity'></span>
                   </div>
                 </div>
-              </div>
-              <div class="itemr-price">
-                <span class="t_price">¥ {{good.actualPrice}}</span>
-                <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
               </div>
             </div>
           </a>
@@ -944,6 +944,7 @@ export default {
 // 选酒公共
 .com-item {
   .padlr20;
+  .u-bars;
   margin: 20px 0;
   & > a {
     .flex_between;
@@ -951,28 +952,28 @@ export default {
 
   .item_l {
     width: 120px;
-    height: 210px;
+    height: 180px;
     border-radius: 8px;
     border: 1PX solid #eaeaea;
     &_bk {
       margin-top: 6px;
       width: 100%;
-      height: 202px;
+      height: 178px;
       .bg_contain;
     }
   }
 
   .item_r {
     width: 195px;
-    min-height: 213px;
+    min-height: 180px;
 
     &>h3 {
 
-      font-size: 15px;
+      font-size: 13px;
 
-      color: rgba(51, 51, 51, 1);
+      color: #333;
 
-      line-height: 21px;
+      line-height: 18px;
 
     }
 
@@ -985,31 +986,21 @@ export default {
     .itemr-price {
 
       .t_price {
-
         display: inline-block;
-
-        font-size: 17px;
-
+        vertical-align: middle;
+        font-size: 15px;
         font-family: Impact;
-
-        color: #f99c00;
-
+        color: @c-price;
       }
 
       .m_price {
-
         display: inline-block;
-
+        vertical-align: middle;
         padding-left: 10px;
-
-        font-size: 12px;
-
+        font-size: 11px;
         font-family: PingFang-SC-Medium;
-
         font-weight: 500;
-
         color: @cor_999;
-
       }
 
     }
@@ -1111,9 +1102,7 @@ export default {
   }
 
   .itemr-price {
-
-    padding-top: 4px;
-
+    padding: 10px 0 12px;
   }
 
 }
