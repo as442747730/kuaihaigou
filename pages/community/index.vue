@@ -1,5 +1,6 @@
 <template>
   <div class="comindex">
+    <com-head :titleConfig="configtitle"></com-head>
     <div class="navbox">
       <div class="navitem" :class="{active: item.id === navIndex}" v-for="(item, index) in navList" @click="hrefFn(item)" :key="index">{{item.status}}</div>
     </div>
@@ -62,6 +63,7 @@
 import nullData from '~/components/nullData'
 import tools from '~/utils/tools'
 import { munityApi } from '~/api/community'
+import comHead from '~/components/com-head'
 export default {
   head () {
     return {
@@ -72,7 +74,8 @@ export default {
     }
   },
   components: {
-    nullData
+    nullData,
+    comHead
   },
   async asyncData (req) {
     let _themes = null
@@ -127,6 +130,7 @@ export default {
   },
   data () {
     return {
+      configtitle: '社区活动',
       curPage: 1,
       totalPage: 1,
       loadOk: true,

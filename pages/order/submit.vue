@@ -94,7 +94,7 @@
         <span class="content color_666" v-else>￥{{ formatMoney(couponSelected.faceValue) }}</span>
       </div>
       <div class="m-section-cell-item">
-        <div class="label">优币抵扣<span class="tip">您有Hi币 {{ formatMoney(rewardNow) }}个</span></div>
+        <div class="label">嗨币抵扣<span class="tip">您有Hi币 {{ formatMoney(rewardNow) }}个</span></div>
         <van-stepper :min='0' :max="maxReward" v-model='rewardMoney' @change='handleNumChange'></van-stepper>
       </div>
     </div>

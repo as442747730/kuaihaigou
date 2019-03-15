@@ -86,6 +86,9 @@ export default {
         case '/selection':
           window.location.href = '/home'
           break
+        case '/community':
+          window.location.href = '/home'
+          break
         default:
           console.log('未知页面')
           break
