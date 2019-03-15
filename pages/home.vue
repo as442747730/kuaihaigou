@@ -163,7 +163,7 @@
                 </div>
                 <div class="bottom">
                   <div class="summary">{{ pick.summary }}</div>
-                  <div class="pro" v-lazy:background-image="pick.goodsMinimalResp.cover">
+                  <div class="pro" v-lazy:background-image="pick.img">
                     <div class="goods-info">
                       <div class="ib-middle goods-info-img" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
                       <div class="ib-middle goods-info-detail">
@@ -1035,8 +1035,9 @@ export default {
     .goods-info {
       position: absolute;
       width: 270px;
+      box-sizing: border-box;
       bottom: 10px;
-      left: 13px;
+      left: 16px;
       padding: 5px 10px;
       background: #f9f9f9;
       &-img {

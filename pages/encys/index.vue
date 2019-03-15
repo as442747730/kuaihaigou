@@ -1,5 +1,6 @@
 <template>
   <div class="encys">
+    <com-head :titleConfig="configtitle"></com-head>
     <div class="top">
       <div class="topbanner">
         <h2>查询工具</h2>
@@ -127,6 +128,7 @@
 <script>
 import { encyApi } from '~/api/encys'
 import userLab from '@/components/Usericon.vue'
+import comHead from '~/components/com-head'
 export default {
   asyncData (req) {
     let par1 = { page: 1, count: 10 }
@@ -145,9 +147,13 @@ export default {
       }
     })
   },
-  components: { userLab },
+  components: {
+    userLab,
+    comHead
+  },
   data () {
     return {
+      configtitle: '红酒百科',
       hotnewList: [],
       shareList: [],
       shareSwiper: {
