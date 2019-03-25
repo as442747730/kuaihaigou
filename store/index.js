@@ -9,17 +9,20 @@ Vue.use(Vuex)
 const store = () => new Vuex.Store({
 
   state: {
-    authUser: null
+    authUser: null,
+    blurOpen: false // 设置模糊动画
   },
 
   mutations: {
     SET_USER: function (state, user) {
       state.authUser = user
+    },
+    SET_BLUR: function (state, val) {
+      state.blurOpen = val
     }
   },
 
   actions: {
-    // ...
   }
 
 })

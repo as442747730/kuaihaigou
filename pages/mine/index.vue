@@ -2,7 +2,9 @@
   <div class="mine" ref="scrollElem">
     <header>
       <div class="hd-head">
-        <div class="hd_l" data-val="123" @click="openMenu"></div>
+        <div class="hd_l" @click="openMenu">
+          <i v-if='OriNotifyNum !== 0'></i>
+        </div>
         <div class="hd_c">我的</div>
         <div class="hd_r"></div>
       </div>
@@ -12,9 +14,10 @@
         </div>
       </div>
       <div class="hd-name">
-        <p class="hd_world">{{ userInfo.nickname }}</p>
-        <i class="icons ic_level"></i>
-        <i class="icons ic_cms"></i>
+        <div class="hd_world">
+          <span>{{ userInfo.nickname }}</span>
+          <user-lab :level='String(userInfo.userGradeNumber)' type='2' :profess="String(userInfo.professionTypeCode || '')" :official="String((userInfo.certCategory === 3 && userInfo.certStage === 2) ? 3 : '')" :selfmedia='String(userInfo.selfMediaType)'></user-lab>
+        </div>
       </div>
       <div class="hd-sign">
         <p>{{ userInfo.signature }}</p>
@@ -39,8 +42,8 @@
         <nav class="navlist">
           <a class="navitem ic_gwc" href="/order/cart">购物车</a>
           <a class="navitem ic_wdgz" href="/order/list">我的订单</a>
-          <a class="navitem ic_wdhd" href="#">我的活动</a>
-          <a class="navitem ic_wdsc" href="#">我的收藏</a>
+          <a class="navitem ic_wdhd" href="/community/mymunity">我的活动</a>
+          <a class="navitem ic_wdsc" href="/mine/collect">我的收藏</a>
         </nav>
       </div>
       <div class="main-bottom">
@@ -50,15 +53,37 @@
           </div>
         </div>
         <section class="bottom-content" v-if="headactive === 0">
-          <u-article :artlist="artList"></u-article>
+          <u-article :artlist="artList" ></u-article>
         </section>
         <section class="bottom-content" v-else>
           <u-jarsclb :poetryList="poetrys"></u-jarsclb>
         </section>
+
+        <template v-if='headactive === 0'>
+          <div class='more-loading' v-show='artLoad'>
+            <van-loading type="spinner" />
+            <p>正在加载更多</p>
+          </div>
+
+          <div class="no-more" v-show='!artMore'>
+            <p>没有更多内容了！</p>
+          </div>
+        </template>
+        <template v-else>
+          <div class='more-loading' v-show='poesLoad'>
+            <van-loading type="spinner" />
+            <p>正在加载更多</p>
+          </div>
+
+          <div class="no-more" v-show='!poesMore'>
+            <p>没有更多内容了！</p>
+          </div>
+        </template>
+
       </div>
     </div>
     <van-popup class="vanpopup" v-model="showmenu" position="left">
-      <left-menu></left-menu>
+      <left-menu :notifyNum='notifyNum'></left-menu>
     </van-popup>
   </div>
 </template>
@@ -67,7 +92,9 @@
 import uArticle from '~/components/mine/Article'
 import uJarsclb from '~/components/mine/Jarsclub'
 import leftMenu from '~/components/Menu'
+import userLab from '~/components/Usericon.vue'
 import { userApi } from '~/api/users'
+
 export default {
   name: 'mineIndex',
   layout: 'page-with-tabbar',
@@ -81,10 +108,33 @@ export default {
   },
   async asyncData (req) {
     const { code: detCode, data: detData } = await userApi.serverPostInfo(req)
+    const { code: artCode, data: artData } = await userApi.serveGetAartical({ page: 1, count: 5 }, req)
+    const { code: notiCode, data: notiData } = await userApi.serveGetNotifyNum(req)
+    console.log(detCode)
+    console.log(artCode)
     if (detCode === 506) {
       req.redirect('/account/login')
-    } else if (detCode === 200) {
-      return { userInfo: detData }
+    } else if (detCode === 200 && artCode === 200) {
+      let artMore = false
+      let artList = []
+      let total = 0
+      let OriNotifyNum = 0
+      if (notiCode === 200) {
+        OriNotifyNum = notiData.total
+      }
+      if (artData) {
+        artMore = artData.total > 5
+        artList = artData.array
+        total = artData.total
+      }
+      return {
+        userInfo: detData,
+        artList: artList,
+        artMore: artMore,
+        artLoad: artMore,
+        artTotalPage: total,
+        OriNotifyNum: OriNotifyNum
+      }
     } else {
       req.redirect('/error')
     }
@@ -92,7 +142,8 @@ export default {
   components: {
     uArticle,
     uJarsclb,
-    leftMenu
+    leftMenu,
+    userLab
   },
   data () {
     return {
@@ -110,25 +161,30 @@ export default {
       artTotalPage: 1,
       curArt: {
         page: 1,
-        count: 10
+        count: 5
       }, // 我的文章请求参数
-      artLoad: true,
-      artMore: true,
+      artLoad: false,
+      artMore: false,
       poetrys: [], // 酒坛诗社
       poetTotalPage: 1,
       curPoes: {
         page: 1,
-        count: 10
+        count: 5
       }, // 酒坛诗社请求参数
-      poesLoad: true,
+      poesLoad: false,
       poesMore: true,
-      showmenu: false // 是否显示菜单栏
+      showmenu: false, // 是否显示菜单栏
+
+      // pageEmpty: false,
+      // pageLoding: false,
+      isFirst: true,
+      ifFirst: true,
+      notifyNum: 0,
+      OriNotifyNum: 0
     }
   },
-  created () {
-    this.getArts()
-  },
   mounted () {
+    console.log(this.userInfo)
     window.addEventListener('scroll', () => {
       let winH = document.documentElement.clientHeight || document.body.clientHeight
       let elemBound = this.$refs.scrollElem.getBoundingClientRect()
@@ -138,22 +194,24 @@ export default {
       if (bottomH <= 100) {
         if (this.headactive === 0) {
           if (this.artLoad && this.artMore) {
-            if (this.artTotalPage > this.curArt.page) {
-              this.artLoad = false
-              this.curPoes.page += 1
+            if (this.artTotalPage > this.curArt.page * 5) {
+              // this.artLoad = false
+              this.curArt.page += 1
               this.getArts()
             } else {
-              this.artMore = false
+              // this.pageEmpty = true
+              // this.artMore = false
             }
           }
         } else {
           if (this.poesLoad && this.poesMore) {
-            if (this.poetTotalPage > this.curPoes.page) {
+            if (this.poetTotalPage > this.curPoes.page * 5) {
               this.poesLoad = false
               this.curPoes.page += 1
               this.getpoetry()
             } else {
               this.poesMore = false
+              // this.pageEmpty = true
             }
           }
         }
@@ -163,8 +221,9 @@ export default {
   methods: {
     headFn (index) {
       this.headactive = index
-      if (index === 1) {
+      if (index === 1 && this.isFirst) {
         this.getpoetry()
+        this.isFirst = false
       }
     },
     tofollow (num) {
@@ -175,36 +234,55 @@ export default {
     },
     openMenu () {
       this.showmenu = !this.showmenu
+      if (this.ifFirst) {
+        this.getInfo()
+        this.ifFirst = false
+      }
     },
     async getArts () {
+      this.artLoad = true
       // 获取文章
       let params = { ...this.curArt }
       const { code, data } = await userApi.getArticle(params)
       if (code === 200) {
         if (data && data.array) {
           this.artList.push(...data.array)
+          this.artMore = this.artTotalPage > this.curArt.page * 5
         }
         this.artLoad = true
       }
+      this.artLoad = false
     },
     async getpoetry () {
       // 酒坛诗社
+      this.poesLoad = true
       let params = { ...this.curPoes }
       const { code, data } = await userApi.windPoetry(params)
       if (code === 200) {
-        let { array, totalPageNo } = data
-        this.poetTotalPage = totalPageNo
-        let poeArr = array.map(v => {
-          let { content, createdAt } = v
-          let date = new Date(createdAt)
-          let yy = date.getFullYear()
-          let mm = date.getMonth() + 1
-          let dd = date.getDate()
-          let yymm = yy + '/' + mm
-          return { content, yymm, dd }
-        })
+        let { array, total } = data
+        this.poetTotalPage = total
+        let poeArr = []
+        if (array) {
+          poeArr = array.map(v => {
+            let { content, createdAt } = v
+            let date = new Date(createdAt)
+            let yy = date.getFullYear()
+            let mm = date.getMonth() + 1
+            let dd = date.getDate()
+            let yymm = yy + '/' + mm
+            return { content, yymm, dd }
+          })
+        }
         this.poetrys.push(...poeArr)
-        this.artLoad = true
+      }
+      this.poesLoad = false
+    },
+    // 获取系统消息
+    async getInfo () {
+      const { code, data } = await userApi.getNotifyNum()
+      if (code === 200) {
+        this.notifyNum = data.total
+        console.log(this.notifyNum)
       }
     }
   }
@@ -222,7 +300,7 @@ export default {
     background: linear-gradient(-45deg, #4FEDEF, #00A1F0);
 
     .hd-head {
-      padding: 0 20px;
+      padding: 5px 20px 0;
       height: 40px;
       .flex_between;
 
@@ -230,7 +308,17 @@ export default {
         width: 30px;
         height: 30px;
         background-image: url('~/assets/img/Icons/ic_menu_w_30x30@2x.png');
+        position: relative;
         .bg_cover;
+        i {
+          position: absolute;
+          width: 8PX;
+          height: 8PX;
+          background: #ff3333;
+          right: -2PX;
+          top: 1PX;
+          border-radius: 50%;
+        }
       }
 
       .hd_c {
@@ -243,7 +331,7 @@ export default {
       .hd_r {
         width: 30px;
         height: 30px;
-        background-image: url('~/assets/img/Icons/ic_search_w_30x30@2x.png');
+        // background-image: url('~/assets/img/Icons/ic_search_w_30x30@2x.png');
         .bg_cover;
       }
     }
@@ -267,14 +355,24 @@ export default {
     }
 
     .hd-name {
+      font-size: 0;
       .flex_allCenter;
       .hd_world {
-        padding-left: 60px;
-        padding-right: 2px;
         font-size: 21px;
         font-family: PingFangSC-Semibold;
         font-weight: bold;
         color: rgba(255, 255, 255, 1);
+        box-sizing: border-box;
+        max-width: 150px;
+        position: relative;
+        text-align: center;
+        span {
+          display: inline-block;
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
       .icons {
         width: 22px;
@@ -282,18 +380,12 @@ export default {
         margin-left: 7px;
         .bg_cover;
       }
-      .ic_level {
-        background-image: url('~/assets/img/Icons/ic_membership_level2_22x22@1.png');
-      }
-      .ic_cms {
-        background-image: url('~/assets/img/Icons/ic_cms_cs_22x22@2x.png');
-      }
     }
 
     .hd-sign {
-      padding: 20px 20px 50px;
+      padding: 10px 20px 50px;
       p {
-        font-size:12px;
+        font-size:13px;
         font-family:PingFang-SC-Medium;
         color:rgba(255,255,255,1);
         line-height:20px;
@@ -325,8 +417,8 @@ export default {
 
             &>span {
               font-size: 19px;
-              font-family: DINPro-BlackCondensed;
-              font-weight: normal;
+              font-family: 'DINPro';
+              font-weight: 700;
               color: rgba(51, 51, 51, 1);
             }
           }

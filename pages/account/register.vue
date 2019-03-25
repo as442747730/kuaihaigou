@@ -1,7 +1,7 @@
 <template>
   <div class="m-register">
 
-    <h2 class="m-register-title">{{ pageTitle }}<div class="icon-close "></div></h2>
+    <h2 class="m-register-title">{{ pageTitle }}<div class="icon-close" @click='historyBack'></div></h2>
 
     <div class="u-login-input mb-30">
       <input v-model="phone" placeholder="请输入手机号码" type="phone"></input>
@@ -62,6 +62,25 @@ export default {
     }
   },
 
+  watch: {
+    captcha (val) {
+      if (val.length === 1) {
+        val = val.replace(/[^1-9]/g, '')
+      } else {
+        val = val.replace(/\D/g, '')
+      }
+      this.captcha = val
+    },
+    phone (val) {
+      if (val.length === 1) {
+        val = val.replace(/[^1-9]/g, '')
+      } else {
+        val = val.replace(/\D/g, '')
+      }
+      this.phone = val
+    }
+  },
+
   methods: {
     togglePwd () {
       this.pwdType = this.pwdType === 'password' ? 'text' : 'password'
@@ -103,6 +122,15 @@ export default {
       } else {
         this.$toast(data)
       }
+    },
+
+    historyBack () {
+      if (document.referrer === 'http://' + window.location.host + '/account/login?status=1') {
+        window.location.href = '/account/login?status=1'
+      } else {
+        window.location.href = '/account/login'
+      }
+      // window.history.go(-1)
     }
   }
 }

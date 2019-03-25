@@ -1,6 +1,6 @@
 <template>
   <div class="m-invoice-edit">
-    <com-head :titleConfig="configtitle"></com-head>
+    <!-- <com-head :titleConfig="configtitle"></com-head> -->
     <div class="m-invoice-edit-cell">
       <div class="title">发票类型</div>
       <div class="checkbox-wrapper">
@@ -71,7 +71,7 @@
 </template>
 <script>
 import api from '~/utils/request'
-import comHead from '~/components/com-head'
+// import comHead from '~/components/com-head'
 export default {
   name: '',
   head () {
@@ -83,7 +83,7 @@ export default {
     }
   },
   components: {
-    comHead
+    // comHead
   },
   async asyncData (req) {
     return api.serverGet('/api/invoice/get/' + req.params.edit).then((res) => {
@@ -183,7 +183,11 @@ export default {
       })
       if (code === 200) {
         this.$toast.success('修改成功')
-        window.location.href = '/invoice/list'
+        if (this.$route.query.from === 'submit') {
+          window.location.href = '/invoice/list?from=submit'
+        } else {
+          window.location.href = '/invoice/list'
+        }
       } else {
         this.$toast(data)
       }
@@ -250,7 +254,6 @@ export default {
         height: 30px;
       }
       .item-label {
-        width: 60px;
         font-size: 15px;
         font-weight: 500;
         padding-right: 25px;

@@ -1,4 +1,6 @@
 // 颜色
+@c-primary: #03A1CD;
+@c-price: #FB6248;
 @nice-blue: #03A1CD;
 @cor_999: #999;
 @cor_333: #333;
@@ -12,8 +14,21 @@
   white-space: nowrap;
 }
 
+.limit_2() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
 
 // padding
+.padlr15 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
 .padlr20 {
   padding-left: 20px;
   padding-right: 20px;
@@ -150,33 +165,30 @@
 }
 
 // 进度条
-.u-bars {
-  margin: 15px 0;
-
+.u-bars() {
   .bars {
+    margin: 10px 0;
     .flex_between;
 
     &-left {
       width: 75px;
       height: 12px;
-      font-size: 12px;
-      font-family: PingFang-SC-Regular;
-      font-weight: 400;
+      font-size: 11px;
       color: @cor_666;
     }
 
     &-right {
       width: 117px;
-      height: 10px;
-      background: #D7F2E6;
+      height: 5px;
+      background: #EFF9FC;
       border-radius: 6px;
       position: relative;
 
       &_top {
         position: absolute;
         width: 0;
-        height: 10px;
-        background: #00E67F;
+        height: 5px;
+        background: #59C2E1;
         border-radius: 6px;
         transition: .3s;
       }
@@ -189,25 +201,49 @@
 }
 
 // 750ml | 日常餐酒 | 紧致单宁
-.u-mltip {
-  padding: 10px 0;
+.u-mltip() {
   font-size: 12px;
-  font-family: PingFang-SC-Regular;
-  font-weight: 400;
+  // font-family: PingFang-SC-Regular;
+  font-weight: 300;
   color: rgba(153, 153, 153, 1);
   line-height: 12px;
 
   &>span {
     position: relative;
-    margin-right: 14px;
-
+    min-width: 40px;
+    height: 13PX;
+    line-height: 15PX;
+    margin-right: 5px;
+    font-size: 9px;
+    color: @c-primary;
+    // border: 0.5PX solid @c-primary;
+    // border-image: url(data:image/gif;base64,R0lGODlhBQAFAIABAN3d3f) 2 stretch;
+    border-radius: 2px;
+    text-align: center;
+    font-weight: normal;
+    padding: 0 5px;
+    display: inline-block;
+    margin-bottom: 5px;
     &:after {
-      content: '|';
+      box-sizing: border-box;
+      content: '';
+      display: block;
       position: absolute;
+      width: 200%;
+      left: 0%;
       top: 0;
-      right: -8px;
-      height: 12px;
+      height: 200%;
+      border: 1PX solid @c-primary;
+      transform: scale(.5);
+      transform-origin: 0 0;
     }
+    // &:after {
+    //   content: '|';
+    //   position: absolute;
+    //   top: 0;
+    //   right: -8px;
+    //   height: 12px;
+    // }
   }
 
   &>span:last-child {
@@ -222,21 +258,24 @@
 
 // 列表base
 .listbase(@w, @h) {
-  margin-right: -10px;
   flex-wrap: wrap;
   .flex_between;
 
   &_item {
     width: @w;
     height: @h;
+    line-height: @h;
     border-radius: 4px;
     border: 1PX solid;
     border-color: #EEEEEE;
     color: @cor_666;
-    margin-right: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
-    .flex_allCenter;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
   }
 
   .empty {
@@ -246,6 +285,7 @@
   .active {
     border-color: @cor_333;
     color: @cor_333;
+    font-weight: bold;
   }
 }
 
@@ -266,28 +306,22 @@
 
 // 重置， 取消按钮
 .u-footbtns {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background: #fff;
-  width: 100%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  display: flex;
   height: 50px;
-  z-index: 100;
-  box-shadow: 3px 3px 5px #636262;
-  .flex_between;
-
   .btn {
-    width: 50%;
-    height: 100%;
+    flex: 1;
+    height: 50px;
+    line-height: 50px;
     font-size: 15px;
-    font-family: PingFangSC-Medium;
-    font-weight: 500;
-    .flex_allCenter;
-    color: #03A1CD;
+    font-weight: bold;
+    color: @nice-blue;
+    background: white;
+    text-align: center;
   }
 
   .active {
-    background: #03A1CD;
-    color: #fff;
+    background: @nice-blue;
+    color: white;
   }
 }

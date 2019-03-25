@@ -2,52 +2,36 @@
   <div class="person">
     <com-head :titleConfig="configtitle"></com-head>
     <div class="person-main">
-      <div class="person-head" @click="elheadFn">
-        <img class="headimg" :src="infos.headimgurl || defaulthead" />
-        <i class="ic_arrow"></i>
+      <div class="person-head">
+        <Upload @on-success="onSuccess" class="headupload">
+          <div class="upload-slot">
+            <img class="headimg" :src="infos.headimgurl || defaulthead" />
+            <i class="ic_arrow"></i>
+          </div>
+        </Upload>
       </div>
       <div class="person-listone">
         <div class="lists">
           <list-one  @rFn="editFn('nickname')" list_left="昵称" :list_right="infos.nickname"></list-one>
           <list-one @rFn="editSex(infos.sex)" list_left="性别" :list_right="infos.strSex"></list-one>
-           <list-one v-if="birshow" @rFn="changeBirhday" list_left="生日" :list_right="infos.birhday">
+           <list-one @rFn="changeBirhday" list_left="生日" :list_right="infos.birhday">
             <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('birst', birshow)" active-color="#03A1CD" size="24px" :value="birshow" />
+              <van-switch @input="switchOpen('birst', birshow)" active-color="#03A1CD" size="20px" :value="birshow" />
             </div>
           </list-one>
-          <list-one v-else list_left="生日">
+          <list-one @rFn="editSex('_dz')" list_left="居住地" :list_right="infos._dz">
             <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('birst', birshow)" active-color="#03A1CD" size="24px" :value="birshow" />
+              <van-switch @input="switchOpen('address', addrshow)" active-color="#03A1CD" size="20px" :value="addrshow" />
             </div>
           </list-one>
-          <list-one v-if="addrshow" @rFn="editSex('_dz')" list_left="居住地" :list_right="infos._dz">
+          <list-one @rFn="editFn('wechat')" list_left="微信号" :list_right="infos.wechat">
             <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('address', addrshow)" active-color="#03A1CD" size="24px" :value="addrshow" />
+              <van-switch @input="switchOpen('wechat', wxshow)" active-color="#03A1CD" size="20px" :value="wxshow" />
             </div>
           </list-one>
-          <list-one v-else list_left="居住地">
+          <list-one @rFn="editFn('qq')" list_left="QQ" :list_right="infos.qq">
             <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('address', addrshow)" active-color="#03A1CD" size="24px" :value="addrshow" />
-            </div>
-          </list-one>
-          <list-one v-if="wxshow" @rFn="editFn('wechat')" list_left="微信号" :list_right="infos.wechat">
-            <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('wechat', wxshow)" active-color="#03A1CD" size="24px" :value="wxshow" />
-            </div>
-          </list-one>
-          <list-one v-else list_left="微信号">
-            <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('wechat', wxshow)" active-color="#03A1CD" size="24px" :value="wxshow" />
-            </div>
-          </list-one>
-          <list-one v-if="qqshow" @rFn="editFn('qq')" list_left="QQ" :list_right="infos.qq">
-            <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('qq', qqshow)" active-color="#03A1CD" size="24px" :value="qqshow" />
-            </div>
-          </list-one>
-          <list-one v-else list_left="QQ">
-            <div class="list-switch" slot="sl_l">
-              <van-switch @input="switchOpen('qq', qqshow)" active-color="#03A1CD" size="24px" :value="qqshow" />
+              <van-switch @input="switchOpen('qq', qqshow)" active-color="#03A1CD" size="20px" :value="qqshow" />
             </div>
           </list-one>
           <list-one @rFn="editFn('signature')" list_left="个性签名" :list_right="infos.signature"></list-one>
@@ -58,14 +42,13 @@
         </div>
       </div>
       <div class="person-listtwo">
-        <list-two @ltwoFn="editFn('wineWhen')" title="什么时候开始喝葡萄酒" :content="infos.wineWhen"></list-two>
-        <list-two @ltwoFn="editFn('wineArea')" title="最喜欢什么产区的葡萄酒" :content="infos.wineArea"></list-two>
-        <list-two @ltwoFn="editFn('wineVariety')" title="最喜欢什么品种的葡萄酒" :content="infos.wineVariety"></list-two>
-        <list-two @ltwoFn="editFn('wineHowMany')" title="每个月喝多少瓶葡萄酒" :content="infos.wineHowMany"></list-two>
+        <list-two @ltwoFn="editFn('wineWhen')" title="什么时候开始喝葡萄酒" :content="infos.wineWhen || '——'"></list-two>
+        <list-two @ltwoFn="editFn('wineArea')" title="最喜欢什么产区的葡萄酒" :content="infos.wineArea || '——'"></list-two>
+        <list-two @ltwoFn="editFn('wineVariety')" title="最喜欢什么品种的葡萄酒" :content="infos.wineVariety || '——'"></list-two>
+        <list-two @ltwoFn="editFn('wineHowMany')" title="每个月喝多少瓶葡萄酒" :content="infos.wineHowMany || '——'"></list-two>
       </div>
     </div>
 
-    <selectHead></selectHead>
     <editinfo></editinfo>
     <el-sex></el-sex>
     <el-date></el-date>
@@ -77,20 +60,20 @@ import { userApi } from '~/api/users'
 import comHead from '~/components/com-head'
 import listOne from '~/components/mine/ListOne'
 import listTwo from '~/components/mine/ListTwo'
-import selectHead from '~/components/mine/SelectHead'
 import editinfo from '~/components/mine/Editinfo'
 import elSex from '~/components/mine/ElSex'
 import elDate from '~/components/mine/elDate'
+import Upload from '~/components/Upload'
 
 export default {
   components: {
     comHead,
     listOne,
     listTwo,
-    selectHead,
     editinfo,
     elSex,
-    elDate
+    elDate,
+    Upload
   },
   async asyncData (req) {
     const { code, data } = await userApi.serverPostInfo(req)
@@ -118,6 +101,8 @@ export default {
         addrshow: residenceCanSee,
         infos: allInfo
       }
+    } else if (code === 506) {
+      window.location.href = '/account/login'
     }
   },
   data () {
@@ -128,7 +113,8 @@ export default {
       qqshow: false,
       addrshow: false,
       infos: {},
-      defaulthead: this.defaulthead
+      defaulthead: this.defaulthead,
+      imgsrc: ''
     }
   },
   mounted () {
@@ -169,9 +155,10 @@ export default {
         console.log(this.infos, 'infos')
       }
     },
-    elheadFn () {
+    onSuccess (val) {
       // 选择头像
-      this.$bus.emit('headStatus', true)
+      this.imgsrc = val
+      window.location.href = `/mine/imgcrop?imgsrc=${val}`
     },
     editFn (type) {
       /**
@@ -289,7 +276,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .person {
   &-main {
     background: #F6F6F6;
@@ -299,19 +286,29 @@ export default {
     height: 94px;
     background: #fff;
     padding: 0 20px;
-    .flex_between;
-
-    .headimg {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-    }
-
-    .ic_arrow {
-      width: 7px;
-      height: 10px;
-      background: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
-      .bg_cover;
+    display: flex;
+    align-items: center;
+    .headupload {
+      display: block;
+      width: 100%;
+      .van-uploader {
+        display: block;
+      }
+      .upload-slot {
+        display: flex;
+        .flex_between;
+        .headimg {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+        }
+        .ic_arrow {
+          width: 7px;
+          height: 10px;
+          background: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
+          .bg_cover;
+        }
+      }
     }
   }
 
@@ -319,7 +316,7 @@ export default {
     margin-top: 10px;
 
     .list-switch {
-      margin-left: 30px;
+      // margin-left: 10px;
       .van-switch--on {
         background-color: #03A1CD;
       }
@@ -346,4 +343,9 @@ export default {
     }
   }
 }
+</style>
+<style lang='less'>
+.list-l_name {
+  width: 70px;
+}  
 </style>

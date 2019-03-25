@@ -3,7 +3,10 @@
   <div class="u-menu">
     <div class="menu-wrapper">
       <div class="menu-ul">
-        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key" @click="linkTo(m.url)">{{ m.name }}</div>
+        <div :class="['menu-li', m.key]" v-for="m in menuList" :key="m.key" @click="linkTo(m.url)">
+          {{ m.name }}
+          <i v-if="m.num !== 0 && m.key === 'msg'"></i>
+        </div>
       </div>
     </div>
   </div>
@@ -12,19 +15,32 @@
 <script>
   export default {
     name: 'u-menu',
+    props: {
+      notifyNum: {
+        type: Number,
+        default: 0
+      }
+    },
     data () {
       return {
         menuList: [
-          { name: '我的消息', key: 'msg', url: '' },
-          { name: '发票信息', key: 'invo', url: '/invoice/list' },
-          { name: '地址管理', key: 'address', url: '/address/list' },
+          { name: '我的消息', key: 'msg', url: '/message', num: 0 },
+          { name: '我的评论', key: 'comment', url: '/mine/comment' },
+          { name: '发票信息', key: 'invo', url: '/invoice/manage' },
+          { name: '地址管理', key: 'address', url: '/address/manage' },
           { name: '我的优惠券', key: 'coupon', url: '/coupon/list' },
           { name: '售后记录', key: 'after', url: '/aftersale/list' },
           { name: '账号管理', key: 'account', url: '/account/mgnumber' },
-          { name: '资质认证', key: 'certif', url: '' },
-          { name: '打赏记录', key: 'reward', url: '' },
-          { name: '服务中心', key: 'service', url: '' }
+          { name: '资质认证', key: 'certif', url: '/prove' },
+          { name: '打赏记录', key: 'reward', url: '/mine/reward' },
+          { name: '服务中心', key: 'service', url: '/help' }
         ]
+      }
+    },
+    watch: {
+      notifyNum (val) {
+        console.log(val)
+        this.menuList[0].num = val
       }
     },
     methods: {
@@ -62,8 +78,27 @@
         color: @cor_333;
         font-weight: bold;
         margin-bottom: 25px;
+        position: relative;
+        i {
+          position: absolute;
+          min-width: 8PX;
+          height: 8PX;
+          background: #ff3333;
+          border-radius: 50%;
+          font-size: 10px;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          top: 8px;
+          left: 110px;
+        }
         &.msg {
           background-image: url('~/assets/img/me/icon-msg.png');
+        }
+        &.comment {
+          background-image: url('~/assets/img/me/ic_pinglun_26x26@2x.png');
         }
         &.invo {
           background-image: url('~/assets/img/me/icon-invo.png');

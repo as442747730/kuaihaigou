@@ -2,39 +2,40 @@
   <div class="u-reply">
     <section class="u-detail_header">
       <van-nav-bar title="评论详情" left-arrow @click-left='onClickLeft'>
-        <van-icon name="fenxiang" slot="right" @click='report' />
+        <!-- <van-icon name="fenxiang" slot="right" @click='report' /> -->
       </van-nav-bar>
     </section>
     <div class="u_comment" :id="'u_comment_' + replyType">
       <ul>
         <!-- 楼主 -->
         <li class="u_comment-list">
-          <div class="header-img ib-middle" v-if='masterinfo.personalInfoResp' :style="'background: url(' + masterinfo.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
-          <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
+          <a :href="masterinfo.personalInfoResp ? '/user?uid=' + masterinfo.personalInfoResp.id : 'javascript: void(0)'"><div class="header-img ib-middle" v-if='masterinfo.personalInfoResp' :style="'background: url(' + (masterinfo.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
           <div class="user-infor ib-middle">
-            <a class="ib-middle" v-if='masterinfo.personalInfoResp'>{{ masterinfo.personalInfoResp.nickname || '' }}</a>
+            <a class="ib-middle" v-if='masterinfo.personalInfoResp' :href="'/user?uid=' + masterinfo.personalInfoResp.id">{{ masterinfo.personalInfoResp.nickname || '' }}</a>
             <a class="ib-middle" v-else>匿名用户</a>
             <br>
             <u-usericon v-if='masterinfo.personalInfoResp' :level='String(masterinfo.personalInfoResp.userGradeNumber)' type='1' :profess='String(masterinfo.personalInfoResp.category)' />
           </div>
-          <div v-if='masterinfo.evaluationLevel >= 4' class="like_type type1">
+          <div v-if='masterinfo.ifPopular' class="like_type type1">
             <i></i>
-            <span>超爱</span>
+            <!-- <span>超爱</span> -->
           </div>
-          <p class="desc">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
+          <p class="desc" :class="{'mb-0': masterinfo.imgs}">{{ masterinfo.content ? masterinfo.content : masterinfo.question ? masterinfo.question : '此用户没有填写评论!' }}</p>
+          <div class="pro" v-if='masterinfo.imgs'>
+            <div v-for="(item, index) in getJSONArr(masterinfo.imgs)" class="pro-item" :style="'background: url(' + item + ') no-repeat center/cover'" @click='showBigImg(index, getJSONArr(masterinfo.imgs))'></div>            
+          </div>
         </li>
         <li class="u_comment-list" v-for="($v, $k) in (replyData.length === 0 ? replystr : replyData)">
-          <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + $v.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
-          <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
+          <a :href="'/user?uid=' + $v.personalInfoResp.id"><div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
           <div class="user-infor ib-middle">
             <template v-if='!$v.parentUsername'>
-              <a class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</a>
+              <a class="ib-middle" v-if='$v.personalInfoResp' :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname || '' }}</a>
               <a class="ib-middle" v-else>匿名用户</a>
             </template>
             <div v-else class="has-reply">
-              <a class="ib-middle">{{ $v.personalInfoResp.nickname }}</a>
+              <a class="ib-middle" :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname }}</a>
               <b class="ib-middle">回复</b>
-              <a class="ib-middle">{{ $v.parentUsername }}</a>
+              <a class="ib-middle":href="'/user?uid=' + $v.parentUserId">{{ $v.parentUsername }}</a>
             </div>
             <br>
             <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
@@ -65,8 +66,8 @@
         <p>没有更多评论了！</p>
       </div>
     </div>
-    <div class="u-reply-form" id="replay">
-      <van-field @focus="turnToEdit(null, masterinfo.personalInfoResp.nickname)" class="ib-middle" v-model="replay" type="textarea" :placeholder="'回复:' + (masterinfo.personalInfoResp ? masterinfo.personalInfoResp.nickname : '')" rows="1" autosize maxlength="40" />
+    <div class="u-reply-form" id="replay" @click="turnToEdit(null, masterinfo.personalInfoResp ? masterinfo.personalInfoResp.nickname : '匿名用户')">
+      <van-field class="ib-middle" v-model="replay" type="textarea" :placeholder="'回复:' + (masterinfo.personalInfoResp ? masterinfo.personalInfoResp.nickname : '匿名用户')" rows="1" autosize maxlength="40" disabled />
       <!-- <button class="ib-middle" @click="sayFn">回复</button> -->
     </div>
     <!-- 举报 -->
@@ -81,8 +82,10 @@
 <script>
 import tools from '~/utils/tools'
 import uUsericon from '~/components/Usericon'
+import wechatLogin from '~/utils/wechatLogin'
 import { goodsApi } from '~/api/goods'
 import { quizApi } from '~/api/quiz'
+import { ImagePreview } from 'vant'
 export default {
   components: {
     uUsericon
@@ -99,7 +102,9 @@ export default {
     replystr: {
       Type: Array,
       default: []
-    }
+    },
+    islogin: Boolean,
+    env: Number
   },
   data () {
     return {
@@ -124,7 +129,8 @@ export default {
 
       page: 1,
       pageLoding: false,
-      pageEmpty: false
+      pageEmpty: false,
+      sendLoading: false
     }
   },
   watch: {
@@ -139,7 +145,6 @@ export default {
       this.replyData = JSON.parse(JSON.stringify(this.replystr))
       this.pageEmpty = false
       this.page = 1
-      console.log('val', val)
     },
     isBottom (val) {
       if (val && !this.pageEmpty) {
@@ -169,6 +174,16 @@ export default {
       this.listshow = false
     },
     turnToEdit (replyid, editPerson) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        if (this.env === 1) {
+          let wl = window.location
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck(wl.origin + wl.pathname) }, 500)
+        } else {
+          setTimeout(function () { window.location.href = '/account/login' }, 500)
+        }
+        return
+      }
       console.log(replyid)
       if (replyid) {
         this.method = 'two'
@@ -190,45 +205,62 @@ export default {
         method -> 回复楼主/层主
         commentid -> 根据replyType区分是 解答疑问 / 商品评价
       */
-      let obj = {}
-      let fn = null
-      console.log(replyType)
-      if (method === 'one') {
-        console.log('回复楼主')
-        // 回复楼主
-        obj = {
-          commentid: id,
-          content: this.editContent
+      if (!this.sendLoading) {
+        this.sendLoading = true
+        let obj = {}
+        let fn = null
+        console.log(replyType)
+        if (method === 'one') {
+          console.log('回复楼主')
+          // 回复楼主
+          obj = {
+            commentid: id,
+            content: this.editContent
+          }
+        } else if (method === 'two') {
+          console.log('回复层主')
+          // 回复层主
+          obj = {
+            parentid: this.replyid,
+            commentid: id,
+            content: this.editContent
+          }
         }
-      } else if (method === 'two') {
-        console.log('回复层主')
-        // 回复层主
-        obj = {
-          parentid: this.replyid,
-          commentid: id,
-          content: this.editContent
+        if (replyType === 'answer') {
+          let param = {
+            consultid: id,
+            answer: this.editContent
+          }
+          fn = quizApi.reply(param)
+        } else if (replyType === 'comment') {
+          fn = goodsApi.reply(obj)
         }
-      }
-      if (replyType === 'answer') {
-        let param = {
-          consultid: id,
-          answer: this.editContent
-        }
-        fn = quizApi.reply(param)
-      } else if (replyType === 'comment') {
-        fn = goodsApi.reply(obj)
-      }
-      const { code, data } = await fn
-      if (code === 200) {
-        this.$toast('回复成功')
-        this.editContent = ''
-        this.renderData()
-      } else {
-        this.$toast(data)
+        const { code, data } = await fn
+        setTimeout(() => {
+          if (code === 200) {
+            this.$toast('回复成功')
+            this.editContent = ''
+            this.renderData()
+            this.sendLoading = false
+          } else {
+            this.$toast(data)
+            this.sendLoading = false
+          }
+        }, 500)
       }
     },
     // 点赞
     async zan (val) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        if (this.env === 1) {
+          let wl = window.location
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck(wl.origin + wl.pathname) }, 500)
+        } else {
+          setTimeout(function () { window.location.href = '/account/login' }, 500)
+        }
+        return
+      }
       console.log(val)
       let fn = null
       let msg = ''
@@ -321,6 +353,18 @@ export default {
     changeTime (time) {
       time = new Date(time).getTime()
       return tools.timeago(time)
+    },
+    getJSONArr (strArr) {
+      return JSON.parse(strArr)
+    },
+    // 查看大图
+    showBigImg (index, val) {
+      ImagePreview({
+        images: val,
+        startPosition: index,
+        onClose () {
+        }
+      })
     }
   }
 }
@@ -527,15 +571,16 @@ export default {
   }
 
   .u_comment-list {
-    overflow: hidden;
     &:first-child {
       margin-bottom: 20px;
-      border-bottom: 1px solid #eee;
       .desc {
-        margin-bottom: 15px;
+        padding-bottom: 15px;
       }
     }
     &:not(:first-child) {
+      &:after {
+        display: none;
+      }
       .user-infor {
         a {
           font-weight: normal;
@@ -587,5 +632,8 @@ export default {
 }
 .van-toast {
   z-index: 10001!important
+}
+.mb-0 {
+  margin-bottom: 0!important;
 }
 </style>

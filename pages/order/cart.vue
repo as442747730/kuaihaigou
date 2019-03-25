@@ -82,6 +82,8 @@ export default {
   name: 'cart',
   layout: 'default',
 
+  middleware: 'checkWxStatus',
+
   head () {
     return {
       title: '我的购物车',
@@ -110,7 +112,11 @@ export default {
         item.chosen = false
       })
     } else if (code === 506) {
-      req.redirect('/account/login')
+      if (req.env === 1) {
+        req.redirect('/home')
+      } else {
+        req.redirect('/account/login')
+      }
     }
     return { goodsList: data }
   },
@@ -274,6 +280,7 @@ export default {
         font-size: 0;
         line-height: 1;
         &.box-gutter .van-swipe-cell__wrapper {
+          transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1) 0s!important;
           display: flex;
           align-items: center;
         }
@@ -382,7 +389,7 @@ export default {
         .cart-delete {
           display: block;
           text-align: center;
-          width: 70px;
+          width: 70PX;
           height: 100%;
           line-height: 152px;
           background: #FB6248;

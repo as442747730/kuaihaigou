@@ -37,52 +37,117 @@
     <div class="parama_detail margin-30">
       <h3 class="title">详细信息</h3>
       <div class="wrap">
-        <a :href="info.link" class="parama_detail-item" v-for="(info, index) in infos" :key="index">
-          <div class="pro ib-middle" :style="{background: 'url(' + info.icon + ') no-repeat center/cover'}"></div>
-          <div class="pd_type ib-middle">
-            <p>
-              <span>{{ info.name }}</span>
-              <span>（{{ info.mark }}）</span>
-            </p>
-            <em>{{ info.text }}</em>
-          </div>
-          <i class="van-icon van-icon-arrow"></i>
-        </a>
+        <div class="parama_detail-item" v-for="(info, index) in infos" :key="index">
+          <!-- 产区 -->
+          <template v-if="info.name === '产区'">
+            <div class="pro ib-middle" :style="{background: 'url(' + info.icon + ') no-repeat center/cover'}"></div>
+            <div class="pd_type ib-middle">
+              <p>
+                <span>{{ info.name }}</span>
+                <span>（{{ info.mark }}）</span>
+              </p>
+              <a :href=" $v.areaid ? '/noun/detail/' + $v.areaid + '?num=1' : $v.areaUrl" v-for='($v, $k) in info.text'>
+                {{ $k === info.text.length - 1 ? $v.areaName : $v.areaName + '>' }}
+              </a>
+            </div>
+            <!-- <i class="van-icon van-icon-arrow"></i> -->
+          </template>
+          <!-- 品种 -->
+          <template v-else-if="info.name === '品种'">
+            <a :href="info.link">
+              <div class="pro ib-middle" :style="{background: 'url(' + info.icon + ') no-repeat center/cover'}"></div>
+              <div class="pd_type ib-middle">
+                <p>
+                  <span>{{ info.name }}</span>
+                  <span>（{{ info.mark }}）</span>
+                </p>
+                <em>{{ info.text }}</em>
+              </div>
+              <i class="van-icon van-icon-arrow"></i>
+            </a>
+          </template>
+          <!-- 常规 -->
+          <template v-else>
+            <a :href="info.link">
+              <div class="pro ib-middle" :style="{background: 'url(' + info.icon + ') no-repeat center/cover'}"></div>
+              <div class="pd_type ib-middle">
+                <p>
+                  <span>{{ info.name }}</span>
+                  <span>（{{ info.mark }}）</span>
+                </p>
+                <em>{{ info.text }}</em>
+              </div>
+              <i class="van-icon van-icon-arrow"></i>
+            </a>
+          </template>
+        </div>
       </div>
     </div>
 
     <div class="parama_detail-attr margin-30">
       <h3 class="title">红酒属性</h3>
-      <div class="attr-item">
-        <span>涩度：</span>
-        <div class="bar">
-          <i class="bar-long" :style="{width: redAttr.astringency + '%'}"></i>
-        </div>
-      </div>
-      <div class="attr-item">
-        <span>苦度：</span>
-        <div class="bar">
-          <i class="bar-long" :style="{width: redAttr.bitterness + '%'}"></i>
-        </div>
-      </div>
-      <div class="attr-item">
-        <span>酸度：</span>
-        <div class="bar">
-          <i class="bar-long" :style="{width: redAttr.acidity + '%'}"></i>
-        </div>
-      </div>
-      <div class="attr-item">
-        <span>果香：</span>
-        <div class="bar">
-          <i class="bar-long" :style="{width: redAttr.fruity + '%'}"></i>
-        </div>
-      </div>
-      <div class="attr-item">
-        <span>复杂度：</span>
-        <div class="bar">
-          <i class="bar-long" :style="{width: redAttr.complexity + '%'}"></i>
-        </div>
-      </div>
+      <van-collapse class='attr-item-wrap' v-model="activeName" accordion @change='collaChange'>
+        <van-collapse-item name="1" v-if='redAttr.astringency'>
+          <div class="attr-item" slot='title'>
+            <span>涩度：{{ redAttr.astringency }}%</span>
+            <div class="bar">
+              <i class="bar-long" :style="{width: redAttr.astringency + '%'}"></i>
+            </div>
+          </div>
+          <span class='right-txt' slot='right-icon'>{{ rightTxt[1] }}</span>
+          {{ redAttr.astringencyRemark }}
+        </van-collapse-item>
+        <van-collapse-item name="2" v-if='redAttr.bitterness'>
+          <div class="attr-item" slot='title'>
+            <span>苦度：{{ redAttr.bitterness }}%</span>
+            <div class="bar">
+              <i class="bar-long" :style="{width: redAttr.bitterness + '%'}"></i>
+            </div>
+          </div>
+          <span class='right-txt' slot='right-icon'>{{ rightTxt[2] }}</span>
+          {{ redAttr.bitternessRemark }}
+        </van-collapse-item>
+        <van-collapse-item name="3" v-if='redAttr.acidity'>
+          <div class="attr-item" slot='title'>
+            <span>酸度：{{ redAttr.acidity }}%</span>
+            <div class="bar">
+              <i class="bar-long" :style="{width: redAttr.acidity + '%'}"></i>
+            </div>
+          </div>
+          <span class='right-txt' slot='right-icon'>{{ rightTxt[3] }}</span>
+          {{ redAttr.acidityRemark }}
+        </van-collapse-item>
+        <van-collapse-item name="4" v-if='redAttr.fruity'>
+          <div class="attr-item" slot='title'>
+            <span>果香：{{ redAttr.fruity }}%</span>
+            <div class="bar">
+              <i class="bar-long" :style="{width: redAttr.fruity + '%'}"></i>
+            </div>
+          </div>
+          <span class='right-txt' slot='right-icon'>{{ rightTxt[4] }}</span>
+          {{ redAttr.fruityRemark }}
+        </van-collapse-item>
+        <van-collapse-item name="5" v-if='redAttr.tannin'>
+          <div class="attr-item" slot='title'>
+            <span>单宁：{{ redAttr.tannin }}%</span>
+            <div class="bar">
+              <i class="bar-long" :style="{width: redAttr.tannin + '%'}"></i>
+            </div>
+          </div>
+          <span class='right-txt' slot='right-icon'>{{ rightTxt[5] }}</span>
+          {{ redAttr.tanninRemark }}
+        </van-collapse-item>
+        <van-collapse-item name="6" v-if='redAttr.complexity'>
+          <div class="attr-item" slot='title'>
+            <span>复杂度：{{ redAttr.complexity }}%</span>
+            <div class="bar">
+              <i class="bar-long" :style="{width: redAttr.complexity + '%'}"></i>
+            </div>
+          </div>
+          <span class='right-txt' slot='right-icon'>{{ rightTxt[6] }}</span>
+          {{ redAttr.complexityRemark }}
+        </van-collapse-item>
+      </van-collapse>
 
       <div class="refer">
         <p>参考酒评</p>
@@ -129,15 +194,18 @@ export default {
   },
   data () {
     return {
+      activeName: '0',
       hotList: this.hotlist,
       redAttr: this.viewdata.redAttr,
       goodsIndentify: this.viewdata.goodsIndentify,
-      goodsWineCommentResp: this.viewdata.goodsWineCommentResp
+      goodsWineCommentResp: this.viewdata.goodsWineCommentResp,
+
+      rightTxt: ['查看', '查看', '查看', '查看', '查看', '查看', '查看']
     }
   },
   computed: {
     infos: function () {
-      console.log(this.redAttr)
+      console.log('this.redAttr', this.redAttr)
       let { typeIcon, typeRemark, typeUrl, type } = this.redAttr
       let typeobj = this.setObj('类型', typeIcon, typeRemark, type, typeUrl)
 
@@ -147,17 +215,17 @@ export default {
       let { areaIcon, areaRemark, areaList } = this.redAttr
       console.log('areaList', areaList)
       areaList = !areaList ? [] : areaList
-      let areaArray = areaList.map(v => {
-        return v.areaName
-      })
-      let areaStr = areaArray.join(',')
-      let areaobj = this.setObj('产区', areaIcon, areaRemark, areaStr)
+      // let areaArray = areaList.map(v => {
+      //   return v.areaName
+      // })
+      // let areaStr = areaArray.join(',')
+      let areaobj = this.setObj('产区', areaIcon, areaRemark, areaList)
 
       let { yearIcon, yearRemark, year } = this.redAttr
       let yearobj = this.setObj('年份', yearIcon, yearRemark, year)
 
-      let { varietyIcon, varietyRemark, varietyUrl, variety } = this.redAttr
-      let varietyobj = this.setObj('品种', varietyIcon, varietyRemark, variety, varietyUrl)
+      let { varietyIcon, varietyRemark, variety, varietyid } = this.redAttr
+      let varietyobj = this.setObj('品种', varietyIcon, varietyRemark, variety, '/noun/detail/' + varietyid + '?num=0')
 
       let { alcoholDegreeIcon, alcoholDegreeRemark, alcoholDegree } = this.redAttr
       let alcohobj = this.setObj('酒精度', alcoholDegreeIcon, alcoholDegreeRemark, alcoholDegree)
@@ -189,6 +257,16 @@ export default {
         link: link
       }
       return obj
+    },
+    collaChange (val) {
+      this.rightTxt = ['查看', '查看', '查看', '查看', '查看', '查看', '查看']
+      if (val !== this.oldVal && val !== '') {
+        this.oldVal = val
+        this.rightTxt[val] = '收起'
+      }
+      if (val === '') {
+        this.rightTxt[this.oldVal] = '查看'
+      }
     }
   }
 }
@@ -268,6 +346,13 @@ export default {
           // margin-right: 15px;
         }
         .pd_type {
+          font-size: 0;
+          a {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: bolder;
+            margin-top: 7px;
+          }
          
           p {
             font-size: 12px;
@@ -309,7 +394,7 @@ export default {
           span {
             display: inline-block;
             vertical-align: middle;
-            width: 48px;
+            width: 74px;
             height: 12px;
             color: #333;
             font-size: 12px;
@@ -318,7 +403,7 @@ export default {
           .bar {
             display: inline-block;
             vertical-align: middle;
-            width: 262px;
+            width: 197px;
             height: 11px;
             border-radius: 11px;
             background: #d9f4fa;
@@ -334,7 +419,12 @@ export default {
             }
           }
         }
+        .right-txt {
+          font-size: 12px;
+          color: #59C3E1
+        }
         .refer {
+          margin-top: 10px;
           padding: 10px 15px;
           background: rgba(249,249,249,1);
           border-radius: 6px;
@@ -366,5 +456,31 @@ export default {
         }
       }
     }
+  }
+</style>
+<style lang="less">
+  .van-hairline--top-bottom:after {
+    display: none
+  }
+  .van-collapse-item {
+    border: 0;
+    &:after {
+      display: none;
+    }
+  }
+  .van-cell {
+    padding: 10px 0;
+    line-height: 1;
+    &:after {
+      display: none;
+    }
+  }
+  .van-collapse-item__content {
+    font-size: 10px;
+    color: #666;
+    line-height: 20px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 6px;
   }
 </style>

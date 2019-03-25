@@ -16,6 +16,15 @@ const regexp = {
   password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$/ // 数字字母大小写 6-16位
 }
 
+const outerHeight = (el, includeMargin) => {
+  let height = el.offsetHeight
+  if (includeMargin) {
+    let style = el.currentStyle || getComputedStyle(el)
+    height += parseInt(style.marginTop) + parseInt(style.marginBottom)
+  }
+  return height
+}
+
 // 辅助通用方法
 export default {
   // 正则检测
@@ -39,24 +48,39 @@ export default {
     }
     return !val === false
   },
+  // 检查微信环境
+  checkWechat () {
+    const ua = window.navigator.userAgent
+    return /MicroMessenger/.test(ua)
+  },
   // 时间格式化
   /**
-    * @argument date * 时间对象
-    * @argument options * 配置参数
-    * dayDelimiter * 年月日分隔符，默认 -
-    * timeDelimiter * 时分秒分隔符，默认 :
-    * ifHaveTime * 是否需要时分秒，默认 false
+   * @argument date * 时间对象
+   * @argument options * 配置参数
+   * dayDelimiter * 年月日分隔符，默认 -
+   * timeDelimiter * 时分秒分隔符，默认 :
+   * ifMinutes * 是否需要时分， 默认 fase
+   * ifHaveTime * 是否需要时分秒，默认 false
    */
   formatDate (date, options) {
     if (!date || !date.getFullYear()) {
       throw new Error('请传入时间对象')
     }
+    console.log('options', options)
     options = options || {}
     options.dayDelimiter = options.dayDelimiter || '-'
     options.timeDelimiter = options.timeDelimiter || ':'
+    options.ifMinutes = options.ifMinutes || false
     options.ifHaveTime = options.ifHaveTime || false
     let str = ''
     str = date.getFullYear() + options.dayDelimiter + (date.getMonth() + 1) + options.dayDelimiter + date.getDate()
+    if (options.ifMinutes) {
+      const _h = date.getHours()
+      const _m = date.getMinutes()
+      const hh = _h < 10 ? '0' + _h : _h
+      const mm = _m < 10 ? '0' + _m : _m
+      str += ' ' + hh + options.timeDelimiter + mm
+    }
     if (options.ifHaveTime) {
       str += ' ' + date.getHours() + options.timeDelimiter + date.getMinutes() + options.timeDelimiter + date.getSeconds()
     }
@@ -140,7 +164,7 @@ export default {
    * 获取地址栏参数
    * @params 传入需要获取的参数
    * @return 参数值
-  **/
+   **/
   getUrlQues (que) {
     let webUrl = window.location.href
     console.log(webUrl)
@@ -156,13 +180,161 @@ export default {
       console.log('该地址没有参数')
     }
   },
+  getUrlQues2 (que) {
+    let webUrl = window.location.search
+    console.log(webUrl)
+    if (webUrl.includes('?')) {
+      let dealUrl = webUrl.split('?')[1]
+      let queArr = dealUrl.split('&')
+      let ewArr = queArr.map(v => {
+        v = v.split('=')
+        return v
+      })
+      return new Map(ewArr).get(que)
+    } else {
+      console.log('该地址没有参数')
+    }
+  },
+  getUrlParam (url, que) {
+    if (url.includes('?')) {
+      let dealUrl = url.split('?')[1]
+      let queArr = dealUrl.split('&')
+      let ewArr = queArr.map(v => {
+        v = v.split('=')
+        return v
+      })
+      return new Map(ewArr).get(que)
+    } else {
+      console.log('该地址没有参数')
+    }
+  },
   /**
    * ['1032464259549761537_白葡萄'] => [{name: '白葡萄', id: '1032464259549761537'}]
-  **/
+   **/
   adjustProps (array) {
     return array.map(v => {
       let arrs = v.split('_')
       return { id: arrs[0], name: arrs[1] }
     })
+  },
+  /**
+   * 瀑布流（若有图片需先设置图片的高度）
+   * el {list => Element}
+   * parentList {el 父级，position: relative;}
+   * amount {一行数量}
+   */
+  waterFall (el, parentEl, amount) {
+    let els = document.querySelectorAll(el)
+    let elsParent = document.querySelector(parentEl)
+    if (els && els.length === 0) return
+    let colHeights = Array(amount).fill(0)
+    els.forEach((item, index) => {
+      if (index < amount) {
+        colHeights[index] = item.offsetTop + outerHeight(item, true) || 0
+      } else {
+        let minHeight = Math.min(...colHeights)
+        let minHeightIndex = colHeights.indexOf(minHeight)
+        item.style.position = 'absolute'
+        item.style.top = minHeight + 'px'
+        item.style.left = els[minHeightIndex].offsetLeft + 'px'
+        colHeights[minHeightIndex] += outerHeight(item, true)
+      }
+    })
+    elsParent.style.minHeight = Math.max(...colHeights) + 'px'
+  },
+  /**
+   * 根据路径和宽度获取图片对应的高度
+   * {path, wid} => {src: path, _height: _h}
+   **/
+  getImgInfos (path, wid) {
+    return new Promise((resolve) => {
+      let image = new Image()
+      // 图片加载成功
+      image.onload = function () {
+        let imgw = image.width
+        let imgh = image.height
+        let scale = wid / imgw
+        let _h = imgh * scale
+        let imgInfo = {
+          src: path,
+          _height: _h
+        }
+        resolve(imgInfo)
+      }
+      // 图片加载失败
+      image.onerror = function () {
+        let _h = 10
+        let imgInfo = {
+          src: path,
+          _height: _h
+        }
+        resolve(imgInfo)
+      }
+      image.src = path
+    })
+  },
+  /**
+   * 滚动节流
+   **/
+  throttel (fn, interval = 300) {
+    let canRun = true
+    return function () {
+      if (!canRun) return
+      canRun = false
+      setTimeout(() => {
+        fn.apply(this, arguments)
+        canRun = true
+      }, interval)
+    }
+  },
+  /**
+   * @params {String} string='广东, 999991'
+   * @return 广东 or 999991
+   **/
+  getStrIndex (str, index = 0) {
+    if (!str) return
+    if (str.includes(',')) {
+      return str.split(',')[index]
+    }
+    return [str]
+  },
+  /**
+   * 合并两个时间
+  **/
+  concatDate (time1, time2) {
+    const date1 = new Date(time1)
+    const date2 = new Date(time2)
+    const addZero = val => {
+      if (+val < 10) {
+        return '0' + val
+      }
+      return val
+    }
+    // date1
+    const y1 = date1.getFullYear()
+    const m1 = addZero(date1.getMonth() + 1)
+    const d1 = addZero(date1.getDate())
+    const h1 = addZero(date1.getHours())
+    const minut1 = addZero(date1.getMinutes())
+    // date2
+    const y2 = date2.getFullYear()
+    const m2 = addZero(date2.getMonth() + 1)
+    const d2 = addZero(date2.getDate())
+    const h2 = addZero(date2.getHours())
+    const minut2 = addZero(date2.getMinutes())
+    // 符号
+    const [sep1, sep2] = ['-', ':']
+    let [strstart, strend] = ['', '']
+    let _fh
+    if (y1 !== y2 || m1 !== m2 || d1 !== d2) {
+      strstart = y1 + sep1 + m1 + sep1 + d1 + ' ' + h1 + sep2 + minut1
+      strend = y2 + sep1 + m2 + sep1 + d2 + ' ' + h2 + sep2 + minut2
+      _fh = '~'
+    } else {
+      strstart = y1 + sep1 + m1 + sep1 + d1
+      strend = h1 + sep2 + minut1 + '~' + h2 + sep2 + minut2
+      _fh = ' '
+    }
+    return strstart + _fh + strend
   }
 }

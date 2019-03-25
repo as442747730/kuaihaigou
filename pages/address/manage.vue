@@ -1,27 +1,34 @@
 <template>
   <div class="m-address">
+    <com-head :titleConfig="configtitle"></com-head>
     <van-pull-refresh class="van-pull" v-model="refresing" @refresh="getRefresh">
       <div class="m-address-ul">
 
         <div class="m-address-li" v-for="(item, index) in addressList" :key="item.id">
           <div class="top">
-            <div class="top-title">{{ item.name }} <span>{{ item.phone }}</span></div>
+            <div class="top-title font_hight">{{ item.name }} <span>{{ item.phone }}</span><span class="default" v-if="item.ifDefault">默认</span><span class="type">{{ item.addressType === 1 ? '家' : item.addressType === 2 ? '公司' : '其他' }}</span></div>
             <div class="top-desc">{{item.province | formatPlace }}{{item.city | formatPlace }}{{item.district | formatPlace }}{{item.street | formatPlace }}{{item.address}}</div>
           </div>
           <div class="bottom">
             <div :class="['u-checkbox', item.ifDefault ? 'active' : '']" @click="setDefault(item.id)"></div>
-            <span @click="setDefault(item)">默认地址</span>
+            <span @click="setDefault(item.id)">默认地址</span>
             <div class="icon-label icon-edit active-status" @click="editAddress(item)">编辑</div>
             <div class="icon-label icon-delete active-status" @click="deleteAddress(item.id)">删除</div>
           </div>
         </div>
 
-        <div class="placeholder" v-if="addressList.length === 0">尚无收货地址</div>
+        <!-- <div class="placeholder" v-if="addressList.length === 0">尚无收货地址</div> -->
+        <div class="default-empty full" v-if="addressList.length === 0">
+          <div>
+            <div class="bg"></div>
+            <span style="color: #999">暂时没有收货地址哦</span>
+          </div>
+        </div>
 
       </div>
     </van-pull-refresh>
 
-    <div class="f-bottom-btn">
+    <div class="f-bottom-btn" v-show='addressList.length <= 4'>
       <div class="m-address-btn active-status" @click="addAddress">新增收货地址</div>
     </div>
 
@@ -30,6 +37,7 @@
 
 <script>
 import { addressApi } from '~/api/address'
+import comHead from '~/components/com-head'
 
 export default {
   name: 'addressList',
@@ -56,6 +64,10 @@ export default {
         { hid: 'title', name: 'title', content: '收货地址管理' }
       ]
     }
+  },
+
+  components: {
+    comHead
   },
 
   data () {
@@ -95,11 +107,19 @@ export default {
     },
 
     addAddress () {
-      window.location.href = '/address/add'
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/address/add?from=submit'
+      } else {
+        window.location.href = '/address/add'
+      }
     },
 
     editAddress (val) {
-      window.location.href = '/address/' + val.id
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/address/' + val.id + '?from=submit'
+      } else {
+        window.location.href = '/address/' + val.id
+      }
     },
 
     deleteAddress (val) {
@@ -116,6 +136,11 @@ export default {
       })
     },
     successFn () {
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/order/submit'
+      } else {
+        window.location.href = '/address/list'
+      }
     }
   }
 }
@@ -134,7 +159,10 @@ export default {
     flex: 1;
   }
   &-ul {
+    padding-bottom: 50px;
     box-sizing: border-box;
+    overflow: scroll;
+    height: ~'calc(100vh - 46px)'
   }
   &-li {
     padding-top: 20px;
@@ -149,9 +177,38 @@ export default {
         font-size: 17px;
         color: @cor_333;
         margin-bottom: 10px;
-        font-weight: 500;
         span {
+          vertical-align: middle;
           padding-left: 15px;
+          &:nth-child(2) {
+            margin-left: 10px;
+          }
+        }
+        .default {
+          display: inline-block;
+          font-size: 9px;
+          font-weight: 400;
+          color: #FF5B1F;
+          border: 1PX solid #FF5B1F;
+          border-radius: 2px;
+          height: 14px;
+          box-sizing: border-box;
+          line-height: 14px;
+          padding: 0 3px;
+        }
+        .type {
+          margin-left: 5px;
+          display: inline-block;
+          font-size: 0.24rem;
+          font-weight: 400;
+          color: #59C3E1;
+          border: 1PX solid #59C3E1;
+          border-radius: 0.05333rem;
+          height: 0.37333rem;
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          line-height: 0.37333rem;
+          padding: 0 0.08rem;
         }
       }
       &-desc {
@@ -196,6 +253,8 @@ export default {
     padding-bottom: 30px;
   }
   &-btn {
+    position: fixed;
+    bottom: 0;
     height: 50px;
     width: 100%;
     background: #03A1CD;

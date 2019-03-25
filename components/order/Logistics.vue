@@ -7,7 +7,7 @@
       <li class="u-logistics-list" v-for='($v, $k) in logisData' :key='$k' @click='logisDetail($v)'>
         <p>物流公司：<span>{{ $v.logisticsCompany }}</span></p>
         <p>物流单号：<span>{{ $v.logisticsBillIdentify }}</span></p>
-        <p style="margin: 0">包含商品：<span>4件</span></p>
+        <p style="margin: 0">包含商品：<span>{{ $v.deliverBillItemResp.length }}件</span></p>
         <van-icon name="arrow" />
       </li>
       <div class="depart-line"></div>
@@ -22,23 +22,21 @@
       <div class="depart-line"></div>
       <div class="u-logistics-goods">
         <h3 class="font_medium">商品详情</h3>
-        <p>· 法国1982拉菲法国1982拉菲传奇Lafite</p>
-        <p>· 法国1982拉菲法国1982拉菲传奇Lafite</p>
-        <p>· 法国1982拉菲法国1982拉菲传奇Lafite</p>
-        <p>· 法国1982拉菲法国1982拉菲传奇Lafite</p>
+        <p v-for='($v2, $k2) in detailData.deliverBillItemResp' :key='$k2'>· {{ $v2.goodsName }}</p>
       </div>
       <div class="depart-line"></div>
       <div class="u-logistics-detail">
         <h3>物流详情</h3>
         <ul>
-          <li class="u-logistics-detail-list" v-for='($v2, $k2) in traces' :key='$k2'>
+          <li class="u-logistics-detail-list" v-for='($v3, $k3) in traces' :key='$k3'>
             <i class="ib-top"></i>
             <div class="desc ib-middle">
-              <p>{{ $v2.AcceptStation }}</p>
-              <p class="rs">{{ $v2.AcceptTime }}</p>
+              <p>{{ $v3.AcceptStation }}</p>
+              <p class="rs">{{ $v3.AcceptTime }}</p>
             </div>
           </li>
         </ul>
+        <div class="no-msg" v-if='tracesEmpty'>暂无物流信息！</div>
       </div>
     </van-popup>
   </van-popup>
@@ -77,7 +75,8 @@ export default {
     return {
       logisDetailShow: false,
       detailData: {}, // 物流详细
-      traces: []
+      traces: [],
+      tracesEmpty: false
     }
   },
 
@@ -92,11 +91,15 @@ export default {
       const { code, data } = await orderApi.queryTrack(val.logisticsCompany, val.logisticsBillIdentify)
       if (code === 200) {
         this.detailData = val
+        console.log(this.detailData)
         Toast1.clear()
         this.logisDetailShow = true
         window.location.hash = 'logisDetail'
         this.traces = JSON.parse(data).Traces
         console.log(this.traces)
+        if (this.traces.length === 0) {
+          this.tracesEmpty = true
+        }
       } else {
         Toast1.clear()
         this.$toast(data)
@@ -233,6 +236,12 @@ export default {
           }
         }
       }
+    }
+    .no-msg {
+      text-align: center;
+      color: @cor_333;
+      font-size: 13px;
+      margin: 20px 0;
     }
   }
 }

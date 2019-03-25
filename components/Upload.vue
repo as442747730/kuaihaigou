@@ -1,7 +1,7 @@
 <template>
 
   <div class="u-upload" >
-    <van-uploader :after-read="handleRead" accept="image/*" :multiple="ifMult" >
+    <van-uploader  :after-read="handleRead" accept="image/*" :multiple="ifMult" >
       <slot></slot>
     </van-uploader>
   </div>
@@ -28,6 +28,10 @@ export default {
     ifMult: {
       type: Boolean,
       default: true
+    },
+    maxSize: {
+      type: Number,
+      default: 2048000
     }
   },
 
@@ -46,6 +50,7 @@ export default {
     },
 
     async handleRead (file) {
+      console.log('读取完成后')
       if (Array.isArray(file) && file.length > this.max) {
         return Toast.fail(`最多只可上传${this.max}张图片`)
       }
@@ -68,6 +73,12 @@ export default {
           })
         })
       }
+    },
+
+    oversizeFn (maxSize) {
+      let _M = maxSize / 1024 / 1000
+      let tips = '上传图片不超过' + _M + 'M'
+      this.$toast(tips)
     },
 
     // handleFile (file) {

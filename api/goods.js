@@ -6,9 +6,25 @@ export const goodsApi = {
   getDetail (goodsId, req) {
     return request.serverGet('/api/goods/getDetail/' + goodsId, {}, req)
   },
+  // 获取收藏信息
+  getCollect (goodsId, req) {
+    return request.serverGet('/api/goods/getColleaction/' + goodsId, null, req)
+  },
   // 获取热门商品
   getTopSales (req) {
     return request.serverGet('/api/goods/listTopSales', {}, req)
+  },
+  // 获取常见问题
+  frequently (no) {
+    return request.serverGet('/api/acp/list?no=' + no)
+  },
+  // 商品对比
+  compare (data) {
+    return request.serverPostJson('/api/goods/contrast', data)
+  },
+  // 获取加入对比的商品
+  showGoodsForContrast (req) {
+    return request.serverGet('/api/goods/showGoodsForContrast', null, req)
   },
   /** -------------- client ------------------- */
   // 获取商品详情
@@ -18,10 +34,6 @@ export const goodsApi = {
   // 检查是否可配送
   checkDistr (goodsId, areaId, req) {
     return request.clientGet('/api/goods/checkDistribution/' + goodsId, {areaId: areaId}, req)
-  },
-  // 获取收藏信息
-  getCollect (goodsId) {
-    return request.clientGet('/api/goods/getColleaction/' + goodsId)
   },
   // 获取单个套餐信息
   getPack (packId) {
@@ -38,6 +50,14 @@ export const goodsApi = {
   // 加入商品对比
   addCompare (goodsId) {
     return request.clientPost('/api/goods/addToContrast/' + goodsId)
+  },
+  // 去收藏
+  toCollect (goodsId) {
+    return request.clientPost('/api/goods/clt/' + goodsId)
+  },
+  // 取消收藏
+  cancelCollect (goodsId) {
+    return request.clientPost('/api/goods/cnl_clt/' + goodsId)
   },
   // 加入购物车
   addCart (data) {
@@ -69,5 +89,9 @@ export const goodsApi = {
   // 点赞层主
   likeComment (id) {
     return request.clientPost('/api/cmt/likeCommentReply/' + id)
+  },
+  // 删除对比的商品
+  removeFromContrast (data) {
+    return request.clientPostJson('/api/goods/removeFromContrast', data)
   }
 }

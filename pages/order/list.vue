@@ -1,3 +1,23 @@
+<!-- 
+   * 订单状态说明 orderStatus
+   1、 待支付
+   2、 支付成功,待发货
+   3、 发货中
+   4、 待收货
+   5、 待评价
+   6、 交易流程已完成
+   7、 已关闭（超时/取消订单)
+
+   * 可申请售后状态 -> 5.6
+   * 可申请退款状态 -> 2.3.4
+
+   commentStatus 评价状态
+   1、未评价
+   2、已评价
+   3、已追评
+
+   canComment 不允许评价
+ -->
 <template>
   <div class="m-order-list">
 
@@ -14,65 +34,77 @@
             <p class="right">{{ statusTxt[+item.status - 1] }}</p>
           </div>
 
-          <div class="good-wrapper good-li" v-for="p in item.orderItemList">
-            <!-- 普通商品 -->
-            <div class="good-li-item flex-center box-gutter" v-if="!p.packName">
-              <div class="content">
-                <img :src="p.goodsImg" alt="" width="90" height="100">
-                <div class="info">
-                  <p class="title">{{ p.goodsName }}</p>
-                  <div class="flex-jcsb" v-if="p.skuName">
-                    <span class="sku">{{ p.skuName }}</span><span class="price">￥{{ p.price }}</span>
-                  </div>
-                  <p class="num">x{{ p.num }}</p>
-                </div>
-              </div>
-            </div>
-            <!-- 套餐 -->
-            <div class="good-li-item" v-else>
-              <div class="top top-pack">
-                <div class="top-flex">
-                  <div class="top-name">{{ p.packName }}</div>
-                </div>
-                <p class="top-price">￥{{ p.packPrice }}</p>
-              </div>
-              <div class="product-wrapper">
-                <div class="content" v-for="(good, idx) in p.goodsList" :key="idx">
-                  <img :src="good.goodsImg" alt="" width="90" height="100">
+          <a :href="'/order/detail?id=' + item.id">
+            <div class="good-wrapper good-li" v-for="p in item.orderItemList">
+              <!-- 普通商品 -->
+              <div class="good-li-item flex-center box-gutter" v-if="!p.packName">
+                <div class="content">
+                  <img v-lazy="p.goodsImg" alt="" width="90" height="100">
                   <div class="info">
-                    <p class="title">{{ good.goodsName }}</p>
-                    <p class="desc">{{ good.skuName }}</p>
-                    <p class="desc">{{ good.num }} 件/套</p>
+                    <p class="title font_medium">{{ p.goodsName }}</p>
+                    <div class="flex-jcsb" v-if="p.skuName">
+                      <span class="sku">{{ p.skuName }}</span><span class="price">￥{{ p.price }}</span>
+                    </div>
+                    <p class="num">x{{ p.num }}</p>
+                  </div>
+                </div>
+              </div>
+              <!-- 套餐 -->
+              <div class="good-li-item" v-else>
+                <div class="top top-pack">
+                  <div class="top-flex">
+                    <div class="top-name font_medium">{{ p.packName }}</div>
+                  </div>
+                  <p class="top-price">￥{{ p.packPrice }}</p>
+                </div>
+                <div class="product-wrapper">
+                  <div class="content" v-for="(good, idx) in p.goodsList" :key="idx">
+                    <img v-lazy="good.goodsImg" alt="" width="90" height="100">
+                    <div class="info">
+                      <p class="title font_medium">{{ good.goodsName }}</p>
+                      <p class="desc">{{ good.skuName }}</p>
+                      <p class="desc">{{ good.num }} 件/套</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </a>
 
-          <div class="result">共{{ item.totalNum }}件商品 总额：￥{{ item.totalPrice }}</div>
+          <div class="result">共{{ item.totalNum }}件商品 总额：￥{{ item.balanceAmount }}</div>
 
           <div class="bottom">
 
-            <!-- <div class="u-button small inline" v-if="item.status <= 2">{{ item.status === 2 || item.status === 3 || item.status === 4 ? '申请退款' : '申请售后'}}</div> -->
-            <div class="u-button small inline default" v-if="item.status === 7" @click="deleteOrder(item.id)">删除订单</div>
+            <div class="u-button small inline default" v-if="item.status >= 3 && item.status !== 7" @click="checkLogis(item.id)">查看物流</div>
 
+            <!-- <div class="u-button small inline default" v-if="item.status >= 2 && item.status < 7" @click='toAfterSale(item.id)'>{{ item.status === 2 || item.status === 3 || item.status === 4 ? '申请退款' : '申请售后'}}</div> -->
+            <div class="u-button small inline default" v-if="(item.status === 6 || item.status === 7)" @click="deleteOrder(item.id)">删除订单</div>
 
-            <div class="u-button small inline" v-if="item.status === 1" @click="cancelOrder(item.id)">取消订单</div>
+            <div class="u-button small inline default" v-if="item.status === 1" @click="cancelOrder(item.id)">取消订单</div>
 
-            <div v-if='item.status === 5 || item.status === 6' style="display:inline-block">
-              <div class="u-button small inline" v-if="item.commentStatus === 1">评价</div>
-              <div class="u-button small inline green" v-else @click="toComment(item.id)">去追评</div>
-            </div>
+            <template v-if='(item.status === 5 || item.status === 6) && item.canComment' style="display:inline-block">
+              <div class="u-button small inline" v-if="item.commentStatus === 1" @click="toComment(item.id)">评价商品</div>
+              <div class="u-button small inline green" v-if='item.commentStatus === 2' @click="toAddComment(item.id)">去追评</div>
+            </template>
 
             <div class="u-button small inline" v-if="item.status === 4" @click="confirmReceive(item.id)">确认收货</div>
 
-            <div class="u-button small inline red" v-if="item.status === 1">马上支付</div>
+            <div class="u-button small inline red" v-if="item.status === 1" @click="toPay(item.id)">马上支付</div>
 
-            <div class="u-button small inline" @click="getDetail(item.id)">订单详情</div>
+            <!-- <div class="u-button small inline" @click="getDetail(item.id)">订单详情</div> -->
           </div>
         </div>
         <div class="empty" v-if="orderList.length === 0">暂无更多订单</div>
 
+      </div>
+
+      <div class='more-loading' v-show='pageLoding'>
+        <van-loading type="spinner" />
+        <p>正在加载更多</p>
+      </div>
+
+      <div class="no-more" v-show='pageEmpty'>
+        <p>没有更多订单了！</p>
       </div>
     </van-pull-refresh>
 
@@ -130,20 +162,69 @@ export default {
       orderList: [],
 
       status: null,
-      currentPage: 1
+      currentPage: 1,
+
+      isBottom: false,
+      pageEmpty: false,
+      pageLoding: false
     }
+  },
+
+  watch: {
+    isBottom (val) {
+      if (val && !this.pageEmpty && this.orderList.length >= 10) {
+        this.currentPage += 1
+        this.moreData(this.currentPage)
+      }
+    }
+  },
+
+  mounted () {
+    console.log(this.orderList)
+    let ele = document.querySelector('.u-pull')
+    ele.addEventListener('scroll', this.handleScroll(() => {
+      this.eleHeight = ele.clientHeight
+      this.scrollHeight = ele.scrollHeight
+      let scrollTop = ele.scrollTop
+      // 距离底部大约200像素
+      if (scrollTop + this.eleHeight >= this.scrollHeight - 200) {
+        this.isBottom = true
+      } else {
+        this.isBottom = false
+      }
+    }))
+    this.pageEmpty = this.orderList.length <= 10 && this.orderList.length !== 0
   },
 
   methods: {
     handleTab (val) {
+      this.currentPage = 1
+      this.pageEmpty = false
       this.status = val === 'all' ? null : val
       this.fetchData()
     },
     // 获取订单列表
     async fetchData () {
+      this.pageLoding = true
+      const Toast1 = this.$toast.loading('数据获取中')
       const { code, data } = await orderApi.getOrderListClient({ page: this.currentPage, count: 10, status: this.status })
       if (code === 200) {
         this.orderList = data.array
+        this.pageEmpty = this.orderList.length <= 10 && this.orderList.length !== 0
+        Toast1.clear()
+        this.pageLoding = false
+      }
+    },
+    // 上拉加载更多
+    async moreData () {
+      this.pageLoding = true
+      const { code, data } = await orderApi.getOrderListClient({ page: this.currentPage, count: 10, status: this.status })
+      if (code === 200) {
+        this.orderList.push(...data.array)
+        if (data.array.length <= 10) {
+          this.pageEmpty = true
+        }
+        this.pageLoding = false
       }
     },
     // 刷新
@@ -152,6 +233,7 @@ export default {
       this.currentPage = 1
       await this.fetchData()
       this.isLoading = false
+      this.pageEmpty = this.orderList.length <= 10 && this.orderList.length !== 0
     },
 
     cancelOrder (val) {
@@ -189,12 +271,40 @@ export default {
       })
     },
 
+    handleScroll (fn) {
+      let Switch = true
+      return function () {
+        if (!Switch) return
+        Switch = false
+        setTimeout(() => {
+          fn.apply(this, arguments)
+          Switch = true
+        }, 250)
+      }
+    },
+
     getDetail (val) {
       window.location.href = `/order/detail?id=${val}`
     },
-
+    // 去评价
     toComment (val) {
       window.location.href = `/order/evaluation/${val}`
+    },
+    // 去追评
+    toAddComment (val) {
+      window.location.href = `/order/evaluation/${val}?type=add`
+    },
+    // 去售后
+    // toAfterSale (val) {
+    //   window.location.href = `/order/aftersale/${val}`
+    // },
+    // 查看物流
+    checkLogis (val) {
+      window.location.href = `/order/logistics/${val}`
+    },
+    // 去支付
+    toPay (val) {
+      window.location.href = `/order/detail?id=${val}&type=pay`
     }
   }
 }
@@ -258,11 +368,6 @@ export default {
         &>div {
           margin: 0 5px; 
         }
-        .u-button {
-          &:not(:last-child) {
-            margin-right: 10px;
-          }
-        }
       }
     }
 
@@ -288,7 +393,12 @@ export default {
         .product-wrapper {
           padding: 0 20px 25px 40px;
           .content {
-            margin-top: 20px;
+            padding: 20px 0;
+            border-bottom: 1PX solid #eee;
+            &:last-child {
+              border-bottom: 0;
+              padding-bottom: 0;
+            }
             .desc {
               font-size: 13px;
               color: #999999;
@@ -319,6 +429,7 @@ export default {
           img {
             border: 1PX solid #E6E6E6;
             margin-left: 15px;
+            border-radius: 3px;
           }
           .info {
             flex: 1;

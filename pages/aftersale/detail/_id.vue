@@ -28,8 +28,11 @@
               <div class="info">
                 <p class="title">{{ detailObj.goodsName }}</p>
                 <p class="desc sku">{{ detailObj.skuName }}<span>x{{ detailObj.num }}</span></p>
-                <p class="desc"><span :class="{ 'light-orange': status !== 5 }">申请退款：¥{{ detailObj.totalRefundAmount }}</span>
-                  <span class="light-orange" v-if="status === 5">实际退款： ￥{{ detailObj.actualRefundAmount }}</span></p>
+                <p class="desc">
+                  <span :class="{ 'light-orange': status !== 5 }">申请退款：¥{{ detailObj.totalRefundAmount }}</span>
+                  <br>
+                  <span class="light-orange mt10" v-if="status === 5">实际退款：￥{{ detailObj.actualRefundAmount }}</span>
+                </p>
               </div>
             </div>
           </div>
@@ -42,22 +45,22 @@
           <p class="cnotact-cell"><span class="label">收货地址：</span><span class="subs">{{ `${detailObj.province}${detailObj.city}${detailObj.district}${detailObj.address}` }}</span></p>
         </div>
 
-        <div class="courior-wrapper" v-if="detailObj.serviceType === 2 && status > 2">
+        <div class="courior-wrapper" v-if="detailObj.serviceType === 2 && detailObj.status > 2 && detailObj.status !== 7">
           <div class="wrapper-title">退货快递信息</div>
           <div class="wrapper-desc">快递公司：{{ detailObj.logistics }}</div>
           <div class="wrapper-desc">快递单号：{{ detailObj.logisticsIdentify }}</div>
         </div>
 
-        <div class="btn-wrapper fit" v-if="status < 5">
+        <div class="btn-wrapper fit" v-if="status === 1 || status === 2">
           <van-button class="submit-btn" @click="handleCancel">取消售后</van-button>
         </div>
 
-        <van-dialog v-model="reasonShow" :show-confirm-button="false" close-on-click-overlay >
+       <!--  <van-dialog v-model="reasonShow" :show-confirm-button="false" close-on-click-overlay >
           <div class="fail-reason">
             <div class="reason-title">您本次申请不符合退款条款，原因如下：</div>
             <div class="reason-detail">1、您的退回的商品并没在我们系统内查询到相应的识别信息；<br>2、寄回的商品有明显的外包装缺失和赠品缺失；<br>3、附带的发票并没有随商品一同寄回。</div>
           </div>
-        </van-dialog>
+        </van-dialog> -->
 
         <van-dialog v-model="transfromShow" :show-confirm-button="false" close-on-click-overlay>
           <div class="dialog-title">货运单号</div>
@@ -100,14 +103,14 @@
       <div class="record-section" v-if="section === 2">
         <div class="msg-box">
 
-          <div :class="['msg-item', item.userid === 0 ? 'js' : '']" v-for="(item, index) in recordList" :key="index">
+          <div :class="['msg-item', item.userid === '0' ? 'js' : '']" v-for="(item, index) in recordList" :key="index">
             <div class="time" v-if="index === 0 || getRecordTime(item.createdAt) - getRecordTime(recordList[index - 1].createdAt) > 120000">{{ item.createdAt }}</div>
-            <div class="left avatar" v-if="item.userid === 0" style="background-image: url('~/assets/img/foot/ic_home_ele@2x.png')"></div>
+            <div class="left avatar" v-if="item.userid === '0'" :style="`background-image: url(${require('~/assets/img/defaultImg.png')})`"></div>
             <div class="center">
               <span v-if="!item.ifImg">{{ item.content }}</span>
               <img v-else :src="item.content" alt="" @click="viewPhoto(item.content)">
             </div>
-            <div class="right avatar" :style="`background-image: url(${item.headimgurl})`"></div>
+            <div class="right avatar" v-if="item.userid !== '0'"  :style="`background-image: url(${item.headimgurl || defaulthead})`"></div>
           </div>
 
         </div>
@@ -175,7 +178,8 @@ export default {
     return {
       section: 1,
 
-      reasonShow: false,
+      defaulthead: this.defaulthead,
+      // reasonShow: false,
 
       detailObj: {},
 
@@ -209,6 +213,20 @@ export default {
     }
   },
 
+  created () {
+    console.log(this.detailObj)
+    if (this.status === 2) {
+      this.$dialog.confirm({
+        title: '',
+        message: '基础审核已通过 寄回货物请提交退货运单号',
+        confirmButtonText: '去填写'
+      }).then(() => {
+        this.openTransform()
+      }).catch(() => {
+      })
+    }
+  },
+
   methods: {
     /* eslint-disable */
     getRecordTime (t) {
@@ -234,7 +252,9 @@ export default {
     },
 
     showReason () {
-      this.reasonShow = true
+      // this.reasonShow = true
+      this.getRecord()
+      this.section = 2
     },
 
     getCredentials () {
@@ -256,7 +276,9 @@ export default {
       const { code } = await afterSaleApi.sendMessage({ content: this.content, id: this.id, ifImg: false })
       if (code === 200) {
         this.$toast.success('发送成功')
+        this.content = ''
         this.getRecord()
+        document.querySelectorAll('.input-select')[0].blur()
       }
     },
     async sendImageRecord (val) {
@@ -277,6 +299,7 @@ export default {
       const { code } = await afterSaleApi.sendTransform({ id: this.id, logistics: this.logiName, logisticsIdendity: this.logiNum })
       if (code === 200) {
         this.$toast.success('填写成功')
+        window.location.reload()
       }
       this.transfromShow = false
     },
@@ -288,7 +311,7 @@ export default {
         const { code } = await afterSaleApi.cancelAftersale(this.id)
         if (code === 200) {
           this.$toast.success('取消订单成功')
-          this.fetchData()
+          window.location.reload()
         }
       })
     }
@@ -298,6 +321,7 @@ export default {
 
 <style lang="less" scoped>
 .m-aftersale-detail {
+  box-sizing: border-box;
   min-height: 100vh;
   background: @cor_border;
   .info-section {
@@ -495,17 +519,20 @@ export default {
     }
   }
   .light-orange {
-    color: #FB6248;
+    color: #FB6248!important;
+    &.mt10 {
+      display: inline-block;
+      margin-top: 6px;
+    }
   }
 
   .record-section {
     height: calc(100vh - 45px);
-    display: flex;
-    flex-direction: column;
     .msg-box {
+      box-sizing:border-box;
       padding: 20px 10px;
-      flex: 1;
       overflow: scroll;
+      height: calc(100vh - 101px);
       .msg-item {
         display: flex;
         flex-wrap: wrap;
@@ -513,6 +540,10 @@ export default {
         &.js {
           justify-content: flex-start;
           .content {
+            margin-right: 45px;
+            margin-left: 0;
+          }
+          .center {
             margin-right: 45px;
             margin-left: 0;
           }
@@ -533,7 +564,7 @@ export default {
           background-position: center;
           background-size: cover;
           background-repeat: no-repeat;
-          border-radius: 4px;
+          border-radius: 50%;
           &.left {
             margin-right: 10px;
           }
@@ -550,6 +581,7 @@ export default {
           color: white;
           margin-left: 45px;
           margin-right: 0;
+          max-width: 69%;
           img {
             width: 120px;
             height: auto;
@@ -603,4 +635,16 @@ export default {
     }
   }
 }
+</style>
+<style type="text/css">
+  .van-dialog__message {
+    text-align: center;
+    font-size: 17px;
+    color: #333;
+    font-family: 'PingFangSC-Semibold';
+    font-weight: bold;
+  }
+  .van-dialog__confirm {
+    color: #03A1CD
+  }
 </style>

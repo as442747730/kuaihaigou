@@ -11,6 +11,10 @@ export const orderApi = {
   getEvaluationInfo (orderId, req) {
     return request.serverGet('/api/order/toComment/' + orderId, {}, req)
   },
+  // 物流信息获取
+  queryTrackServe (logisticsCompany, logisticsBillIdentify) {
+    return request.serverGet('/api/order/queryTrack/' + logisticsCompany + '/' + logisticsBillIdentify)
+  },
   // 获取支付信息
   getPayMsgServer (id, req) {
     return request.serverGet('/api/order/getPayMsg/' + id, {}, req)
@@ -25,11 +29,16 @@ export const orderApi = {
   receiveOrder (id) {
     return request.clientPost(`/api/order/confirmReceipt/${id}`)
   },
-  deleteOrder (id) {
-    return request.clientPost(`${id}`)
+  deleteOrder (orderId) {
+    return request.clientPost(`/api/order/delete/${orderId}`)
   },
+  // 去评价
   submitEvaluation (obj) {
-    return request.clientPost('/api/cmt/createComment', obj)
+    return request.clientPostJson('/api/cmt/createComment', obj)
+  },
+  // 追评
+  review (obj) {
+    return request.clientPostJson('/api/cmt/review', obj)
   },
   // 获取订单信息
   getPayMsg (orderId) {
@@ -42,6 +51,10 @@ export const orderApi = {
   // 微信创建wap支付
   wxReward (obj) {
     return request.clientPostJson('/api/pay/wxReward', obj)
+  },
+  // 公众号支付（微信浏览器环境下）
+  wxOrderPay (obj) {
+    return request.clientPostJson('/api/wxpay/js/orderPay', obj)
   },
   // 检测支付状态
   getOrderPayOrNot (orderId) {
@@ -78,7 +91,7 @@ export const afterSaleApi = {
     return request.clientPost(`/api/afterSale/cancel/${id}`)
   },
   sendTransform (obj) {
-    return request.clientPost('/api/afterSale/submitShipMsg', obj)
+    return request.clientPostJson('/api/afterSale/submitShipMsg', obj)
   },
   getNegotiation (id) {
     return request.clientGet(`/api/afterSale/getNegotiation/${id}`, { afterSaleId: id })

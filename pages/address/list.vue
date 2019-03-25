@@ -1,11 +1,12 @@
 <template>
   <div class="m-address-list">
+    <com-head :titleConfig="configtitle"></com-head>
     <van-pull-refresh class="van-pull" v-model="refresing" @refresh="getRefresh">
 
       <div class="address-ul">
         <div class="address-item" v-for="item in list" :key="item.id">
           <div class="title">
-            <span class="contxt">{{ item.name }}</span><span class="contxt">{{ item.phone }}</span><span class="default" v-if="item.ifDefault">默认</span>
+            <span class="contxt">{{ item.name }}</span><span class="contxt">{{ item.phone }}</span><span class="default" v-if="item.ifDefault">默认</span><span class="type">{{ item.addressType === 1 ? '家' : item.addressType === 2 ? '公司' : '其他' }}</span>
           </div>
           <p class="address">{{item.province | formatPlace }}{{item.city | formatPlace }}{{item.district | formatPlace }}{{item.street | formatPlace }}{{item.address}}</p>
         </div>
@@ -24,6 +25,7 @@
 
 <script>
 import { addressApi } from '~/api/address'
+import comHead from '~/components/com-head'
 
 export default {
   name: 'addressList',
@@ -37,6 +39,10 @@ export default {
         { hid: 'title', name: 'title', content: '收货地址' }
       ]
     }
+  },
+
+  components: {
+    comHead
   },
 
   async asyncData (req) {
@@ -87,6 +93,8 @@ export default {
     flex: 1;
   }
   .address-ul {
+    height: 82vh;
+    overflow: scroll;
   }
   .placeholder {
     font-size: 14px;
@@ -97,6 +105,7 @@ export default {
   }
   .address-item {
     padding: 25px 20px 15px 20px;
+    border-bottom: 1px solid #f5f5f5;
     .title {
       display: flex;
       align-items: center;
@@ -118,6 +127,20 @@ export default {
         box-sizing: border-box;
         line-height: 14px;
         padding: 0 3px;
+      }
+      .type {
+        margin-left: 5px;
+        display: inline-block;
+        font-size: 0.24rem;
+        font-weight: 400;
+        color: #59C3E1;
+        border: 1PX solid #59C3E1;
+        border-radius: 0.05333rem;
+        height: 0.37333rem;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        line-height: 0.37333rem;
+        padding: 0 0.08rem;
       }
     }
     & + .address-item {

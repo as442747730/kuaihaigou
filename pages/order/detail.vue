@@ -1,3 +1,13 @@
+<!-- 
+   * 订单状态说明 orderStatus
+   1、 待支付
+   2、 支付成功,待发货
+   3、 发货中
+   4、 待收货
+   5、 待评价
+   6、 交易流程已完成
+   7、 已关闭（超时/取消订单
+ -->
 <template>
   <div class="m-order-detail" :class="{'mb0': orderDetail.status === 2 || orderDetail.status === 6}">
 
@@ -5,9 +15,15 @@
 
     <div class="notice-bar" v-if="orderDetail.status === 1">{{ timeCount }}后未支付，此订单将自动关闭</div>
 
-    <div class="logi-wrapper" v-if="orderDetail.status === 4" @click='logisHandle'>
-      <p class="title">您的订单已进入库房，准备出库<i></i></p>
-      <p class="date">2017-04-01 12:00:00 </p>
+    <div class="logi-wrapper" v-if="orderDetail.status >= 3 && orderDetail.status !== 7" @click='logisHandle'>
+      <template v-if='orderDetail.status === 3 || orderDetail.status === 4'>
+        <p class="title">您的订单已进入库房，准备出库<i></i></p>
+        <p class="date">{{ orderDetail.distributionTime }}</p>  
+      </template>
+      <template v-if='orderDetail.status === 5 || orderDetail.status === 6'>
+        <p class="title">感谢您在快海购购物，欢迎再次光临<i></i></p>
+        <p class="date">{{ orderDetail.transactionCompleteTime || orderDetail.outStorageTime }}</p>  
+      </template>
     </div>
 
     <div class="address-wrapper">
@@ -74,7 +90,7 @@
         <p v-if="orderDetail.invoiceType === 1">收票邮箱：{{ orderDetail.email }}</p>
       </div>
       <div class="cost-wrapper-item">
-        <p>订单编号：{{ orderDetail.orderIdentify }} <span @click="">复制</span></p>
+        <p>订单编号：{{ orderDetail.orderIdentify }} <!-- <span @click="">复制</span> --></p>
         <p>下单时间：{{ orderDetail.submitOrderTime }}</p>
         <p v-if="orderDetail.status !== 1">支付方式：{{ orderDetail.payMethod | getPayment() }}</p>
         <p v-if="orderDetail.status !== 1">实付金额：{{ orderDetail.balanceAmount }}</p>
@@ -83,9 +99,9 @@
       <!-- <div class="cost-wrapper-total" v-if="orderDetail.status === 1">应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span></div> -->
     </div>
 
-    <div class="bottom-wrapper" v-if='orderDetail.status !== 2 && orderDetail.status !== 6'>
-      <div class="cost-wrapper-total" v-if="orderDetail.status === 1">
-        应付金额：<span>￥ {{ orderDetail.balanceAmount }}</span>
+    <div class="bottom-wrapper" v-if='orderDetail.status !== 6 && orderDetail.status !== 2'>
+      <div class="cost-wrapper-total" v-if='orderDetail.status !==7'>
+        {{ orderDetail.status === 1 ? '应付金额' : '实付金额' }}：<span>￥ {{ orderDetail.balanceAmount }}</span>
       </div>
 
       <!-- status 1  代付款 -->
@@ -98,25 +114,28 @@
 
       <div class="u-button small inline" v-if="orderDetail.status === 4" @click="confirmReceive">确认收货</div>
 
-      <div class="u-button small inline" v-if="orderDetail.status === 5" @click="goEvaluation">评价商品</div>
+      <template v-if='(orderDetail.status === 5 || orderDetail.status === 6) && orderDetail.canComment'>
+        <div class="u-button small inline" v-if="orderDetail.status === 5" @click="goEvaluation">评价商品</div>
+        <div class="u-button small inline" v-if="orderDetail.status === 6" @click="goEvaluationAdd">去追评</div>
+      </template>
 
       <!-- 7 已关闭 -->
-      <div class="u-button small inline default" v-if="orderDetail.status === 7" @click="">删除订单</div>
+      <div class="u-button small inline default" v-if="orderDetail.status === 7" @click="deleteOrder">删除订单</div>
 
     </div>
 
     <!-- 支付 -->
-    <uPay :payMethodShow='payMethodShow' :orderId='orderId' @payClose='payClose'></uPay>
+    <uPay :payMethodShow='payMethodShow' :orderId='orderId' :env='env' @payClose='payClose'></uPay>
 
     <!-- 物流 -->
-    <uLogis v-model='logisOpen' :logisData='orderDetail.deliverBillList'></uLogis>
+    <!-- <uLogis v-model='logisOpen' :logisData='orderDetail.deliverBillList'></uLogis> -->
   </div>
 </template>
 
 <script>
 import { orderApi, afterSaleApi } from '~/api/order'
 import uPay from '~/components/Pay'
-import uLogis from '~/components/order/Logistics'
+// import uLogis from '~/components/order/Logistics'
 import api from '~/utils/request'
 
 export default {
@@ -125,8 +144,8 @@ export default {
   layout: 'default',
 
   components: {
-    uPay,
-    uLogis
+    uPay
+    // uLogis
   },
 
   head () {
@@ -147,8 +166,14 @@ export default {
       if (res1.code === 506 || res2.code === 506) {
         req.redirect('/account/login')
       }
-      // console.log(res1.data, res2.data)
       let payInfo = {}
+      // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+      const ua = req.req.headers['user-agent']
+      let env = 0
+      if (/MicroMessenger/.test(ua)) {
+        // 检测用户设备
+        env = 1
+      }
       if (res1.code === 200 && res2.code === 200) {
         res1.data.orderItemList.forEach((n, i) => {
           if (!n.packName && res2.data.filter(m => m.orderItemId === n.orderItemId).length !== 0 && res2.data.filter(m => m.orderItemId === n.orderItemId)[0].num === n.num) {
@@ -172,8 +197,11 @@ export default {
           payInfo = res3.data
         }
         console.log(payInfo)
-        // console.log(res1.data.orderItemList[0].goodsList)
-        return { orderDetail: res1.data, orderId: req.query.id, payInfo: payInfo }
+        // let payMethodShow = false
+        // if (req.query.type === 'pay') {
+        //   payMethodShow = true
+        // }
+        return { env: env, orderDetail: res1.data, orderId: req.query.id, payInfo: payInfo, type: req.query.type }
       } else {
         req.redirect('/error')
       }
@@ -198,6 +226,7 @@ export default {
 
   data () {
     return {
+      env: 0, // 用户浏览器
       orderId: null,
 
       statusTxt: ['待付款', '待发货', '发货中', '待收货', '待评价', '已完成', '已关闭'],
@@ -209,6 +238,7 @@ export default {
       payInfo: {},
 
       payMethodShow: false,
+      type: null,
       // 物流
       logisOpen: false
     }
@@ -217,8 +247,8 @@ export default {
   mounted () {
     console.log(this.orderDetail)
     if (this.orderDetail.status === 1) {
-      console.log('this.payInfo', this.payInfo)
       this.countTime(parseInt(this.payInfo.timestamp / 1000) + 10)
+      if (this.type === 'pay') this.payMethodShow = true
     }
   },
 
@@ -231,7 +261,7 @@ export default {
         const { code } = await orderApi.cancelOrder(this.orderId)
         if (code === 200) {
           this.$toast.success('取消订单成功')
-          this.fetchData()
+          window.location.reload()
         }
       }).catch(() => {})
     },
@@ -242,11 +272,21 @@ export default {
         const { code } = await orderApi.receiveOrder(this.orderId)
         if (code === 200) {
           this.$toast.success('确认收货成功')
-          this.fetchData()
+          window.location.reload()
         }
       })
     },
-
+    deleteOrder () {
+      this.$dialog.confirm({
+        message: '确定要删除订单吗？'
+      }).then(async () => {
+        const { code } = await orderApi.deleteOrder(this.orderId)
+        if (code === 200) {
+          this.$toast.success('删除成功')
+          window.location.href = '/order/list'
+        }
+      })
+    },
     countTime (pt) {
       var nt = new Date().getTime() / 1000
       var t = nt
@@ -282,8 +322,9 @@ export default {
     },
     // 物流查看开关
     logisHandle () {
-      this.logisOpen = true
-      window.location.hash = 'logis'
+      // this.logisOpen = true
+      // window.location.hash = 'logis'
+      window.location.href = `/order/logistics/${this.orderId}`
     },
 
     goAftersale (val) {
@@ -292,6 +333,10 @@ export default {
 
     goEvaluation () {
       window.location.href = `/order/evaluation/${this.orderId}`
+    },
+
+    goEvaluationAdd () {
+      window.location.href = `/order/evaluation/${this.orderId}?type=add`
     }
   }
 }

@@ -3,17 +3,18 @@
     <com-head :titleConfig="getTitle"></com-head>
     <div class="follow-items">
       <div class="follow-item" v-for="(list, index) in lists" :key="index">
-        <div class="item-l" :style="{background: `url(${list.headimgurl}) no-repeat center/cover`}"></div>
+        <a :href="'/user?uid=' + list.id">
+          <div class="item-l" :style="{background: `url(${list.headimgurl || require('~/assets/img/defaultImg.png')}) no-repeat center/cover`}"></div>
+        </a>
         <div class="item-c">
           <div class="item-c_name">
             <p class="name-world">{{ list.nickname }}</p>
             <p>
-              <i class="ic-name ic-member"></i>
-              <i class="ic-name ic-cms"></i>
+              <user-lab :level='String(list.userGradeNumber)' type='1' :profess='String(list.category)'></user-lab>
             </p>
           </div>
           <div class="item-c_sign">
-            <p>{{list.nickname }} </p>
+            <p>{{list.signature }} </p>
           </div>
           <div class="item-c_count">
             <span>创作 {{ list.worksNumber }}</span>
@@ -21,8 +22,8 @@
           </div>
         </div>
         <div class="item-r">
-          <div class="item-gz item-xhgz" v-if="list.checkAttention && getNum === 2">相互关注</div>
-          <div class="item-gz item-ygz" v-else-if="list.checkAttention">
+          <div class="item-gz item-xhgz" v-if="list.checkAttention && getNum === '2'" @click='followFriend(list)'>相互关注</div>
+          <div class="item-gz item-ygz" v-else-if="list.checkAttention" @click='followFriend(list)'>
             <div class="gz_level ygz_level"></div>
             <p>已关注</p>
           </div>
@@ -30,7 +31,6 @@
             <div class="gz_level wgz_level"></div>
             <p>关注</p>
           </div>
-          
         </div>
       </div>
     </div>
@@ -38,6 +38,7 @@
 </template>
 <script>
 import comHead from '~/components/com-head'
+import userLab from '@/components/Usericon'
 import { userApi } from '~/api/users'
 export default {
   head () {
@@ -49,7 +50,8 @@ export default {
     }
   },
   components: {
-    comHead
+    comHead,
+    userLab
   },
   data () {
     return {
@@ -118,12 +120,12 @@ export default {
       window.location.href = '/mine'
     },
     async followFriend (person) {
-      console.log(person)
       let params = { userId: person.id }
       const { code, data } = await userApi.likeFriend(params)
       if (code === 200) {
-        // console.log('data', data)
-        this.getList()
+        this.$toast(data)
+        person.checkAttention = !person.checkAttention
+        // this.getList()
       } else {
         this.$toast(data)
       }
@@ -186,13 +188,15 @@ export default {
           }
         }
         .item-wgz {
-          background: #cccccc;
-        }
-        .item-ygz {
+          // background: #cccccc;
           background: #03A1CD;
         }
+        .item-ygz {
+          // background: #03A1CD;
+        }
         .item-xhgz {
-          background: #cccccc;
+          background: #ccc;
+          // background: #03A1CD;
         }
       }
 
@@ -207,12 +211,14 @@ export default {
           font-family: PingFangSC-Semibold;
           font-weight: 600;
           color: rgba(51, 51, 51, 1);
-          line-height: 15px;
           align-items: center;
           margin-bottom: 8px;
           .name-world {
-            width: 60%;
+            max-width: 60%;
             overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 10px;
           }
 
           .ic-name {
@@ -260,4 +266,3 @@ export default {
   }
 }
 </style>
-

@@ -1,3 +1,13 @@
+<!-- 
+   * 售后进度说明 status 
+   1、 商家确认中 -> 待审核
+   2、 待退货 -> 审核中
+   3、 待商家收货 -> 审核中
+   4、 商家已收货 -> 退款中
+   5、 退款成功 -> 已完成
+   6、 拒绝退款 -> 已拒绝
+   7、 申请已取消 -> 已关闭
+ -->
 <template>
   <div class="m-aftersale-list" >
     <div class="search-wrapper">
@@ -14,7 +24,7 @@
           <div class="top">
             <p class="desc">申请号：{{ item.afterSaleIdentify }}</p>
             <p class="desc">申请时间：{{ item.createdAt }}</p>
-            <span class="status">{{ statusTxt[item.status - 1] }}</span>
+            <span class="status" :style="'background:' + statusColor[item.status - 1]">{{ statusTxt[item.status - 1] }}</span>
           </div>
           <div class="body">
             <div class="cover" v-lazy:background-image="item.cover"></div>
@@ -88,6 +98,7 @@ export default {
   data () {
     return {
       statusTxt: ['审核中', '待寄回', '待接收', '退款中', '已完成', '已拒绝', '已关闭'],
+      statusColor: ['#4285F4', '#4285F4', '#4285F4', '#4285f4', '#52c41a', '#ff3333', '#999'],
       refershing: false,
       loading: false,
       list: [],
@@ -204,6 +215,7 @@ export default {
       background: #FAFAFA;
       border-radius: 14px;
       height: 28px;
+      line-height: 28px;
       margin-right: 22px;
       padding-left: 50px;
       padding-right: 16px;

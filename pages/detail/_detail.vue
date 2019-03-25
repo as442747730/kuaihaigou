@@ -2,8 +2,8 @@
   <main class="u-detail">
     <section class="u-detail_header">
       <van-nav-bar title="商品详情" left-arrow @click-left="historyBack">
-        <van-icon name="fenxiang" slot="right" />
-        <van-icon name="collect" slot="right" />
+        <!-- <van-icon name="fenxiang" slot="right" /> -->
+        <van-icon :name="ifCollection ? 'star' : 'collect'" slot="right" @click='handleCollect' />
       </van-nav-bar>
     </section>
 
@@ -27,9 +27,16 @@
       </div>
 
       <div class="u-detail_info-desc margin-30">
-        <h2 class="limit_one">{{topGoods.goodsName}}</h2>
+        <h2>{{topGoods.goodsName}}</h2>
         <p>
-          <span v-for="(tag, index) in topGoods.topList" :key="index">{{tag}}</span>
+          <span v-for="(tag, index) in topGoods.tagList" :key="index">
+            <template v-if='index !== topGoods.tagList.length - 1'>
+              {{ tag.tagname + '|' }}
+            </template>
+            <template v-else>
+              {{ tag.tagname }}
+            </template>
+          </span>
         </p>
         <em class="price">
           ¥ {{ showPrice }}
@@ -38,8 +45,9 @@
           去对比
         </div>
         <br>
-        <div class="active">
-          全场满88元免邮
+        <div class="active" v-if='topGoods.promotionResp'>
+          <!-- {{ topGoods.reductionStrategy }} -->
+          {{ '满' + topGoods.promotionResp.threshold + '减' + topGoods.promotionResp.amount }}
         </div>
         <!-- 单品时出现 -->
         <div class="single-sku-num" v-if='singleObj.isSingle'>
@@ -64,8 +72,7 @@
         <span class="limit_one">{{ areaTxt }}</span>
       </div>
       <div class="choose-txt">
-        <p class="ib-middle" v-if="ifsend">可配送</p>
-        <p class="ib-middle" v-else>不可配送</p>
+        <p class="ib-middle">{{ sendStatus }}</p>
         <i class="van-icon ib-middle van-icon-arrow"></i>
       </div>
     </div>
@@ -100,7 +107,7 @@
         <li class="tab-list" :class="{'cur': tabIndex === 1}" @click="chooseType(1)">
           <span>图文详情</span>
         </li>
-        <li class="tab-list" :class="{'cur': tabIndex === 2}" @click="chooseType(2)">
+        <li class="tab-list" :class="{'cur': tabIndex === 2}" v-if="sourcePage !== 'otherone'" @click="chooseType(2)">
           <span>酒评参数</span>
         </li>
         <li class="tab-list" :class="{'cur': tabIndex === 3}" @click="chooseType(3)">
@@ -117,7 +124,7 @@
         <li class="tab-list" :class="{'cur': tabIndex === 1}" @click="chooseType(1)">
           <span>图文详情</span>
         </li>
-        <li class="tab-list" :class="{'cur': tabIndex === 2}" @click="chooseType(2)">
+        <li class="tab-list" :class="{'cur': tabIndex === 2}" v-if="sourcePage !== 'otherone'" @click="chooseType(2)">
           <span>酒评参数</span>
         </li>
         <li class="tab-list" :class="{'cur': tabIndex === 3}" @click="chooseType(3)">
@@ -130,9 +137,11 @@
     </section>
 
     <!-- 内容模块 -->
-    <transition name='slide-fade2' mode="out-in">
-      <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom="scrollBottom"></component>
-    </transition>
+    <div class="u-detail_content">
+      <transition name='slide-fade2' mode="out-in">
+        <component v-bind:is="view" :viewdata="viewData" :hotlist="hotlist" :goodsid="goodsId" :scrollbottom="scrollBottom" :islogin='isLogin' :env='env'></component>
+      </transition>
+    </div>
 
     <!-- 底栏 -->
     <van-goods-action>
@@ -230,6 +239,13 @@
       <van-picker ref="areaPicker" :columns="columns" show-toolbar @change="handleChange" @cancel="onCancel" @confirm="onConfirm" />
     </van-popup>
 
+    <!-- 去对比 -->
+    <div class="compare-btn" @click='toCompare'>
+      <div>
+        <i></i>
+      </div>
+    </div>
+
   </main>
 </template>
 <script>
@@ -237,10 +253,12 @@ import api from '~/utils/request'
 import { goodsApi } from '~/api/goods'
 import { userApi } from '~/api/users'
 import { cartApi } from '~/api/cart'
+import { wineApi } from '~/api/wine'
 import uGraphic from '~/components/detail/Graphic'
 import uParame from '~/components/detail/Parame'
 import uComment from '~/components/detail/Comment'
 import uAfter from '~/components/detail/After'
+import wechatLogin from '~/utils/wechatLogin'
 
 export default {
   components: {
@@ -249,6 +267,8 @@ export default {
     uComment,
     uAfter
   },
+
+  middleware: 'checkWxStatus',
 
   head () {
     return {
@@ -261,31 +281,43 @@ export default {
   async asyncData (req) {
     const goodsId = req.params.detail
     console.log(goodsId)
+    // sourcePage='otherone' 来自其它商品,去掉酒评参数
+    let sourcePage = req.query.page
     let id = goodsId
     let detailFn = goodsApi.getDetail(id, req)
     let topSaleFn = goodsApi.getTopSales(req)
     let userInfoFn = userApi.serverPostInfo(req)
+    let collectFn = goodsApi.getCollect(id, req)
     const {code: detCode, data: detData} = await detailFn
     const {code: hotCode, data: hotData} = await topSaleFn
     const {code: userCode} = await userInfoFn
-    console.log('detCode', detCode)
+    const { code: colCode, data: colData } = await collectFn
+    let no = detData.ifWine ? 2 : 1
+    const {code: frequeCode, data: frequeData} = await goodsApi.frequently(no)
     if (detCode === 200) {
       let hotlist = []
       let isLogin = false
+      let ifCollection = false
       if (hotCode === 200) {
         hotlist = hotData
       }
-      console.log(userCode)
       if (userCode === 200) {
         isLogin = true
       }
-      // console.log('detData', detData)
-      let { imgList, goodsName, actualPrice, introduce } = detData
+      if (colCode === 200) {
+        ifCollection = colData.ifCollection
+      }
+      // 顶部信息
+      let { imgList, goodsName, actualPrice, introduce, promotionResp, tagList, province, city } = detData
       let topData = {
+        tagList: tagList,
         imgList: imgList,
         goodsName: goodsName,
         actualPrice: actualPrice,
-        introduce: introduce
+        introduce: introduce,
+        // reductionStrategy: reductionStrategy
+        promotionResp: promotionResp,
+        province: province ? province + ',' + city : ''
       }
       let { skuAttrList, skuList, packList } = detData
 
@@ -307,9 +339,14 @@ export default {
 
       // 评价提问
       let { satisfactionNum, satisfactionDegree } = detData
+      let frequeList = []
+      if (frequeCode === 200) {
+        frequeList = frequeData
+      }
       let commentParams = {
         satisfactionNum: satisfactionNum,
-        satisfactionDegree: satisfactionDegree
+        satisfactionDegree: satisfactionDegree,
+        frequeList: frequeList
       }
 
       // 售后服务
@@ -329,9 +366,9 @@ export default {
         allprice: actualPrice
       }
 
-      console.log(isLogin)
-
       return {
+        env: req.env,
+        sourcePage: sourcePage,
         goodsId: goodsId,
         isLogin: isLogin,
         topGoods: topData,
@@ -343,13 +380,15 @@ export default {
         afterSale: afterSale,
         commentParams: commentParams,
         hotlist: hotlist || [],
-        singleObj: singleObj
+        singleObj: singleObj,
+        ifCollection: ifCollection
       }
     }
   },
 
   data () {
     return {
+      sourcePage: '',
       goodsId: '',
       isLogin: false,
       // 初始化数据
@@ -365,6 +404,8 @@ export default {
           }
         }
       },
+      ifCollection: false, // 是否收藏
+
       topGoods: {}, // 上部商品详情数据
       turePrice: 0,
       skuAttrList: [], // 商品规格
@@ -395,7 +436,7 @@ export default {
       }, // 选中套餐
       elpackId: '', // 选中套餐id
       singleObj: {}, // 单品信息
-      ifsend: false, // 是否可配送
+      sendStatus: '-', // 是否可配送
       goodsDetailMobile: '', // 商品详情
       listDetailMobile: '', // 包装清单
       goodsList: {}, // 商品清单
@@ -415,7 +456,7 @@ export default {
       areaTxt: '请选择',
       // 省市区的id
       provinceId: '86',
-      cityId: '',
+      cityId: '1026342555157008385',
       // districtId: '',
       // 省市区的中文
       provinceTxt: '',
@@ -457,6 +498,8 @@ export default {
   },
 
   async created (req) {
+    console.log('topGoods', this.topGoods)
+    this.Inertia = require('~/static/inertia')
     this.viewData = this.goodsList
     const {code, data} = await goodsApi.getProvince('86')
     if (code === 200) {
@@ -492,9 +535,23 @@ export default {
       // 初始化规格选择
       this.getSkuFn()
     }
+    // 如果用户处于登录状态并存在默认收货地址，则获取是否可配送
+    if (this.topGoods.province) {
+      const provinceArr = this.topGoods.province.split(',')
+      // console.log(areaTxt)
+      let areaId = provinceArr[3]
+      this.checkDistrFn(this.goodsId, areaId)
+      this.areaTxt = provinceArr[0] + provinceArr[2]
+    }
   },
 
-  mounted () {
+  async mounted () {
+    const { code, data } = await goodsApi.clientDetail(this.goodsId)
+    if (code === 200) {
+      console.log(data)
+    }
+    const compareBtn = document.querySelector('.compare-btn')
+    this.Inertia(compareBtn)
     let that = this
     window.addEventListener('scroll', this.handleScroll(function () {
       this.windowHeight = document.documentElement.clientHeight || document.body.clientHeight
@@ -545,11 +602,22 @@ export default {
       let anchor = this.$el.querySelector(selector)
       document.body.scrollTop = anchor.offsetTop
     },
-    openAreaSelect () {
-      this.getArea(this.provinceId, 'city')
+    async openAreaSelect () {
+      if (this.topGoods.province) {
+        var _provinceArr = this.topGoods.province.split(',')
+        await this.getArea(_provinceArr[1], 'city')
+        setTimeout(() => {
+          this.provinceIndex = this.provinceList.findIndex(v => { return v.text === _provinceArr[0] })
+          this.cityIndex = this.cityList.findIndex(v => { return v.text === _provinceArr[2] })
+          this.$refs.areaPicker.setColumnIndex(0, this.provinceIndex)
+          this.$refs.areaPicker.setColumnIndex(1, this.cityIndex)
+        }, 100)
+      } else {
+        await this.getArea(this.cityId, 'city')
+      }
       if (this.$refs.areaPicker) {
-        this.$refs.areaPicker.setColumnValues(1, this.cityList)
-        // this.$refs.areaPicker.setColumnValues(2, this.districtList)
+        // this.$refs.areaPicker.setColumnValues(1, this.cityList)
+        // this.$refs.areaPicker.setColumnValues(1, this.districtList)
         this.$refs.areaPicker.setColumnIndex(0, this.provinceIndex)
         this.$refs.areaPicker.setColumnIndex(1, this.cityIndex)
         // this.$refs.areaPicker.setColumnIndex(2, this.districtIndex)
@@ -575,8 +643,7 @@ export default {
     onCancel () {
       this.popupShow = false
     },
-    async onConfirm (val, idx) {
-      console.log('val confirm', val)
+    onConfirm (val, idx) {
       this.provinceId = val[0].id
       this.cityId = val[1].id
 
@@ -590,15 +657,38 @@ export default {
 
       let goodsId = this.goodsId
       let cityId = this.cityId
+      this.checkDistrFn(goodsId, cityId)
+      // const {code, data} = await goodsApi.checkDistr(goodsId, cityId)
+      // if (code === 200) {
+      //   switch (data) {
+      //     case 1:
+      //       this.sendStatus = '可配送'
+      //       break
+      //     case 2:
+      //       this.sendStatus = '不可配送'
+      //       break
+      //     case 3:
+      //       this.sendStatus = '包邮'
+      //       break
+      //   }
+      // }
+      this.popupShow = false
+    },
+    async checkDistrFn (goodsId, cityId) {
       const {code, data} = await goodsApi.checkDistr(goodsId, cityId)
       if (code === 200) {
-        if (data === 2) {
-          this.ifsend = false
-        } else {
-          this.ifsend = true
+        switch (data) {
+          case 1:
+            this.sendStatus = '可配送'
+            break
+          case 2:
+            this.sendStatus = '不可配送'
+            break
+          case 3:
+            this.sendStatus = '包邮'
+            break
         }
       }
-      this.popupShow = false
     },
     openSkuFn () {
       // 打开规格弹窗
@@ -721,15 +811,14 @@ export default {
     async compareFn () {
       // 去对比
       let goodsId = this.goodsId
-      const {code, data} = await goodsApi.addCompare(goodsId)
+      const { code } = await goodsApi.addCompare(goodsId)
       if (code === 200) {
-        this.$toast('加入对比')
-      } else {
-        this.$toast(data)
+        this.$toast('加入对比成功')
       }
     },
     // 去购物查看
     onClickMiniBtn () {
+      if (!this.isLogin) return this.jumpLogin()
       window.location.href = '/order/cart'
     },
     // 加入购物车
@@ -833,6 +922,21 @@ export default {
         this.$toast(setData)
       }
     },
+    // 去收藏
+    async handleCollect () {
+      if (!this.isLogin) return this.$toast('请先登录！')
+      let fn = null
+      if (this.ifCollection) {
+        fn = goodsApi.cancelCollect(this.goodsId)
+      } else {
+        fn = goodsApi.toCollect(this.goodsId)
+      }
+      const { code } = await fn
+      if (code === 200) {
+        this.ifCollection = !this.ifCollection
+        this.$toast(this.ifCollection ? '收藏成功' : '取消收藏成功')
+      }
+    },
     onClickefu () {
       console.log(3)
     },
@@ -850,13 +954,34 @@ export default {
     // 跳转登录
     jumpLogin () {
       this.$toast('检测到您未登录，请先登录！')
-      setTimeout(() => {
-        window.location.href = '/account/login'
-      }, 1000)
+      if (this.env === 1) {
+        let wl = window.location
+        setTimeout(function () { wechatLogin.wxLoginWithNoCheck(wl.origin + wl.pathname) }, 500)
+      } else {
+        setTimeout(() => {
+          window.location.href = '/account/login'
+        }, 1000)
+      }
     },
 
     historyBack () {
-      window.history.go(-1)
+      // window.history.go(-1)
+      window.location.href = '/winecenter'
+    },
+
+    // 去对比
+    async toCompare () {
+      const { code, data } = await wineApi.showGoodsForContrast()
+      if (code === 200) {
+        console.log(data)
+        if (data.length >= 2) {
+          window.location.href = '/compare'
+        } else if (data.length === 1) {
+          this.$toast('对比商品不能少于2件')
+        } else if (data.length === 0) {
+          this.$toast('您还未添加对比商品')
+        }
+      }
     }
   }
 }
@@ -946,11 +1071,16 @@ export default {
       h2 {
         font-size: 17px;
         color: #333;
+        line-height: 22px;
+        max-height: 48px;
+        overflow: hidden;
       }
       p {
-        font-size: 14px;
+        font-size: 13px;
         color: #999;
         margin: 12px 0 10px;
+        max-width: 220px;
+        line-height: 20px;
       }
       .price {
         font-size: 19px;
@@ -1051,7 +1181,6 @@ export default {
       }
       span {
         color: #333;
-        font-weight: bold;
         font-family: 'PingFang-SC-Medium'
       }
       .choose-txt {
@@ -1234,6 +1363,9 @@ export default {
   .van-modal {
     z-index: 2000!important
   }
+  &_content {
+    min-height: ~'calc(100vh - 95px)';
+  }
 }
 .u-goods-content {
   overflow: hidden;
@@ -1402,6 +1534,40 @@ export default {
   span {
     font-size: 17px;
     color: #000;
+  }
+}
+.van-actionsheet__content {
+  height: calc(77vh - 43px);
+  overflow: scroll;
+}
+.van-icon.van-icon-star {
+  font-size: 21px;
+  color: #333;
+  margin-right: 4px;
+}
+.van-hairline--bottom::after {
+  border: 0!important;
+}
+
+.compare-btn {
+  position: fixed;
+  bottom: 15%;
+  right: 0;
+  padding: 0 20px;
+  z-index: 100;
+  div {
+    padding: 10px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: #7A7A7A;
+    box-sizing: border-box;
+  }
+  i {
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    background: url('~/assets/img/Icons/ic_vs_blue_45x45@2x.png') no-repeat center/contain;
   }
 }
 </style>

@@ -6,12 +6,19 @@ html, body
   font-family: PingFang SC,Lantinghei SC,Helvetica Neue,Helvetica,Arial,Microsoft YaHei,\\5FAE\8F6F\96C5\9ED1,STHeitiSC-Light,simsun,\\5B8B\4F53,WenQuanYi Zen Hei,WenQuanYi Micro Hei,"sans-serif";
   /* font-family: PingFang SC, Arial, -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif; */
   height: 100%;
-  margin: 0;
+  background: #fff;
+  margin: 0 auto;
   -webkit-overflow-scrolling: touch;
+  max-width: 800PX;
+
   &.hidden {
     height: 100%;
     overflow: hidden;
   }
+}
+
+body {
+  font-size: 62.5%;
 }
 
 #__nuxt {
@@ -163,6 +170,10 @@ input[type="text"] {
   vertical-align: bottom;
 }
 
+.w100 {
+  width: 100%!important;
+}
+
 .margin-20 {
   margin: 0px 20px;
 }
@@ -184,6 +195,12 @@ input[type="text"] {
 
 .fr {
   float: right;
+}
+
+// 文本限制（处理一些客户测试只打一长串英文或者数字的情况）
+.text-limit {
+  word-break: break-all;
+  line-height: 18px;
 }
 
 // 等级与认证icon
@@ -221,7 +238,7 @@ input[type="text"] {
   background: url('~/assets/img/level/official.png') no-repeat center/contain;
 }
 // 专业
-.u-profess() {
+.u-profess {
   &.CMS_IS{
     background: url('~/assets/img/level/CMS_IS.png') no-repeat center/contain;
   }
@@ -264,6 +281,9 @@ input[type="text"] {
   &.STATE_1ST{
     background: url('~/assets/img/level/STATE_1ST.png') no-repeat center/contain;
   }
+  &.OTHER {
+    background: url('~/assets/img/level/OTHER.png') no-repeat center/contain;
+  }
   // 自媒体
   &.OFFICIAL_MEDIA{
     background: url('~/assets/img/level/media.png') no-repeat center/contain;
@@ -277,7 +297,7 @@ input[type="text"] {
   }
 }
 // 自媒体--认证
-.u-self() {
+.u-self {
   // 企业
   &_0{
     background: url('~/assets/img/level/media.png') no-repeat center/contain;
@@ -314,6 +334,11 @@ input[type="text"] {
     align-items:center;
     justify-content: center;
   }
+  .bg {
+    width: 200px;
+    height: 160px;
+    background: url('~/assets/img/pic_mpty_state_200x200.png') no-repeat center/contain;
+  }
 }
 
 .depart-line {
@@ -322,10 +347,29 @@ input[type="text"] {
   height: 10px; 
 }
 
+// 加载更多
+.more-loading {
+  padding:  15px 0;
+  .van-loading {
+    margin: 0 auto 10px;
+  }
+  text-align: center;
+  background: #f2f2f2;
+  font-size: 11px;
+  color: #999;
+}
+.no-more {
+  text-align: center;
+  padding: 18px 0 15px;
+  background: #f2f2f2;
+  font-size: 11px;
+  color: #999;
+}
+
 // 按钮
 .u-button {
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   height: 45px;
   line-height: 45px;
   border-radius: 23px;
@@ -351,11 +395,52 @@ input[type="text"] {
     opacity: 0.7;
   }
   &.disabled {
-    background: #F2F2F2;
-    color: #999999;
+    background: #ccc;
+    color: #fff;
     &:active {
       opacity: 1;
     }
+  }
+  &.border-small {
+    border-radius: 4px;
+  }
+  &.noradius {
+    border-radius: 0;
+  }
+}
+
+// 毛玻璃效果
+.m-layout {
+  &>div:first-child {
+    transition: ease .3s;
+    // transform: translateZ(0);
+  }
+}
+.m-layout .blur {
+  filter: blur(11PX);
+}
+
+// 返回顶部
+.to-top {
+  width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  border-radius: 100%;
+  position: fixed;
+  bottom: 100px;
+  right: 25px;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: ease .6s;
+  &.show {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+  .van-icon {
+    background: #fff;
+    border-radius: 20px;
   }
 }
 
@@ -478,7 +563,7 @@ input[type="text"] {
     width: 100%;
     height: 26px;
     line-height: 26px;
-    font-size: 16px;
+    font-size: 15px;
     &::-webkit-input-placeholder {
       font-size: 16px;
       color: #D0D0D0;
@@ -490,8 +575,8 @@ input[type="text"] {
 }
 
 // a
-.u-link {
-  font-size: 14px;
+a.u-link {
+  font-size: 13px;
   color: #03A1CD;
 }
 
@@ -542,6 +627,7 @@ input[type="text"] {
 .adapter-ipx {
   padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
   padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
+  transition: ease .5s;
 }
 
 @font-face {
@@ -600,14 +686,22 @@ input[type="text"] {
   }
 }
 
+// 富文本框样式重置
 .content-wrapper {
+  font-size: 14px!important;
+  // color: #999!important;
   img {
     max-width: 100%;
     height: auto;
+    margin: 5px 0;
   }
   video {
     width: 100%;
     height: auto;
+  }
+  strong, b, h3, h2 {
+    // color: #333;
+    font-weight: bolder;
   }
 }
 

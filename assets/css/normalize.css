@@ -6,7 +6,7 @@
  ****************/
 /*css reset*/
 body,nav,dl,dt,dd,p,h1,h2,h3,h4,ul,ol,li,input,button,textarea,footer{margin:0;padding:0}
-body{font:16px/1.5 'Microsoft Yahei','Simsun';  color:#333;-webkit-text-size-adjust: none; min-width:320px;line-height: 1;}
+body{color:#333;-webkit-text-size-adjust: none; min-width:320PX;line-height: 1;}
 h1,h2,h3,h4,h5,h6{font-size:100%}
 form{display:inline}
 ul,ol{list-style:none}
@@ -23,3 +23,5 @@ table { border-collapse:collapse; border-spacing:0}
 .ellipsis { white-space:nowrap; text-overflow:ellipsis; overflow:hidden}
 .break { word-break:break-all; word-wrap:break-word}
 header, footer, article, section, nav, menu, hgroup {display: block;clear:all;}
+[type=search] {-webkit-appearance: none;outline-offset: -2PX;}
+input[type=search]::-webkit-search-cancel-button{-webkit-appearance: none;}

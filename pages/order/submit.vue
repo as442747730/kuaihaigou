@@ -1,13 +1,13 @@
 <template>
   <div class="m-order-submit" :class="{'fullScreen': fullScreen}">
 
-    <van-nav-bar :title="navTitle || '填写订单'" left-arrow :right-text="navTxt" @click-left='historyBack' @click-right="jump">
+    <van-nav-bar style='position: fixed' :title="clearHead || '填写订单'" left-arrow :right-text="navTxt" @click-left='historyBack' @click-right="jump">
     </van-nav-bar>
 
     <div class="m-section-position more-link" @click="openAddress">
       <span v-if="!addressSelected.phone">添加收货地址</span>
       <div class="address-info" v-else>
-        <div class="head">
+        <div class="head font_hight">
           <div class="title">{{ addressSelected.name }}</div>
           <div class="title">{{ addressSelected.phone }}</div>
           <div class="default-badge" v-if="addressSelected.ifDefault">默认</div>
@@ -90,11 +90,11 @@
     <div class="m-section-cell">
       <div class="m-section-cell-item more-link small" @click="openCoupon">
         <div class="label">优惠券</div>
-        <span class="content" v-if="!couponSelected.faceValue">{{ usableCouponCount ? usableCouponCount + '张可用' : '无可用优惠券' }}</span>
-        <span class="content" v-else>￥{{ formatMoney(couponSelected.faceValue) }}</span>
+        <span class="content color_666" v-if="!couponSelected.faceValue">{{ usableCouponCount ? usableCouponCount + '张可用' : '无可用优惠券' }}</span>
+        <span class="content color_666" v-else>￥{{ formatMoney(couponSelected.faceValue) }}</span>
       </div>
       <div class="m-section-cell-item">
-        <div class="label">优币抵扣<span class="tip">您有Hi币 {{ formatMoney(rewardNow) }}个</span></div>
+        <div class="label">嗨币抵扣<span class="tip">您有Hi币 {{ formatMoney(rewardNow) }}个</span></div>
         <van-stepper :min='0' :max="maxReward" v-model='rewardMoney' @change='handleNumChange'></van-stepper>
       </div>
     </div>
@@ -116,11 +116,11 @@
       </div>
       <div class="m-section-cell-item">
         <div class="label">优惠券</div>
-        <div class="content">￥-{{ couponSelected.faceValue || 0 }}</div>
+        <div class="content">￥{{ couponSelected.faceValue ? '-' + couponSelected.faceValue : 0 }}</div>
       </div>
       <div class="m-section-cell-item">
         <div class="label">优币抵扣</div>
-        <div class="content">-{{ rewardMoney }}</div>
+        <div class="content">{{ rewardMoney !== 0 ? '-' + rewardMoney : rewardMoney }}</div>
       </div>
       <div class="m-section-cell-item" v-if='fullSub !== 0'>
         <div class="label">活动优惠</div>
@@ -131,17 +131,21 @@
     <div class="m-section-cell">
       <div class="m-section-cell-item more-link small" @click="openInvoice">
         <div class="label">发票信息</div>
-        <div class="content">{{ invoinceSelected.id ? (invoinceSelected.invoiceType === 1 ? '纸质' : '电子') + (invoinceSelected.headType === 1 ? '个人' : '单位') + '发票' : '不开发票' }}</div>
+        <div class="content color_666">{{ invoinceSelected.id ? (invoinceSelected.invoiceType === 1 ? '纸质' : '电子') + (invoinceSelected.headType === 1 ? '个人' : '单位') + '发票' : '不开发票' }}</div>
       </div>
     </div>
 
     <!-- 留言 -->
-    <div class="m-section-cell">
-      <h4>订单留言</h4>
+    <div class="m-section-cell" style="margin-bottom: 0">
+      <div class="msg">
+        <h4>订单留言</h4>
+        <textarea v-model="msg" class="reason-content" :maxlength="150" rows="5" placeholder="请输入留言内容" @blur="ioskeyborad"></textarea>
+        <span class="words">{{ msg.length }}/150</span>
+      </div>
     </div>
 
     <div class="m-section-bottom">
-      <div class="m-section-bottom-left">应付金额：<span class="total">￥{{ payable }}</span></div>
+      <div class="m-section-bottom-left">应付金额：<span class="total">￥{{ formatMoney(payable) }}</span></div>
       <div class="m-section-bottom-right active-status" @click="submitOrder">提交订单</div>
     </div>
 
@@ -154,10 +158,11 @@
     </transition>
 
     <transition name="slide">
-      <uCoupon v-show="couponShow" :usableList="couponArray.filter(n => { return n.useThreshold <= this.totalPrice })" :unusableList="couponArray.filter(n => { return n.useThreshold >= this.totalPrice })" @handleSelectCoupon="handleSelectCoupon"></uCoupon>
+      <uCoupon v-show="couponShow" :amount="formatMoney(payable)" :usableList="couponArray.filter(n => { return n.useThreshold <= this.totalPrice })" :unusableList="couponArray.filter(n => { return n.useThreshold >= this.totalPrice })" @handleSelectCoupon="handleSelectCoupon" @changeCoupon='changeCoupon'></uCoupon>
     </transition>
 
-    <uPay :payMethodShow='payMethodShow' :orderId='orderId' @payClose='payClose'></uPay>
+    <!-- 支付 -->
+    <uPay :payMethodShow='payMethodShow' :orderId='orderId' :env='env' @payClose='payClose'></uPay>
 
   </div>
 </template>
@@ -184,30 +189,48 @@ export default {
   computed: {
     payable () {
       let c = +this.couponSelected.faceValue || 0 // 优惠卷
-      let p = +this.promotion.amount || 0 // 活动满减
+      let p = +this.fullSub // 活动满减
+      // console.log(p)
       let s = +this.rewardMoney || 0
       this.maxReward = this.totalPrice - c - p
       if (this.maxReward > this.rewardNow) {
         this.maxReward = this.rewardNow
       }
       return (this.totalPrice + this.totalFreight - this.reduceFreight - c - p - s)
+    },
+    clearHead () {
+      // 防止物理返回键导致navTitle没有重置
+      let title = this.navTitle
+      if (!this.addressShow && !this.couponShow && !this.invoinceShow) {
+        title = ''
+      }
+      return title
     }
   },
-
-  // transition: {},
 
   async asyncData (req) {
     return api.all([
       api.serverGet('/api/shippingAddress/listAll', {}, req), // 地址
       api.serverGet('/api/order/calcFreight?time=' + new Date().getTime(), {}, req), // 运费
       api.serverGet('/api/promotion/get', null, req), // 活动
-      api.serverGet('/api/coupon/listForUsable', { amount: 100 }, req), // 优惠券
+      // api.serverGet('/api/coupon/listForUsable', {}, req), // 优惠券
       api.serverGet('/api/invoice/listAll', {}, req), // 发票信息
       api.serverGet('/api/reward/getTotalActualAmount/', null, req) // hi币总额
     ])
-      .then(api.spread(function (res1, res2, res3, res4, res5, res6) {
-        if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506 || res5.code === 506) {
-          return req.redirect('/account/login')
+      .then(api.spread(function (res1, res2, res3, res4, res5) {
+        // 检测用户环境是否为微信浏览器,0为非微信,1为微信
+        const ua = req.req.headers['user-agent']
+        let env = 0
+        if (/MicroMessenger/.test(ua)) {
+          // 检测用户设备
+          env = 1
+        }
+        if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506) {
+          if (env === 1) {
+            return req.redirect('/home')
+          } else {
+            return req.redirect('/account/login')
+          }
         }
         let a = []
         let b = []
@@ -227,11 +250,11 @@ export default {
         console.log('res1', res1.data)
         // console.log(res2.data)
         // console.log('res2', res2)
-        // console.log(res4.data)
 
         // 获取默认收货地址
         let defaultAdress = res1.data.find(v => v.ifDefault) || {}
         return {
+          env: env, // 用户浏览器环境
           addressArray: res1.data, // 所有可选的收货地址
           addressSelected: defaultAdress,
           reduceFreight: res2.data.reduceFreight || 0, //
@@ -241,10 +264,10 @@ export default {
           promotion: res3.data || {},
           productList: a,
           goodsNoSend: b,
-          usableCouponCount: res4.data.length, // 可用优惠券数量
-          couponArray: res4.data,
-          invoinceArray: res5.data,
-          rewardNow: res6.data // hi币总额
+          // usableCouponCount: s.length || 0, // 可用优惠券数量
+          // couponArray: s, // 优惠卷
+          invoinceArray: res4.data,
+          rewardNow: res5.data // hi币总额
         }
       }))
   },
@@ -260,6 +283,8 @@ export default {
 
   data () {
     return {
+      env: 0, // 用户浏览器,微信或者非微信
+
       fullScreen: false,
       navTitle: '',
       navTxt: '',
@@ -291,6 +316,7 @@ export default {
       maxReward: 0, // 最大hi币额度
       // 活动优惠 全场满减
       fullSub: 0,
+      msg: '', // 留言信息
       payMethodShow: false, // 支付弹框
       // 支付方式
       payMethod: 0,
@@ -299,6 +325,25 @@ export default {
 
       productList: [],
       goodsNoSend: []
+    }
+  },
+
+  watch: {
+    $route (to, from) {
+      if (to.hash === '') {
+        this.addressShow = false
+        this.couponShow = false
+        this.invoinceShow = false
+        this.fullScreen = false
+        this.navTitle = ''
+        this.navTxt = ''
+      } else if (to.hash === '#address') {
+        this.addressShow = true
+      } else if (to.hash === '#coupon') {
+        this.couponShow = true
+      } else if (to.hash === '#invoice') {
+        this.invoinceShow = true
+      }
     }
   },
 
@@ -315,13 +360,27 @@ export default {
       }, 1000)
     } else if (code === 10026) {
       setTimeout(() => {
-        window.location.href = '/address/manage'
+        this.$dialog.confirm({
+          message: '系统检测到您还没有默认收获地址，是否要去填写收货地址'
+        }).then(() => {
+          window.location.href = '/address/manage?from=submit'
+        }).catch(() => {
+          window.location.href = '/order/cart'
+        })
       }, 1000)
     }
+    await api.clientGet('/api/coupon/listForUsable', { amount: this.totalPrice }).then(response => {
+      if (response.code === 200) {
+        this.couponArray = response.data
+        this.usableCouponCount = response.data.length
+      }
+    })
     console.log('reductionStrategy', this.reductionStrategy)
     if (this.promotion.promotionName && this.totalPrice >= this.promotion.threshold) {
       this.fullSub = this.promotion.amount
+      this.fullSubCache = this.promotion.amount
       this.promotionId = this.promotion.id
+      this.promotionIdCache = this.promotion.id
     }
     // 减免策略
     let { minimumCost, ifDeliveryIncluded, reduceMoney } = this.reductionStrategy
@@ -332,10 +391,15 @@ export default {
   },
 
   methods: {
+    ioskeyborad () {
+      window.scroll(0, 0)
+    },
     openAddress () {
       this.addressShow = true
       this.fullScreen = true
       this.navTitle = '选择地址'
+      this.navTxt = '管理'
+      window.location.hash = 'address'
     },
     async handleSelect (val) {
       this.addressSelected = val
@@ -367,7 +431,8 @@ export default {
       this.invoinceShow = true
       this.fullScreen = true
       this.navTitle = '选择发票信息'
-      this.navTxt = ''
+      this.navTxt = '管理'
+      window.location.hash = 'invoice'
     },
     handleSelectInvoice (val) {
       this.fullScreen = false
@@ -381,25 +446,36 @@ export default {
       this.invoinceShow = false
     },
 
+    changeCoupon (val) {
+      this.couponArray = val
+      this.usableCouponCount = val.length
+    },
+
     openCoupon () {
-      if (this.usableCouponCount === 0) return
+      // if (this.usableCouponCount === 0) return
       this.couponShow = true
       this.fullScreen = true
       this.navTitle = '选择优惠卷'
+      window.location.hash = 'coupon'
     },
     handleSelectCoupon (val) {
       this.couponShow = false
       this.fullScreen = false
       this.navTitle = ''
       this.couponSelected = val
-      // 当优惠卷不可以与全场满减活动叠加时
-      if (!this.promotion.ifAccumulated && this.totalPrice >= this.promotion.threshold && !!val) {
-        this.promotionId = null
-        this.fullSub = 0
-        this.$toast('该满减活动与优惠卷不可叠加，请在两者选一项')
+      // 不选择优惠劵
+      if (val === '') {
+        this.promotionId = this.promotionIdCache || null
+        this.fullSub = this.fullSubCache || 0
+        console.log(this.fullSub)
       } else {
-        this.fullSub = this.promotion.amount || 0
-        this.promotionId = this.promotion.id
+        // 选择优惠劵
+        // 当优惠卷不可以与全场满减活动叠加时
+        if (!this.promotion.ifAccumulated && this.totalPrice >= this.promotion.threshold) {
+          this.promotionId = null
+          this.fullSub = 0
+          this.$toast('该满减活动与优惠卷不可叠加，请在两者选一项')
+        }
       }
     },
 
@@ -412,21 +488,44 @@ export default {
       }
       let obj = {
         shippingAddressId: this.addressSelected.id, // 收货地址id
-        // remark: this.remark, // 留言
+        remark: this.msg, // 留言
         invoiceId: this.invoinceSelected.id, // 发票信息id
         promotionId: this.promotionId || '', // 优惠活动id
-        couponId: this.couponSelected.couponId, // 优惠卷id
+        couponId: this.couponSelected.couponId || null, // 优惠卷id
         hiCoinReduction: this.rewardMoney, // hi币抵扣
-        totalFeight: this.totalFreight - this.reduceFreight // 实际运费
+        totalFeight: this.totalFreight - this.reduceFreight, // 实际运费
+        source: 2 // 来源: 1:PC 2:移动端 3:APP
       }
-      const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
-      const { code, data } = await api.clientPostJson('/api/order/order', obj)
-      if (code === 200) {
-        toast2.clear()
-        this.payMethodShow = true
-        this.orderId = data.orderid
+      // 如果是hi币全额支付
+      if (this.payable === 0 && this.rewardMoney) {
+        // this.payHimoney = true
+        this.$dialog.confirm({
+          title: '支付提示',
+          message: '当前支付方式为hi币全额付款,是否确认付款?'
+        }).then(async () => {
+          // on confirm
+          const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
+          const { code, data } = await api.clientPostJson('/api/order/order', obj)
+          if (code === 200) {
+            toast2.clear()
+            this.orderId = data.orderid
+            window.location.href = '/order/result?orderId=' + this.orderId
+          } else {
+            this.$toast(data)
+          }
+        }).catch(() => {
+        })
       } else {
-        this.$toast(data)
+        // 非hi币，普通支付
+        const toast2 = Toast.loading({ mask: true, message: '订单生成中', duration: 0 })
+        const { code, data } = await api.clientPostJson('/api/order/order', obj)
+        if (code === 200) {
+          toast2.clear()
+          this.payMethodShow = true
+          this.orderId = data.orderid
+        } else {
+          this.$toast(data)
+        }
       }
     },
 
@@ -444,16 +543,23 @@ export default {
     historyBack () {
       this.fullScreen = false
       this.navTitle = ''
+      this.navTxt = ''
       if (this.addressShow) {
         this.addressShow = false
+        window.history.go(-1)
+        // window.location.hash = ''
         return
       }
       if (this.invoinceShow) {
         this.invoinceShow = false
+        window.history.go(-1)
+        // window.location.hash = ''
         return
       }
       if (this.couponShow) {
         this.couponShow = false
+        window.history.go(-1)
+        // window.location.hash = ''
         return
       }
       window.location.href = '/order/cart'
@@ -469,6 +575,12 @@ export default {
       if (this.invoinceShow) {
         window.location.href = '/invoice/list'
       }
+      if (this.addressShow) {
+        window.location.href = '/address/manage?from=submit'
+      }
+      if (this.invoinceShow) {
+        window.location.href = '/invoice/manage?from=submit'
+      }
     },
 
     formatMoney (a) {
@@ -478,24 +590,33 @@ export default {
 }
 </script>
 <style lang="less">
+.van-nav-bar {
+  width: 100%;
+  position: fixed;
+}
 .m-order-submit {
   position: relative;
   min-height: 100vh;
   background: @cor_border;
   font-size: 0;
   padding-bottom: 50px;
+  box-sizing: border-box;
+  overflow: hidden;
   &.fullScreen {
-    height: 100vh;
+    height: 0vh;
+    min-height: 0vh;
     overflow: hidden;
     box-sizing: border-box;
+    padding-bottom: 0;
   }
   .m-section-position {
+    margin-top: 46px;
     height: 65px;
     background: #FFFFFF;
     position: relative;
     font-size: 15px;
     color: @cor_333;
-    padding-left: 67px;
+    padding-left: 60px;
     &::before {
       content: '';
       display: block;
@@ -521,6 +642,9 @@ export default {
           font-size: 15px;
           color: @cor_333;
           padding-right: 15px;
+          &:nth-child(2) {
+            padding-right: 5px;
+          }
         }
         .default-badge {
           color: #FF5B1F;
@@ -566,7 +690,11 @@ export default {
       }
       .content {
         font-size: 14px;
-        color: @cor_999;
+        color: @cor_333;
+        font-weight: lighter;
+        &.color_666 {
+          color: #666
+        }
         .badge {
           display: inline-block;
           vertical-align: bottom;
@@ -580,6 +708,29 @@ export default {
       }
       .van-stepper {
         padding-right: 10px;
+      }
+    }
+    .msg {
+      position: relative;
+      padding: 20px 0 20px 0;
+      h4 {
+        font-size: 15px;
+        color: #333;
+        font-weight: normal;
+      }
+      textarea {
+        width: 100%;
+        margin: 0.4rem 0 0.53333rem 0;
+        font-size: 0.4rem;
+        line-height: 1.5;
+        color:#333;
+      }
+      span {
+        color: #C7C7C7;
+        font-size: 0.37333rem;
+        position: absolute;
+        right: 0;
+        bottom: 26px;
       }
     }
   }
@@ -598,6 +749,11 @@ export default {
     }
 
     &-li {
+      &:last-child {
+        .m-section-product-item {
+          padding-bottom: 20px;
+        }
+      }
       .pack-title {
         border-top: 1PX solid @cor_border;
         border-bottom: 1PX solid @cor_border;
@@ -657,6 +813,9 @@ export default {
           margin-top: 6px;
           font-size: 13px;
           color: @cor_666;
+          &:last-child {
+            margin-top: 10px;
+          }
           .price {
             font-size: 17px;
             color: #F99C00;
@@ -724,5 +883,8 @@ export default {
       transform: translate(0, -50%);
     }
   }
+}
+.m-layout > div:first-child {
+  transition: none;
 }
 </style>

@@ -3,7 +3,7 @@
 
     <div class="m-invoice-ul">
       <div class="m-invoice-li" v-for="(item, index) in invoiceList" :key="index" @click="handleSelectInvoice(item)">
-        <div class="head">{{ (item.invoiceType === 1 ? '纸质' : '电子') + (item.headType === 1 ? '个人' : '单位') + '发票' }}<div class="badge" v-if="item.ifDefault">默认</div></div>
+        <div class="head">{{ (item.invoiceType === 1 ? '纸质' : '电子') + (item.headType === 1 ? '个人' : '单位') + '发票' }}<div class="badge" v-if="item.ifDefault">默认</div><div class="type">{{ item.addressType === 1 ? '家' : item.addressType === 2 ? '公司' : '其他' }}</div></div>
         <div class="content">抬头：{{ item.head }}</div>
         <div class="content" v-if="item.headType === 2">单位税号：{{ item.taxIdentify }}</div>
         <div class="content">内容：{{ item.contentType === 1 ? '酒水/饮料' : '购物明细' }}</div>
@@ -13,7 +13,7 @@
 
     <!-- todo 发票说明跳转 -->
     <div class="m-invoice-bottom">
-      <nuxt-link to="" class="u-link">发票说明</nuxt-link>
+      <a href="/invoice/instructions" class="u-link">发票说明</a>
     </div>
 
   </div>
@@ -53,6 +53,8 @@ export default {
   &-ul {
     background: white;
     font-size: 0;
+    height: ~'calc(100vh - 96px)';
+    overflow: scroll;
   }
   &-li {
     padding: 20px;
@@ -64,15 +66,29 @@ export default {
       color: @cor_333;
       font-weight: bold;
       margin-bottom: 10px;
+      &>div:first-child {
+        margin-left: 10px;
+      }
       .badge {
         display: inline-block;
-        margin-left: 10px;
         padding: 2px;
         vertical-align: top;
         color: #FF5B1F;
         font-size: 9px;
         border: 1PX solid #FF5B1F;
         border-radius: 2px;
+      }
+      .type {
+        margin-left: 5px;
+        display: inline-block;
+        vertical-align: top;
+        font-size: 9px;
+        font-weight: 400;
+        color: #59C3E1;
+        border: 1PX solid #59C3E1;
+        border-radius: 2px;
+        box-sizing: border-box;
+        padding: 2px;
       }
     }
     .content {
@@ -84,8 +100,11 @@ export default {
   &-bottom {
     width: 100%;
     text-align: center;
-    position: absolute;
+    position: fixed;
     bottom: 20px;
+    a {
+      color: #03A1CD
+    }
   }
 }
 </style>

@@ -5,7 +5,7 @@
       <div class="cover" v-lazy:background-image="detailObj.cover"></div>
       <div class="info">
         <p class="title">{{ detailObj.goodsName }}</p>
-        <p class="desc sku">{{ detailObj.skuName }}<span class="price">{{ detailObj.totalRefundAmount }}</span></p>
+        <p class="desc sku">{{ detailObj.skuName }}<span class="price">¥{{ detailObj.totalRefundAmount }}</span></p>
         <p class="desc">x{{ detailObj.remainNum }}</p>
       </div>
     </div>
@@ -13,8 +13,8 @@
     <div class="form-wrapper">
       <div class="title">申请售后类型</div>
       <div class="btn-box">
-        <div :class="['btn', serviceType === 2 ? 'active' : '']" @click="handleType(2)">退货退款</div>
         <div :class="['btn', serviceType === 1 ? 'active' : '']" @click="handleType(1)">仅退款</div>
+        <div :class="['btn', serviceType === 2 ? 'active' : '']" @click="handleType(2)" v-if='detailObj.orderStatus === 5 || detailObj.orderStatus === 6'>退货退款</div>
       </div>
       <div class="select-box">
         <div class="select-left">
@@ -122,7 +122,7 @@ export default {
 
       serviceType: null, // 售后类型
       num: 1, // 售后数量
-      reason: '', // 原因
+      reason: '', // 原因
       questionDesc: '', // 问题描述
       amount: '', // 退款金额
       maxAmount: 0, // 最大可退金额
@@ -136,7 +136,7 @@ export default {
       address: '',
 
       reasonShow: false,
-      reasonCol: ['买错商品', '商品质量', '其他'],
+      reasonCol: ['买错商品', '商品质量', '少件/漏发', '与商品描述不符', '包装/商品残破', '发票问题', '其他'],
 
       areaTxt: '',
 
@@ -199,7 +199,20 @@ export default {
       }))
   },
 
+  watch: {
+    amount (val) {
+      if (+val > this.detailObj.totalRefundAmount) {
+        val = this.detailObj.totalRefundAmount
+      }
+      if (+val < 0) {
+        val = 0
+      }
+      this.amount = val
+    }
+  },
+
   async created () {
+    console.log(this.detailObj)
     await this.getArea(this.provinceId, 'city')
     await this.getArea(this.cityId, 'district')
     // 计算 每一列的 索引
@@ -379,6 +392,7 @@ export default {
         &-desc {
           color: @cor_999;
           font-size: 12px;
+          font-weight: lighter;
         }
       }
       .select-right-input {
@@ -388,6 +402,9 @@ export default {
         font-size: 15px;
         // height: 37px;
         border: 1PX solid @cor_border;
+        font-weight: bolder;
+        color: #333;
+        text-align: center;
       }
       .van-stepper {
         .van-stepper__minus {
@@ -400,7 +417,9 @@ export default {
           width: 26px;
           padding: 0;
           height: 35px;
-          font-size: 13px
+          font-size: 13px;
+          font-weight: bolder;
+          color: #333;
         }
         .van-stepper__plus {
           width: 26px;

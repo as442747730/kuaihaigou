@@ -23,7 +23,6 @@ export default {
       switch (path) {
         case '/mine/person':
         case '/mine/follow':
-        case '/invoice/list':
         case '/address/list':
         case '/coupon/list':
         case '/account/mgnumber':
@@ -33,13 +32,31 @@ export default {
           window.location.href = '/account/mgnumber'
           break
         case '/address/manage':
-          window.location.href = '/address/list'
+          if (this.$route.query.from === 'submit') {
+            window.location.href = '/order/submit'
+          } else {
+            window.location.href = '/mine'
+          }
           break
         case '/address/add':
           window.location.href = '/address/manage'
           break
+        case '/invoice/list':
+          if (this.$route.query.from === 'submit') {
+            window.location.href = '/order/submit'
+          } else {
+            window.location.href = '/mine'
+          }
+          break
         case '/invoice/add':
           window.location.href = '/invoice/list'
+          break
+        case '/invoice/manage':
+          if (this.$route.query.from === 'submit') {
+            window.location.href = '/order/submit'
+          } else {
+            window.location.href = '/mine'
+          }
           break
         case '/coupon/explain':
           window.location.href = '/coupon/list'
@@ -49,6 +66,28 @@ export default {
           break
         case '/noun':
           window.location.href = '/encys'
+          break
+        case '/prove':
+          window.location.href = '/mine'
+          break
+        case '/message':
+          window.location.href = '/mine'
+          break
+        case '/mine/comment':
+          window.location.href = '/mine'
+          break
+        case '/account/bindphone':
+          // window.location.href = '/account/mgphone'
+          window.history.go(-1)
+          break
+        case '/hotspot':
+          window.location.href = '/home'
+          break
+        case '/selection':
+          window.location.href = '/home'
+          break
+        case '/community':
+          window.location.href = '/home'
           break
         default:
           console.log('未知页面')
@@ -69,6 +108,7 @@ header {
   line-height: 1;
   font-size: 12px;
   background: #fff;
+  box-sizing: border-box;
 
   .icon_back {
     // position: absolute;
@@ -93,7 +133,6 @@ header {
       background-position: 50% 50%;
       background-size: cover;
       background-repeat: no-repeat;
-      
     }
   }
 
@@ -102,6 +141,7 @@ header {
     font-family: PingFangSC-Medium;
     font-weight: bold;
     color: rgba(51, 51, 51, 1);
+    margin-right: 20px;
   }
   .h_r {
     padding-right: 20px;

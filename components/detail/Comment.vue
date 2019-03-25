@@ -2,8 +2,8 @@
   <article class="u-goods-comment">
     <div class="detail_comment-tab">
       <ul>
-        <li @click='commentShow = true' :class="{'cur': commentShow}">客户评价</li>
-        <li @click='commentShow = false' :class="{'cur': !commentShow}">客户提问</li>
+        <li @click='handleComment(true)' :class="{'cur': commentShow}">客户评价</li>
+        <li @click='handleComment(false)' :class="{'cur': !commentShow}">客户提问</li>
       </ul>
     </div>
     <!-- 评价 -->
@@ -27,26 +27,25 @@
 
         <div class="detail_comment-type">
           <ul>
-            <li @click='filter(0)' :class="{'cur': checkActive === 0}">全部<span>(3873)</span></li>
-            <li @click='filter(1)' :class="{'cur': checkActive === 1}">优先内容<span>(873)</span></li>
-            <li @click='filter(2)' :class="{'cur': checkActive === 2}">带图片<span>(362)</span></li>
+            <li @click='filter(1)' :class="{'cur': checkActive === 1}">优先内容<span>({{ commentNum.hasContentNum || 0 }})</span></li>
+            <li @click='filter(2)' :class="{'cur': checkActive === 2}">带图片<span>({{ commentNum.hasImgNum || 0 }})</span></li>
+            <li @click='filter(0)' :class="{'cur': checkActive === 0}">全部<span>({{ commentNum.totalNum || 0 }})</span></li>
           </ul>
         </div>
 
         <div class="u_comment">
           <ul>
             <li class="u_comment-list" v-for="($v, $k) in commentData">
-              <div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + $v.personalInfoResp.headimgurl + ') no-repeat center/cover'"></div>
-              <div class="header-img ib-middle" v-else :style="'background: url(' + defaulthead + ') no-repeat center/cover'"></div>
+              <a :href="$v.personalInfoResp ? '/user?uid=' + $v.personalInfoResp.id : 'javascript: void(0)'"><div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
               <div class="user-infor ib-middle">
-                <a class="ib-middle" v-if='$v.personalInfoResp'>{{ $v.personalInfoResp.nickname || '' }}</a>
+                <a class="ib-middle" v-if='$v.personalInfoResp' :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname || '' }}</a>
                 <a class="ib-middle" v-else>匿名用户</a>
                 <br>
                 <u-usericon v-if='$v.personalInfoResp' :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)' />
               </div>
-              <div v-if='$v.evaluationLevel >= 4' class="like_type type1">
+              <div v-if='$v.ifPopular' class="like_type type1">
                 <i></i>
-                <span>超爱</span>
+                <!-- <span>超爱</span> -->
               </div>
               <p class="desc">{{ $v.content || '此用户没有填写评论!' }}</p>
 
@@ -54,7 +53,7 @@
                 <div v-for="($v2, $k2) in getJSONArr($v.imgs)" class="pro-item" :style="'background: url(' + $v2 + ') no-repeat center/cover'" @click='showBigImg($k2, getJSONArr($v.imgs))'></div>
               </div>
 
-              <div class="other">
+              <div class="other" :class="{'bord-1': $v.review}">
                 <div class="time">{{ changeTime($v.createdAt) }}</div>
                 <div class="fr">
                   <span @click='reply($v.id, $v)'>回复({{ $v.replyNum }})</span>
@@ -69,6 +68,9 @@
               <div class="add-comment" v-if='$v.review'>
                 <h3>用户{{ countTimeAgo($v.reviewTime, $v.createdAt) }}追评</h3>
                 <p>{{ $v.review }}</p>
+                <div class="pro">
+                  <div v-for="($v3, $k3) in getJSONArr($v.reviewImgs)" class="pro-item" :style="'background: url(' + $v3 + ') no-repeat center/cover'" @click='showBigImg($k3, getJSONArr($v.reviewImgs))'></div>
+                </div>
               </div>
 
               <!-- 官方回复 -->
@@ -92,19 +94,22 @@
         </div>
 
         <!-- 回复 -->
-        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='comment' />
+        <u-reply v-show='replyShow' :class="{'show': replyShowDelay}" :replystr='replystr' :masterinfo='masterInfo' replyType='comment' :islogin='islogin' :env='env' />
 
       </div>
     </transition>
     <!-- 提问 -->
     <transition name='nav-fade' mode="out-in">
-      <u-question :goodsid="goodsid" v-if='!commentShow' :scrollbottom="scrollbottom" />
+      <u-question :goodsid="goodsid" :queslist="viewdata.frequeList" v-if='!commentShow' :scrollbottom="scrollbottom" :islogin='islogin' :env='env' />
     </transition>
   </article>
 </template>
 <script>
 import uQuestion from './Question'
+
 import uReply from './Replylist'
+
+import wechatLogin from '~/utils/wechatLogin'
 
 import { ImagePreview } from 'vant'
 
@@ -119,7 +124,9 @@ export default {
   props: {
     goodsid: String,
     viewdata: Object,
-    scrollbottom: Boolean
+    scrollbottom: Boolean,
+    islogin: Boolean,
+    env: Number
   },
   components: {
     uQuestion,
@@ -129,7 +136,7 @@ export default {
 
   data () {
     return {
-      checkActive: 0,
+      checkActive: 1,
       commentShow: true,
 
       replyShow: false,
@@ -147,11 +154,12 @@ export default {
       // 默认头像
       defaulthead: this.defaulthead,
       commentData: [],
+      commentNum: {},
 
       page: 1,
       pageLoding: true,
       pageEmpty: false,
-      hasContent: false, // 优先内容
+      hasContent: true, // 优先内容
       hasImg: false, // 优先图片
 
       // 回复内容
@@ -161,7 +169,7 @@ export default {
   },
 
   created () {
-    this.getComment(1)
+    this.getComment(1, false, this.hasContent)
   },
 
   watch: {
@@ -199,6 +207,7 @@ export default {
         } else {
           this.pageEmpty = false
         }
+        this.commentNum = data.extras
         // 是否需要重渲染数据
         this.commentData = needRender ? data.array : this.commentData.concat(data.array)
         this.pageLoding = false
@@ -212,6 +221,15 @@ export default {
         onClose () {
         }
       })
+    },
+    handleComment (val) {
+      this.commentShow = val
+      let ctn = document.querySelector('.compare-btn')
+      if (!val) {
+        ctn.style.display = 'none'
+      } else {
+        ctn.style.display = 'block'
+      }
     },
     // 回复
     async reply (commentid, val) {
@@ -237,6 +255,16 @@ export default {
     },
     // 点赞
     async zan (val, id, ifLike) {
+      if (!this.islogin) {
+        this.$toast('请先登录！')
+        if (this.env === 1) {
+          let wl = window.location
+          setTimeout(function () { wechatLogin.wxLoginWithNoCheck(wl.origin + wl.pathname) }, 500)
+        } else {
+          setTimeout(function () { window.location.href = '/account/login' }, 500)
+        }
+        return
+      }
       console.log(ifLike)
       let likeFn = ifLike ? goodsApi.unlike(id) : goodsApi.like(id)
       const { code, data } = await likeFn
@@ -258,6 +286,7 @@ export default {
     filter (val) {
       this.checkActive = val
       this.pageEmpty = false
+      this.page = 1
       switch (val) {
         case 0:
           // 全部
@@ -302,7 +331,7 @@ export default {
     },
     countTimeAgo (now, setTime) {
       const getTime = new Date(now).getTime() - new Date(setTime).getTime()
-      return Math.floor(getTime / (3600 * 24 * 1e3)) === 0 ? '当天' : Math.floor(getTime / (3600 * 24 * 1e3)) + '天后'
+      return Math.floor(getTime / (3600 * 24 * 1000)) === 0 ? '当天' : Math.floor(getTime / (3600 * 24 * 1000)) + '天后'
     },
     getJSONArr (strArr) {
       return JSON.parse(strArr)
@@ -313,23 +342,6 @@ export default {
 <style lang="less">
 .u-goods-comment {
   font-size: 0;
-  .more-loading {
-    padding:  15px 0;
-    .van-loading {
-      margin: 0 auto 10px;
-    }
-    text-align: center;
-    background: #f2f2f2;
-    font-size: 11px;
-    color: #999;
-  }
-  .no-more {
-    text-align: center;
-    padding: 18px 0 15px;
-    background: #f2f2f2;
-    font-size: 11px;
-    color: #999;
-  }
 }
 .detail_comment {
   &-tab {
@@ -445,12 +457,22 @@ export default {
 }
 .u_comment {
   padding: 0 20px;
-  overflow: hidden;
+  // overflow: hidden;
   &-list {
+    position: relative;
+    margin-bottom: 30px;
+    overflow: hidden;
+    &:after {
+      content: '';
+      position: absolute;
+      height: 1PX;
+      background: #eee;
+      width: 355px;
+      bottom: 0;
+    }
     &:first-child {
       margin-top: 30px;
     }
-    margin-bottom: 30px;
     .header-img {
       width: 45px;
       height: 45px;
@@ -479,9 +501,8 @@ export default {
       text-align: center;
       i{
         display: inline-block;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
+        width: 54px;
+        height: 20px;
         background: url('~/assets/img/ic_chaoai_35x35@2x.png') no-repeat center/contain;
       }
       span {
@@ -512,7 +533,9 @@ export default {
     }
     .other {
       padding-bottom: 22px;
-      border-bottom: 1PX solid #f1f1f1;
+      &.bord-1 {
+        border-bottom: 1PX solid #f1f1f1;
+      }
       .time {
         font-size: 12px;
         color: #999;
@@ -558,10 +581,11 @@ export default {
         color: #333;
         font-family: 'PingFang-SC-Medium';
         text-align: justify;
+        margin-bottom: 10px;
       }
     }
     .office-comment {
-      margin-top: 15px;
+      margin: 15px 0;
       padding: 16px 10px;
       background: #fcfcfc;
       border: 1PX solid #f1f1f1;

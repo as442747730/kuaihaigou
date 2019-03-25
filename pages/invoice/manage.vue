@@ -1,10 +1,11 @@
 <template>
   <div class="m-invoice">
+    <com-head class="comhead" :titleConfig="configtitle"></com-head>
     <div class="m-invoice-ul">
 
       <div class="m-invoice-li" v-for="(item, index) in invoiceList">
         <div class="top">
-          <div class="top-title">{{ (item.invoiceType === 1 ? '纸质' : '电子') + (item.headType === 1 ? '个人' : '单位') + '发票' }}</div>
+          <div class="top-title font_medium">{{ (item.invoiceType === 1 ? '纸质' : '电子') + (item.headType === 1 ? '个人' : '单位') + '发票' }}</div>
           <div class="top-desc">抬头：{{ item.head }}</div>
           <div class="top-desc" v-if="item.headType === 2">单位税号：{{ item.taxIdentify }}</div>
           <div class="top-desc">内容：{{ item.contentType === 1 ? '酒水/饮料' : '购物明细' }}</div>
@@ -20,7 +21,7 @@
 
     </div>
 
-    <div class="f-bottom-btn">
+    <div class="f-bottom-btn" v-show='invoiceList.length <= 4'>
       <div class="m-invoice-btn active-status" @click="addInvoice">添加发票信息</div>
     </div>
 
@@ -28,6 +29,7 @@
 </template>
 <script>
 import api from '~/utils/request'
+import comHead from '~/components/com-head'
 
 export default {
   name: 'invoice',
@@ -40,6 +42,10 @@ export default {
         { hid: 'title', name: 'title', content: '发票信息管理' }
       ]
     }
+  },
+
+  components: {
+    comHead
   },
 
   async asyncData (req) {
@@ -57,7 +63,8 @@ export default {
 
   data () {
     return {
-      invoiceList: []
+      invoiceList: [],
+      configtitle: '选择发票信息'
     }
   },
 
@@ -69,10 +76,18 @@ export default {
       }
     },
     addInvoice () {
-      window.location.href = '/invoice/add'
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/invoice/add?from=submit'
+      } else {
+        window.location.href = '/invoice/add'
+      }
     },
     editInvoice (val) {
-      window.location.href = '/invoice/' + val.id
+      if (this.$route.query.from === 'submit') {
+        window.location.href = '/invoice/' + val.id + '?from=submit'
+      } else {
+        window.location.href = '/invoice/' + val.id
+      }
     },
 
     async setDefault (val) {
@@ -118,8 +133,18 @@ export default {
   background: @cor_border;
   position: relative;
   box-sizing: border-box;
+  padding-bottom: 50px;
+  padding-top: 45px;
+  .comhead {
+    position: fixed !important;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 100;
+  }
   &-ul {
     flex: 1;
+    overflow: scroll;
   }
   &-li {
     padding-top: 20px;
@@ -134,7 +159,7 @@ export default {
         font-size: 17px;
         color: @cor_333;
         margin-bottom: 10px;
-        font-weight: 500;
+        font-weight: bold;
       }
       &-desc {
         font-size: 13px;
@@ -171,6 +196,8 @@ export default {
     }
   }
   &-btn {
+    position: fixed;
+    bottom: 0;
     height: 50px;
     width: 100%;
     background: #03A1CD;

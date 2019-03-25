@@ -39,7 +39,7 @@
     .input-item {
       flex: 1;
       height: 22px;
-      border-bottom: 1PX solid @cor_border;
+      border-bottom: 1PX solid #e2e2e2;
       text-align: center;
       font-size: 16px;
       line-height: 22px;;

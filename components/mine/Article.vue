@@ -1,32 +1,38 @@
 <template>
 	<div>
 	  <article v-for="(art, index) in artlist" :key="index">
-	    <h1>{{ art.title }}</h1>
-	    <div class="time">{{ art.createdAt }}</div>
-	    <div class="tips">
-	      <span class="tips_one">频道：{{ art.channelName }}</span>
-	      <span>话题：{{ art.topicName }}</span>
-	    </div>
-	    <div class="artcon">{{ art.summary }}</div>
-	    <div class="imglist" >
-	      <div class="imgitem" v-for="(imgs, index) in art.imgsPaht" :key="index">
-         <div class="imgitem_bk" :style="{background: `url(${ imgs }) no-repeat center/cover`}"></div>
+      <a :href="'/knowledge/detail/' + art.id + '?type=' + art.articleType">
+  	    <h3>{{ art.title }}</h3>
+  	    <div class="time">{{ art.createdAt }}</div>
+  	    <div class="tips">
+  	      <span class="tips_one">频道：{{ art.channelName }}</span>
+  	      <span>话题：{{ art.topicName }}</span>
+  	    </div>
+  	    <div class="artcon" v-if='art.articleType === 1' v-html='art.summary'></div>
+  	    <div class="imglist" v-if='art.articleType === 1 && art.imgsPaht'>
+  	      <div v-for="(item, index) in art.imgsPaht" :key="index" :class="['imgitem', art.imgsPaht.length === 1 ? 'big' : '' , art.imgsPaht.length % 3 === 0 ? 'small' : '', art.imgsPaht.length === 8 ? 'small' : '', (art.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image='setImgUrl(item)'>
+          </div>
+          <div class="imgitem small" v-if="art.imgsPaht.length === 8"></div>
+  	    </div>
+        <!-- 视频 -->
+        <div class="video-box" v-if="art.articleType === 2">
+          <video class="video-player" controls :src="art.videoPath"></video>
         </div>
-	    </div>
-	    <div class="ctrls">
-	      <div class="ctrl">
-	        <img src="~/assets/img/Icons/ic_dianzan_g_18x18@2x.png" />
-	        <span>{{ art.likeNumber }}</span>
-	      </div>
-	      <div class="ctrl">
-	        <img src="~/assets/img/Icons/ic_pinglun_g_18x18@2x.png" />
-					<span>{{ art.commentNumber }}</span>
-	      </div>
-	      <div class="ctrl">
-	        <img src="~/assets/img/Icons/ic_liulang_g_18x18@2x.png" />
-	      	<span>{{ art.readNumber }}</span>
-	      </div>
-	    </div>
+  	    <div class="ctrls">
+  	      <div class="ctrl">
+  	        <img class="ib-middle" src="~/assets/img/Icons/ic_dianzan_g_18x18@2x.png" />
+  	        <span class="ib-middle">{{ art.likeNumber }}</span>
+  	      </div>
+  	      <div class="ctrl">
+  	        <img class="ib-middle" src="~/assets/img/Icons/ic_pinglun_g_18x18@2x.png" />
+  					<span class="ib-middle">{{ art.commentNumber }}</span>
+  	      </div>
+  	      <div class="ctrl">
+  	        <img class="ib-middle" src="~/assets/img/Icons/ic_liulang_g_18x18@2x.png" />
+  	      	<span class="ib-middle">{{ art.readNumber }}</span>
+  	      </div>
+  	    </div>
+      </a>
 	  </article>
 	</div>
 </template>
@@ -36,6 +42,11 @@ export default {
     artlist: {
       type: Array,
       default: []
+    }
+  },
+  methods: {
+    setImgUrl (url) {
+      return url.indexOf('imageslim') !== -1 ? url.split('?')[0] + '?imageView2/5/w/480/h/480' : url + '?imageView2/5/w/480/h/480'
     }
   }
 }
@@ -49,8 +60,9 @@ article {
   padding: 15px 20px 20px;
   overflow: hidden;
   margin-bottom: 30px;
+  font-size: 0;
 
-  &>h1 {
+  h3 {
     font-size: 16px;
     font-family: PingFangSC-Semibold;
     font-weight: 600;
@@ -114,14 +126,32 @@ article {
     .flex_between;
 
     .imgitem {
-      width: 88px;
-      height: 88px;
       border-radius: 8px;
-      background: #60aff5;
-      &>div {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      overflow: hidden;
+      width: 140px;
+      height: 140px;
+      margin-bottom: 18px;
+      &.big {
         width: 100%;
-        height: 100%;
+        height: 150px;
       }
+      &.small {
+        width: 88px;
+        height: 88px;
+      }
+    }
+  }
+
+  .video-box {
+    position: relative;
+    .video-player {
+      width: 100%;
+      max-height: 180px;
+      border-radius: 5px;
+      margin: 10px 0;
     }
   }
 
