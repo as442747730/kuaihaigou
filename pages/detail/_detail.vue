@@ -28,27 +28,13 @@
 
       <div class="u-detail_info-desc margin-30">
         <h2>{{topGoods.goodsName}}</h2>
-        <p>
-          <span v-for="(tag, index) in topGoods.tagList" :key="index">
-            <template v-if='index !== topGoods.tagList.length - 1'>
-              {{ tag.tagname + '|' }}
-            </template>
-            <template v-else>
-              {{ tag.tagname }}
-            </template>
-          </span>
+        <p class="price">¥ {{ showPrice }} <i>{{ topGoods.marketPrice }}</i></p>
+        <p class="tag-wrap">
+          <span v-for="(tag, index) in topGoods.tagList" :key="index">{{ tag.tagname }}</span>
         </p>
-        <em class="price">
-          ¥ {{ showPrice }}
-        </em>
-        <div class="to-compare" @click="compareFn">
-          去对比
-        </div>
+        <div class="to-compare" @click="compareFn">去对比</div>
         <br>
-        <div class="active" v-if='topGoods.promotionResp'>
-          <!-- {{ topGoods.reductionStrategy }} -->
-          {{ '满' + topGoods.promotionResp.threshold + '减' + topGoods.promotionResp.amount }}
-        </div>
+        <div class="active" v-if='topGoods.promotionResp'>{{ '满' + topGoods.promotionResp.threshold + '减' + topGoods.promotionResp.amount }}</div>
         <!-- 单品时出现 -->
         <div class="single-sku-num" v-if='singleObj.isSingle'>
           <h4>数量：</h4>
@@ -154,16 +140,13 @@
     <van-actionsheet v-model="skuShow" title="选择规格">
       <div class="sku-wrap">
         <div class="goods-info">
-          <div class="pro ib-middle">
+          <div class="pro">
             <img v-if="topGoods.imgList[0].imgUrl" :src="topGoods.imgList[0].imgUrl">
           </div>
-          <div class="desc ib-bottom">
-            <div class="price">
-              ¥{{ getskuInfo.allprice }}
-            </div>
-            <div class="selected">
-              已选：【{{ getskuInfo.skuname }}】
-            </div>
+          <div class="desc">
+            <p class="title">{{ topGoods.goodsName }}</p>
+            <div class="selected">已选：【{{ getskuInfo.skuname }}】</div>
+            <div class="price">¥ {{ getskuInfo.allprice }}</div>
           </div>
         </div>
         <div class="sku-item" v-for="(skuList, index) in newSkuAttrs" :key="index">
@@ -194,16 +177,13 @@
     <van-actionsheet v-model="packShow" title="选择套餐">
       <div class="sku-wrap pack-wrap">
         <div class="goods-info">
-          <div class="pro ib-middle">
+          <div class="pro">
             <img :src="nowpack.coverUrl">
           </div>
-          <div class="desc ib-bottom">
-            <div class="price">
-              ¥ {{ nowpack.allprice }}
-            </div>
-            <div class="selected">
-              已选：【{{ nowpack.name}}】
-            </div>
+          <div class="desc">
+            <p class="title">{{ topGoods.goodsName }}</p>
+            <div class="selected">已选：【{{ nowpack.name}}】</div>
+            <div class="price">¥ {{ nowpack.allprice }}</div>
           </div>
         </div>
         <div class="sku-item">
@@ -280,7 +260,6 @@ export default {
   },
   async asyncData (req) {
     const goodsId = req.params.detail
-    console.log(goodsId)
     // sourcePage='otherone' 来自其它商品,去掉酒评参数
     let sourcePage = req.query.page
     let id = goodsId
@@ -294,6 +273,9 @@ export default {
     const { code: colCode, data: colData } = await collectFn
     let no = detData.ifWine ? 2 : 1
     const {code: frequeCode, data: frequeData} = await goodsApi.frequently(no)
+
+    console.log(detData)
+
     if (detCode === 200) {
       let hotlist = []
       let isLogin = false
@@ -308,13 +290,14 @@ export default {
         ifCollection = colData.ifCollection
       }
       // 顶部信息
-      let { imgList, goodsName, actualPrice, introduce, promotionResp, tagList, province, city } = detData
+      let { imgList, goodsName, actualPrice, marketPrice, introduce, promotionResp, tagList, province, city } = detData
       let topData = {
         tagList: tagList,
         imgList: imgList,
         goodsName: goodsName,
         actualPrice: actualPrice,
         introduce: introduce,
+        marketPrice: marketPrice,
         // reductionStrategy: reductionStrategy
         promotionResp: promotionResp,
         province: province ? province + ',' + city : ''
@@ -1075,28 +1058,41 @@ export default {
         max-height: 48px;
         overflow: hidden;
       }
-      p {
-        font-size: 13px;
-        color: #999;
-        margin: 12px 0 10px;
+      .tag-wrap {
+        margin-top: 12px;
         max-width: 220px;
-        line-height: 20px;
+        span {
+          font-size: 9px;
+          font-weight: bold;
+          display: inline-block;
+          line-height: 1;
+          vertical-align: top;
+          border: 1px solid #03A1CD;
+          border-radius: 2px;
+          padding: 4px 3px;
+          color: #03A1CD;
+          margin-bottom: 5px;
+          &:not(:last-child) {
+            margin-right: 5px;
+          }
+        }
       }
       .price {
+        padding-top: 7px;
         font-size: 19px;
-        font-style: normal;
-        font-family: 'Impact';
-        color: #F99C00
+        color: #FB6248;
+        font-weight: bold;
       }
       .to-compare {
         position: absolute;
         right: 0;
-        top: 35px;
-        width: 78px;
-        height: 31px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100px;
+        height: 35px;
         line-height: 33px;
         border: 1PX solid #c7c7c7;
-        border-radius: 18px;
+        border-radius: 2px;
         text-align: center;
         color: #333;
         font-size: 13px;
@@ -1202,7 +1198,10 @@ export default {
     .goods-info {
       padding: 20px 0 0;
       margin-bottom: 30px;
+      display: flex;
+      overflow: hidden;
       .pro {
+        flex-shrink: 0;
         width: 100px;
         height: 100px;
         border: 1PX solid #e6e6e6;
@@ -1217,15 +1216,26 @@ export default {
         }
       }
       .desc {
-        margin-bottom: 16px;
-        margin-left: 14px;
+        flex: 1;
+        overflow: hidden;
+        padding-left: 16px;
+        .title {
+          width: 100%;
+          font-size: 15px;
+          font-weight: bold;
+          color: #333;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
         .price {
-          font-family: 'Impact';
-          color: #F99C00;
-          font-size: 19px;
+          margin-top: 20px;
+          color: #FF5B1F;
+          font-weight: bold;
+          font-size: 15px;
         }
         .selected {
-          margin-top: 10px;
+          margin-top: 20px;
           font-size: 13px;
           color: #666;
         }
@@ -1328,7 +1338,8 @@ export default {
     &.show {
       visibility: visible;
       transform: none;
-      box-shadow: -1PX -12px 11px 9px #131313;
+      // box-shadow: -1PX -12px 11px 9px #131313;
+      box-shadow: 0 1px 1px 0 rgba(216,216,216,.5);
     }
     .tab-item {
       padding: 0 30px; 

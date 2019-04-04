@@ -17,10 +17,10 @@
           <span class="ib-middle">{{ userInfo.nickname }}</span>
           <user-lab class="ib-middle" :level='String(userInfo.userGradeNumber)' type='2' :profess='String(userInfo.category)'></user-lab>
         </h3>
-        <p>{{ userInfo.signature }}</p>
+        <p>{{ userInfo.signature || '梦想还是要有的，万一实现了呢' }}</p>
       </div>
       <div class="part-top-box">
-        <div class="part-top-left ib-middle">
+        <div class="part-top-left">
           <div class="part-top-item">
             <p class="count">{{ userInfo.buyNumber || 0 }} <span>瓶</span></p>
             <span class="label">已购(酒)</span>
@@ -34,13 +34,13 @@
             <span class="label">粉丝</span>
           </div>
         </div>
-        <div class="part-top-right ib-middle">
-          <div :class="['follow', userInfo.friendSystem ? 'dark' : '']" @click='clickSubscribe'>
-            <van-icon class='ib-middle' :name="userInfo.friendSystem ? 'success' : 'cross'" />
-            <span class='ib-middle'>
-              {{ userInfo.friendSystem ? '已关注' : '关注' }}
-            </span>
-          </div>
+      </div>
+      <div class="part-top-right">
+        <div :class="['follow', userInfo.friendSystem ? 'dark' : '']" @click='clickSubscribe'>
+          <van-icon class='ib-middle' :name="userInfo.friendSystem ? 'success' : 'cross'" />
+          <span class='ib-middle'>
+            {{ userInfo.friendSystem ? '已关注' : '关注' }}
+          </span>
         </div>
       </div>
       <div class="depart-line"></div>
@@ -217,7 +217,7 @@ export default {
       text-align: center;
       h3 {
         color: #333;
-        margin-top: 20px;
+        margin-top: 13px;
         font-size: 21px;
         box-sizing: border-box;
         max-width: 150px;
@@ -241,16 +241,18 @@ export default {
       }
     }
     &-right {
+      padding-bottom: 20px;
       .follow {
-        width: 80px;
-        height: 35px;
+        width: 70px;
+        height: 30px;
         border: 1px solid #03A1CD;
         color: #03A1CD;
         font-size: 0;
-        border-radius:4px;
+        border-radius: 15px;
         text-align: center;
-        line-height: 35px;
+        line-height: 28px;
         box-sizing: border-box;
+        margin: 0 auto;
         &.dark {
           background: #ccc;
           color: #fff;
@@ -263,14 +265,10 @@ export default {
           transform: rotate(45deg);
         }
         span {
-          font-size: 13px;
+          font-size: 12px;
           margin-left: 3px;
         }
       }
-    }
-    &-left {
-      margin-right: 20px;
-      width: 70%;
     }
     &-item {
       text-align: center;

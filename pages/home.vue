@@ -251,13 +251,8 @@
 
       <section class="community_home margin-20">
         <div class="title_home">
-          <h2>
-            社区活动
-          </h2>
-          <a class="to-channel" href="/community?status=0">
-            进入频道
-            <i class="van-icon van-icon-arrow"></i>  
-          </a>
+          <h2>社区活动</h2>
+          <a class="to-channel" href="/community?status=0">进入频道<i class="van-icon van-icon-arrow"></i></a>
         </div>
         <ul class="community_home-item">
           <li
@@ -276,9 +271,10 @@
                 <span class="status carry" v-if="munity.status === 3">进行中</span>
                 <span class="status ends" v-if="munity.status === 4">已结束</span>
               </div>
+              <p class="period">第{{ munity.period }}期 | {{ munity.theme }} </p>
             </div>
             <div class="desc">
-              <h3>第{{ munity.period }}期 | {{ munity.theme }} <span>{{ munity.title }}</span></h3>
+              <h3>{{ munity.title }}</h3>
               <p>活动时间：{{ munity._times }}</p>
               <p class="text-limit">活动地点：{{ munity._dz }}</p>
             </div>
@@ -289,13 +285,8 @@
       <section class="news_home">
         <div class="margin-20">
           <div class="title_home">
-            <h2>
-              行业热点
-            </h2>
-            <a class="to-channel" href="/hotspot">
-              进入频道
-              <i class="van-icon van-icon-arrow"></i>  
-            </a>
+            <h2>行业热点</h2>
+            <a class="to-channel" href="/hotspot">进入频道<i class="van-icon van-icon-arrow"></i></a>
           </div>
         </div>
         <div v-swiper:mySwiper3="swiperNews">
@@ -306,9 +297,7 @@
               @click="gohostpot(news)"
               :key="index">
               <div class="news-list-box" :class="{'w100': newsList.length === 1}">
-                <h3 class="box_title">
-                  <p>{{ news.title }}</p>
-                </h3>
+                <h3 class="box_title"><p>{{ news.title }}</p></h3>
                 <div class="tips">
                   <span>作者：{{ news.author || '佚名' }}</span>
                   <span v-if='news.sourceAddress || news.sourceAuthor'>来源：
@@ -318,6 +307,7 @@
                   </span>
                   <span>分类：{{ circlenavList[news.classificationId] }}</span>
                 </div>
+                <p class="date">{{ news.createdAt }}</p>
                 <div class="pro">
                   <div class="bg full swiper-lazy" v-if="news.imgPath" :data-background="news.imgPath + '?imageView2/5/w/480/h/480'"></div>
                 </div>
@@ -383,7 +373,6 @@ export default {
     }
     if (poetCode === 200) {
       _poets = poetData.array
-      console.log('_poets', _poets)
     }
     if (selectCode === 200) {
       _selects = selectData
@@ -1031,7 +1020,6 @@ export default {
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
     }
-
     .goods-info {
       position: absolute;
       width: 270px;
@@ -1068,29 +1056,6 @@ export default {
         margin-left: 8px;
       }
     }
-    // .infor {
-    //   margin-top: 12px;
-    //   border-top: 1PX solid #eaeaea;
-    //   background: #FBFBFB;
-    //   padding: 15px 20px;
-    //   h3 {
-    //     color: #333;
-    //     font-size: 16px;
-    //     margin-bottom: 10px;
-    //   }
-    //   p {
-    //     color: #999;
-    //     font-size: 14px;
-    //     line-height: 24px;
-    //     text-align: justify;
-    //     overflow: hidden;
-    //     -o-text-overflow: ellipsis;
-    //     text-overflow: ellipsis;
-    //     display: -webkit-box;
-    //     -webkit-line-clamp: 5;
-    //     -webkit-box-orient: vertical;
-    //   } 
-    // }
   }
 }
 
@@ -1211,98 +1176,84 @@ export default {
 .community_home {
   &-list {
     margin-bottom: 15px;
+    border-radius: 4px;
+    box-shadow:0px 2px 14px 0px rgba(231,231,231,1);
     &:last-child {
       margin-bottom: 0;
     }
     .pro {
       height: 180px;
-      border-radius: 6px;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
       overflow: hidden;
+      position: relative;
       .bg {
+        position: relative;
         .bg_cover;
       }
       .munity_bk {
         .theme {
-          float: left;
-          margin-left: 10px;
-          font-size: 13px;
-          font-family: PingFangSC-Semibold;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 1);
+          position: absolute;
+          top: 10px;
+          left: 15px;
+          font-size: 12px;
+          font-weight: bold;
+          color: rgba(255,255,255,1);
           line-height: 16px;
           padding: 3PX 5PX;
-          background: rgba(0, 0, 0, .4);
-          position: relative;
-
-          &:before {
-            position: absolute;
-            left: 0;
-            bottom: -6PX;
-            content: '';
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 0 6PX 20PX;
-            border-color: transparent transparent transparent rgba(0, 0, 0, .4);
-          }
-
-          &:after {
-            position: absolute;
-            right: 0;
-            bottom: -6PX;
-            content: '';
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 20PX 6PX 0;
-            border-color: transparent rgba(0, 0, 0, .4) transparent transparent;
-          }
+          background: rgba(0,0,0,.5);
+          border-radius: 2px;
         }
 
         .status {
-          float: right;
-          margin-top: 10px;
-          margin-right: 10px;
-          font-size: 14px;
-          font-family: PingFangSC-Semibold;
-          font-weight: 600;
+          display: inline-block;
+          width: 50px;
+          height: 20px;
+          box-sizing: border-box;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          font-size: 12px;
+          font-weight: bold;
           color: rgba(255, 255, 255, 1);
-          line-height: 14px;
-          padding: 7px 10px;
+          line-height: 20px;
+          text-align: center;
           border-radius: 4px;
         }
-
         .sign {
           background: #FF3333;
         }
-
         .carry {
           background: #F99C00;
         }
-
         .ends {
           background: #999999;
         }
       }
+      .period {
+        font-size: 19px;
+        line-height: 1;
+        font-weight: bold;
+        color: #fff;
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+      }
     }
     .desc {
+      padding-left: 15px;
+      padding-bottom: 10px;
       h3 {
         margin: 13px 0 10px;
         display: inline-block;
         color: #333;
         font-size:16px;
         font-weight: bold;
-        font-family: 'PingFangSC-Semibold';
-        span {
-          font-weight: normal;
-          font-family: 'PingFang-SC'
-        }
       }
       p {
         font-size: 12px;
         color: #999;
         line-height: 20px;
-        font-weight: lighter;
       }
     }
   }
@@ -1344,11 +1295,11 @@ export default {
       }
     }
     .tips {
-      margin: 6px 0 16px;
+      margin: 10px 0;
       span {
         display: inline-block;
         font-size: 12px;
-        color: #999;
+        color: #333;
         max-width: 110px;
         padding-right: 20px;
         box-sizing: border-box;
@@ -1360,6 +1311,17 @@ export default {
           padding-right: 0;
         }
       }
+    }
+    .date {
+      margin-bottom: 10px;
+      font-size: 12px;
+      line-height: 14px;
+      color: @cor_999;
+      padding-left: 18px;
+      background-image: url(~/assets/img/me/icon-clock.png);
+      background-position: left center;
+      background-size: 14px 14px;
+      background-repeat: no-repeat;
     }
     .pro {
       height: 150px;
@@ -1373,9 +1335,9 @@ export default {
       margin-top: 10px;
       height: 120px;
       & > p {
-        line-height: 24px;
-        color: #999;
-        font-size: 14px;
+        line-height: 23px;
+        color: #666;
+        font-size: 13px;
         overflow: hidden;
         -o-text-overflow: ellipsis;
         text-overflow: ellipsis;

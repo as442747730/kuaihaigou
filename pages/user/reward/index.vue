@@ -4,9 +4,9 @@
 
     <div class="reward-box">
       <ul class="reward-item">
-        <li class="reward-list" v-for='($v, $k) in rewardData' :key='$k' :class="['type_' + $k, rewardIndex === $k ? 'cur' : '']" @click='rewardSelect($k)'>
-            <span><b>{{ formatMoney($v.price) }}</b>元</span>
-            <p>{{ $v.desc }}</p>
+        <li class="reward-list" v-for='($v, $k) in rewardData' :key='$k' :class="['type_' + $k]" @click='rewardSelect($k)'>
+          <span><b>{{ formatMoney($v.price) }}</b>元</span>
+          <p>{{ $v.desc }}</p>
         </li>
       </ul>
       <div class="desc" v-if='rewardInfor.rewardNum !== 0'>
@@ -111,25 +111,14 @@ export default {
       uid: null, // 用户id
       rewardInfor: [],
 
-      rewardData: [{
-        price: 0.01,
-        desc: '喜欢你'
-      }, {
-        price: 5.2,
-        desc: '么么哒'
-      }, {
-        price: 6.66,
-        desc: '666'
-      }, {
-        price: 12,
-        desc: '佩服'
-      }, {
-        price: 50,
-        desc: '老司机'
-      }, {
-        price: 520,
-        desc: '带我飞'
-      }],
+      rewardData: [
+        { price: 0.01, desc: '喜欢你' },
+        { price: 5.2, desc: '么么哒' },
+        { price: 6.66, desc: '666' },
+        { price: 12, desc: '佩服' },
+        { price: 50, desc: '老司机' },
+        { price: 520, desc: '带我飞' }
+      ],
 
       rewardIndex: null,
 

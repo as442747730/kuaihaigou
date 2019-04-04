@@ -10,35 +10,39 @@
     <div class="u-share-articel">
       <div class="u-share-articel-item" v-for='($v, $k) in workData' :key='$k'>
         <a :href="'/knowledge/detail/' + $v.id + '?type=' + $v.articleType">
-          <h3 class="font_hight">{{ $v.title }}</h3>
-          <div class="time">{{ $v.createdAt }}</div>
-          <div class="tips">
-            <span class="tips_one">频道：{{ $v.channelName }}</span>
-            <span>话题：{{ $v.topicName }}</span>
-          </div>
-          <!-- 文章 -->
-          <div class="artcon" v-if='$v.articleType === 1' v-html='formatHtml($v.summary)'></div>
-          <div class="imglist" v-if='$v.articleType === 1 && $v.imgsPaht'>
-            <div v-for="(item, index) in $v.imgsPaht" :key="index" :class="['imgitem', $v.imgsPaht.length === 1 ? 'big' : '' , $v.imgsPaht.length % 3 === 0 ? 'small' : '', $v.imgsPaht.length === 8 ? 'small' : '', ($v.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image='setImgUrl(item)'>
+          <div class="user-wrap">
+            <div class="avatar" :style="`background-image: url(${$v.userResp.headimgurl || require('~/assets/img/defaultImg.png')})`"></div>
+            <div class="user">
+              <p class="user-nickname">{{ $v.userResp.nickname }}</p>
+              <div class="tips">
+                <span class="tips_one">频道：{{ $v.channelName }}</span>
+                <span>话题：{{ $v.topicName }}</span>
+              </div>
+              <div class="time">{{ $v.createdAt }}</div>
             </div>
-            <div class="imgitem small" v-if="$v.imgsPaht.length === 8"></div>
           </div>
-          <!-- 视频 -->
-          <div class="video-box" v-if="$v.articleType === 2">
-            <video class="video-player" controls :src="$v.videoPath"></video>
-          </div>
-          <div class="ctrls">
-            <div class="ctrl">
-              <img class="ib-middle" src="~/assets/img/Icons/ic_dianzan_g_18x18@2x.png" />
-              <span class="ib-middle">{{ $v.likeNumber }}</span>
+          <div class="content-wrap">
+            <h3 class="article-title">{{ $v.title }}</h3>
+            <div class="article-cover">
+              <img v-if="$v.articleType === 1 && $v.imgsPaht && $v.imgsPaht.length !== 0" :src="$v.imgsPaht[0]" class="cover-img" alt="">
+              <img v-if="$v.articleType === 1 && (!$v.imgsPaht || $v.imgsPaht.length === 0)" class="cover-img" :src="require('~/assets/img/shareDefault.png')" alt="">
+              <video v-if="$v.articleType === 2" class="cover-img" ref="refvideo" controls :src="$v.videoPath">
+                <source :src="$v.videoPath" type="video/mp4">
+              </video>
             </div>
-            <div class="ctrl">
-              <img class="ib-middle" src="~/assets/img/Icons/ic_pinglun_g_18x18@2x.png" />
-              <span class="ib-middle">{{ $v.commentNumber }}</span>
-            </div>
-            <div class="ctrl">
-              <img class="ib-middle" src="~/assets/img/Icons/ic_liulang_g_18x18@2x.png" />
-              <span class="ib-middle">{{ $v.readNumber }}</span>
+            <div class="ctrls">
+              <div class="ctrl">
+                <img class="ib-middle" src="~/assets/img/Icons/ic_dianzan_g_18x18@2x.png" />
+                <span class="ib-middle">{{ $v.likeNumber }}</span>
+              </div>
+              <div class="ctrl">
+                <img class="ib-middle" src="~/assets/img/Icons/ic_pinglun_g_18x18@2x.png" />
+                <span class="ib-middle">{{ $v.commentNumber }}</span>
+              </div>
+              <div class="ctrl">
+                <img class="ib-middle" src="~/assets/img/Icons/ic_liulang_g_18x18@2x.png" />
+                <span class="ib-middle">{{ $v.readNumber }}</span>
+              </div>
             </div>
           </div>
         </a>
@@ -86,6 +90,7 @@ export default {
 
   async asyncData (req) {
     const { code, data } = await personApi.serverCreation(req.query.uid)
+    console.log(data.array)
     if (code === 200) {
       let pageEmpty = true
       let workData = []
@@ -197,9 +202,114 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import './common.less';
+// @import './common.less';
+.u-share-articel {
+  padding: 20px;
+}
 .u-share-articel-item {
   margin-bottom: 20px;
+  background: #fff;
+  border-radius: 8px;
+  min-height: 50px;
+  border: 1PX solid #EAEAEA;
+  overflow: hidden;
+  .user-wrap {
+    border-bottom: 1PX solid #EAEAEA;
+    display: flex;
+    padding: 15px 20px 16px 20px;
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 15px;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .user {
+      &-nickname {
+        font-size: 15px;
+        color: #333;
+        font-weight: bold;
+        line-height: 1;
+        margin-bottom: 10px;
+      }
+      .tips {
+        font-size: 12px;
+        color: #333;
+        line-height: 12px;
+        margin-bottom: 10px;
+        &_one {
+          margin-right: 10px;
+        }
+      }
+      .time {
+        font-size: 12px;
+        color: #999;
+        position: relative;
+        padding-left: 20px;
+        line-height: 14px;
+        &:before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 0;
+          width: 14px;
+          height: 14px;
+          transform: translateY(-50%);
+          background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+          .bg_cover;
+        }
+      }
+    }
+  }
+  .content-wrap {
+    padding: 15px 20px;
+    .article-title {
+      font-size: 15px;
+      color: #333;
+      font-weight: bold;
+      line-height: 21px;
+      max-height: 42px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      margin-bottom: 10px;
+    }
+    .article-cover {
+      width: 295px;
+      height: 150px;
+      border-radius: 4px;
+      overflow: hidden;
+      .cover-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    .ctrls {
+      display: flex;
+      font-size: 0;
+      .ctrl {
+        padding-top: 16px;
+        &:not(:first-child) {
+          margin-left: 25px;
+        }
+        &>img {
+          display: inline-flex;
+          width: 18px;
+          height: 18px;
+        }
+        &>span {
+          padding-left: 3px;
+          font-size: 12px;
+          color: rgba(153, 153, 153, 1);
+        }
+      }
+    }
+  }
 }
 .model-item a{
   &:last-child {

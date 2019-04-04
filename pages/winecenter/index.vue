@@ -948,6 +948,7 @@ export default {
   margin: 20px 0;
   & > a {
     .flex_between;
+    align-items: flex-start;
   }
 
   .item_l {

@@ -8,36 +8,28 @@
     </div>
 
     <div class="u-collect-articel">
-      <div class="u-collect-articel-list" v-for='($v, $k) in collectData' :key='$k'>
+      <div class="u-collect-articel-list hot-list" v-for='($v, $k) in collectData' :key='$k'>
         <!-- 知识分享 -->
-        <div class="u-share-articel-item"  v-if='$v.collectType === 1'>
-          <a :href="'/knowledge/detail/' + $v.id + '?type=' + $v.articleType">
-            <div class="author-info">
-              <span class="avatar" :style="'background-image: url(' + ($v.personalInfoResp.headimgurl ? $v.personalInfoResp.headimgurl : require('~/assets/img/defaultImg.png')) + ')'"></span>
-              <div class="info">
-                <div class="nickname">
-                  <span>{{ $v.personalInfoResp.nickname }}</span>
-                  <user-lab :level='String($v.personalInfoResp.userGradeNumber)' type='1' :profess='String($v.personalInfoResp.category)'></user-lab>
-                </div>
-                <p class="date">{{ $v.createdAt }}</p>
+        <a class="share-item" v-if='$v.collectType === 1' :href="'/knowledge/detail/' + $v.id + '?type=' + $v.articleType">
+          <div class="user-wrap">
+            <div class="avatar" :style="`background-image: url(${$v.userResp.headimgurl || require('~/assets/img/defaultImg.png')})`"></div>
+            <div class="user">
+              <p class="user-nickname">{{ $v.userResp.nickname }}</p>
+              <div class="tips">
+                <span class="tips_one">频道：{{ $v.channelName }}</span>
+                <span>话题：{{ $v.topicName }}</span>
               </div>
+              <div class="time">{{ $v.createdAt }}</div>
             </div>
-            <h3 class="font_hight">{{ $v.title }}</h3>
-            <!-- <div class="time">{{ $v.createdAt }}</div> -->
-            <div class="tips">
-              <span class="tips_one">频道：{{ channelName[$v.channelNumber - 1] }}</span>
-              <span>话题：{{ $v.topicName }}</span>
-            </div>
-            <!-- 文章 -->
-            <div class="artcon" v-if='$v.articleType === 1' v-html='formatHtml($v.summary)'></div>
-            <div class="imglist" v-if='$v.articleType === 1 && $v.imgsPaht'>
-              <div v-for="(item, index) in $v.imgsPaht" :key="index" :class="['imgitem', $v.imgsPaht.length === 1 ? 'big' : '' , $v.imgsPaht.length % 3 === 0 ? 'small' : '', $v.imgsPaht.length === 8 ? 'small' : '', ($v.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="setImgUrl(item) + '&' + new Date().getTime()">
-              </div>
-              <div class="imgitem small" v-if="$v.imgsPaht.length === 8"></div>
-            </div>
-            <!-- 视频 -->
-            <div class="video-box" v-if="$v.articleType === 2">
-              <video class="video-player" controls :src="$v.videoPath"></video>
+          </div>
+          <div class="content-wrap">
+            <h3 class="article-title">{{ $v.title }}</h3>
+            <div class="article-cover">
+              <img v-if="$v.articleType === 1 && $v.imgsPaht && $v.imgsPaht.length !== 0" :src="$v.imgsPaht[0]" class="cover-img" alt="">
+              <img v-if="$v.articleType === 1 && (!$v.imgsPaht || $v.imgsPaht.length === 0)" class="cover-img" :src="require('~/assets/img/shareDefault.png')" alt="">
+              <video v-if="$v.articleType === 2" class="cover-img" ref="refvideo" controls :src="$v.videoPath">
+                <source :src="$v.videoPath" type="video/mp4">
+              </video>
             </div>
             <div class="ctrls">
               <div class="ctrl">
@@ -53,18 +45,15 @@
                 <span class="ib-middle">{{ $v.readNumber }}</span>
               </div>
             </div>
-          </a>
-        </div>
+          </div>
+        </a>
         <!-- 新闻资讯 -->
         <div class="list-box" v-if="$v.collectType === 2">
           <div class="list">
             <div class="content">
               <div class="content-head">
-                <p>
-                  <a :href="'/hotspot/detail/' + $v.id">{{ $v.title }}</a>
-                </p>
+                <p><a :href="'/hotspot/detail/' + $v.id">{{ $v.title }}</a></p>
               </div>
-              <div class="content-time">{{$v.createdAt}}</div>
               <div class="content-other">
                 <span>作者：{{$v.author || '佚名'}}</span>
                 <!-- <span v-if="$v.sourceAddress">来源：{{$v.sourceAddress}}</span> -->
@@ -75,7 +64,8 @@
                 </span>
                 <span v-if="$v.classificationId >= 0">分类：{{circlenavList[$v.classificationId]}}</span>
               </div>
-              <div class="content-labels">
+              <div class="content-time">{{$v.createdAt}}</div>
+              <!-- <div class="content-labels">
                 <span
                   class="label"
                   v-for="(lab, labIndex) in $v.labels"
@@ -83,13 +73,13 @@
                   :key="labIndex">
                     <a :href="'/hotspot/label/' + lab.id">{{ lab.labelName }}</a>
                   </span>
-              </div>
+              </div> -->
               <div class="imgs">
                 <a :href="'/hotspot/detail/' + $v.id">
                   <div class="imgone" v-lazy:background-image="$v.imgPath + '?imageslim'"></div>
                 </a>
               </div>
-              <div class="article">
+              <div class="article news-content">
                 <a :href="'/hotspot/detail/' + $v.id">{{ $v.summary }}</a>
               </div>
             </div>
@@ -98,7 +88,31 @@
         <!-- 甄选内容 -->
         <div class="picklist" v-if="$v.collectType === 3">
           <a :href="'/selection/detail/' + $v.id">
-            <div class="infos" v-if="$v.goodsMinimalResp">
+            <div class="hot-list-box" v-if="$v.goodsMinimalResp" >
+              <div class="desc">
+                <h3>{{ $v.goodsMinimalResp.goodsName }}</h3>
+                <div class="author">作者：{{ $v.auth }}</div>
+              </div>
+              <div class="bottom">
+                <div class="summary">{{ $v.summary }}</div>
+                <div class="pro" v-lazy:background-image="$v.img">
+                  <div class="goods-info">
+                    <div class="ib-middle goods-info-img" v-lazy:background-image="$v.goodsMinimalResp.cover"></div>
+                    <div class="ib-middle goods-info-detail">
+                      <p class="u-ellipsis">{{ $v.goodsMinimalResp.goodsName }}</p>
+                      <em class="ib-middle">¥{{ $v.goodsMinimalResp.actualPrice }}</em>
+                      <del class="ib-middle">市场价：¥{{ $v.goodsMinimalResp.marketPrice }}</del>
+                    </div>
+                  </div>
+                </div>
+                <div class="u-other">
+                  <span class="zan"><i></i>{{ $v.likeNumber }}</span>
+                  <span class="chat"><i></i>{{ $v.commentNumber }}</span>
+                  <span class="watch"><i></i>{{ $v.readNumber }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="infos" v-if="$v.goodsMinimalResp">
               <div class="infos-l" v-lazy:background-image="$v.goodsMinimalResp.cover"></div>
               <div class="infos-r">
                 <div class="head">{{$v.goodsMinimalResp.goodsName}}</div>
@@ -122,7 +136,7 @@
             <div class="articles">
               <h3 class="title">{{ $v.title }}</h3>
               <p class="content">{{ $v.summary }}</p>
-            </div>
+            </div> -->
           </a>
         </div>
         <!-- 名词解释 -->
@@ -132,8 +146,8 @@
             <div class="varity-bk">
               <div class="varity-bk_in" v-lazy:background-image="$v.bgimg"></div>
             </div>
-            <!-- <div class="varity-article" v-html='$v.summary'></div> -->
-            <div class="varity-foot">
+            <div class="varity-article">{{ $v.summary | fillArticle }}</div>
+            <div class="varity-foot" style="border-top: 1px solid #EAEAEA;">
               <i class="icon_same ic_good"></i>
               <span class="num_same">{{ $v.likeNumber }}</span>
               <i class="icon_same ic_collect marl"></i>
@@ -167,13 +181,14 @@
 import { personApi } from '@/api/users'
 import Tab from '@/components/user/Tab.vue'
 import userLab from '@/components/Usericon.vue'
+import ShareItem from '@/components/ShareItem'
 
 export default {
   name: '',
 
   layout: 'page-with-user',
 
-  components: { Tab, userLab },
+  components: { Tab, userLab, ShareItem },
 
   head () {
     return {
@@ -187,7 +202,12 @@ export default {
   async asyncData (req) {
     const { code, data } = await personApi.serverArticel({ page: 1, count: 5, type: null, userId: req.query.uid })
     if (code === 200) {
-      console.log(data)
+      console.log(data.array)
+      data.array.forEach(item => {
+        if (item.personalInfoResp) {
+          item.userResp = item.personalInfoResp
+        }
+      })
       let pageEmpty = false
       pageEmpty = data.total <= 5
       return {
@@ -241,6 +261,11 @@ export default {
       this.pageLoding = true
       const { code, data } = await personApi.collect({ page: page, count: 5, type: this.type, userId: this.uid })
       if (code === 200) {
+        data.array.forEach(item => {
+          if (item.personalInfoResp) {
+            item.userResp = item.personalInfoResp
+          }
+        })
         if (needClear) {
           // data.array.forEach(v => {
           //   if (v.collectType === 3) {
@@ -292,6 +317,14 @@ export default {
       str = str.replace('。', '')
       return str
     }
+  },
+  filters: {
+    fillArticle (str) {
+      str = str.toString()
+      /* eslint-disable */
+      return str.replace(/<strong>.*?<\/strong>/g, '').replace(/<h\d.*?>.*<\/h\d>/g, '').replace(/<img .*?\/>/g, '').replace(/[<.*?>|<\/.*?\>|&nbsp;]/g, '').replace(/[\n|\s|\r|\\s|↵]/g, '').substr(0, 100)
+      /* eslint-disable */
+    }
   }
 }
 </script>
@@ -304,6 +337,220 @@ export default {
     padding: 0 20px;
     margin-bottom: 20px;
   }
+}
+.share-item {
+  display: block;
+  border-radius: 8px;
+  border: 1PX solid #EAEAEA;
+  .user-wrap {
+    border-bottom: 1PX solid #EAEAEA;
+    display: flex;
+    padding: 15px 20px 16px 20px;
+    overflow: hidden;
+    .avatar {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 15px;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .user {
+      flex: 1;
+      overflow: hidden;
+      &-nickname {
+        width: 100%;
+        font-size: 15px;
+        color: #333;
+        font-weight: bold;
+        line-height: 1;
+        margin-bottom: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .tips {
+        font-size: 12px;
+        color: #333;
+        line-height: 12px;
+        margin-bottom: 10px;
+        &_one {
+          margin-right: 10px;
+        }
+      }
+      .time {
+        font-size: 12px;
+        color: #999;
+        position: relative;
+        padding-left: 20px;
+        line-height: 14px;
+        &:before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 0;
+          width: 14px;
+          height: 14px;
+          transform: translateY(-50%);
+          background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+          .bg_cover;
+        }
+      }
+    }
+  }
+  .content-wrap {
+    padding: 15px 20px;
+    .article-title {
+      font-size: 15px;
+      color: #333;
+      font-weight: bold;
+      line-height: 21px;
+      max-height: 42px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      margin-bottom: 10px;
+    }
+    .article-cover {
+      width: 295px;
+      height: 150px;
+      border-radius: 4px;
+      overflow: hidden;
+      .cover-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    .ctrls {
+      display: flex;
+      font-size: 0;
+      .ctrl {
+        padding-top: 16px;
+        &:not(:first-child) {
+          margin-left: 25px;
+        }
+        &>img {
+          display: inline-flex;
+          width: 18px;
+          height: 18px;
+        }
+        &>span {
+          padding-left: 3px;
+          font-size: 12px;
+          color: rgba(153, 153, 153, 1);
+        }
+      }
+    }
+  }
+}
+.varity-article {
+  font-size: 14px;
+  color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 24px;
+  margin: 10px 0;
+  border-bottom: none;
+  margin: 0;
+}
+.hot-list {
+  .bottom {
+    padding: 10px 15px;
+  }
+  .pro {
+    margin: 10px 0 15px;
+    height: 180px;
+    border-radius: 4px;
+    text-align: center;
+    position: relative;
+    .bg_cover;
+  }
+  .desc {
+    font-size: 12px;
+    border-bottom: 1PX solid #f5f5f5; 
+    padding: 15px;
+    &>h3 {
+      font-size: 15px;
+      font-family: PingFangSC-Medium;
+      color:rgba(51,51,51,1);
+      line-height: 21px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      height: 42px;
+    }
+    &>p {
+      padding: 10px 0;
+      font-size:12px;
+      color:rgba(153,153,153,1);
+      line-height:12px;
+    }
+    .author {
+      font-size: 12px;
+      color: #333;
+      padding: 10px 0 0px;
+    }
+  }
+  .summary {
+    color: #666;
+    height: 68px;
+    font-size: 13px;
+    line-height: 23px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  .goods-info {
+    position: absolute;
+    width: 270px;
+    box-sizing: border-box;
+    bottom: 10px;
+    left: 16px;
+    padding: 5px 10px;
+    background: #f9f9f9;
+    &-img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+      .bg_cover;
+      background-color: #fff;
+    }
+    &-detail {
+      width: calc(100% - 60px);
+      text-align: left;
+    }
+    p {
+      color: #333;
+      font-size: 11px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+    em {
+      color: @c-price;
+      font-size: 15px;
+    }
+    del {
+      font-size: 11px;
+      color: #666;
+      margin-left: 8px;
+    }
+  }
+}
+.news-content {
+  font-size: 13px!important;
+  line-height: 23px!important;
 }
 .model-item a{
   &:last-child {

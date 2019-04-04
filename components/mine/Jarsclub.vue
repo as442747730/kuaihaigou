@@ -56,39 +56,37 @@ export default {
 <style lang="less" soped>
 .jars {
   display: flex;
-  padding: 25px 0;
-  border-bottom: 1px solid @cor_border;
+  padding: 25px 20px;
+  &:not(:last-child) {
+    border-bottom: 1px solid @cor_border;
+  }
   &:first-child {
     padding-top: 0;
   }
 
   .jars-l {
-    display: flex;
-    flex-direction: column;
     width: 65px;
-    height: 73px;
+    height: 79px;
+    box-sizing: border-box;
     border-radius: 8px;
-    align-items: center;
-    justify-content: center;
-    background: -webkit-linear-gradient(135deg, #4FEDEF, #00A1F0);
-    background: -o-linear-gradient(135deg, #4FEDEF, #00A1F0);
-    background: -moz-linear-gradient(135deg, #4FEDEF, #00A1F0);
-    background: linear-gradient(135deg, #4FEDEF, #00A1F0);
-
+    // background: -webkit-linear-gradient(135deg, #4FEDEF, #00A1F0);
+    // background: -o-linear-gradient(135deg, #4FEDEF, #00A1F0);
+    // background: -moz-linear-gradient(135deg, #4FEDEF, #00A1F0);
+    // background: linear-gradient(135deg, #4FEDEF, #00A1F0);
+    background:linear-gradient(334deg,rgba(0,161,240,1) 0%,rgba(79,237,239,1) 100%);
+    color: #fff;
+    padding: 8px 8px 0 8px;
     &_d {
       font-size: 30px;
-      font-family: PingFangSC-Semibold;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 1);
-      line-height: 30px;
+      line-height: 1;
+      font-weight: bold;
       text-align: center;
+      padding-bottom: 10px;
     }
-
     &_ym {
+      border-top: 1PX solid #fff;
+      padding-top: 10px;
       font-size: 12px;
-      font-family: PingFang-SC-Regular;
-      font-weight: 400;
-      color: rgba(255, 255, 255, 1);
       line-height: 12px;
       text-align: center;
     }
@@ -103,10 +101,9 @@ export default {
       height: 20px;
       line-height: 20px;
       text-align: center;
-      background: #59C3E1;
+      background: #03A1CD;
       font-size: 12px;
-      font-family: PingFangSC-Semibold;
-      font-weight: 600;
+      font-weight: bold;
       color: rgba(255, 255, 255, 1);
       border-radius: 2PX;
     }
@@ -114,9 +111,7 @@ export default {
     &>p {
       width: 100%;
       font-size: 14px;
-      font-family: PingFang-SC-Medium;
-      font-weight: 500;
-      color: rgba(102, 102, 102, 1);
+      color: #333;
       line-height: 24px;
       word-break: break-all;
       overflow : hidden;
