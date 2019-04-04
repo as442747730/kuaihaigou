@@ -164,10 +164,11 @@ export default {
     border-radius: 8px;
     align-items: center;
     justify-content: center;
-    background: -webkit-linear-gradient(135deg, #4FEDEF, #00A1F0);
-    background: -o-linear-gradient(135deg, #4FEDEF, #00A1F0);
-    background: -moz-linear-gradient(135deg, #4FEDEF, #00A1F0);
-    background: linear-gradient(135deg, #4FEDEF, #00A1F0);
+    // background: -webkit-linear-gradient(135deg, #4FEDEF, #00A1F0);
+    // background: -o-linear-gradient(135deg, #4FEDEF, #00A1F0);
+    // background: -moz-linear-gradient(135deg, #4FEDEF, #00A1F0);
+    // background: linear-gradient(135deg, #4FEDEF, #00A1F0);
+    background:linear-gradient(334deg,rgba(0,161,240,1) 0%,rgba(79,237,239,1) 100%);
 
     &_d {
       font-size: 30px;
@@ -179,7 +180,6 @@ export default {
     &_ym {
       font-size: 12px;
       color: #fff;
-      font-weight: lighter;
       line-height: 12px;
       text-align: center;
       padding-top: 7px;
@@ -197,9 +197,10 @@ export default {
       height: 20px;
       line-height: 20px;
       text-align: center;
-      background: #59C3E1;
+      background: #03A1CD;
       font-size: 12px;
-      color: rgba(255, 255, 255, 1);
+      font-weight: bold;
+      color: #fff;
       margin-bottom: 4px;
       border-radius: 2PX;
     }

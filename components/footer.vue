@@ -24,7 +24,7 @@
           <i></i>
           <span>短视频</span>
         </div>
-        <div class="u-publish-item" @click='jumpDrink'>
+        <div :style="ifSignin ? 'opacity: 0.4' : ''" class="u-publish-item" @click='jumpDrink'>
           <i></i>
           <span>酒坛诗社</span>
         </div>
@@ -61,7 +61,14 @@ export default {
         { name: '我的', path: '/mine' }
       ],
 
-      publishShow: false // 发布文章界面
+      publishShow: false, // 发布文章界面
+      ifSignin: false
+    }
+  },
+  async mounted () {
+    const { code, data } = await poetApi.adjustSign()
+    if (code === 200) {
+      this.ifSignin = data.ifSign
     }
   },
   methods: {
@@ -93,6 +100,9 @@ export default {
       window.location.href = '/knowledge/add?type=2'
     },
     async jumpDrink () {
+      if (this.ifSignin) {
+        return
+      }
       const { code, data } = await poetApi.adjustSign()
       if (code === 200) {
         let { ifSign } = data

@@ -39,36 +39,25 @@
         </div>
         <div v-swiper:mySwiper2="shareSwiper">
           <div class="mdl-lists swiper-wrapper">
-            <div class="list swiper-slide" v-for="(item, index) in shareList" :key="index">
-              <div class="users">
-                <div class="avater" :style="'background-image: url('+ (item.userResp.headimgurl ? item.userResp.headimgurl : require('~/assets/img/defaultImg.png')) +')'"></div>
-                <div class="infos">
-                  <div class="person">
-                    <p>{{ item.userResp.nickname }}</p>
-                    <user-lab :level='String(item.userResp.userGradeNumber)' type='1' :profess='String(item.userResp.category)'></user-lab>
-                  </div>
-                  <div class="time">{{ item.createdAt }}</div>
-                </div>
+            <div class="list no-border share-item swiper-slide" v-for="(item, index) in shareList" :key="index">
+              <div class="item-top">
+                <div class="avatar" :style="'background-image: url('+ (item.userResp.headimgurl ? item.userResp.headimgurl : require('~/assets/img/defaultImg.png')) +')'"></div>
+                <span class="nickname">{{ item.userResp.nickname }}</span>
+                <user-lab :level='String(item.userResp.userGradeNumber)' type='1' :profess='String(item.userResp.category)'></user-lab>
+              </div>
+              <img v-if="item.articleType === 1" class="item-cover" :src="item.articleType === 1 && item.imgsPaht && item.imgsPaht.length !== 0 ? (item.imgsPaht[0] + '?imageView2/2/w/320/h/200') : require('~/assets/img/shareDefault.png')" alt="">
+              <div class="round-bottom">
+                <video v-if="item.articleType === 2" class="item-cover" controls :src="item.videoPath"></video>
               </div>
               <div class="content">
                 <a :href="'/knowledge/detail/' + item.id + '?type=' + item.articleType">
-                  <div class="content-head">
-                    <p>{{ item.title }}</p>
-                  </div>
+                  <p class="content-title">{{ item.title }}</p>
                   <div class="content-other">
                     <span>频道：{{ item.channelName }}</span>
                     <span>话题：{{ item.topicName }}</span>
                   </div>
-                  <div class="article" v-if="item.articleType === 1" style="-webkit-box-orient: vertical;" v-html="item.summary"></div>
-                  <div class="imgs" v-if="item.articleType === 1 && item.imgsPaht">
-                    <div v-if="item.imgsPaht" class="imgone" v-lazy:background-image="item.imgsPaht[0] + '?imageView2/2/w/560/h/300'"></div>
-                    <!-- <div v-else class="imgone" v-lazy:background-image="require('~/assets/img/001.jpg')"></div> -->
-                  </div>
+                  <div class="time">{{ item.createdAt }}</div>
                 </a>
-                <!-- 视频 -->
-                <div class="video-box" v-if="item.articleType === 2">
-                  <video class="video-player" controls :src="item.videoPath"></video>
-                </div>
               </div>
               <div class="bottoms">
                 <div class="btns">
@@ -79,6 +68,7 @@
                 <a :href="'/knowledge/detail/' + item.id + '?type=' + item.articleType"><div class="more"></div></a>
               </div>
             </div>
+
           </div>
         </div>
       </section>
@@ -98,25 +88,24 @@
                   <div class="content-head">
                     <p>{{ item.title }}</p>
                   </div>
-                  <div class="content-time">{{ item.createdAt }}</div>
                   <div class="content-other">
                     <span v-if='item.author'>作者：{{ item.author }}</span>
                     <span v-if='item.sourceAddress'>来源：{{ item.sourceAddress }}</span>
                   </div>
+                  <div class="content-time">{{ item.createdAt }}</div>
                   <div class="imgs">
                     <div v-if="item.imgPath" class="imgone" v-lazy:background-image="item.imgPath + '?imageView2/2/w/560/h/300'"></div>
                     <div v-else class="imgone" v-lazy:background-image="require('~/assets/img/001.jpg')"></div>
                   </div>
                   <div class="article">{{item.summary}}</div>
                 </div>
-                <div class="bottoms">
+                <!-- <div class="bottoms">
                   <div class="btns">
                     <span class="sub good">{{ item.likeNumber }}</span>
                     <span class="sub msg">{{ item.commentNumber }}</span>
                     <span class="sub look">{{ item.readNumber }}</span>
                   </div>
-                  <!-- <div class="more"></div> -->
-                </div>
+                </div> -->
               </a>
             </div>
           </div>
@@ -137,7 +126,7 @@ export default {
     let homefn = encyApi.paginate(par2, req)
     // 需要 return 才能为 data 绑上数据
     return Promise.all([sharefn, homefn]).then(([share, home]) => {
-      console.log(share)
+      console.log(home.data.array)
       if (home.code !== 200 || share.code !== 200) {
         req.redirect('/error')
       }
@@ -228,9 +217,9 @@ export default {
         &:last-child {
           margin-right: 20px;
         }
-        // & + .list {
-        //   margin-left: 15px;
-        // }
+        &.no-border {
+          border:none;
+        }
         .users {
           padding: 0 20px;
           height: 80px;
@@ -259,23 +248,10 @@ export default {
                 margin-right: 5px;
               }
             }
-            .time {
-              font-size:12px;
-              font-family:PingFang-SC-Regular;
-              font-weight:400;
-              color:rgba(153,153,153,1);
-              height: 14px;
-              line-height:14px;
-              padding-left: 18px;
-              background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
-              background-position: left center;
-              background-repeat: no-repeat;
-              background-size: 14px 14px;
-            }
           }
         }
         .content {
-          padding: 20px 20px 0;
+          padding: 20px;
           &-head {
             display: flex;
             align-items: center;
@@ -288,7 +264,7 @@ export default {
               overflow: hidden;
               text-overflow: ellipsis;
               display: -webkit-box;
-              -webkit-line-clamp: 1;
+              -webkit-line-clamp: 2;
               -webkit-box-orient: vertical;
             }
           }
@@ -309,19 +285,18 @@ export default {
           &-other {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
             &>span {
               font-size:12px;
-              font-family:PingFang-SC-Regular;
-              font-weight:400;
               color:rgba(153,153,153,1);
-              max-width: 100%;
               box-sizing: border-box;
               overflow: hidden;
               white-space: nowrap;
               text-overflow: ellipsis;
               padding-right: 20px;
               margin-top: 10px;
+              &:first-child {
+                flex-shrink: 0;
+              }
               &+span {
                 padding-right: 0;
               }
@@ -329,12 +304,10 @@ export default {
           }
           .article {
             margin-top: 15px;
-            font-size:14px;
-            font-family:PingFang-SC-Medium;
-            font-weight:500;
-            color:rgba(153,153,153,1);
-            line-height:24px;
-            
+            font-size: 13px;
+            color: #666;
+            line-height: 23px;
+            max-height: 115px;
           }
           .imgs {
             margin-top: 10px;
@@ -404,32 +377,87 @@ export default {
         }
       }
     }
-    .shares {
-      .list {
-        height: 443px;
-        .article {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-        }
-      }
-    }
     .hotnews {
       margin-top: 10px;
       margin-bottom: 10px;
       .list {
-        height: 365px;
+        height: 417px;
         .article {
           overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: 5;
           -webkit-box-orient: vertical;
         }
       }
     }
+
+    .share-item {
+      .item-top {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px 10px 10px;
+        border: 1Px solid #EAEAEA;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        .avatar {
+          width: 25px;
+          height: 25px;
+          border-radius: 50%;
+          overflow: hidden;
+          .bg_cover;
+        }
+        .nickname {
+          flex: 1;
+          padding: 0 10px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-size: 13px;
+          color: #666;
+        }
+      }
+      .item-cover {
+        width: 320px;
+        height: 200px;
+        object-fit: cover;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+      .round-bottom {
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        overflow: hidden;
+      }
+      .content {
+        padding: 15px 0 0 0!important;
+        &-title {
+          font-size: 15px;
+          color: #333;
+          font-weight: bold;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .time {
+          margin-top: 10px;
+          font-size:12px;
+          height: 14px;
+          color: #999;
+          line-height:14px;
+          padding-left: 18px;
+          background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+          background-position: left center;
+          background-repeat: no-repeat;
+          background-size: 14px 14px;
+        }
+      }
+      .bottoms {
+        position: static!important;
+        padding: 0!important;
+      }
+    }
+
   }
 }
 

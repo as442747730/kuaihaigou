@@ -53,7 +53,10 @@
           </div>
         </div>
         <section class="bottom-content" v-if="headactive === 0">
-          <u-article :artlist="artList" ></u-article>
+          <!-- <u-article :artlist="artList" ></u-article> -->
+          <div style="padding: 0 20px;">
+            <ShareItem v-for="item in artList" :key="item.id" :item="item" />
+          </div>
         </section>
         <section class="bottom-content" v-else>
           <u-jarsclb :poetryList="poetrys"></u-jarsclb>
@@ -94,6 +97,7 @@ import uJarsclb from '~/components/mine/Jarsclub'
 import leftMenu from '~/components/Menu'
 import userLab from '~/components/Usericon.vue'
 import { userApi } from '~/api/users'
+import ShareItem from '@/components/ShareItem'
 
 export default {
   name: 'mineIndex',
@@ -140,6 +144,7 @@ export default {
     }
   },
   components: {
+    ShareItem,
     uArticle,
     uJarsclb,
     leftMenu,
@@ -288,7 +293,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .mine {
   padding-bottom: 50px;
 
@@ -507,13 +512,19 @@ export default {
       }
 
       .bottom-content {
-        padding: 30px 20px 10px;
+        padding: 30px 0 10px;
       }
     }
   }
   .vanpopup {
     width: 250px;
     height: 100vh;
+  }
+  .article-item .author-info {
+    display: none!important;
+  }
+  .article-item .article-cover {
+    border-radius: 4px!important;
   }
 }
 </style>

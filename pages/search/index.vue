@@ -6,7 +6,7 @@
           <div class="inputmdl-in">
             <i class="icon_fdj"></i>
             <i class="icon_close" v-if="keywords" @click="keywords = ''"></i>
-            <input v-model="keywords" type="search" name='word' placeholder="请输入想查找的内容" @keyup.13="search" autocomplete="off" autocapitalize="off" >
+            <input v-model.trim="keywords" type="search" name='word' placeholder="请输入想查找的内容" @keyup.13="search" autocomplete="off" autocapitalize="off" >
           </div>
         </form>
         <div class="inputmdl-world" @click="toWinecenter">取消</div>
@@ -24,7 +24,7 @@
             <div class="list-item" v-for="($v, $k) in searchData" :key="$k">
               <a :href="'/detail/' + $v.id" style="display: flex">
                 <div class="item_l">
-                  <div class="item_l-bk" :style="'background: url(' + $v.imgUrl + ') no-repeat center/contain'"></div>
+                  <div :class="{ 'item_l-bk': true, 'sale-out': $v.stock === 876 }" :style="'background: url(' + $v.imgUrl + ') no-repeat center/contain'"></div>
                 </div>
                 <div class="item_r">
                   <h4>{{ $v.goodsName }}</h4>
@@ -53,8 +53,9 @@
                 <div class="varity-bk">
                   <div class="varity-bk_in" :style="'background: url(' + $v.bgimg + ') no-repeat center/cover'"></div>
                 </div>
+                <p class="varity-article">{{ $v.detail | fillArticle }}</p>
                 <!-- <article class="varity-article">{{  }}</article> -->
-                <footer class="varity-foot">
+                <footer class="varity-foot" style="border-top: 1px solid #ECECEC;">
                   <i class="icon_same ic_good ib-middle"></i>
                   <span class="num_same ib-middle">{{ $v.likeNum }}</span>
                   <i class="icon_same ic_collect marl ib-middle"></i>
@@ -68,51 +69,7 @@
         </section>
         <!-- 知识分享 -->
         <section class="u-share-articel-item" v-if='navDatanIndex === 2'>
-          <div class="u-share-articel-list" v-for="($v, $k) in searchData" :key="$k">
-            <a :href="'/knowledge/detail/' + $v.id + '?type=' + $v.articleType">
-              <div class="author-info">
-                <span class="avatar" :style="'background-image: url(' + ($v.userResp.headimgurl ? $v.userResp.headimgurl : require('~/assets/img/defaultImg.png')) + ')'"></span>
-                <div class="info">
-                  <div class="nickname">
-                    <span>{{ $v.userResp.nickname }}</span>
-                    <user-lab :level='String($v.userResp.userGradeNumber)' type='1' :profess='String($v.userResp.category)'></user-lab>
-                  </div>
-                  <p class="date">{{ $v.createdAt }}</p>
-                </div>
-              </div>
-              <h3 class="font_hight">{{ $v.title }}</h3>
-              <!-- <div class="time">{{ $v.createdAt }}</div> -->
-              <div class="tips">
-                <span class="tips_one">频道：{{ channelName[$v.channelNumber - 1] }}</span>
-                <span>话题：{{ $v.topicName }}</span>
-              </div>
-              <!-- 文章 -->
-              <div class="artcon" v-if='$v.articleType === 1' v-html='formatHtml($v.summary)'></div>
-              <div class="imglist" v-if='$v.articleType === 1 && $v.imgsPaht'>
-                <div v-for="(item, index) in $v.imgsPaht" :key="index" :class="['imgitem', $v.imgsPaht.length === 1 ? 'big' : '' , $v.imgsPaht.length % 3 === 0 ? 'small' : '', $v.imgsPaht.length === 8 ? 'small' : '', ($v.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="setImgUrl(item)">
-                </div>
-                <div class="imgitem small" v-if="$v.imgsPaht.length === 8"></div>
-              </div>
-              <!-- 视频 -->
-              <div class="video-box" v-if="$v.articleType === 2">
-                <video class="video-player" controls :src="$v.videoPath"></video>
-              </div>
-              <div class="ctrls">
-                <div class="ctrl">
-                  <img class="ib-middle" src="~/assets/img/Icons/ic_dianzan_g_18x18@2x.png" />
-                  <span class="ib-middle">{{ $v.likeNumber }}</span>
-                </div>
-                <div class="ctrl">
-                  <img class="ib-middle" src="~/assets/img/Icons/ic_pinglun_g_18x18@2x.png" />
-                  <span class="ib-middle">{{ $v.commentNumber }}</span>
-                </div>
-                <div class="ctrl">
-                  <img class="ib-middle" src="~/assets/img/Icons/ic_liulang_g_18x18@2x.png" />
-                  <span class="ib-middle">{{ $v.readNumber }}</span>
-                </div>
-              </div>
-            </a>
-          </div>
+          <ShareItem v-for="(item, index) in searchData" :key="index" :item="item" />
         </section>
         <!-- 新闻资讯 -->
         <section class="news" v-if="navDatanIndex === 3">
@@ -193,8 +150,10 @@
 <script>
 import { searchApi } from '@/api/search'
 import userLab from '@/components/Usericon.vue'
+import ShareItem from '@/components/ShareItem'
+
 export default {
-  components: { userLab },
+  components: { userLab, ShareItem },
 
   head () {
     return {
@@ -248,49 +207,27 @@ export default {
       searching: false,
 
       setArr: [],
-      goodsArr: [{
-        value: 1,
-        label: '酒类'
-      }, {
-        value: 2,
-        label: '非酒类'
-      }], // 商品选择栏
-      phraseArr: [{
-        value: 1,
-        label: '最新'
-      }, {
-        value: 2,
-        label: '评论最多'
-      }, {
-        value: 3,
-        label: '点赞最多'
-      }], // 名词解释
-      knowArr: [{
-        value: 1,
-        label: '最新'
-      }, {
-        value: 2,
-        label: '最热门'
-      }, {
-        value: 3,
-        label: '评论最多'
-      }, {
-        value: 4,
-        label: '点赞最多'
-      }], // 知识分享
-      newsArr: [{
-        value: 1,
-        label: '最新'
-      }, {
-        value: 2,
-        label: '最热门'
-      }, {
-        value: 3,
-        label: '评论最多'
-      }, {
-        value: 4,
-        label: '点赞最多'
-      }],
+      goodsArr: [
+        { value: 1, label: '酒类' },
+        { value: 2, label: '非酒类' }
+      ], // 商品选择栏
+      phraseArr: [
+        { value: 1, label: '最新' },
+        { value: 2, label: '评论最多' },
+        { value: 3, label: '点赞最多' }
+      ], // 名词解释
+      knowArr: [
+        { value: 1, label: '最新' },
+        { value: 2, label: '最热门' },
+        { value: 3, label: '评论最多' },
+        { value: 4, label: '点赞最多' }
+      ], // 知识分享
+      newsArr: [
+        { value: 1, label: '最新' },
+        { value: 2, label: '最热门' },
+        { value: 3, label: '评论最多' },
+        { value: 4, label: '点赞最多' }
+      ],
       channelName: ['经验/知识', '美食/周边'],
       circlenavList: ['这些圈子都在看', '行业热点', '培训讲座', '企业招商'],
 
@@ -513,6 +450,15 @@ export default {
     },
     setImgUrl (url) {
       return url.indexOf('imageslim') !== -1 ? url.split('?')[0] + '?imageView2/5/w/480/h/480' : url + '?imageView2/5/w/480/h/480'
+    }
+  },
+
+  filters: {
+    fillArticle (str) {
+      str = str.toString()
+      /* eslint-disable */
+      return str.replace(/<strong>.*?<\/strong>/g, '').replace(/<h\d.*?>.*<\/h\d>/g, '').replace(/<img .*?\/>/g, '').replace(/[<.*?>|<\/.*?\>|&nbsp;]/g, '').replace(/[\n|\s|\r|\\s|↵]/g, '').substr(0, 100)
+      /* eslint-disable */
     }
   }
 }
@@ -775,6 +721,25 @@ export default {
               &-bk {
                 width: 114px;
                 height: 116px;
+                position: relative;
+                &.sale-out {
+                  &:after {
+                    content: '';
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    z-index: 1;
+                    top: 0;
+                    left: 0;
+                    border-radius: 4px;
+                    background-color: rgba(0,0,0,.6);
+                    background-image: url('~/assets/img/Icons/img-saleout.png');
+                    background-size: 60px auto;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                  }
+                }
               }
             }
 
@@ -1046,12 +1011,14 @@ export default {
 
   &-article {
     font-size: 14px;
-    font-family: PingFang-SC-Medium;
-    font-weight: 500;
-    color: rgba(153, 153, 153, 1);
+    color: #999;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     line-height: 24px;
-    padding: 10px 0;
-    border-bottom: 1PX solid #ECECEC;
+    margin: 10px 0;
   }
 
   &-foot {

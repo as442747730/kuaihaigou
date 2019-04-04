@@ -214,8 +214,8 @@ export default {
       }
       span {
         font-size: 15px;
-        color: #F99C00;
-        font-family: 'Impact'
+        color: #FB6248;
+        font-weight: bold;
       }
     }
   }

@@ -140,7 +140,7 @@
                     <div class="form">
                       打赏了您<em class="to-price"> {{ $v.signInformationResp.amount }} </em>嗨币
                     </div>
-                    <div class="my">
+                    <div v-if="$v.articleName" class="my">
                       <div>
                         <span class="ib-middle head-img" :style="'background: url(' + (userData.headimgurl || defaulthead) + ') no-repeat center/contain'"></span>
                         <span class="ib-middle nick-name limit_one">{{ userData.nickname }}</span>
@@ -163,57 +163,57 @@
         <ul class="system-info-item">
           <li class="system-info-list" v-for="($v, $k) in msgData" :key="$k">
             <!-- 禁言 -->
-            <div class="delete-icon" @click="rDelbtn($v.id)"></div>
+            <!-- <div class="delete-icon" @click="rDelbtn($v.id)"></div> -->
             <template v-if="$v.serialNumber === 1">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                <time>{{ changeTime($v.createdAt) }}</time>
                 <p>{{ $v.content }}</p>
               </div>
             </template>
             <!-- 认证通过 -->
             <template v-if="$v.serialNumber === 3 || $v.serialNumber === 5">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <a href="/prove">
                   <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                  <time>{{ changeTime($v.createdAt) }}</time>
                   <p>{{ $v.content }}</p>
                 </a>
               </div>
             </template>
             <!-- 认证失败 -->
             <template v-if="$v.serialNumber === 2 || $v.serialNumber === 6">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <a href="/prove">
                   <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                  <time>{{ changeTime($v.createdAt) }}</time>
                   <p>{{ $v.content }}</p>
                 </a>
               </div>
             </template>
             <!-- 自定义(全站推送) -->
             <template v-if="$v.serialNumber === 8">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ $v.title }}</h3>
+                <time>{{ changeTime($v.createdAt) }}</time>
                 <p v-html='$v.content'></p>
               </div>
             </template>
             <!-- 优惠劵 -->
             <template v-if="$v.serialNumber === 9">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <a href="/coupon/list">
                   <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                  <time>{{ changeTime($v.createdAt) }}</time>
                   <p>{{ $v.content }}</p>
                 </a>
               </div>
             </template>
             <!-- 神评 -->
             <template v-if="$v.serialNumber === 10">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                <time>{{ changeTime($v.createdAt) }}</time>
                 <p>
                   亲爱的快海购用户，你的参与的文章《<a :href="setSystemHref($v)">{{ $v.articleName }}</a>》的评论：“{{ $v.content }}”被选为神评论，为您增加{{ $v.systemInfo.experiencePoints }}积分经验，并置顶显示该评论。
                 </p>
@@ -221,25 +221,25 @@
             </template>
             <!-- 知识分享被选为精彩绝伦 -->
             <template v-if="$v.serialNumber === 11">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                <time>{{ changeTime($v.createdAt) }}</time>
                 <p>亲爱的快海购用户，您发表的文章<a :href="setSystemHref($v)">《{{ $v.articleName }}》</a>被选为精彩绝伦，为您增加{{ $v.systemInfo.experiencePoints }}积分经验。</p>
               </div>
             </template>
             <!-- 酒坛诗社 -->
             <template v-if="$v.serialNumber === 12">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                <time>{{ changeTime($v.createdAt) }}</time>
                 <p>亲爱的快海购用户，您发表的签到：“ {{ $v.content }} ”被选为【酒坛诗社】，为您增加{{ $v.experiencePoints }}积分经验，并展示在首页轮播。</p>
               </div>
             </template>
             <!-- 热门评论 -->
             <template v-if="$v.serialNumber === 13">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                <time>{{ changeTime($v.createdAt) }}</time>
                 <p>
                   亲爱的快海购用户，你的发表的商品评论：“<a :href="'/detail/' + $v.no">{{ $v.content }}</a>”被推荐为热门评论，为您增加{{ $v.systemInfo.experiencePoints }}积分经验，并置顶显示该评论
                 </p>
@@ -247,9 +247,9 @@
             </template>
             <!-- 独立对用户推送 -->
             <template v-if="$v.serialNumber === 14">
-              <time>{{ changeTime($v.createdAt) }}</time>
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ $v.title }}</h3>
+                <time>{{ changeTime($v.createdAt) }}</time>
                 <p v-html='$v.content'></p>
               </div>
             </template>
@@ -288,7 +288,7 @@ export default {
   async asyncData (req) {
     const { code: userCode, data: userData } = await userApi.serverPostInfo(req)
     const { code: code2, data: data2 } = await userApi.serveGetNotifyNum(req)
-    const { code: code1, data: data1 } = await messageApi.serverSystemInfo({ page: 1, count: 6, infoType: 2 }, req)
+    const { code: code1, data: data1 } = await messageApi.serverSystemInfo({ page: 1, count: 8, infoType: 2 }, req)
     if (code1 === 200 && userCode === 200) {
       let pageEmpty = false
       let signCount = 0
@@ -297,7 +297,7 @@ export default {
         signCount = data2.signCount
         systemCount = data2.systemCount
       }
-      pageEmpty = data1.total <= 6
+      pageEmpty = data1.total <= 8
       return {
         userData: userData,
         msgData: data1.array || {},
@@ -353,7 +353,7 @@ export default {
         var toast1 = this.$toast.loading({ message: '数据获取中', duration: 0, mask: true })
       }
       this.pageLoding = true
-      const { code, data } = await messageApi.systemInfo({ page: page, count: 6, infoType: this.type })
+      const { code, data } = await messageApi.systemInfo({ page: page, count: 8, infoType: this.type })
       if (code === 200) {
         if (needClear) {
           this.msgData = data.array
@@ -361,7 +361,7 @@ export default {
         } else {
           this.msgData.push(...data.array)
         }
-        this.pageEmpty = this.page * 6 >= data.total
+        this.pageEmpty = this.page * 8 >= data.total
       } else {
         this.pageEmpty = false
       }
@@ -563,12 +563,6 @@ export default {
     height: ~'calc(100vh - 86px)';
     overflow: scroll;
     background: #f5f5f5;
-    &.system {
-      .no-more,
-      .more-loading {
-        background: #fff;
-      }
-    }
     .del_right {
       background: #FB6248;
       width: 100PX;
@@ -684,6 +678,7 @@ export default {
             margin-top: 10px;
             background: #fcfcfc;
             padding: 15px 15px 12px;
+            border: 1px solid #F1F1F1;
             .head-img {
               width: 20px;
               height: 20px;
@@ -718,15 +713,10 @@ export default {
 }
 
 .system-info {
-  padding: 0 20px;
   overflow: hidden;
   &-list {
-    margin-bottom: 20px;
-    &:first-child {
-      margin-top: 20px;
-    }
+    border-bottom: 1PX solid #F1F1F1;
     time {
-      text-align: center;
       display: block;
       font-size: 11px;
       color: #999;

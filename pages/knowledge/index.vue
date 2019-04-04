@@ -5,56 +5,8 @@
 
     <van-pull-refresh class="van-pull" v-if="articleList.length > 0" v-model="refreshing" @refresh="geRefresh" :loading-text="'刷新中'">
       <div class="article-ul">
-
-        <div class="article-item" v-for="item in articleList" :key="item.id">
-          <div class="author-info">
-            <a :href="'/user?uid=' + item.userResp.id">
-              <div class="avatar" :style="'background-image: url(' + (item.userResp.headimgurl ? item.userResp.headimgurl : require('~/assets/img/defaultImg.png')) + ')'"></div>
-              <div class="info">
-                <div class="nickname">
-                  <span>{{ item.userResp.nickname }}</span>
-                  <user-lab :level='String(item.userResp.userGradeNumber)' type='1' :profess='String(item.userResp.category)'></user-lab>
-                </div>
-                <p class="date">{{ item.createdAt }}</p>
-              </div>
-            </a>
-          </div>
-          <div class="content" @click="gotodetail(item)">
-            <p class="content-title" style="-webkit-box-orient: vertical;">{{ item.title }}</p>
-            <p class="content-desc">
-              <span>频道：{{ item.channelName }}</span>
-              <span>话题：{{ item.topicName }}</span>
-            </p>
-
-            <div class="content-box">
-              <!-- 文章 -->
-              <p v-if="item.articleType === 1" class="content-article" style="-webkit-box-orient: vertical;" v-html="formatHtml(item.summary)"></p>
-              <div class="imgs" v-if="item.articleType === 1 && item.imgsPaht">
-                <div :class="['img', item.imgsPaht.length === 1 ? 'big' : '' , item.imgsPaht.length % 3 === 0 ? 'small' : '', item.imgsPaht.length === 8 ? 'small' : '', (item.imgsPaht.length === 5 && index === 4) ? 'big' : '']" v-lazy:background-image="m + '?imageView2/5/w/500/h/500'" v-for="(m, index) in item.imgsPaht" :key="index"></div>
-                <div class="img small" v-if="item.imgsPaht.length === 8"></div>
-              </div>
-              <!-- 视频 -->
-              <div class="video-box" v-if="item.articleType === 2">
-                <video ref="refvideo" class="video-player" controls>
-                  <source :src="item.videoPath" type="video/mp4">
-                </video>
-              </div>
-            </div>
-
-            <div class="content-bottom">
-              <div class="left">
-                <span class="sub like">{{ item.likeNumber }}</span>
-                <span class="sub msg">{{ item.commentNumber }}</span>
-                <span class="sub view">{{ item.readNumber }}</span>
-              </div>
-              <!-- !!! TODO !!! -->
-              <!-- <div class="more"></div> -->
-            </div>
-          </div>
-        </div>
-
+        <ShareItem v-for="item in articleList" :key="item.id" :item="item" />
       </div>
-
       <div class="load-more">{{ hasMore ? loadTxt : '已无更多文章' }}</div>
 
     </van-pull-refresh>
@@ -75,13 +27,14 @@ import { knowApi } from '~/api/knowledge'
 import TabSelect from '@/components/knowledge/TabSelect.vue'
 import userLab from '@/components/Usericon.vue'
 import nullData from '~/components/nullData'
+import ShareItem from '@/components/ShareItem'
 
 export default {
   name: 'knowledge',
 
   layout: 'page-with-tabbar',
 
-  components: { TabSelect, userLab, nullData: nullData },
+  components: { TabSelect, userLab, nullData: nullData, ShareItem },
 
   head () {
     return {
@@ -271,170 +224,7 @@ export default {
     .article-ul {
       box-sizing: border-box;
       background: white;
-      padding: 20px 20px 20px 20px;
-      .article-item {
-        border-radius: 8px;
-        border: 1PX solid #EAEAEA;
-        padding: 20px 20px 20px 0;
-        .author-info {
-          padding-left: 20px;
-          padding-bottom: 20px;
-          border-bottom: 1PX solid #EAEAEA;
-          display: flex;
-          &>a {
-            display: flex;
-          }
-          .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 100%;
-            overflow: hidden;
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            margin-right: 15px;
-          }
-          .info {
-            .nickname {
-              font-size: 16px;
-              font-weight: bold;
-              color: @cor_333;
-              display: flex;
-              align-items: center;
-              span {
-                display: block;
-                max-width: 100px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                padding-right: 5px;
-              }
-            }
-            .date {
-              margin-top: 6px;
-              font-size: 12px;
-              color: @cor_999;
-              padding-left: 18px;
-              background-image: url(~/assets/img/me/icon-clock.png);
-              background-position: left center;
-              background-size: 14px 14px;
-              background-repeat: no-repeat;
-            }
-          }
-        }
-        .content {
-          padding-top: 20px;
-          padding-left: 20px;
-          &-title {
-            font-size: 16px;
-            color: @cor_333;
-            font-weight: bold;
-            line-height: 22px;
-
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-          }
-          &-desc {
-            margin-top: 10px;
-            font-size: 12px;
-            color: @cor_999;
-            span:first-child {
-              margin-right: 20px;
-            }
-          }
-          &-box {
-            margin-top: 15px;
-          }
-          &-article {
-            font-size: 14px;
-            color: @cor_999;
-            line-height: 24px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 5;
-            -webkit-box-orient: vertical;
-          }
-          .video-box {
-            position: relative;
-            .video-player {
-              width: 100%;
-              max-height: 180px;
-              border-radius: 5px;
-              margin: 5px 0;
-            }
-          }
-          .imgs {
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            .img {
-              // 默认140px
-              width: 140px;
-              height: 140px;
-              border-radius: 5px;
-              background-position: center;
-              background-size: cover;
-              background-repeat: no-repeat;
-              margin-bottom: 15px;
-              &.big {
-                width: 100%;
-                height: 150px;
-              }
-              &.small {
-                width: 88px;
-                height: 88px;
-              }
-            }
-          }
-          &-bottom {
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            .left {
-              display: flex;
-              align-items: center;
-              .sub {
-                padding-left: 21px;
-                font-size: 12px;
-                line-height: 18px;
-                color: @cor_999;
-                background-position: left center;
-                background-repeat: no-repeat;
-                background-size: 18px 18px;
-                & + .sub {
-                  margin-left: 25px;
-                }
-                &.like {
-                  background-image: url(~/assets/img/knowledge/icon-like.png);
-                }
-                &.msg {
-                  background-image: url(~/assets/img/knowledge/icon-msg.png);
-                }
-                &.view {
-                  background-image: url(~/assets/img/knowledge/icon-view.png);
-                }
-              }
-            }
-            .more {
-              width: 30px;
-              height: 30px;
-              background-image: url(~/assets/img/knowledge/icon-more.png);
-              background-position: center;
-              background-size: contain;
-              background-repeat: no-repeat;
-            }
-          }
-        }
-        &:not(:last-child) {
-          margin-bottom: 20px;
-        }
-      }
+      padding: 20px;
     }
     .load-more {
       width: 100%;
