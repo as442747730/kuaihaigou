@@ -226,7 +226,8 @@ export default {
     justify-content: space-between;
     align-self: flex-end;
     width: 100%;
-    padding-bottom: 90px;
+    padding-bottom: calc(90px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
     position: relative;
     z-index: 3;
   }
@@ -271,8 +272,9 @@ export default {
     width: 26px;
     height: 26px;
     left: 50%;
-    bottom: 16px;
-    transform: translateX(-50%;);
+    bottom: calc(16px + constant(safe-area-inset-bottom));
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
     background: url('~assets/img/knowledge/icon-close-single.png') no-repeat center/contain;
   }
   .close-mask {

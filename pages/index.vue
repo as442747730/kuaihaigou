@@ -66,22 +66,16 @@
       <section class="commend_home" id="comwines">
         <div class="margin-20">
           <div class="title_home">
-            <h2>
-              美酒推荐
-              <p>达人体验</p>
-            </h2>
-            <div class="change-new" id="changeNew">
-              <i></i>
-              换一批
-            </div>
+            <h2>美酒推荐<p>达人体验</p></h2>
+            <div class="change-new" id="changeNew"><i></i>换一批</div>
           </div>
         </div>
 
         <div class="commend_home-content">
           <div class="home_bk">
-            <div class="bg ani_show_opacty2" :style="{ backgroundImage: 'url(' + wineBk + ')' }" :key='+new Date().getMilliseconds()'>
-              <div class="bg_world">{{ wineSence }}</div>
-            </div>
+            <div class="bg ani_show_opacty2" :style="{ backgroundImage: 'url(' + wineBk + ')' }" :key='+new Date().getMilliseconds()'></div>
+            <div class="bg_world">{{ wineSence }}</div>
+            <i class="bg-arrow"></i>
           </div>
           <div v-swiper:mySwiper4="swiperCommend">
             <div class="swiper-wrapper">
@@ -115,13 +109,8 @@
       <section class="hot_home">
         <div class="margin-20">
           <div class="title_home">
-            <h2>
-              热门甄选
-            </h2>
-            <a class="to-channel" href="/selection?sortedBy=1">
-              进入频道
-              <i class="van-icon van-icon-arrow"></i>  
-            </a>
+            <h2>热门甄选</h2>
+            <a class="to-channel" href="/selection?sortedBy=1">进入频道<i class="van-icon van-icon-arrow"></i></a>
           </div>
         </div>
         <div v-swiper:mySwiper="swiperOption">
@@ -140,11 +129,13 @@
                   <div class="summary">{{ pick.summary }}</div>
                   <div class="pro" v-lazy:background-image="pick.img">
                     <div class="goods-info">
-                      <div class="ib-middle goods-info-img" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
-                      <div class="ib-middle goods-info-detail">
-                        <p class="u-ellipsis">{{ pick.goodsMinimalResp.goodsName }}</p>
-                        <em class="ib-middle" style="font-weight: bold;">¥{{ pick.goodsMinimalResp.actualPrice }}</em>
-                        <del class="ib-middle">市场价：¥{{ pick.goodsMinimalResp.marketPrice }}</del>
+                      <div class="box">
+                        <div class="ib-middle goods-info-img" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
+                        <div class="ib-middle goods-info-detail">
+                          <p class="u-ellipsis">{{ pick.goodsMinimalResp.goodsName }}</p>
+                          <em style="font-weight: bold;">¥{{ pick.goodsMinimalResp.actualPrice }}</em>
+                          <del>市场价：¥{{ pick.goodsMinimalResp.marketPrice }}</del>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -642,6 +633,9 @@ export default {
         padding-left: 36px;
         box-sizing: border-box;
         transition: ease .5s;
+        &::placeholder {
+          color: #CCD8E6;
+        }
       }
       i {
         top: 50%;
@@ -756,21 +750,47 @@ export default {
     margin-left: 20px;
     .home_bk {
       margin-right: 20px;
+      position: relative;
       .bg {
         height: 160px;
         border-radius: 10px;
         margin-bottom: 20px;
-        .bg_cover;
-        &_world {
-          float: left;
-          margin-left: 20px;
-          margin-top: 109px;
-          font-size:16px;
-          font-family:PingFangSC-Semibold;
-          font-weight:600;
-          color:rgba(255,255,255,1);
-          line-height:16px;
+        &:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: block;
+          background: rgba(0,0,0,.3);
+          z-index: 1;
+          border-radius: 10px;
         }
+        .bg_cover;
+      }
+      .bg_world {
+        position: absolute;
+        left: 20px;
+        top: 109px;
+        z-index: 2;
+        font-size:16px;
+        font-weight: bold;
+        color:#fff;
+        line-height:16px;
+      }
+      .bg-arrow {
+        display: block;
+        width: 18px;
+        height: 18px;
+        background-image: url('~assets/img/upgrade/icon-right-arrow.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+        position: absolute;
+        top: 109px;
+        right: 18px;
+        z-index: 2;
       }
     }
     .tags {
@@ -824,15 +844,12 @@ export default {
       text-align: left;
       h3 {
         font-size: 13px;
-        height: 35px;
+        line-height: 1;
         color: #333;
-        line-height: 18px;
         overflow: hidden;
         text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        margin: 10px 0 0;
+        white-space: nowrap;
+        margin-top: 10px;
       }
       p {
         margin: 10px 0;
@@ -844,6 +861,7 @@ export default {
         white-space: nowrap;
       }
       em {
+        line-height: 1;
         color: @c-price;
         font-size: 15px;
       }
@@ -859,10 +877,10 @@ export default {
    display: inline-block;
    &:first-child {
     margin-right: 15px;
-    background-image: url('../assets/img/home/img_jiushenrukou_160x100@2x.png')
+    background-image: url('../assets/img/home/img_xinshourukou_160x100@2x.png')
   }
    &:last-child {
-    background-image: url('../assets/img/home/img_xinshourukou_160x100@2x.png')
+    background-image: url('../assets/img/home/img_jiushenrukou_160x100@2x.png')
    } 
   }
 }
@@ -878,8 +896,6 @@ export default {
       border: 1PX solid #eaeaea;
       box-sizing: border-box;
       width: 320px;
-      // height: 370px;
-      // overflow: hidden;
     }
     .bottom {
       padding: 10px 15px;
@@ -890,6 +906,7 @@ export default {
       border-radius: 4px;
       text-align: center;
       position: relative;
+      overflow: hidden;
       .bg_cover;
     }
     .desc {
@@ -898,13 +915,12 @@ export default {
       padding: 15px;
       &>h3 {
         font-size: 15px;
-        font-family: PingFangSC-Medium;
-        color:rgba(51,51,51,1);
-        line-height: 21px;
-        display: flex;
-        align-items: center;
+        font-weight: bold;
+        line-height: 1;
+        color: #333;
         overflow: hidden;
-        height: 42px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       &>p {
         padding: 10px 0;
@@ -932,12 +948,22 @@ export default {
     }
     .goods-info {
       position: absolute;
-      width: 270px;
+      width: 100%;
+      height: 80px;
       box-sizing: border-box;
-      bottom: 10px;
-      left: 16px;
-      padding: 5px 10px;
-      background: #f9f9f9;
+      bottom: 0;
+      left: 0;
+      background: #404240;
+      padding-top: 10px;
+      .box {
+        width: 270px;
+        height: 60px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 5px 10px;
+        box-sizing: border-box;
+        align-items: center;
+      }
       &-img {
         width: 50px;
         height: 50px;
@@ -952,13 +978,15 @@ export default {
       p {
         color: #333;
         font-size: 11px;
-        margin-bottom: 8px;
+        margin-bottom: 2px;
         font-weight: bold;
-        line-height: 1.2;
+        line-height: 23px;
       }
       em {
         color: @c-price;
         font-size: 15px;
+        font-family:PingFangSC-Semibold;
+        font-weight: bold;
       }
       del {
         font-size: 11px;
@@ -1101,10 +1129,22 @@ export default {
         .bg_cover;
       }
       .munity_bk {
+        &:after {
+          content: '';
+          display: block;
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 1;
+          background: rgba(0,0,0,.3);
+        }
         .theme {
           position: absolute;
           top: 10px;
           left: 15px;
+          z-index: 2;
           font-size: 12px;
           font-weight: bold;
           color: rgba(255,255,255,1);
@@ -1124,6 +1164,7 @@ export default {
           position: absolute;
           top: 10px;
           right: 10px;
+          z-index: 2;
           font-size: 12px;
           font-weight: bold;
           color: rgba(255, 255, 255, 1);
@@ -1135,7 +1176,7 @@ export default {
           background: #FF3333;
         }
         .carry {
-          background: #F99C00;
+          background: #FB6248;
         }
         .ends {
           background: #999999;
@@ -1149,6 +1190,7 @@ export default {
         position: absolute;
         bottom: 15px;
         left: 15px;
+        z-index: 2;
       }
     }
     .desc {
@@ -1200,7 +1242,6 @@ export default {
         color: #333;
         font-size: 16px;
         font-weight: bold;
-        font-family: 'PingFangSC-Semibold';
         overflow: hidden;
         -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
@@ -1248,7 +1289,6 @@ export default {
     }
     .desc {
       margin-top: 10px;
-      height: 120px;
       & > p {
         line-height: 23px;
         color: #666;
@@ -1257,7 +1297,7 @@ export default {
         -o-text-overflow: ellipsis;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 5;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
       }
     }

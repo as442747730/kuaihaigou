@@ -282,7 +282,7 @@ export default {
       right: 20px;
       top: 20px;
       font-size: 15px;
-      color: #F99C00;
+      color: #FB6248;
     }
   }
 }

@@ -1976,7 +1976,7 @@
             background: #FF3333;
           }
           .carry {
-            background: #F99C00;
+            background: #FB6248;
           }
           .ends {
             background: #999999;
@@ -2036,13 +2036,13 @@
     background: #CCCCCC;
   }
   .btncor4 {
-    background: #F99C00;
+    background: #FB6248;
   }
   .btncor5 {
-    background: #F99C00;
+    background: #FB6248;
   }
   .btncor6 {
-    background: #F99C00;
+    background: #FB6248;
   }
   .btncor7 {
     background: #CCCCCC;

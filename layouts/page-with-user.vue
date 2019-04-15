@@ -179,8 +179,8 @@ export default {
     }
     u {
       width: 100%;
-      height: 35px;
-      background: url('~assets/img/user/img_wave_375x35@2x.png') no-repeat center/cover;
+      height: 45px;
+      background: url('~assets/img/upgrade/img-wave.png') no-repeat bottom/auto 35px;
       position: absolute;
       left: 0;
       bottom: 0;
@@ -200,25 +200,27 @@ export default {
     align-items: center;
     &-box {
       padding: 0 20px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+      font-size: 0;
     }
     &-pro {
-      width: 110px;
-      height: 110px;
+      width: 76px;
+      height: 76px;
       border: 6px solid #fff;
       border-radius: 50%;
       box-sizing: border-box;
       overflow: hidden;
       display: block;
-      margin: -75px auto 0;
+      margin: -35px auto 0;
       position: relative;
     }
     &-title {
       text-align: center;
       h3 {
         color: #333;
-        margin-top: 13px;
-        font-size: 21px;
+        margin-top: 9px;
+        font-size: 19px;
+        font-weight: bold;
         box-sizing: border-box;
         max-width: 150px;
         position: relative;
@@ -231,13 +233,15 @@ export default {
           white-space: nowrap;
         }
         .u-icon-type2 {
+          white-space: nowrap;
+          font-size: 0;
           top: 0;
         }
       }
       p {
         color: #bbb;
         font-size: 12px;
-        margin: 15px 0 25px; 
+        margin: 19px 0 25px; 
       }
     }
     &-right {
@@ -278,8 +282,9 @@ export default {
       .count {
         color: @cor_333;
         font-size: 19px;
-        font-family: DINPro;
-        padding-bottom: 10px;
+        font-weight: bold;
+        line-height: 1;
+        padding-bottom: 7px;
         font-weight: bold;
         span {
           font-weight: normal;
@@ -289,7 +294,7 @@ export default {
       }
       .label {
         color: @cor_999;
-        font-size: 13px;
+        font-size: 11px;
       }
     }
   }

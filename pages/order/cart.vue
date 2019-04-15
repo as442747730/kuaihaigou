@@ -327,7 +327,7 @@ export default {
           }
         }
         .top-price {
-          color: #F99C00;
+          color: #FB6248;
           font-size: 17px;
           font-family: Impact;
           padding-left: 40px;
@@ -376,7 +376,7 @@ export default {
               }
               .price {
                 font-size: 17px;
-                color: #F99C00;
+                color: #FB6248;
                 font-family: Impact;
                 line-height: 30px;
               }
@@ -435,7 +435,7 @@ export default {
       .price {
         font-family: Impact;
         font-size: 19px;
-        color: #F99C00;
+        color: #FB6248;
       }
     }
     &-right {

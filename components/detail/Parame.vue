@@ -86,6 +86,10 @@
 
     <div class="parama_detail-attr margin-30">
       <h3 class="title">红酒属性</h3>
+      <div class="refer" style="margin-bottom: 15px;">
+        <p>参考酒评</p>
+        <span> {{goodsWineCommentResp.longComment }}</span>
+      </div>
       <van-collapse class='attr-item-wrap' v-model="activeName" accordion @change='collaChange'>
         <van-collapse-item name="1" v-if='redAttr.astringency'>
           <div class="attr-item" slot='title'>
@@ -148,11 +152,6 @@
           {{ redAttr.complexityRemark }}
         </van-collapse-item>
       </van-collapse>
-
-      <div class="refer">
-        <p>参考酒评</p>
-        <span> {{goodsWineCommentResp.longComment }}</span>
-      </div>
 
       <div class="tips-item" v-if="goodsWineCommentResp.wineCriticComment">
         <h3 class="title">酒评家评价</h3>
@@ -475,6 +474,10 @@ export default {
       display: none;
     }
   }
+
+  .van-collapse-item__wrapper {
+    overflow: visible;
+  }
   .van-collapse-item__content {
     font-size: 10px;
     color: #666;
@@ -482,5 +485,16 @@ export default {
     padding: 10px;
     background: #f5f5f5;
     border-radius: 6px;
+    position: relative;
+    &:before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: #F5F5F5;
+      position: absolute;
+      top: -5px;
+      left: 11px;
+      transform: rotate(45deg);
+    }
   }
 </style>

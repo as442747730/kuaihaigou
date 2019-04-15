@@ -197,7 +197,7 @@ export default {
       h3 {
         color: #333;
         font-size: 13px;
-        margin: 12px 0 10px;
+        margin: 11px 0 10px;
         line-height: 18px;
         a {
           overflow : hidden;

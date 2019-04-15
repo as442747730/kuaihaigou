@@ -1,14 +1,8 @@
 <template>
   <div class="message">
     <div class="tab">
-      <span class="font_hight" :class="{'cur': type === 2}" @click='handleSelect(2)'>
-        酒友消息
-        <i v-if='signCount !== 0'><u>{{ signCount }}</u></i>
-      </span>
-      <span class="font_hight" :class="{'cur': type === 1}" @click='handleSelect(1)'>
-        系统消息
-        <i v-if='systemCount !== 0'><u>{{ systemCount }}</u></i>
-      </span>
+      <span :class="{'cur': type === 2}" @click='handleSelect(2)'>酒友消息<i v-if='signCount !== 0'><u>{{ signCount }}</u></i></span>
+      <span :class="{'cur': type === 1}" @click='handleSelect(1)'>系统消息<i v-if='systemCount !== 0'><u>{{ systemCount }}</u></i></span>
     </div>
     <section class="showcontents" :class="{'system' : type === 1}">
       <!-- 酒友消息 -->
@@ -27,16 +21,12 @@
                     </div>
                   </div>
                   <div class="vessel-b">
-                    <div class="form">
-                      回复了您在<em class="to-href"> 《{{ $v.articleName }}》 </em>的评论
-                    </div>
-                    <div class="reply">
-                      {{ $v.signInformationResp.replyContent }}
-                    </div>
+                    <div class="form">回复了您在<em class="to-href"> 《{{ $v.articleName }}》 </em>的评论</div>
+                    <div class="reply">{{ $v.signInformationResp.replyContent }}</div>
                     <div class="my">
                       <div>
                         <span class="ib-middle head-img" :style="'background: url(' + (userData.headimgurl || defaulthead) + ') no-repeat center/contain'"></span>
-                        <span class="ib-middle nick-name limit_one">{{ userData.nickname }}</span>
+                        <span class="ib-middle nick-name limit_one" style="font-weight:bold;">{{ userData.nickname }}</span>
                       </div>
                       <p class="limit_one">{{ $v.content }}</p>
                     </div>
@@ -56,16 +46,12 @@
                     </div>
                   </div>
                   <div class="vessel-b">
-                    <div class="form">
-                      回复了您在<em class="to-href"> 《{{ $v.goodInformationResp.goodName }}》 </em>的评论
-                    </div>
-                    <div class="reply">
-                      {{ $v.goodInformationResp.replyContent }}
-                    </div>
+                    <div class="form">回复了您在<em class="to-href"> 《{{ $v.goodInformationResp.goodName }}》 </em>的评论</div>
+                    <div class="reply">{{ $v.goodInformationResp.replyContent }}</div>
                     <div class="my">
                       <div>
                         <span class="ib-middle head-img" :style="'background: url(' + (userData.headimgurl || defaulthead) + ') no-repeat center/contain'"></span>
-                        <span class="ib-middle nick-name limit_one">{{ userData.nickname }}</span>
+                        <span class="ib-middle nick-name limit_one" style="font-weight: bold">{{ userData.nickname }}</span>
                       </div>
                       <p class="limit_one">{{ $v.content }}</p>
                     </div>
@@ -85,12 +71,8 @@
                     </div>
                   </div>
                   <div class="vessel-b">
-                    <div class="form">
-                      评论了您的文章<em class="to-href"> 《{{ $v.articleName }}》 </em>
-                    </div>
-                    <div class="reply">
-                      {{ $v.content }}
-                    </div>
+                    <div class="form">评论了您的文章<em class="to-href"> 《{{ $v.articleName }}》 </em></div>
+                    <div class="reply">{{ $v.content }}</div>
                   </div>
                 </div>
               </a>
@@ -107,16 +89,12 @@
                     </div>
                   </div>
                   <div class="vessel-b">
-                    <div class="form">
-                      回答了您在<em class="to-href"> 《{{ $v.goodInformationResp.goodName }}》 </em>的提问
-                    </div>
-                    <div class="reply">
-                      {{ $v.goodInformationResp.replyContent }}
-                    </div>
+                    <div class="form">回答了您在<em class="to-href"> 《{{ $v.goodInformationResp.goodName }}》 </em>的提问</div>
+                    <div class="reply">{{ $v.goodInformationResp.replyContent }}</div>
                     <div class="my">
                       <div>
                         <span class="ib-middle head-img" :style="'background: url(' + (userData.headimgurl || defaulthead) + ') no-repeat center/contain'"></span>
-                        <span class="ib-middle nick-name limit_one">{{ userData.nickname }}</span>
+                        <span class="ib-middle nick-name limit_one" style="font-weight: bold">{{ userData.nickname }}</span>
                       </div>
                       <p class="limit_one">{{ $v.goodInformationResp.question }}</p>
                     </div>
@@ -142,7 +120,7 @@
                     <div v-if="$v.articleName" class="my">
                       <div>
                         <span class="ib-middle head-img" :style="'background: url(' + (userData.headimgurl || defaulthead) + ') no-repeat center/contain'"></span>
-                        <span class="ib-middle nick-name limit_one">{{ userData.nickname }}</span>
+                        <span class="ib-middle nick-name limit_one" style="font-weight: bold">{{ userData.nickname }}</span>
                       </div>
                       <p class="limit_one">发表文章<i class="to-href"> 《{{ $v.articleName }}》 </i></p>
                     </div>
@@ -156,7 +134,6 @@
           </div>
         </van-swipe-cell>
       </template>
-
       <!-- 系统消息 -->
       <div class="system-info" v-if='type === 1'>
         <ul class="system-info-item">
@@ -211,17 +188,15 @@
             <!-- 神评 -->
             <template v-if="$v.serialNumber === 10">
               <div class="system-info-wrap">
-                <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                <h3 class="font_hight flex_between">{{ noticeTxt[$v.serialNumber - 1] }} <div class="tag red" style="width: 50px;">神评论</div></h3>
                 <time>{{ changeTime($v.createdAt) }}</time>
-                <p>
-                  亲爱的快海购用户，你的参与的文章《<a :href="setSystemHref($v)">{{ $v.articleName }}</a>》的评论：“{{ $v.content }}”被选为神评论，为您增加{{ $v.systemInfo.experiencePoints }}积分经验，并置顶显示该评论。
-                </p>
+                <p>亲爱的快海购用户，你的参与的文章《<a :href="setSystemHref($v)">{{ $v.articleName }}</a>》的评论：“{{ $v.content }}”被选为神评论，为您增加{{ $v.systemInfo.experiencePoints }}积分经验，并置顶显示该评论。</p>
               </div>
             </template>
             <!-- 知识分享被选为精彩绝伦 -->
             <template v-if="$v.serialNumber === 11">
               <div class="system-info-wrap">
-                <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                <h3 class="font_hight flex_between">{{ noticeTxt[$v.serialNumber - 1] }} <div class="tag yellow">精彩绝伦</div></h3>
                 <time>{{ changeTime($v.createdAt) }}</time>
                 <p>亲爱的快海购用户，您发表的文章<a :href="setSystemHref($v)">《{{ $v.articleName }}》</a>被选为精彩绝伦，为您增加{{ $v.systemInfo.experiencePoints }}积分经验。</p>
               </div>
@@ -229,7 +204,7 @@
             <!-- 酒坛诗社 -->
             <template v-if="$v.serialNumber === 12">
               <div class="system-info-wrap">
-                <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
+                <h3 class="font_hight flex_between">{{ noticeTxt[$v.serialNumber - 1] }} <div class="tag red">酒坛诗社</div></h3>
                 <time>{{ changeTime($v.createdAt) }}</time>
                 <p>亲爱的快海购用户，您发表的签到：“ {{ $v.content }} ”被选为【酒坛诗社】，为您增加{{ $v.experiencePoints }}积分经验，并展示在首页轮播。</p>
               </div>
@@ -239,9 +214,7 @@
               <div class="system-info-wrap">
                 <h3 class="font_hight">{{ noticeTxt[$v.serialNumber - 1] }}</h3>
                 <time>{{ changeTime($v.createdAt) }}</time>
-                <p>
-                  亲爱的快海购用户，你的发表的商品评论：“<a :href="'/detail/' + $v.no">{{ $v.content }}</a>”被推荐为热门评论，为您增加{{ $v.systemInfo.experiencePoints }}积分经验，并置顶显示该评论
-                </p>
+                <p>亲爱的快海购用户，你的发表的商品评论：“<a :href="'/detail/' + $v.no">{{ $v.content }}</a>”被推荐为热门评论，为您增加{{ $v.systemInfo.experiencePoints }}积分经验，并置顶显示该评论</p>
               </div>
             </template>
             <!-- 独立对用户推送 -->
@@ -510,12 +483,13 @@ export default {
       font-size: 13px;
       padding: 0 66px;
       position: relative;
-      color: #666;
+      color: #999;
       &:first-child {
         border-right: 1px solid #999;
       }
       &.cur {
         color: #333;
+        font-weight: bold;
         &:after {
           content: '';
           position: absolute;
@@ -743,6 +717,21 @@ export default {
 
 .system-info-list{
   position:relative;
+  .tag {
+    font-size: 11px;
+    color: #fff;
+    text-align: center;
+    line-height: 20px;
+    border-radius: 2px;
+    width: 60px;
+    height: 20px;
+    &.red {
+      background: #FF3333;
+    }
+    &.yellow {
+      background: #FB6248;
+    }
+  }
 }
 .delete-icon{
   position:absolute;

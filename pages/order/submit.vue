@@ -771,7 +771,7 @@ export default {
         }
         &-right {
           font-size: 17px;
-          color: #F99C00;
+          color: #FB6248;
         }
       }
     }
@@ -818,7 +818,7 @@ export default {
           }
           .price {
             font-size: 17px;
-            color: #F99C00;
+            color: #FB6248;
             font-family: Impact;
             float: right;
           }
@@ -846,7 +846,7 @@ export default {
       padding-left: 20px;
       .total {
         font-size: 19px;
-        color: #F99C00;
+        color: #FB6248;
         font-family: Impact;
       }
     }

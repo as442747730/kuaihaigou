@@ -37,7 +37,7 @@
           <ul>
             <li class="u_comment-list" v-for="($v, $k) in commentData">
               <a :href="$v.personalInfoResp ? '/user?uid=' + $v.personalInfoResp.id : 'javascript: void(0)'"><div class="header-img ib-middle" v-if='$v.personalInfoResp' :style="'background: url(' + ($v.personalInfoResp.headimgurl || defaulthead) + ') no-repeat center/cover'"></div></a>
-              <div class="user-infor ib-middle">
+              <div class="user-infor" style="display:inline-block">
                 <a class="ib-middle" v-if='$v.personalInfoResp' :href="'/user?uid=' + $v.personalInfoResp.id">{{ $v.personalInfoResp.nickname || '' }}</a>
                 <a class="ib-middle" v-else>匿名用户</a>
                 <br>
@@ -372,33 +372,35 @@ export default {
       padding: 20px;
       em {
         font-weight: bold;
-        font-family: 'Impact';
+        font-family: 'PingFang-SC-Medium';
         font-size: 17px;
+        line-height: 1;
         color: #F99C00;
       }
       span {
-        font-family: 'PingFang-SC-Medium';
+        color: #666;
         font-size: 11px;
-        margin-left: 5px;
+        line-height: 17px;
+        margin-left: 10px;
       }
       .bar {
         width: 335px;
-        height: 20px;
-        background: rgba(239,249,252,1);
+        height: 16px;
+        background: #EFF9FC;
         border-radius: 10px;
         position: relative;
-        line-height: 20px;
+        line-height: 16px;
         overflow: hidden;
-        margin-top: 12px;
-        font-size: 11px;
-        font-weight: 600;
+        margin-top: 10px;
+        font-size: 10px;
+        font-weight: bold;
         text-align: center;
         &-now {
           position: absolute;
           height: 100%;
           left: 0;
           top: 0;
-          background: #59C3E1;
+          background: #03A1CD;
           border-radius: 10px;
         }
         p {
@@ -426,7 +428,7 @@ export default {
     }
   }
   &-type {
-    padding: 15px 20px;
+    padding: 20px;
     border-bottom: 1PX solid #f5f5f5;
     li {
       display: inline-block;
@@ -435,10 +437,9 @@ export default {
       line-height: 29px;
       border-radius: 4px;
       border: 1PX solid #eee;
-      margin: 0 5px;
+      margin-right: 10px;
       font-size: 13px;
       font-family: 'PingFang-SC-Medium';
-      font-weight: bold;
       text-align: center;
       color: #999;
       &:last-child {
@@ -450,6 +451,7 @@ export default {
       }
       &.cur {
         color: #333;
+        font-weight: bold;
         border-color: #000;
       }
     }
@@ -474,8 +476,8 @@ export default {
       margin-top: 30px;
     }
     .header-img {
-      width: 45px;
-      height: 45px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
       overflow: hidden;
       margin-right: 10px;
@@ -484,7 +486,6 @@ export default {
       a {
         font-size: 15px;
         color: #333;
-        font-family: 'PingFangSC-Semibold';
         font-weight: bold;
         margin-bottom: 5px;
         width: 200px;
@@ -515,17 +516,17 @@ export default {
     }
     .desc {
       color: #333;
-      font-family: 'PingFang-SC-Medium';
       line-height: 25px;
       text-align: justify;
-      margin: 13px 0;
+      font-weight: bold;
+      margin: 15px 0;
       font-size: 15px;
     }
     .pro-item {
       width: 72px;
       height: 72px;
-      margin-right: 15px;
-      margin-bottom: 15px;
+      margin-right: 10px;
+      margin-bottom: 14px;
       display: inline-block;
       &:last-child {
         margin-right: 0;
@@ -546,7 +547,6 @@ export default {
         &>span {
           display: inline-block;
           vertical-align: middle;
-          font-family: 'PingFangSC-Medium';
           font-size: 13px;
           font-weight: bold;
           &:last-child {

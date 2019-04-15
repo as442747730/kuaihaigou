@@ -26,9 +26,9 @@
         </div>
       </div>
 
-      <div class="u-detail_info-desc margin-30">
+      <div class="u-detail_info-desc">
         <h2>{{topGoods.goodsName}}</h2>
-        <p class="price">¥ {{ showPrice }} <i>{{ topGoods.marketPrice }}</i></p>
+        <p class="price">¥ {{ showPrice }} <i>市场价：￥{{ topGoods.marketPrice }}</i></p>
         <p class="tag-wrap">
           <span v-for="(tag, index) in topGoods.tagList" :key="index">{{ tag.tagname }}</span>
         </p>
@@ -137,9 +137,9 @@
       <van-goods-action-big-btn :loading='buyLoading' class='buy-now' text="立即购买" @click="buyNow" primary />
     </van-goods-action>
     <!-- 规格弹窗 -->
-    <van-actionsheet v-model="skuShow" title="选择规格">
+    <van-actionsheet class="round-header" v-model="skuShow" title="选择规格">
       <div class="sku-wrap">
-        <div class="goods-info">
+        <div class="goods-info" style="padding-top: 0;">
           <div class="pro">
             <img v-if="topGoods.imgList[0].imgUrl" :src="topGoods.imgList[0].imgUrl">
           </div>
@@ -169,7 +169,7 @@
             @change="changeSkuFn"
             v-model="getskuInfo.num"
             :integer="true" />
-          <div class="surstock">剩余库存{{ skuObj.stock }}</div>
+          <!-- <div class="surstock">剩余库存{{ skuObj.stock }}</div> -->
         </div>
       </div>
     </van-actionsheet>
@@ -210,7 +210,7 @@
             @change="changepackFn"
             v-model="packDetaNum"
             :integer="true" />
-          <div class="surstock">剩余库存{{ nowpack.goodsNum }}</div>
+          <!-- <div class="surstock">剩余库存{{ nowpack.goodsNum }}</div> -->
         </div>
       </div>
     </van-actionsheet>
@@ -365,7 +365,12 @@ export default {
         commentParams: commentParams,
         hotlist: hotlist || [],
         singleObj: singleObj,
-        ifCollection: ifCollection
+        ifCollection: ifCollection,
+        swiperBanner: {
+          effect : 'fade',
+          speed: 600,
+          slidesPerView: 'auto'
+        }
       }
     }
   },
@@ -377,16 +382,9 @@ export default {
       isLogin: false,
       // 初始化数据
       swiperBanner: {
+        effect : 'fade',
         speed: 600,
-        slidesPerView: 'auto',
-        on: {
-          slideChangeTransitionStart: function (swiper) {
-            document.querySelectorAll('.point').forEach(el => {
-              el.classList.remove('active')
-            })
-            document.getElementsByClassName('swiper-page')[0].querySelectorAll('.point')[this.activeIndex].classList.add('active')
-          }
-        }
+        slidesPerView: 'auto'
       },
       ifCollection: false, // 是否收藏
 
@@ -948,15 +946,14 @@ export default {
     },
 
     historyBack () {
-      // window.history.go(-1)
-      window.location.href = '/winecenter'
+      window.history.go(-1)
+      // window.location.href = '/winecenter'
     },
 
     // 去对比
     async toCompare () {
       const { code, data } = await wineApi.showGoodsForContrast()
       if (code === 200) {
-        console.log(data)
         if (data.length >= 2) {
           window.location.href = '/compare'
         } else if (data.length === 1) {
@@ -973,7 +970,10 @@ export default {
 .u-detail {
   margin-bottom: 50px;
   &_banner {
-    padding-left: 25px;
+    padding: 0 20px;
+    .swiper-container {
+      overflow: hidden;
+    }
     .swiper-page {
       position: absolute;
       width: 100%;
@@ -996,16 +996,7 @@ export default {
     }
   }
   .banner-list {
-    width: 315px;
-    margin-left: 5px;
-    &.swiper-slide-active {
-      .banner-list-box {
-        transform: scale(1);
-        &:after{
-          opacity: 0;
-        }
-      }     
-    }
+    width: 335px;
     &:last-child {
       width: 350px;
     }
@@ -1013,34 +1004,20 @@ export default {
       border-radius: 8px;
       border: 1PX solid #e6e6e6;
       box-sizing: border-box;
-      width: 315px;
-      height: 350px;
-      transform: scale(.94);
+      height: 315px;
       transition: transform ease .6s;
       position: relative;
-      &:after {
-        content: '';
-        position: absolute;
-        border-radius: 8px;
-        width: 100%;
-        height: 100%;
-        left: 0;
-        top: 0;
-        opacity: .1;
-        background: #000;
-        transition: opacity .6s;
-        transform: translateZ(0);
-      }
     }
     .pro {
-      width: 100%;
-      height: 350px;
+      width: 255px;
+      height: 260px;
       text-align: center;
-      line-height: 350px;
+      margin: 0 auto;
+      padding-top: 20px;
+      box-sizing: border-box;
       img {
-        max-width: 100%;
-        max-height: 100%;
-        vertical-align: middle;
+        width: 100%;
+        background-color: #fff;
       }
     }
   }
@@ -1048,15 +1025,15 @@ export default {
     font-size: 0;
     margin-top: 15px;
     &-desc {
-      margin-bottom: 25px;
+      padding: 20px;
       position: relative;
-      margin-top: 20px;
       h2 {
         font-size: 17px;
         color: #333;
-        line-height: 22px;
-        max-height: 48px;
+        line-height: 1;
         overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .tag-wrap {
         margin-top: 12px;
@@ -1081,11 +1058,21 @@ export default {
         padding-top: 7px;
         font-size: 19px;
         color: #FB6248;
+        font-family:PingFangSC-Semibold;
         font-weight: bold;
+        line-height: 1;
+        i {
+          font-size: 11px;
+          color: #666;
+          font-weight: normal;
+          padding-left: 10px;
+          text-decoration: line-through;
+          font-family: auto;
+        }
       }
       .to-compare {
         position: absolute;
-        right: 0;
+        right: 20px;
         top: 50%;
         transform: translateY(-50%);
         width: 100px;
@@ -1095,6 +1082,7 @@ export default {
         border-radius: 2px;
         text-align: center;
         color: #333;
+        font-weight: bold;
         font-size: 13px;
       }
       .active {
@@ -1104,7 +1092,6 @@ export default {
         color: #fff;
         font-size: 11px;
         font-weight: bold;
-        font-family: 'PingFangSC-Medium';
         border-radius: 2px;
         background:rgba(251,98,72,1)
       }
@@ -1148,9 +1135,9 @@ export default {
         display: inline-block;
         font-weight: bold;
         font-size: 15px;
-        font-family: 'PingFangSC-Semibold';
+        font-weight: bold;
         color: #333;
-        line-height: 1.2;
+        line-height: 1;
       }
     }
     .choose-txt {
@@ -1177,13 +1164,16 @@ export default {
       }
       span {
         color: #333;
-        font-family: 'PingFang-SC-Medium'
+        font-weight: bold;
       }
       .choose-txt {
         float: right;
         p {
-         color: #666; 
-         margin-right: 10px;
+          span {
+            color: #666;
+            font-weight: normal;
+          }
+          margin-right: 10px;
         }
         i {
           color: #333;
@@ -1202,17 +1192,15 @@ export default {
       overflow: hidden;
       .pro {
         flex-shrink: 0;
-        width: 100px;
-        height: 100px;
+        width: 105px;
+        height: 105px;
         border: 1PX solid #e6e6e6;
-        line-height: 100px;
-        text-align: center;
-        overflow: hidden;
+        border-radius: 2px;
         img {
-          max-height: 100%;
-          max-width: 100%;
-          display: inline-block;
-          vertical-align: middle;
+          width: 97px;
+          height: 98px;
+          object-fit: contain;
+          margin: 4px auto;
         }
       }
       .desc {
@@ -1221,6 +1209,7 @@ export default {
         padding-left: 16px;
         .title {
           width: 100%;
+          padding-top: 5px;
           font-size: 15px;
           font-weight: bold;
           color: #333;
@@ -1229,7 +1218,7 @@ export default {
           white-space: nowrap;
         }
         .price {
-          margin-top: 20px;
+          margin-top: 22px;
           color: #FF5B1F;
           font-weight: bold;
           font-size: 15px;
@@ -1262,6 +1251,7 @@ export default {
         color: #333;
         font-weight: bold;
         margin-bottom: 20px;
+        border-radius: 4px;
         &:nth-child(2n) {
           margin-right: 0
         }
@@ -1274,11 +1264,11 @@ export default {
     }
     .sku-num {
       margin-top: 10px;
-      line-height: 24px;
+      font-size: 0;
       h4 {
         font-size: 15px;
         display: inline-block;
-        line-height: 24px;
+        line-height: 1;
         vertical-align: middle;
       }
       .surstock {
@@ -1288,7 +1278,18 @@ export default {
         margin-right: 20px;
       }
       .van-stepper {
-        float: right;
+        margin-top: 20px;
+        button {
+          width: 40px;
+          height: 40px;
+        }
+        input {
+          width: 50px;
+          height: 38px;
+          color: #333;
+          border-left: 1px solid #EBEBEB;
+          border-right: 1px solid #EBEBEB;
+        }
       }
     }
   }
@@ -1296,15 +1297,15 @@ export default {
     .pack-goods-bill {
       font-size: 0;
       span {
-        color: #333;
-        font-weight: bold;
-        font-size: 13px;
+        color: #999;
+        font-size: 11px;
+        line-height: 1;
+        padding-bottom: 10px;
       }
       p {
-        margin-top: 6px;
-        font-size: 12px;
+        font-size: 13px;
         color: #666;
-        line-height: 22px;
+        line-height: 23px;
       }
     }
     .sku-num {
@@ -1534,6 +1535,29 @@ export default {
 .van-modal {
   z-index: 10000!important
 }
+
+.round-header {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  .van-actionsheet__header {
+    height: 77px;
+    line-height: 77px;
+    div {
+      font-size: 17px;
+      font-weight: bold;
+    }
+    .van-icon.van-icon-close {
+      &:before {
+        visibility: hidden;
+      }
+      background-image: url('~assets/img/upgrade/icon-close.png');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 15px;
+    }
+  }
+}
+
 .van-actionsheet__item {
   height: 50px;
   &:first-child {
@@ -1548,7 +1572,7 @@ export default {
   }
 }
 .van-actionsheet__content {
-  height: calc(77vh - 43px);
+  // height: calc(77vh - 43px);
   overflow: scroll;
 }
 .van-icon.van-icon-star {

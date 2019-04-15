@@ -560,7 +560,7 @@ export default {
       color: @cor_333;
       span {
         font-size: 20px;
-        color: #F99C00;
+        color: #FB6248;
         font-family: Impact;
       }
     }

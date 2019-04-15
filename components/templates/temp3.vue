@@ -74,7 +74,7 @@
       background: #FF3333;
     }
     .carry {
-      background: #F99C00;
+      background: #FB6248;
     }
   }
 
