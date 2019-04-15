@@ -1,6 +1,5 @@
 <template>
   <div class="m-invoice-edit">
-    <!-- <com-head :titleConfig="configtitle"></com-head> -->
     <div class="m-invoice-edit-cell">
       <div class="title">发票类型</div>
       <div class="checkbox-wrapper">
@@ -71,7 +70,6 @@
 </template>
 <script>
 import api from '~/utils/request'
-// import comHead from '~/components/com-head'
 export default {
   name: '',
   head () {
@@ -81,9 +79,6 @@ export default {
         { hid: 'title', name: 'title', content: '编辑发票信息' }
       ]
     }
-  },
-  components: {
-    // comHead
   },
   async asyncData (req) {
     return api.serverGet('/api/invoice/get/' + req.params.edit).then((res) => {

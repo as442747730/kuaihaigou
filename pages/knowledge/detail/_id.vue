@@ -463,10 +463,10 @@ export default {
         background-repeat: no-repeat;
         background-size: contain;
         &.tick {
-          background-image: url('~/assets/img/knowledge/icon-tick.png');
+          background-image: url('~assets/img/knowledge/icon-tick.png');
         }
         &.plus {
-          background-image: url('~/assets/img/knowledge/icon-plus.png');
+          background-image: url('~assets/img/knowledge/icon-plus.png');
         }
       }
     }
@@ -486,7 +486,7 @@ export default {
       color: @cor_999;
       &.date {
         padding-left: 18px;
-        background-image: url(~/assets/img/me/icon-clock.png);
+        background-image: url(~assets/img/me/icon-clock.png);
         background-position: left center;
         background-size: contain;
         background-repeat: no-repeat;
@@ -540,7 +540,7 @@ export default {
       height: 60px;
       background: @nice-blue;
       border-radius: 100%;
-      background-image: url(~/assets/img/knowledge/icon-money.png);
+      background-image: url(~assets/img/knowledge/icon-money.png);
       background-size: 27px 27px;
       background-position: center;
       background-repeat: no-repeat;

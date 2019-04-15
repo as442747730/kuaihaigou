@@ -1,6 +1,5 @@
 <template>
   <div class="phone">
-    <com-head :titleConfig="configtitle"></com-head>
     <div class="phone-in">
       <div class="in-bk">
         <div class="bk_logo"></div>
@@ -15,12 +14,10 @@
   </div>
 </template>
 <script>
-import comHead from '~/components/com-head'
 import keyBoard from '~/components/Keyboard'
 // import { userApi } from '~/api/users'
 export default {
   components: {
-    comHead,
     keyBoard
   },
   data () {
@@ -83,8 +80,8 @@ export default {
       margin: 0 auto;
       width: 165px;
       height: 165px;
-      // background: url('~/assets/img/login/ic_shouji_165x165@2x.png') center center no-repeat;
-      background-image: url('~/assets/img/login/ic_shouji_165x165@2x.png');
+      // background: url('~assets/img/login/ic_shouji_165x165@2x.png') center center no-repeat;
+      background-image: url('~assets/img/login/ic_shouji_165x165@2x.png');
       .bg_cover;
     }
   }
@@ -132,7 +129,7 @@ export default {
       position: absolute;
       top: 15px;
       right: 14px;
-      background-image: url('~/assets/img/Icons/ic_off_g_24x24@2x.png');
+      background-image: url('~assets/img/Icons/ic_off_g_24x24@2x.png');
       .bg_cover;
     }
   }

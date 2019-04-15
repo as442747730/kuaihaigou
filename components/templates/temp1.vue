@@ -65,7 +65,7 @@
         height: 14px;
         line-height: 14px;
         padding-left: 18px;
-        background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+        background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
         background-position: left center;
         background-repeat: no-repeat;
         background-size: 14px 14px;
@@ -104,7 +104,7 @@
       font-weight: 400;
       color: rgba(153, 153, 153, 1);
       padding-left: 18px;
-      background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+      background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
       background-position: left center;
       background-repeat: no-repeat;
       background-size: 14px 14px;
@@ -191,15 +191,15 @@
         }
 
         &.good {
-          background-image: url(~/assets/img/knowledge/icon-like.png);
+          background-image: url(~assets/img/knowledge/icon-like.png);
         }
 
         &.msg {
-          background-image: url(~/assets/img/knowledge/icon-msg.png);
+          background-image: url(~assets/img/knowledge/icon-msg.png);
         }
 
         &.look {
-          background-image: url(~/assets/img/knowledge/icon-view.png);
+          background-image: url(~assets/img/knowledge/icon-view.png);
         }
       }
     }
@@ -207,7 +207,7 @@
     .more {
       width: 30px;
       height: 30px;
-      background-image: url('~/assets/img/knowledge/icon-more.png');
+      background-image: url('~assets/img/knowledge/icon-more.png');
       .bg_cover;
     }
   }

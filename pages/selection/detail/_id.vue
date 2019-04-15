@@ -133,7 +133,7 @@ export default {
         background-repeat: no-repeat;
         background-size: 18px 18px;
         background-position: left center;
-        background-image: url('~/assets/img/Icons/ic_liulang_g_18x18@2x.png');
+        background-image: url('~assets/img/Icons/ic_liulang_g_18x18@2x.png');
       }
 
       .sub.pick {
@@ -246,15 +246,15 @@ export default {
               }
 
               .ic_year {
-                background-image: url('~/assets/img/Icons/ic_time_24x24.png');
+                background-image: url('~assets/img/Icons/ic_time_24x24.png');
               }
 
               .ic_address {
-                background-image: url('~/assets/img/Icons/ic_position_24x24.png');
+                background-image: url('~assets/img/Icons/ic_position_24x24.png');
               }
 
               .ic_variety {
-                background-image: url('~/assets/img/Icons/ic_grape_24x24.png');
+                background-image: url('~assets/img/Icons/ic_grape_24x24.png');
               }
             }
 

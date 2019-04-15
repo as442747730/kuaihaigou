@@ -239,6 +239,7 @@ import uParame from '~/components/detail/Parame'
 import uComment from '~/components/detail/Comment'
 import uAfter from '~/components/detail/After'
 import wechatLogin from '~/utils/wechatLogin'
+import Inertia from '~/utils/inertia'
 
 export default {
   components: {
@@ -482,7 +483,6 @@ export default {
 
   async created (req) {
     console.log('topGoods', this.topGoods)
-    this.Inertia = require('~/static/inertia')
     this.viewData = this.goodsList
     const {code, data} = await goodsApi.getProvince('86')
     if (code === 200) {
@@ -534,7 +534,7 @@ export default {
       console.log(data)
     }
     const compareBtn = document.querySelector('.compare-btn')
-    this.Inertia(compareBtn)
+    Inertia(compareBtn)
     let that = this
     window.addEventListener('scroll', this.handleScroll(function () {
       this.windowHeight = document.documentElement.clientHeight || document.body.clientHeight
@@ -1140,7 +1140,7 @@ export default {
         margin-right: 10px;
         width: 14px;
         height: 17px;
-        background: url('~/assets/img/Icons/ic_position_b_18x18@2x.png') no-repeat center/contain
+        background: url('~assets/img/Icons/ic_position_b_18x18@2x.png') no-repeat center/contain
       }
       span {
         width: 200px;
@@ -1578,7 +1578,7 @@ export default {
     display: inline-block;
     width: 45px;
     height: 45px;
-    background: url('~/assets/img/Icons/ic_vs_blue_45x45@2x.png') no-repeat center/contain;
+    background: url('~assets/img/Icons/ic_vs_blue_45x45@2x.png') no-repeat center/contain;
   }
 }
 </style>

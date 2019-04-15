@@ -99,7 +99,7 @@ export default {
       position: absolute;
       top: 15px;
       right: 14px;
-      background-image: url('~/assets/img/Icons/ic_off_g_24x24@2x.png');
+      background-image: url('~assets/img/Icons/ic_off_g_24x24@2x.png');
       .bg_cover;
     }
   }

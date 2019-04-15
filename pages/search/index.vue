@@ -348,7 +348,7 @@ export default {
       // } else if (id === 'winecenter') {
       //   window.location.href = '/winecenter'
       // }
-      window.location.href = '/home'
+      window.location.href = '/'
     },
     elNavlist (index) {
       if (this.navData.elIndex === index) return
@@ -504,7 +504,7 @@ export default {
           height: 16px;
           margin-left: 22px;
           margin-right: 12px;
-          background-image: url('~/assets/img/Icons/ic_search_g_16x16@2x.png');
+          background-image: url('~assets/img/Icons/ic_search_g_16x16@2x.png');
           .bg_contain;
         }
 
@@ -521,7 +521,7 @@ export default {
             content: '';
             width: 14px;
             height: 14px;
-            background-image: url('~/assets/img/Icons/ic_shanchu_g_14x14@2x.png');
+            background-image: url('~assets/img/Icons/ic_shanchu_g_14x14@2x.png');
             position: absolute;
             top: 50%;
             left: 50%;
@@ -580,7 +580,7 @@ export default {
         display: inline-block;
         width: 16px;
         height: 16px;
-        background-image: url('~/assets/img/Icons/ic_caidan_g_16x16@2x.png');
+        background-image: url('~assets/img/Icons/ic_caidan_g_16x16@2x.png');
         transition: transform .2s;
         .bg_contain;
       }
@@ -663,7 +663,7 @@ export default {
             float: right;
             width: 16px;
             height: 16px;
-            background-image: url('~/assets/img/Icons/ic_detele_b_16x16@2x.png');
+            background-image: url('~assets/img/Icons/ic_detele_b_16x16@2x.png');
             .bg_contain;
           }
         }
@@ -692,7 +692,7 @@ export default {
               width: 12px;
               height: 12px;
               margin-top: -6px;
-              background-image: url('~/assets/img/Icons/ic_off_g_14x14@2x.png');
+              background-image: url('~assets/img/Icons/ic_off_g_14x14@2x.png');
               .bg_contain;
             }
           }
@@ -734,7 +734,7 @@ export default {
                     left: 0;
                     border-radius: 4px;
                     background-color: rgba(0,0,0,.6);
-                    background-image: url('~/assets/img/Icons/img-saleout.png');
+                    background-image: url('~assets/img/Icons/img-saleout.png');
                     background-size: 60px auto;
                     background-repeat: no-repeat;
                     background-position: center;
@@ -1038,15 +1038,15 @@ export default {
     }
 
     .ic_good {
-      background-image: url('~/assets/img/Icons/ic_dianzan_g_18x18@2x.png');
+      background-image: url('~assets/img/Icons/ic_dianzan_g_18x18@2x.png');
     }
 
     .ic_collect {
-      background-image: url('~/assets/img/Icons/ic_pinglun_g_18x18@2x.png');
+      background-image: url('~assets/img/Icons/ic_pinglun_g_18x18@2x.png');
     }
 
     .ic_look {
-      background-image: url('~/assets/img/Icons/ic_liulang_g_18x18@2x.png');
+      background-image: url('~assets/img/Icons/ic_liulang_g_18x18@2x.png');
     }
 
     .ic_ddd {
@@ -1057,7 +1057,7 @@ export default {
       height: 30px;
       margin-top: -15px;
       float: right;
-      background-image: url('~/assets/img/Icons/头部icon_30x30_ic_more_g_30x30@2x.png');
+      background-image: url('~assets/img/Icons/头部icon_30x30_ic_more_g_30x30@2x.png');
       .bg_cover;
     }
 
@@ -1119,7 +1119,7 @@ export default {
           font-size: 12px;
           color: @cor_999;
           padding-left: 18px;
-          background-image: url(~/assets/img/me/icon-clock.png);
+          background-image: url(~assets/img/me/icon-clock.png);
           background-position: left center;
           background-size: 14px 14px;
           background-repeat: no-repeat;
@@ -1155,7 +1155,7 @@ export default {
         width: 14px;
         height: 14px;
         margin-top: -8px;
-        background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+        background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
         .bg_cover;
       }
     }

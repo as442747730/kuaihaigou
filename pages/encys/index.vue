@@ -1,6 +1,5 @@
 <template>
   <div class="encys">
-    <com-head :titleConfig="configtitle"></com-head>
     <div class="top">
       <div class="topbanner">
         <h2>查询工具</h2>
@@ -117,7 +116,6 @@
 <script>
 import { encyApi } from '~/api/encys'
 import userLab from '@/components/Usericon.vue'
-import comHead from '~/components/com-head'
 export default {
   asyncData (req) {
     let par1 = { page: 1, count: 10 }
@@ -137,8 +135,7 @@ export default {
     })
   },
   components: {
-    userLab,
-    comHead
+    userLab
   },
   data () {
     return {
@@ -203,7 +200,7 @@ export default {
             margin-top: -4px;
             width: 9px;
             height: 9px;
-            background-image: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
+            background-image: url('~assets/img/Icons/ic_more_right_gray_12x12@2x.png');
             .bg_contain;
           }
         }
@@ -277,7 +274,7 @@ export default {
             font-weight:400;
             color:rgba(153,153,153,1);
             padding-left: 18px;
-            background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+            background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
             background-position: left center;
             background-repeat: no-repeat;
             background-size: 14px 14px;
@@ -358,20 +355,20 @@ export default {
                 margin-left: 25px;
               }
               &.good {
-                background-image: url(~/assets/img/knowledge/icon-like.png);
+                background-image: url(~assets/img/knowledge/icon-like.png);
               }
               &.msg {
-                background-image: url(~/assets/img/knowledge/icon-msg.png);
+                background-image: url(~assets/img/knowledge/icon-msg.png);
               }
               &.look {
-                background-image: url(~/assets/img/knowledge/icon-view.png);
+                background-image: url(~assets/img/knowledge/icon-view.png);
               }
             }
           }
           .more {
             width: 30px;
             height: 30px;
-            background-image: url('~/assets/img/knowledge/icon-more.png');
+            background-image: url('~assets/img/knowledge/icon-more.png');
             .bg_cover;
           }
         }
@@ -446,7 +443,7 @@ export default {
           color: #999;
           line-height:14px;
           padding-left: 18px;
-          background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+          background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
           background-position: left center;
           background-repeat: no-repeat;
           background-size: 14px 14px;
@@ -468,7 +465,7 @@ export default {
 
   .topbanner {
     height: 70px;
-    background-image: url('~/assets/img/encys/img_baike_335x70@2x.png');
+    background-image: url('~assets/img/encys/img_baike_335x70@2x.png');
     .bg_cover;
 
     &>h2 {
@@ -518,15 +515,15 @@ export default {
       }
 
       .bk1 {
-        background-image: url('~/assets/img/encys/ic_putaopinz_55x55@2x.png');
+        background-image: url('~assets/img/encys/ic_putaopinz_55x55@2x.png');
       }
 
       .bk2 {
-        background-image: url('~/assets/img/encys/ic_chanqu_55x55@2x.png');
+        background-image: url('~assets/img/encys/ic_chanqu_55x55@2x.png');
       }
 
       .bk3 {
-        background-image: url('~/assets/img/encys/ic_jiuzhuang_55x55@2x.png');
+        background-image: url('~assets/img/encys/ic_jiuzhuang_55x55@2x.png');
       }
 
     }

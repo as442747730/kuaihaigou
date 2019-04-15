@@ -113,7 +113,7 @@ export default {
       })
     } else if (code === 506) {
       if (req.env === 1) {
-        req.redirect('/home')
+        req.redirect('/')
       } else {
         req.redirect('/account/login')
       }

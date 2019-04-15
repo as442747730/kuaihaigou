@@ -148,6 +148,7 @@ import nullData from '~/components/nullData'
 import { wineApi } from '~/api/wine'
 import tools from '~/utils/tools'
 import wechatLogin from '~/utils/wechatLogin'
+import Inertia from '~/utils/inertia'
 
 export default {
   head () {
@@ -174,6 +175,7 @@ export default {
     // 保存对象初始值
     const defparams = { ...params }
     const { code: goodCode, data: goodData } = await wineApi.goodList(params, req)
+    console.log(goodCode)
     if (goodCode === 200) {
       let { array, page, totalPageNo } = goodData
       const ismore = page < totalPageNo
@@ -247,22 +249,18 @@ export default {
     listTwo,
     nullData
   },
-  async created () {
-    console.log(this.goodsList)
-    this.Inertia = require('~/static/inertia')
+  async mounted () {
     let params = { ifWine: true }
     const { code, data } = await wineApi.clientAttrs(params)
     if (code === 200) {
-      console.log('data extras', data)
       this.extras = data
       this.getProplist()
       this.getInfos()
     }
-  },
-  mounted () {
-    this.addBarwid()
+
+    await this.addBarwid()
     const compareBtn = document.querySelector('.compare-btn')
-    this.Inertia(compareBtn)
+    new Inertia(compareBtn)
     let scrollElem = this.$refs.scrollElem
     let scrollChild = this.$refs.scrollChild
     let allH = scrollElem.clientHeight
@@ -769,7 +767,7 @@ export default {
     .icon_switch {
       width: 22px;
       height: 22px;
-      background-image: url("~/assets/img/Icons/ic_qiehuan_blue_22x22.png");
+      background-image: url("~assets/img/Icons/ic_qiehuan_blue_22x22.png");
       .bg_cover;
     }
 
@@ -796,7 +794,7 @@ export default {
       .search_icon {
         width: 16px;
         height: 16px;
-        background-image: url('~/assets/img/Icons/ic_search_g_16x16@2x.png');
+        background-image: url('~assets/img/Icons/ic_search_g_16x16@2x.png');
         .bg_cover;
       }
       .delete_icon {
@@ -806,7 +804,7 @@ export default {
         background-repeat: no-repeat;
         background-size: 14px 14px;
         background-position: center center;
-        background-image: url('~/assets/img/Icons/ic_shanchu_g_14x14@2x.png');
+        background-image: url('~assets/img/Icons/ic_shanchu_g_14x14@2x.png');
       }
       .inpbox {
         width: 130px;
@@ -822,7 +820,7 @@ export default {
     .icon_buy {
       width: 30px;
       height: 30px;
-      background-image: url("~/assets/img/Icons/ic_shop_b_30x30@2x.png");
+      background-image: url("~assets/img/Icons/ic_shop_b_30x30@2x.png");
       .bg_cover;
     }
   }
@@ -852,11 +850,11 @@ export default {
       margin-top: -2.5px;
       width: 8px;
       height: 5px;
-      background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
+      background-image: url("~assets/img/Icons/ic_triangle_bt_12x12@2x.png");
       opacity: 0.5;
       transform: rotate(180deg);
       transition: 0.2s;
-      // background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
+      // background-image: url("~assets/img/Icons/ic_triangle_gu_12x12@2x.png");
       .bg_cover;
     }
   }
@@ -874,7 +872,7 @@ export default {
     &:after {
       opacity: 1;
       transform: rotate(0);
-      background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
+      background-image: url("~assets/img/Icons/ic_triangle_bt_12x12@2x.png");
     }
   }
 }
@@ -912,9 +910,9 @@ export default {
         opacity: 0.5;
         transform: rotate(0);
         transition: 0.2s;
-        background-image: url("~/assets/img/Icons/ic_xiala_b_line_12x12.png");
+        background-image: url("~assets/img/Icons/ic_xiala_b_line_12x12.png");
         .bg_cover;
-        // background-image: url("~/assets/img/Icons/ic_xiala_g_line_12x12.png");
+        // background-image: url("~assets/img/Icons/ic_xiala_g_line_12x12.png");
       }
     }
     &.hascor {
@@ -932,7 +930,7 @@ export default {
         &:after {
           opacity: 1;
           transform: rotate(180deg);
-          background-image: url("~/assets/img/Icons/ic_xiala_b_line_12x12.png");
+          background-image: url("~assets/img/Icons/ic_xiala_b_line_12x12.png");
         }
       }
     }
@@ -1074,7 +1072,7 @@ export default {
 
       &:before {
 
-        background-image: url("../../assets/img/Icons/ic_time_24x24.png");
+        background-image: url("~assets/img/Icons/ic_time_24x24.png");
 
       }
 
@@ -1084,7 +1082,7 @@ export default {
 
       &:before {
 
-        background-image: url("../../assets/img/Icons/ic_position_24x24.png");
+        background-image: url("~assets/img/Icons/ic_position_24x24.png");
 
       }
 
@@ -1094,7 +1092,7 @@ export default {
 
       &:before {
 
-        background-image: url("../../assets/img/Icons/ic_grape_24x24.png");
+        background-image: url("~assets/img/Icons/ic_grape_24x24.png");
 
       }
 
@@ -1134,7 +1132,7 @@ export default {
     display: inline-block;
     width: 45px;
     height: 45px;
-    background: url('~/assets/img/Icons/ic_vs_blue_45x45@2x.png') no-repeat center/contain;
+    background: url('~assets/img/Icons/ic_vs_blue_45x45@2x.png') no-repeat center/contain;
   }
 }
 </style>

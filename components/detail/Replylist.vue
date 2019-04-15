@@ -515,7 +515,7 @@ export default {
                 display: inline-block;
                 width: 16px;
                 height: 16px;
-                background: url("~/assets/img/Icons/ic_like_b_16x16@2x.png") no-repeat center/contain;
+                background: url("~assets/img/Icons/ic_like_b_16x16@2x.png") no-repeat center/contain;
               }
 
               u {

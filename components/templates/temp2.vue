@@ -113,15 +113,15 @@
         }
 
         .ic_year {
-          background-image: url('~/assets/img/Icons/ic_time_24x24.png');
+          background-image: url('~assets/img/Icons/ic_time_24x24.png');
         }
 
         .ic_address {
-          background-image: url('~/assets/img/Icons/ic_position_24x24.png');
+          background-image: url('~assets/img/Icons/ic_position_24x24.png');
         }
 
         .ic_variety {
-          background-image: url('~/assets/img/Icons/ic_grape_24x24.png');
+          background-image: url('~assets/img/Icons/ic_grape_24x24.png');
         }
       }
 

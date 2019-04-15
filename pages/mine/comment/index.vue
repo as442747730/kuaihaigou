@@ -1,6 +1,5 @@
 <template>
   <div class="u-comment">
-    <com-head titleConfig="我的评论"></com-head>
     <div class="tab">
       <span :class="{'cur': tabIndex === 1}" @click='handleTab(1)'>知识分享</span>
       <span :class="{'cur': tabIndex === 2}" @click='handleTab(2)'>行业热点</span>
@@ -26,7 +25,6 @@
   </div>
 </template>
 <script>
-import comHead from '~/components/com-head'
 import { memberCommentApi } from '~/api/comment'
 import goodsComment from '~/components/mine/CommentGoods'
 import ordinary from '~/components/mine/CommentOrdinary'
@@ -34,8 +32,7 @@ export default {
 
   components: {
     goodsComment,
-    ordinary,
-    comHead
+    ordinary
   },
 
   head () {

@@ -133,7 +133,7 @@ export default {
 
         height: 30px;
 
-        background-image: url('~/assets/img/Icons/ic_off_g_30x30.png');
+        background-image: url('~assets/img/Icons/ic_off_g_30x30.png');
 
         .bg_cover;
 

@@ -17,7 +17,7 @@
     },
     methods: {
       toIndex () {
-        window.location.href = '/home'
+        window.location.href = '/'
       }
     }
   }

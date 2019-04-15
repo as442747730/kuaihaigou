@@ -1,6 +1,5 @@
 <template>
   <div class="homelist" ref="scrollElem">
-    <com-head :titleConfig="configtitle"></com-head>
     <div class="hothead">
       <div class="headitem" :class="{active: hotweek}" @click="myhotFn(0)">本周最热</div>
       <div class="headitem" :class="{active: !hotweek}" @click="myhotFn(1)">本月最热</div>
@@ -90,7 +89,6 @@
   import { newApi } from '~/api/news'
   import tools from '~/utils/tools'
   import nullData from '~/components/nullData'
-  import comHead from '~/components/com-head'
 
   export default {
     head () {
@@ -102,8 +100,7 @@
       }
     },
     components: {
-      nullData,
-      comHead
+      nullData
     },
     async asyncData (req) {
       const hottest = true
@@ -476,7 +473,7 @@
             height: 14px;
             line-height: 14px;
             padding-left: 18px;
-            background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+            background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
             background-position: left center;
             background-repeat: no-repeat;
             background-size: 14px 14px;
@@ -514,7 +511,7 @@
           font-weight: 400;
           color: rgba(153, 153, 153, 1);
           padding-left: 18px;
-          background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+          background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
           background-position: left center;
           background-repeat: no-repeat;
           background-size: 14px 14px;

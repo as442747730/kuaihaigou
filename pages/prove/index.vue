@@ -1,6 +1,5 @@
 <template>
   <div class="u-prove" :class="{'fullScreen': fullScreen}">
-    <com-head :titleConfig="configtitle"></com-head>
     <div class="u-prove-info" :class="{'provePass': provePass}">
       <div class="title font_hight" v-if='!provePass'>
         <h2>我的荣誉</h2>
@@ -163,7 +162,6 @@ import api from '~/utils/request'
 import { userApi } from '~/api/users'
 import { proveApi } from '~/api/prove'
 
-import comHead from '~/components/com-head'
 import major from '~/components/prove/Major'
 import media from '~/components/prove/Media'
 import office from '~/components/prove/Office'
@@ -179,7 +177,6 @@ export default {
   },
 
   components: {
-    comHead,
     major,
     media,
     office
@@ -489,7 +486,7 @@ export default {
           color: #999;
           width: 15px;
           height: 15px;
-          background: url('~/assets/img/prove/ic_wenti_g_15x15@2x.png') no-repeat center/contain;
+          background: url('~assets/img/prove/ic_wenti_g_15x15@2x.png') no-repeat center/contain;
         }
       }
     }
@@ -507,7 +504,7 @@ export default {
         color: #999;
         width: 15px;
         height: 15px;
-        background: url('~/assets/img/prove/ic_wenti_g_15x15@2x.png') no-repeat center/contain;
+        background: url('~assets/img/prove/ic_wenti_g_15x15@2x.png') no-repeat center/contain;
       }
     }
     .pro {
@@ -515,18 +512,18 @@ export default {
       width: 100%;
       height: 147px;
       box-sizing: border-box;
-      background: url('~/assets/img/prove/bg_glory_weirenz@2x.png') no-repeat center/contain;
+      background: url('~assets/img/prove/bg_glory_weirenz@2x.png') no-repeat center/contain;
       padding: 20px;
       color: #fff;
       &.auditing {
-        background: url('~/assets/img/prove/bg_glory_shenhezhong@2x.png') no-repeat center/contain;
+        background: url('~assets/img/prove/bg_glory_shenhezhong@2x.png') no-repeat center/contain;
         span {
           color: #FFF3DF;
           background: #EDC37F;
         }  
       }
       &.refuse {
-        background: url('~/assets/img/prove/bg_glory_weitongguo@2x.png') no-repeat center/contain;
+        background: url('~assets/img/prove/bg_glory_weitongguo@2x.png') no-repeat center/contain;
         span {
           background: #ff8091;
           color: #fbb8c1;
@@ -668,7 +665,7 @@ export default {
           position: relative;
         }
         i {
-          background: url('~/assets/img/prove/ic_off_red_20x20@2x.png') no-repeat center/contain;
+          background: url('~assets/img/prove/ic_off_red_20x20@2x.png') no-repeat center/contain;
           width: 20px;
           height: 20px;
           position: absolute;
@@ -722,13 +719,13 @@ export default {
     }
     .icon {
       &_major {
-        background: url('~/assets/img/prove/ic_profession_100x100copy@2x.png') no-repeat center/contain;
+        background: url('~assets/img/prove/ic_profession_100x100copy@2x.png') no-repeat center/contain;
       }
       &_media {
-        background: url('~/assets/img/prove/ic_self_media_100x100@2x.png') no-repeat center/contain;
+        background: url('~assets/img/prove/ic_self_media_100x100@2x.png') no-repeat center/contain;
       }
       &_office {
-        background: url('~/assets/img/prove/ic_official_100x100@2x.png') no-repeat center/contain;
+        background: url('~assets/img/prove/ic_official_100x100@2x.png') no-repeat center/contain;
       }
     }
     span {
@@ -909,7 +906,7 @@ export default {
           z-index: -1
         }
         i {
-          background: url('~/assets/img/prove/ic_recamera_blue_30x30@2x.png') no-repeat center/contain;
+          background: url('~assets/img/prove/ic_recamera_blue_30x30@2x.png') no-repeat center/contain;
         }
         p {
           color: #fff
@@ -919,7 +916,7 @@ export default {
         display: inline-block;
         width: 30px;
         height: 30px;
-        background: url('~/assets/img/prove/ic_camera_blue_30x30@2x.png') no-repeat center/contain;
+        background: url('~assets/img/prove/ic_camera_blue_30x30@2x.png') no-repeat center/contain;
       }
       p {
         margin-top: 10px;

@@ -1,9 +1,6 @@
 <template>
   <div class="noun">
     <div class="noun-head">
-      <com-head titleConfig="名词解释">
-        <div class="search"></div>
-      </com-head>
       <div class="topnav">
         <div
           class="item"
@@ -98,7 +95,6 @@
   </div>
 </template>
 <script>
-import comHead from '~/components/com-head'
 import CpmOne from '~/components/noun/Cpmone'
 import { encyApi } from '~/api/encys'
 export default {
@@ -111,7 +107,6 @@ export default {
     }
   },
   components: {
-    comHead,
     CpmOne
   },
   async asyncData (req) {
@@ -435,7 +430,7 @@ export default {
         height: 14px;
         margin-top: -7px;
         margin-left: -4px;
-        background-image: url('~/assets/img/Icons/ic_return_b_30x30@2x.png');
+        background-image: url('~assets/img/Icons/ic_return_b_30x30@2x.png');
         background-position: 50% 50%;
         background-size: cover;
         background-repeat: no-repeat;
@@ -468,7 +463,7 @@ export default {
         opacity: .5;
         transform: rotate(0);
         transition: .2s;
-        background-image: url('~/assets/img/Icons/ic_triangle_bt_12x12@2x.png');
+        background-image: url('~assets/img/Icons/ic_triangle_bt_12x12@2x.png');
         .bg_cover;
       }
     }
@@ -483,7 +478,7 @@ export default {
       .ic_sj {
         opacity: 1;
         transform: rotate(180deg);
-        background-image: url('~/assets/img/Icons/ic_triangle_bt_12x12@2x.png');
+        background-image: url('~assets/img/Icons/ic_triangle_bt_12x12@2x.png');
       }
     }
   }

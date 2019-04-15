@@ -312,7 +312,7 @@ export default {
       .hd_l {
         width: 30px;
         height: 30px;
-        background-image: url('~/assets/img/Icons/ic_menu_w_30x30@2x.png');
+        background-image: url('~assets/img/Icons/ic_menu_w_30x30@2x.png');
         position: relative;
         .bg_cover;
         i {
@@ -336,7 +336,7 @@ export default {
       .hd_r {
         width: 30px;
         height: 30px;
-        // background-image: url('~/assets/img/Icons/ic_search_w_30x30@2x.png');
+        // background-image: url('~assets/img/Icons/ic_search_w_30x30@2x.png');
         .bg_cover;
       }
     }
@@ -456,25 +456,25 @@ export default {
 
         .ic_gwc {
           &:before {
-            background-image: url('~/assets/img/detail/ic_gouwuche_40x40@2x.png');
+            background-image: url('~assets/img/detail/ic_gouwuche_40x40@2x.png');
           }
         }
 
         .ic_wdgz {
           &:before {
-            background-image: url('~/assets/img/detail/ic_dingdan_40x40@2x.png');
+            background-image: url('~assets/img/detail/ic_dingdan_40x40@2x.png');
           }
         }
 
         .ic_wdhd {
           &:before {
-            background-image: url('~/assets/img/detail/ic_huodong_40x40@2x.png');
+            background-image: url('~assets/img/detail/ic_huodong_40x40@2x.png');
           }
         }
 
         .ic_wdsc {
           &:before {
-            background-image: url('~/assets/img/detail/ic_shoucang_40x40@2x.png');
+            background-image: url('~assets/img/detail/ic_shoucang_40x40@2x.png');
           }
         }
       }

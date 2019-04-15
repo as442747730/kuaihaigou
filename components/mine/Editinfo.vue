@@ -1,7 +1,6 @@
 <template>
   <van-popup v-model="configs.isshow" position="right">
     <div class="editinfo">
-      <com-head :titleConfig="configs._title"></com-head>
       <div class="edit-main">
         <div class="edit-one">
           <van-field v-model="configs.model" :placeholder="configs._plholder" />
@@ -15,12 +14,8 @@
   </van-popup>
 </template>
 <script>
-import comHead from '~/components/com-head'
 import { userApi } from '~/api/users'
 export default {
-  components: {
-    comHead
-  },
   data () {
     return {
       configs: {

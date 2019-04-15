@@ -32,7 +32,7 @@ export default {
   },
 
   created () {
-    this.activePath = this.$route.path === '/' ? '/home' : this.$route.path
+    this.activePath = this.$route.path === '/' ? '/' : this.$route.path
   },
 
   components: {

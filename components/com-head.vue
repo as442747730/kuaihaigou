@@ -62,7 +62,7 @@ export default {
           window.location.href = '/coupon/list'
           break
         case '/encys':
-          window.location.href = '/home'
+          window.location.href = '/'
           break
         case '/noun':
           window.location.href = '/encys'
@@ -81,13 +81,13 @@ export default {
           window.history.go(-1)
           break
         case '/hotspot':
-          window.location.href = '/home'
+          window.location.href = '/'
           break
         case '/selection':
-          window.location.href = '/home'
+          window.location.href = '/'
           break
         case '/community':
-          window.location.href = '/home'
+          window.location.href = '/'
           break
         default:
           console.log('未知页面')
@@ -129,7 +129,7 @@ header {
       height: 14px;
       margin-top: -7px;
       margin-left: -4px;
-      background-image: url('~/assets/img/Icons/ic_return_b_30x30@2x.png');
+      background-image: url('~assets/img/Icons/ic_return_b_30x30@2x.png');
       background-position: 50% 50%;
       background-size: cover;
       background-repeat: no-repeat;

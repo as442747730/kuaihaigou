@@ -507,7 +507,7 @@ export default {
           width: 14px;
           height: 14px;
           transform: translateY(-50%);
-          background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+          background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
           .bg_cover;
         }
       }

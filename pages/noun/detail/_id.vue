@@ -208,7 +208,7 @@ export default {
       background-size: 8px 14px;
       background-repeat: no-repeat;
       background-position: center center;
-      background-image: url('~/assets/img/Icons/ic_return_b_30x30@2x.png');
+      background-image: url('~assets/img/Icons/ic_return_b_30x30@2x.png');
     }
     .zy_btn {
       font-size:13px;

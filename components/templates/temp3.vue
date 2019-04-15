@@ -22,7 +22,7 @@
   &-bk {
     height: 180px;
     border-radius: 10px;
-    background-image: url('~/assets/img/img_shequhuodong_335x180@2x.png');
+    background-image: url('~assets/img/img_shequhuodong_335x180@2x.png');
     .bg_cover;
     .theme {
       float: left;

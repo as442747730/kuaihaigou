@@ -227,7 +227,7 @@ export default {
         }
         if (res1.code === 506 || res2.code === 506 || res3.code === 506 || res4.code === 506) {
           if (env === 1) {
-            return req.redirect('/home')
+            return req.redirect('/')
           } else {
             return req.redirect('/account/login')
           }

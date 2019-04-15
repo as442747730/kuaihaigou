@@ -47,14 +47,14 @@ export default {
   props: {
     postIndex: {
       type: String,
-      default: '/home'
+      default: '/'
     }
   },
   data () {
     return {
       clsList: ['footer-icon-index', 'footer-icon-xjzx', 'footer-icon-add', 'footer-icon-zsfx', 'footer-icon-my'],
       footList: [
-        { name: '首页', path: '/home' },
+        { name: '首页', path: '/' },
         { name: '选酒中心', path: '/winecenter' },
         { name: 'add' },
         { name: '知识分享', path: '/knowledge' },
@@ -138,6 +138,8 @@ export default {
   bottom: 0;
   background: #fff;
   z-index: 20;
+  padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
+  padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
   .footer-icon {
     display: block;
     text-align: center;
@@ -156,36 +158,36 @@ export default {
       background-repeat: no-repeat;
     }
     &-index {
-      background-image: url('~/assets/img/foot/ic_home_nor@2x.png');
+      background-image: url('~assets/img/foot/ic_home_nor@2x.png');
     }
     &-xjzx {
-      background-image: url('~/assets/img/foot/ic_mall_nor@2x.png');
+      background-image: url('~assets/img/foot/ic_mall_nor@2x.png');
     }
     &-add {
       width: 43px!important;
       height: 33px!important;
-      background-image: url('~/assets/img/foot/icon_ic_fabu_43x33@2x.png');
+      background-image: url('~assets/img/foot/icon_ic_fabu_43x33@2x.png');
     }
     &-zsfx {
-      background-image: url('~/assets/img/foot/ic_applets_nor@2x.png');
+      background-image: url('~assets/img/foot/ic_applets_nor@2x.png');
     }
     &-my {
-      background-image: url('~/assets/img/foot/ic_us_nor@2x.png');
+      background-image: url('~assets/img/foot/ic_us_nor@2x.png');
     }
   }
   .footer-icon.cur {
     .footer-icon {
       &-index {
-        background-image: url('~/assets/img/foot/ic_home_ele@2x.png');
+        background-image: url('~assets/img/foot/ic_home_ele@2x.png');
       }
       &-xjzx {
-        background-image: url('~/assets/img/foot/ic_mall_ele@2x.png');
+        background-image: url('~assets/img/foot/ic_mall_ele@2x.png');
       }
       &-zsfx {
-        background-image: url('~/assets/img/foot/ic_applets_ele@2x.png');
+        background-image: url('~assets/img/foot/ic_applets_ele@2x.png');
       }
       &-my {
-        background-image: url('~/assets/img/foot/ic_us_ele@2x.png');
+        background-image: url('~assets/img/foot/ic_us_ele@2x.png');
       }
     }
   }
@@ -235,19 +237,19 @@ export default {
     &:first-child {
       transition-delay: 50ms;
       i {
-        background: url('~/assets/img/knowledge/icon-article.png') no-repeat center/contain;
+        background: url('~assets/img/knowledge/icon-article.png') no-repeat center/contain;
       }
     }
     &:nth-child(2) {
       transition-delay: 100ms;
       i {
-        background: url('~/assets/img/knowledge/icon-video.png') no-repeat center/contain;
+        background: url('~assets/img/knowledge/icon-video.png') no-repeat center/contain;
       }
     }
     &:nth-child(3) {
       transition-delay: 150ms;
       i {
-        background: url('~/assets/img/knowledge/icon-club.png') no-repeat center/contain;
+        background: url('~assets/img/knowledge/icon-club.png') no-repeat center/contain;
       }
     }
     i {
@@ -271,7 +273,7 @@ export default {
     left: 50%;
     bottom: 16px;
     transform: translateX(-50%;);
-    background: url('~/assets/img/knowledge/icon-close-single.png') no-repeat center/contain;
+    background: url('~assets/img/knowledge/icon-close-single.png') no-repeat center/contain;
   }
   .close-mask {
     position: absolute;

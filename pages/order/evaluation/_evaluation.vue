@@ -245,7 +245,7 @@ export default {
           text-align: center;
           font-size: 11px;
           color: #C7C7C7;
-          background-image: url('~/assets/img/order/icon-add.png');
+          background-image: url('~assets/img/order/icon-add.png');
           background-size: 16px 16px;
           background-position: center 18px;
           background-repeat: no-repeat;

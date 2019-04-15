@@ -170,7 +170,7 @@
         width: 12px;
         height: 13px;
         vertical-align: top;
-        background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
+        background-image: url("~assets/img/Icons/ic_triangle_gu_12x12@2x.png");
         background-size: 80% auto;
         background-position: center;
         background-repeat: no-repeat;
@@ -184,7 +184,7 @@
         &:after {
           opacity: 1;
           transform: rotate(0);
-          background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
+          background-image: url("~assets/img/Icons/ic_triangle_bt_12x12@2x.png");
         }
       }
     }
@@ -208,7 +208,7 @@
         display: inline-block;
         width: 12px;
         height: 12px;
-        background-image: url(~/assets/img/order/icon-arrow.png);
+        background-image: url(~assets/img/order/icon-arrow.png);
         background-position: center;
         background-size: 12px;
         background-repeat: no-repeat;

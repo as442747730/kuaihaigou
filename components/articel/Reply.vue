@@ -426,7 +426,7 @@ export default {
         width: 30px;
         height: 30px;
         border-radius: 50%;
-        background: url('~/assets/img/ic_chaoai_35x35@2x.png') no-repeat center/contain;
+        background: url('~assets/img/ic_chaoai_35x35@2x.png') no-repeat center/contain;
       }
       span {
         margin-top: 4px;
@@ -482,9 +482,9 @@ export default {
               display: inline-block;
               width: 16px;
               height: 16px;
-              background: url("~/assets/img/Icons/ic_like_b_16x16@2x.png") no-repeat center/contain;
+              background: url("~assets/img/Icons/ic_like_b_16x16@2x.png") no-repeat center/contain;
               &.active {
-                background: url("~/assets/img/knowledge/icon-like-blue.png") no-repeat center/contain;
+                background: url("~assets/img/knowledge/icon-like-blue.png") no-repeat center/contain;
               }
             }
             u {

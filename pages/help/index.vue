@@ -111,7 +111,7 @@ export default {
       u {
         width: 100%;
         height: 35px;
-        background: url('~/assets/img/user/img_wave_375x35@2x.png') no-repeat center/cover;
+        background: url('~assets/img/user/img_wave_375x35@2x.png') no-repeat center/cover;
         position: absolute;
         left: 0;
         bottom: 0;
@@ -140,10 +140,10 @@ export default {
       }
     }
     i.kefu {
-      background: url('~/assets/img/Icons/ic_zaixiankefu_30x30@2x.png') no-repeat center/contain;
+      background: url('~assets/img/Icons/ic_zaixiankefu_30x30@2x.png') no-repeat center/contain;
     }
     i.phone {
-      background: url('~/assets/img/Icons/ic_dianhuakefu_30x30@2x.png') no-repeat center/contain;
+      background: url('~assets/img/Icons/ic_dianhuakefu_30x30@2x.png') no-repeat center/contain;
     }
     i {
       display: inline-block;

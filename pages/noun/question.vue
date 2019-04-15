@@ -181,7 +181,7 @@
 
       &.active {
         border: none;
-        background-image: url('~/assets/img/Icons/ic_check_bule_20x20@2x.png');
+        background-image: url('~assets/img/Icons/ic_check_bule_20x20@2x.png');
         background-size: 20px;
         background-repeat: no-repeat;
         background-position: center center;
@@ -284,7 +284,7 @@
           background-size: 30px 30px;
           background-repeat: no-repeat;
           background-position: center center;
-          background-image: url('~/assets/img/Icons/ic_add_to_out_g_30x30@2x.png');
+          background-image: url('~assets/img/Icons/ic_add_to_out_g_30x30@2x.png');
         }
       }
     }

@@ -175,7 +175,7 @@ export default {
       height: 130px;
       box-sizing: border-box;
       padding: 20px 0 0 15px;
-      background: url('~/assets/img/reward/img_shanjin_900x210@2x.png') no-repeat center/cover;
+      background: url('~assets/img/reward/img_shanjin_900x210@2x.png') no-repeat center/cover;
     }
     span {
       font-size: 9px;

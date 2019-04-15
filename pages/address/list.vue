@@ -1,6 +1,5 @@
 <template>
   <div class="m-address-list">
-    <com-head :titleConfig="configtitle"></com-head>
     <van-pull-refresh class="van-pull" v-model="refresing" @refresh="getRefresh">
 
       <div class="address-ul">
@@ -25,7 +24,6 @@
 
 <script>
 import { addressApi } from '~/api/address'
-import comHead from '~/components/com-head'
 
 export default {
   name: 'addressList',
@@ -39,10 +37,6 @@ export default {
         { hid: 'title', name: 'title', content: '收货地址' }
       ]
     }
-  },
-
-  components: {
-    comHead
   },
 
   async asyncData (req) {
