@@ -5,7 +5,7 @@
       <p>recommended to you</p>
       <h3>为你推荐</h3>
     </div>
-    <ul class="recommended-item margin-20">
+    <ul class="recommended-item">
       <li class="recommended-list" v-for="(hot, index) in hotList" :key="index">
         <div class="pro">
           <a :href="'/detail/' + hot.id">
@@ -44,19 +44,22 @@ export default {
 <style lang="less" scoped>
 // 推荐
 .recommended {
+  &-item {
+    padding: 0 19px;
+  }
   &-list {
     display: inline-block;
-    width: 160px; 
-    margin-right: 15px;
+    width: 162px; 
+    margin-right: 13px;
     margin-bottom: 20px;
     &:nth-child(2n) {
       margin-right: 0;
     }
     .pro {
       border: 1PX solid #eaeaea;
-      height: 158px;
+      height: 160px;
       text-align: center;
-      line-height: 158px;
+      line-height: 160px;
       overflow: hidden;
       img {
         display: inline-block;
@@ -68,13 +71,14 @@ export default {
       h3 {
         color: #333;
         font-size: 13px;
-        font-family: 'PingFangSC-Medium';
-        margin: 12px 0 10px;
+        margin: 11px 0 10px;
         line-height: 18px;
         font-weight: bold;
-        // height: 36px;
         overflow: hidden;
-        .u-ellipsis;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
       p {
         color: #999;
@@ -83,8 +87,9 @@ export default {
       }
       span {
         font-size: 15px;
-        color: #F99C00;
-        font-family: 'Impact'
+        color: #FB6248;
+        font-family:PingFangSC-Semibold;
+        font-weight: bold;
       }
     }
   }

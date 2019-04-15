@@ -81,7 +81,7 @@ export default {
   .textarea {
     width: 100%;
     min-height: 55vh;
-    font-size: 14px;
+    font-size: 15px;
     color: #333;
     padding: 20px;
     box-sizing: border-box;

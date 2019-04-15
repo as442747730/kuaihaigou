@@ -439,7 +439,7 @@ export default {
         bottom: 0;
         left: 20px;
         font-size: 17px;
-        color: #f99c00;
+        color: #FB6248;
         font-family: 'Impact'
       }
     }

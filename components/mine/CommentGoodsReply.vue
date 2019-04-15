@@ -310,7 +310,7 @@ export default {
       height: 35px;
       line-height: 35px;
       text-align: center;
-      background: #F99C00;
+      background: #FB6248;
       border-radius: 4px;
       color: #fff;
       font-size: 13px;

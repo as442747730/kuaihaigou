@@ -22,7 +22,7 @@
         <section class="goods" v-if="navDatanIndex === 0">
           <div class="goods-details">
             <div class="list-item" v-for="($v, $k) in searchData" :key="$k">
-              <a :href="'/detail/' + $v.id" style="display: flex">
+              <a class="item-wrap" :href="'/detail/' + $v.id">
                 <div class="item_l">
                   <div :class="{ 'item_l-bk': true, 'sale-out': $v.stock === 876 }" :style="'background: url(' + $v.imgUrl + ') no-repeat center/contain'"></div>
                 </div>
@@ -464,6 +464,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+@font-face {
+  font-family: DINEngschriftStd;
+  src: url('~assets/font/DINEngschriftStd.otf');
+}
 .search {
   .u-restout;
   // padding-top: 80px;
@@ -618,34 +622,27 @@ export default {
           .flex_between;
 
           &_item {
-            font-size: 16px;
-            font-family: PingFang-SC-Medium;
-            font-weight: 500;
-            color: #333;
             margin: 15px 0;
-            padding-left: 20px;
-            position: relative;
-
             &>span {
-              position: absolute;
-              top: 50%;
-              left: -5px;
               font-size: 16px;
               font-family: DINEngschriftStd;
               color: rgba(170, 170, 170, 1);
-              transform: translateY(-50%);
             }
-
             .w1 {
               color: #FB6248;
             }
-
             .w2 {
               color: #FEBA2C;
             }
-
             .w3 {
               color: #F2E220;
+            }
+            a {
+              font-size: 16px;
+              font-weight: bold;
+              color: #333;
+              margin-left: 5px;
+              line-height: 1;
             }
           }
         }
@@ -706,21 +703,23 @@ export default {
         padding: 0 20px;
         .list {
           &-item {
-            display: flex;
             margin-top: 30px;
             margin-bottom: 30px;
 
+            .item-wrap {
+              display: flex;
+            }
+
             .item_l {
+              flex-shrink: 0;
               width: 120px;
               height: 120px;
+              box-sizing: border-box;
               border-radius: 4px;
               border: 1PX solid #eaeaea;
-
-              .flex_allCenter;
-
               &-bk {
-                width: 114px;
-                height: 116px;
+                width: 100%;
+                height: 100%;
                 position: relative;
                 &.sale-out {
                   &:after {
@@ -733,7 +732,7 @@ export default {
                     top: 0;
                     left: 0;
                     border-radius: 4px;
-                    background-color: rgba(0,0,0,.6);
+                    background-color: rgba(0,0,0,.4);
                     background-image: url('~assets/img/Icons/img-saleout.png');
                     background-size: 60px auto;
                     background-repeat: no-repeat;
@@ -745,25 +744,25 @@ export default {
 
             .item_r {
               padding-left: 15px;
-              .flex_tlMiddle;
-
               &>h4 {
                 font-size: 15px;
-                font-family: PingFangSC-Medium;
-                font-weight: 500;
-                color: rgba(51, 51, 51, 1);
+                font-weight: bold;
+                color: #333;
                 line-height: 21px;
               }
-
               &>p {
-                .u-mltip;
+                padding: 15px 0 30px 0;
+                span {
+                  color: #999;
+                  font-size: 12px;
+                  line-height: 1;
+                }
               }
-
               .price {
                 font-size: 17px;
+                line-height: 1;
                 font-family: Impact;
-                color: rgba(249, 156, 0, 1);
-
+                color: #F99C00;
               }
             }
           }
@@ -990,9 +989,11 @@ export default {
   &-head {
     padding: 15px 0;
     font-size: 16px;
-    font-family: PingFangSC-Semibold;
-    font-weight: 600;
-    color: rgba(51, 51, 51, 1);
+    font-weight: bold;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &-bk {

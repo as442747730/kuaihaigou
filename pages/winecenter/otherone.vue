@@ -25,8 +25,6 @@
     </section>
   </div>
 </template>
-<style lang="less" scope>
-</style>
 <script>
 import topSelect from '~/components/winecenter/topSelect'
 import nullData from '~/components/nullData'
@@ -195,8 +193,7 @@ export default {
         .head {
           height: 36px;
           font-size: 13px;
-          font-family: PingFangSC-Medium;
-          font-weight: 500;
+          font-weight: bold;
           color: @cor_333;
           line-height: 18px;
           overflow: hidden;
@@ -235,11 +232,11 @@ export default {
         }
 
         .price {
-          height: 15px;
           font-size: 15px;
-          font-family: Impact;
-          color: rgba(249, 156, 0, 1);
-          line-height: 15px;
+          line-height: 1;
+          font-family:PingFangSC-Semibold;
+          font-weight: bold;
+          color: #FB6248;
         }
       }
     }

@@ -97,11 +97,13 @@
                 <div class="summary">{{ $v.summary }}</div>
                 <div class="pro" v-lazy:background-image="$v.img">
                   <div class="goods-info">
-                    <div class="ib-middle goods-info-img" v-lazy:background-image="$v.goodsMinimalResp.cover"></div>
-                    <div class="ib-middle goods-info-detail">
-                      <p class="u-ellipsis">{{ $v.goodsMinimalResp.goodsName }}</p>
-                      <em class="ib-middle">¥{{ $v.goodsMinimalResp.actualPrice }}</em>
-                      <del class="ib-middle">市场价：¥{{ $v.goodsMinimalResp.marketPrice }}</del>
+                    <div class="box">
+                      <div class="ib-middle goods-info-img" v-lazy:background-image="$v.goodsMinimalResp.cover"></div>
+                      <div class="ib-middle goods-info-detail">
+                        <p class="u-ellipsis">{{ $v.goodsMinimalResp.goodsName }}</p>
+                        <em class="ib-middle">¥{{ $v.goodsMinimalResp.actualPrice }}</em>
+                        <del class="ib-middle">市场价：¥{{ $v.goodsMinimalResp.marketPrice }}</del>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -471,6 +473,7 @@ export default {
     border-radius: 4px;
     text-align: center;
     position: relative;
+    overflow: hidden;
     .bg_cover;
   }
   .desc {
@@ -513,12 +516,22 @@ export default {
 
   .goods-info {
     position: absolute;
-    width: 270px;
+    width: 100%;
+    height: 80px;
     box-sizing: border-box;
-    bottom: 10px;
-    left: 16px;
-    padding: 5px 10px;
-    background: #f9f9f9;
+    bottom: 0;
+    left: 0;
+    background: #404240;
+    padding-top: 10px;
+    .box {
+      width: 270px;
+      height: 60px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 5px 10px;
+      box-sizing: border-box;
+      display: flex;
+    }
     &-img {
       width: 50px;
       height: 50px;
@@ -533,12 +546,14 @@ export default {
     p {
       color: #333;
       font-size: 11px;
-      margin-bottom: 8px;
+      margin-bottom: 2px;
       font-weight: bold;
-      line-height: 1.2;
+      line-height: 23px;
     }
     em {
       color: @c-price;
+      font-family:PingFangSC-Semibold;
+      font-weight: bold;
       font-size: 15px;
     }
     del {

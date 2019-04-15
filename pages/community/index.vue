@@ -52,8 +52,9 @@
       </div>
       <div class="load-more" v-if="hasScroll">{{moreData ? loadTxt : '已无更多活动'}}</div>
       <null-data tips="暂无您想要的活动" v-if="activeList.length === 0"></null-data>
+
       <a class="apply-add" href="/community/apply">
-        <span class="apply_word">活动</span>
+        <div class="apply_icon" ></div>
         <span class="apply_word">申请</span>
       </a>
     </section>
@@ -390,11 +391,24 @@ export default {
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
         position: relative;
+        overflow: hidden;
+        &:after {
+          content: '';
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,.3);
+          z-index: 1;
+        }
         .bg_cover;
         .theme {
           position: absolute;
           top: 10px;
           left: 15px;
+          z-index: 2;
           font-size: 12px;
           font-weight: bold;
           color: rgba(255,255,255,1);
@@ -413,6 +427,7 @@ export default {
           position: absolute;
           top: 10px;
           right: 10px;
+          z-index: 2;
           font-size: 12px;
           font-weight: bold;
           color: rgba(255, 255, 255, 1);
@@ -424,7 +439,7 @@ export default {
           background: #FF3333;
         }
         .carry {
-          background: #F99C00;
+          background: #FB6248;
         }
         .ends {
           background: #999999;
@@ -437,6 +452,7 @@ export default {
           position: absolute;
           bottom: 15px;
           left: 15px;
+          z-index: 2;
         }
       }
 
@@ -476,6 +492,7 @@ export default {
   }
   .apply-add {
     position: fixed;
+    z-index: 3;
     right: 36px;
     bottom: 100px;
     width: 64px;
@@ -487,17 +504,19 @@ export default {
     justify-content: center;
     align-items: center;
     .apply_icon {
-      font-size:20px;
-      font-family:PingFangSC-Semibold;
-      font-weight:600;
-      color:rgba(255,255,255,1);
+      width: 14px;
+      height: 14px;
+      background-image: url('~assets/img/Icons/ic_plus_w_12x12@2x.png');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
     }
     .apply_word {
       font-size:12px;
-      font-family:PingFangSC-Semibold;
-      font-weight:600;
-      color:rgba(255,255,255,1);
-      line-height: 16px;
+      line-height: 1;
+      font-weight:bold;
+      padding-top: 5px;
+      color: #fff;
     }
   }
 }

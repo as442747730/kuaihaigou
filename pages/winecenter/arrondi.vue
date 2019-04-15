@@ -933,7 +933,7 @@ export default {
 
         font-family: Impact;
 
-        color: #f99c00;
+        color: #FB6248;
 
       }
 

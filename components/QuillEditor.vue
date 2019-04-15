@@ -54,10 +54,11 @@ export default {
           toolbar: {
             container: [
               'bold',
+              'italic',
               'underline',
-              { 'color': [] },
-              { 'align': [] },
-              { 'size': ['small', false, 'large', 'huge'] },
+              { 'header': [false, 1, 2, 3, 4] },
+              // { 'header': 1 },
+              // { 'header': 2 },
               'image'
             ],
             handlers: {
@@ -141,6 +142,9 @@ export default {
 </script>
 
 <style lang="less">
+.ql-editor.ql-blank::before {
+  font-style: normal!important;
+}
 .u-editor {
   .quill-editor {
     u {

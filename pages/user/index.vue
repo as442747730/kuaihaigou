@@ -30,6 +30,7 @@
                 <source :src="$v.videoPath" type="video/mp4">
               </video>
             </div>
+            <p class="article-sumary">{{ $v.summary }}</p>
             <div class="ctrls">
               <div class="ctrl">
                 <img class="ib-middle" src="~/assets/img/Icons/ic_dianzan_g_18x18@2x.png" />
@@ -218,6 +219,7 @@ export default {
     display: flex;
     padding: 15px 20px 16px 20px;
     .avatar {
+      flex-shrink: 0;
       width: 40px;
       height: 40px;
       border-radius: 50%;
@@ -227,17 +229,21 @@ export default {
       background-repeat: no-repeat;
     }
     .user {
+      overflow: hidden;
       &-nickname {
         font-size: 15px;
         color: #333;
         font-weight: bold;
         line-height: 1;
         margin-bottom: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .tips {
         font-size: 12px;
         color: #333;
-        line-height: 12px;
+        line-height: 1;
         margin-bottom: 10px;
         &_one {
           margin-right: 10px;
@@ -270,7 +276,6 @@ export default {
       color: #333;
       font-weight: bold;
       line-height: 21px;
-      max-height: 42px;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -288,6 +293,16 @@ export default {
         height: 100%;
         object-fit: cover;
       }
+    }
+    .article-sumary {
+      padding-top: 10px;
+      font-size: 13px;
+      line-height: 23px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
     }
     .ctrls {
       display: flex;

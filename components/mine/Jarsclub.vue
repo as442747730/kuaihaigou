@@ -80,8 +80,9 @@ export default {
       font-size: 30px;
       line-height: 1;
       font-weight: bold;
+      font-family:PingFangSC-Semibold;
       text-align: center;
-      padding-bottom: 10px;
+      padding-bottom: 7px;
     }
     &_ym {
       border-top: 1PX solid #fff;
@@ -110,9 +111,9 @@ export default {
 
     &>p {
       width: 100%;
-      font-size: 14px;
+      font-size: 13px;
       color: #333;
-      line-height: 24px;
+      line-height: 23px;
       word-break: break-all;
       overflow : hidden;
       text-overflow: ellipsis;

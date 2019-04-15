@@ -278,7 +278,7 @@ export default {
         }
 
         .carry {
-          background: #F99C00;
+          background: #FB6248;
         }
 
         .ends {

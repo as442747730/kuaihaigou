@@ -31,21 +31,18 @@
     <div class="winecenter-content" ref="scrollElem">
       <section class="novice" ref="scrollChild">
         <div class="com-item" v-for="(good, index) in goodsList" :key="index">
-          <a :href="'/detail/' + good.id">
+          <a href="javascript:void(0)">
             <div class="item_l">
-              <div class="item_l_bk" v-lazy:background-image="good.imgUrl"></div>
+              <div class="item_l_bk" v-lazy:background-image="good.imgUrl" @click="toGoodDetail(good.id)"></div>
+              <div class="add-button" @click.stop="compareFn(good.id)">添加到对比列表</div>
             </div>
-            <div class="item_r" v-if="!isNovice">
+            <div class="item_r" v-if="isNovice" @click="toGoodDetail(good.id)">
               <h3 class="font_hight">{{good.goodsName}}</h3>
               <div class="itemr-price">
                 <span class="t_price">¥ {{good.actualPrice}}</span>
                 <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
               </div>
-              <p>
-                <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">
-                  {{ tag }}
-                </span>
-              </p>
+              <div class="tag-wrap"><span class="tag-item" v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{ tag }}</span></div>
               <div class="itemr-info">
                 <span class="info_item icon_time">{{good.year}}</span>
                 <span class="info_item icon_address">{{good.country}}／{{good.area}}</span>
@@ -60,15 +57,13 @@
                 </div>
               </div>
             </div>
-            <div class="item_r" v-else>
+            <div class="item_r" v-else @click="toGoodDetail(good.id)">
               <h3 class="font_hight">{{good.goodsName}}</h3>
               <div class="itemr-price">
                 <span class="t_price">¥ {{good.actualPrice}}</span>
                 <del class="m_price">市场价：¥ {{good.marketPrice}}</del>
               </div>
-              <p>
-                <span v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{tag}}</span>
-              </p>
+              <div class="tag-wrap"><span class="tag-item" v-for="(tag, tagIndex) in customArray(good.tagListJson)">{{ tag }}</span></div>
               <div class="u-bars" v-if="good.ifAcidityShow">
                 <div class="bars">
                   <div class="bars-left">酸度：{{good.acidity}}<span>分</span></div>
@@ -142,6 +137,7 @@
   </div>
 </template>
 <script>
+import { goodsApi } from '~/api/goods'
 import countryCpm from '~/components/winecenter/countryList'
 import listTwo from '~/components/winecenter/listTwo'
 import nullData from '~/components/nullData'
@@ -728,6 +724,15 @@ export default {
           this.$toast('您还未添加对比商品')
         }
       }
+    },
+    async compareFn (goodsId) {
+      const { code } = await goodsApi.addCompare(goodsId)
+      if (code === 200) {
+        this.$toast('加入对比成功')
+      }
+    },
+    toGoodDetail(id) {
+      window.location.href = '/detail/' + id
     }
   }
 }
@@ -943,6 +948,7 @@ export default {
 .com-item {
   .padlr20;
   .u-bars;
+  padding-right: 15px;
   margin: 20px 0;
   & > a {
     .flex_between;
@@ -950,30 +956,69 @@ export default {
   }
 
   .item_l {
-    width: 120px;
-    height: 180px;
-    border-radius: 8px;
+    width: 130px;
+    height: 130px;
+    border-radius: 4px;
     border: 1PX solid #eaeaea;
+    box-sizing: border-box;
     &_bk {
-      margin-top: 6px;
-      width: 100%;
-      height: 178px;
+      width: 120px;
+      height: 120px;
+      margin: 4px auto;
       .bg_contain;
+    }
+    .add-button {
+      margin-top: 15px;
+      width: 130px;
+      height: 40px;
+      box-sizing: border-box;
+      border-radius: 2px;
+      border: 1PX solid #C7C7C7;
+      text-align: center;
+      line-height: 38px;
+      font-size: 11px;
+      font-weight: bold;
+      color: #333;
+      &:active {
+        opacity: .9;
+      }
     }
   }
 
   .item_r {
     width: 195px;
     min-height: 180px;
-
     &>h3 {
-
       font-size: 13px;
-
       color: #333;
-
       line-height: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
 
+    .tag-wrap {
+      margin-right: -5px;
+      .tag-item {
+        display: inline-block;
+        min-width: 45px;
+        padding: 0 4px;
+        height: 15px;
+        box-sizing: border-box;
+        font-size: 9px;
+        color: #999;
+        border: 1PX solid #ddd;
+        border-radius: 2px;
+        text-align: center;
+        line-height: 13px;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
+        // white-space: nowrap;
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
     }
 
     &>p {
@@ -983,22 +1028,18 @@ export default {
     }
 
     .itemr-price {
-
       .t_price {
         display: inline-block;
-        vertical-align: middle;
         font-size: 15px;
-        font-family: Impact;
+        font-family:PingFangSC-Semibold;
+        font-weight: bold;
         color: @c-price;
       }
 
       .m_price {
         display: inline-block;
-        vertical-align: middle;
-        padding-left: 10px;
+        padding-left: 7px;
         font-size: 11px;
-        font-family: PingFang-SC-Medium;
-        font-weight: 500;
         color: @cor_999;
       }
 
@@ -1007,99 +1048,40 @@ export default {
   }
 
 }
-// 新手选酒
+// 高手选酒
 .novice {
   .itemr-info {
-
     margin-left: -7px;
     padding-bottom: 10px;
-
     &>span {
-
       display: inline-block;
-
-      height: 24px;
-
-      line-height: 24px;
-
-      background: #def3f9;
-
-      border-radius: 12px;
-
-      padding-left: 25px;
-
-      padding-right: 5px;
-
+      height: 20px;
+      line-height: 20px;
+      background-color: #def3f9;
+      border-radius: 10px;
+      padding-left: 26px;
+      padding-right: 10px;
       vertical-align: middle;
-
       margin-top: 10px;
-
       position: relative;
-
-      font-size: 12px;
-
-      font-family: PingFangSC-Semibold;
-
-      font-weight: 600;
-
+      font-size: 11px;
+      font-weight: bold;
       color: #03a1cd;
-
       margin-left: 7px;
-
-      &:before {
-
-        content: "";
-
-        width: 24px;
-
-        height: 24px;
-
-        position: absolute;
-
-        top: 50%;
-
-        left: 0;
-
-        margin-top: -12px;
-
-        .bg_cover;
-
-      }
-
+      background-position: left center;
+      background-repeat: no-repeat;
+      background-size: 20px auto;
     }
-
     .icon_time {
-
-      &:before {
-
-        background-image: url("~assets/img/Icons/ic_time_24x24.png");
-
-      }
-
+      background-image: url("~assets/img/Icons/ic_time_24x24.png");
     }
-
     .icon_address {
-
-      &:before {
-
-        background-image: url("~assets/img/Icons/ic_position_24x24.png");
-
-      }
-
+      background-image: url("~assets/img/Icons/ic_position_24x24.png");
     }
-
     .icon_variety {
-
-      &:before {
-
-        background-image: url("~assets/img/Icons/ic_grape_24x24.png");
-
-      }
-
+      background-image: url("~assets/img/Icons/ic_grape_24x24.png");
     }
-
   }
-
   .itemr-price {
     padding: 10px 0 12px;
   }

@@ -47,11 +47,17 @@
         </nav>
       </div>
       <div class="main-bottom">
-        <div class="bottom-head">
+
+        <!-- <div class="bottom-head">
           <div class="head_item" v-for="(headitem, index) in headitems" :class="{active: headactive === index}" @click="headFn(index)" :key="index">
             <p :class="{head_one: index === 0}">{{ headitem }}</p>
           </div>
-        </div>
+        </div> -->
+        <van-tabs v-model="headactive" :line-width="13" :line-height="3" color="#333333" title-inactive-color="#999999" title-active-color="#333333" @change="headFn">
+          <van-tab title="标签 1"></van-tab>
+          <van-tab title="标签 2"></van-tab>
+        </van-tabs>
+
         <section class="bottom-content" v-if="headactive === 0">
           <!-- <u-article :artlist="artList" ></u-article> -->
           <div style="padding: 0 20px;">
@@ -61,7 +67,7 @@
         <section class="bottom-content" v-else>
           <u-jarsclb :poetryList="poetrys"></u-jarsclb>
         </section>
-
+        
         <template v-if='headactive === 0'>
           <div class='more-loading' v-show='artLoad'>
             <van-loading type="spinner" />
@@ -294,6 +300,29 @@ export default {
 }
 </script>
 <style lang="less">
+@font-face {
+  font-family: DINEngschriftStd;
+  src: url('~assets/font/DINEngschriftStd.otf');
+}
+.van-tabs {
+  box-sizing: border-box;
+  .van-tabs__wrap {
+    .van-tabs__nav {
+      .van-tab {
+        font-size: 13px;
+        line-height: 1.3;
+        padding-top: 14px;
+        &.van-tab--active {
+          font-weight: bold;
+        }
+      }
+      .van-tabs__line {
+        border-radius: 3px!important;
+        margin-bottom: 5px;
+      }
+    }
+  }
+}
 .mine {
   padding-bottom: 50px;
 
@@ -413,17 +442,14 @@ export default {
 
         &-item {
           &>p {
-            font-size: 13px;
-            font-family: PingFang-SC-Medium;
+            font-size: 10px;
             font-weight: 500;
             color: rgba(153, 153, 153, 1);
             margin: 10px 0;
             text-align: center;
-
             &>span {
               font-size: 19px;
-              font-family: 'DINPro';
-              font-weight: 700;
+              font-weight: bold;
               color: rgba(51, 51, 51, 1);
             }
           }
