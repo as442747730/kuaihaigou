@@ -1,6 +1,6 @@
 <template>
   <div class="nulldata">
-    <img class="null-logo" v-lazy="require('~/assets/img/pic_mpty_state_200x200@2x.png')" />
+    <div class="null-logo" :style="`background-image: url(${require('~/assets/img/pic_mpty_state_200x200@2x.png')})`"></div>
     <p class="null-world">{{tips}}</p>
   </div>
 </template>
@@ -25,6 +25,9 @@ export default {
     width: 160px;
     height: 160px;
     margin: 0 auto;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   .null-world {

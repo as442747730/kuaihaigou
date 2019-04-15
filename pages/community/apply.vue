@@ -524,7 +524,7 @@
     .ic_back {
       width: 30px;
       height: 30px;
-      background-image: url('~/assets/img/Icons/ic_return_b_30x30@2x.png');
+      background-image: url('~assets/img/Icons/ic_return_b_30x30@2x.png');
       background-repeat: no-repeat;
       background-position: center center;
       background-size: 8px 14px;
@@ -673,7 +673,7 @@
             &.active {
               &:before {
                 border: none;
-                background-image: url('~/assets/img/Icons/ic_check_bule_20x20@2x.png');
+                background-image: url('~assets/img/Icons/ic_check_bule_20x20@2x.png');
                 background-size: 20px;
                 background-repeat: no-repeat;
                 background-position: center center;
@@ -709,7 +709,7 @@
             transform: translateY(-50%);
             width: 7px;
             height: 10px;
-            background-image: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
+            background-image: url('~assets/img/Icons/ic_more_right_gray_12x12@2x.png');
             background-repeat: no-repeat;
             background-position: center right;
             background-size: 7px 10px;

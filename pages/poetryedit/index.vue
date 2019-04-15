@@ -1,7 +1,11 @@
 <template>
   <div class="m-poetry-edit">
-    <van-nav-bar title="酒坛诗社" left-arrow right-text='发布' @click-left='backHome' @click-right="send"></van-nav-bar>
+    <!-- <van-nav-bar title="酒坛诗社" left-arrow right-text='发布' @click-left='backHome' @click-right="send"></van-nav-bar> -->
     <textarea class="textarea" placeholder="写点东西签个到吧～有可能在首页显示哦～" v-model='editContent' :maxlength="100"></textarea>
+
+    <div class="fix-bottom-wrap">
+      <van-button type="primary" size="large" :loading="loading" loading-text="发布中..." @click="send">发布</van-button>
+    </div>
   </div>
 </template>
 
@@ -10,9 +14,7 @@ import { poetApi } from '~/api/poets'
 import { userApi } from '~/api/users'
 
 export default {
-
   layout: 'default',
-
   head () {
     return {
       title: '酒坛诗社',
@@ -33,6 +35,7 @@ export default {
 
   data () {
     return {
+      loading: false,
       editContent: ''
     }
   },
@@ -59,17 +62,17 @@ export default {
       }
     },
     backHome () {
-      window.location.href = '/home'
+      window.location.href = '/'
     }
   }
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .m-poetry-edit {
   width: 100%;
   height: 100vh;
-  background: #fff;
+  background: #F5F5F5;
   .van-nav-bar__text {
     color: #03A1CD!important;
     font-size: 13px;
@@ -77,11 +80,26 @@ export default {
   }
   .textarea {
     width: 100%;
-    min-height: 40vh;
+    min-height: 55vh;
     font-size: 14px;
     color: #333;
     padding: 20px;
     box-sizing: border-box;
+  }
+
+  .fix-bottom-wrap {
+    background-color: #fff;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding-bottom: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
+    padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
+
+    .van-button {
+      background-color: #03A1CD;
+      border-color: #03A1CD;
+    }
   }
 }
 </style>

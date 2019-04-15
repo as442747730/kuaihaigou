@@ -301,7 +301,7 @@ export default {
           box-sizing: border-box;
           padding-top: 33px;
           font-size: 10px;
-          background-image: url(~/assets/img/knowledge/icon-good.png);
+          background-image: url(~assets/img/knowledge/icon-good.png);
           background-position: center top;
           background-repeat: no-repeat;
           background-size: contain;
@@ -361,12 +361,12 @@ export default {
           font-size: 13px;
           color: @cor_999;
           padding-left: 20px;
-          background-image: url('~/assets/img/knowledge/icon-like-black.png');
+          background-image: url('~assets/img/knowledge/icon-like-black.png');
           background-repeat: no-repeat;
           background-position: left center;
           background-size: contain;
           &.active {
-            background-image: url('~/assets/img/knowledge/icon-like-blue.png');
+            background-image: url('~assets/img/knowledge/icon-like-blue.png');
           }
         }
       }

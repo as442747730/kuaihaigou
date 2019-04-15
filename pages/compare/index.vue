@@ -446,7 +446,7 @@ export default {
         top: 0px;
         width: 14px;
         height: 14px;
-        background: url('~/assets/img/Icons/ic_off_g_14x14@2x.png') no-repeat center/contain;
+        background: url('~assets/img/Icons/ic_off_g_14x14@2x.png') no-repeat center/contain;
       }
     }
   }

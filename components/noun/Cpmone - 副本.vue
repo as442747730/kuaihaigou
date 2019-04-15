@@ -543,7 +543,7 @@ export default {
         .ic_close {
           width: 14px;
           height: 14px;
-          background-image: url('~/assets/img/Icons/ic_shanchu_w_14x14@2x.png');
+          background-image: url('~assets/img/Icons/ic_shanchu_w_14x14@2x.png');
           .bg_cover;
         }
       }
@@ -569,7 +569,7 @@ export default {
           width: 12px;
           height: 12px;
           vertical-align: middle;
-          background-image: url('~/assets/img/Icons/ic_off_g_14x14@2x.png');
+          background-image: url('~assets/img/Icons/ic_off_g_14x14@2x.png');
           .bg_cover;
         }
       }

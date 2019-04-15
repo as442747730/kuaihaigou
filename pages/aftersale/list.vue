@@ -219,7 +219,7 @@ export default {
       margin-right: 22px;
       padding-left: 50px;
       padding-right: 16px;
-      background-image: url(~/assets/img/aftersale/icon-search.png);
+      background-image: url(~assets/img/aftersale/icon-search.png);
       background-position: 22px center;
       background-repeat: no-repeat;
       background-size: 16px 16px;
@@ -240,7 +240,7 @@ export default {
       // height: 30px;
       color: @cor_999;
       font-size: 9px;
-      background-image: url(~/assets/img/aftersale/icon-filter.png);
+      background-image: url(~assets/img/aftersale/icon-filter.png);
       background-position: center top;
       background-size: 20px 20px;
       background-repeat: no-repeat;

@@ -129,7 +129,7 @@ export default {
       text-align: center;
       font-size: 11px;
       color: #666;
-      background-image: url('~/assets/img/prove/ic_upload.png');
+      background-image: url('~assets/img/prove/ic_upload.png');
       background-size: 34px 26px;
       background-position: center 30px;
       background-repeat: no-repeat;

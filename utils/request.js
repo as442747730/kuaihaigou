@@ -9,7 +9,6 @@ import qs from 'qs'
 // import { Toast } from 'vant'
 import config from '../private.config'
 import { Toast } from 'vant'
-const _ = require('lodash')
 
 // API 服务器地址
 const target = config.target
@@ -71,7 +70,7 @@ function checkCode (res) {
 }
 
 export default {
-  serverPost (url, data, req) {
+  serverPost (url, data, ctx) {
     const options = {
       method: 'post',
       url: target + url,
@@ -83,16 +82,12 @@ export default {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
       }
     }
-    if (req && req.req.headers.cookie) {
-      var cookies = []
-      _.each(req.req.headers.cookie, function (value, key) {
-        cookies.push(`${value}`)
-      })
-      options.headers.Cookie = cookies.join('')
+    if (ctx && ctx.req.headers.cookie) {
+      options.headers.Cookie = ctx.req.headers.cookie
     }
     return axios(options).then(checkStatus).then(checkCode)
   },
-  serverPostJson (url, data, req) {
+  serverPostJson (url, data, ctx) {
     const options = {
       method: 'post',
       url: target + url,
@@ -104,16 +99,12 @@ export default {
         'Content-Type': 'application/json;charset=UTF-8'
       }
     }
-    if (req && req.req.headers.cookie) {
-      var cookies = []
-      _.each(req.req.headers.cookie, function (value, key) {
-        cookies.push(`${value}`)
-      })
-      options.headers.Cookie = cookies.join('')
+    if (ctx && ctx.req.headers.cookie) {
+      options.headers.Cookie = ctx.req.headers.cookie
     }
     return axios(options).then(checkStatus).then(checkCode)
   },
-  serverGet (url, params, req) {
+  serverGet (url, params, ctx) {
     const options = {
       method: 'get',
       url: target + url,
@@ -124,19 +115,15 @@ export default {
         'X-Requested-With': 'XMLHttpRequest'
       }
     }
-    if (req && req.req.headers.cookie) {
-      var cookies = []
-      _.each(req.req.headers.cookie, function (value, key) {
-        cookies.push(`${value}`)
-      })
-      options.headers.Cookie = cookies.join('')
+    if (ctx && ctx.req.headers.cookie) {
+      options.headers.Cookie = ctx.req.headers.cookie
     }
     return axios(options).then(checkStatus).then(checkCode)
   },
   clientPost (url, data) {
     return axios({
       method: 'post',
-      url: url,
+      url,
       data: qs.stringify(data),
       timeout: 30000,
       withCredentials: false,
@@ -149,7 +136,7 @@ export default {
   clientPostJson (url, data) {
     return axios({
       method: 'post',
-      url: url,
+      url,
       data: data,
       timeout: 30000,
       withCredentials: false,
@@ -162,7 +149,7 @@ export default {
   clientGet (url, params) {
     return axios({
       method: 'get',
-      url: url,
+      url,
       params,
       timeout: 30000,
       withCredentials: false,

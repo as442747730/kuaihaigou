@@ -96,7 +96,7 @@ export default {
           height: 14px;
           line-height: 14px;
           padding-left: 18px;
-          background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+          background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
           background-position: left center;
           background-repeat: no-repeat;
           background-size: 14px 14px;
@@ -135,7 +135,7 @@ export default {
         font-weight: 400;
         color: rgba(153, 153, 153, 1);
         padding-left: 18px;
-        background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+        background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
         background-position: left center;
         background-repeat: no-repeat;
         background-size: 14px 14px;

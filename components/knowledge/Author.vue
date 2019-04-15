@@ -121,7 +121,7 @@ export default {
     .top-bg {
       width: 100%;
       height: 34px;
-      background-image: url(~/assets/img/knowledge/bg-round.png);
+      background-image: url(~assets/img/knowledge/bg-round.png);
       background-position: center bottom;
       background-repeat: no-repeat;
       background-size: contain;
@@ -201,7 +201,7 @@ export default {
       .close {
         width: 26px;
         height: 26px;
-        background-image: url(~/assets/img/knowledge/icon-close-round.png);
+        background-image: url(~assets/img/knowledge/icon-close-round.png);
         background-position: center;
         background-size: contain;
         background-repeat: no-repeat;
@@ -248,7 +248,7 @@ export default {
         }
         .play {
           padding-top: 37px;
-          background-image: url(~/assets/img/knowledge/icon-play.png);
+          background-image: url(~assets/img/knowledge/icon-play.png);
           background-position: center top;
           background-size: 25px 25px;
           background-repeat: no-repeat;

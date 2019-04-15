@@ -207,7 +207,7 @@ export default {
         .search_icon {
           width: 16px;
           height: 16px;
-          background-image: url('~/assets/img/Icons/ic_search_g_16x16@2x.png');
+          background-image: url('~assets/img/Icons/ic_search_g_16x16@2x.png');
           .bg_cover;
         }
 
@@ -218,7 +218,7 @@ export default {
           background-repeat: no-repeat;
           background-size: 14px 14px;
           background-position: center center;
-          background-image: url('~/assets/img/Icons/ic_shanchu_g_14x14@2x.png');
+          background-image: url('~assets/img/Icons/ic_shanchu_g_14x14@2x.png');
         }
 
 
@@ -239,7 +239,7 @@ export default {
       .icon_buy {
         width: 30px;
         height: 30px;
-        background-image: url("~/assets/img/Icons/ic_shop_b_30x30.png");
+        background-image: url("~assets/img/Icons/ic_shop_b_30x30.png");
         .bg_cover;
       }
     }
@@ -269,7 +269,7 @@ export default {
 
     &-btn {
       padding-right: 16px;
-      background-image: url('~/assets/img/Icons/ic_xiala_g_line_12x12@2x.png');
+      background-image: url('~assets/img/Icons/ic_xiala_g_line_12x12@2x.png');
       background-size: 12px 12px;
       background-repeat: no-repeat;
       background-position: right center;

@@ -121,7 +121,7 @@ export default {
       font-size: 12px;
       color: @cor_999;
       padding-left: 18px;
-      background-image: url(~/assets/img/me/icon-clock.png);
+      background-image: url(~assets/img/me/icon-clock.png);
       background-position: left center;
       background-size: 14px 14px;
       background-repeat: no-repeat;
@@ -146,20 +146,20 @@ export default {
             margin-left: 25px;
           }
           &.like {
-            background-image: url(~/assets/img/knowledge/icon-like.png);
+            background-image: url(~assets/img/knowledge/icon-like.png);
           }
           &.msg {
-            background-image: url(~/assets/img/knowledge/icon-msg.png);
+            background-image: url(~assets/img/knowledge/icon-msg.png);
           }
           &.view {
-            background-image: url(~/assets/img/knowledge/icon-view.png);
+            background-image: url(~assets/img/knowledge/icon-view.png);
           }
         }
       }
       .more {
         width: 30px;
         height: 30px;
-        background-image: url(~/assets/img/knowledge/icon-more.png);
+        background-image: url(~assets/img/knowledge/icon-more.png);
         background-position: center;
         background-size: contain;
         background-repeat: no-repeat;

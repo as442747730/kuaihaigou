@@ -788,7 +788,7 @@
         right: 0;
         width: 29px;
         height: 29px;
-        background-image: url('~/assets/img/Icons/ic_off_b_18x18@2x.png');
+        background-image: url('~assets/img/Icons/ic_off_b_18x18@2x.png');
         background-size: 18px 18px;
         background-position: center center;
         background-repeat: no-repeat;
@@ -1250,7 +1250,7 @@
                 background-size: 24px 24px;
                 background-repeat: no-repeat;
                 background-position: center center;
-                background-image: url('~/assets/img/Icons/ic_like_r_24x24@2x.png');
+                background-image: url('~assets/img/Icons/ic_like_r_24x24@2x.png');
               }
             }
           }
@@ -1326,7 +1326,7 @@
               width: 160px;
               height: 160px;
               margin: 0 auto;
-              background-image: url('~/assets/img/munity/picno.png');
+              background-image: url('~assets/img/munity/picno.png');
               .bg_cover;
             }
             &>p {
@@ -1595,17 +1595,17 @@
                 }
                 .icon_time {
                   &:before {
-                    background-image: url('~/assets/img/Icons/ic_time_24x24.png');
+                    background-image: url('~assets/img/Icons/ic_time_24x24.png');
                   }
                 }
                 .icon_address {
                   &:before {
-                    background-image: url('~/assets/img/Icons/ic_position_24x24.png');
+                    background-image: url('~assets/img/Icons/ic_position_24x24.png');
                   }
                 }
                 .icon_variety {
                   &:before {
-                    background-image: url('~/assets/img/Icons/ic_grape_24x24.png');
+                    background-image: url('~assets/img/Icons/ic_grape_24x24.png');
                   }
                 }
               }
@@ -1734,17 +1734,17 @@
                 }
                 .icon_time {
                   &:before {
-                    background-image: url('~/assets/img/Icons/ic_time_24x24.png');
+                    background-image: url('~assets/img/Icons/ic_time_24x24.png');
                   }
                 }
                 .icon_address {
                   &:before {
-                    background-image: url('~/assets/img/Icons/ic_position_24x24.png');
+                    background-image: url('~assets/img/Icons/ic_position_24x24.png');
                   }
                 }
                 .icon_variety {
                   &:before {
-                    background-image: url('~/assets/img/Icons/ic_grape_24x24.png');
+                    background-image: url('~assets/img/Icons/ic_grape_24x24.png');
                   }
                 }
               }
@@ -1924,7 +1924,7 @@
         &-bk {
           height: 180px;
           border-radius: 10px;
-          background-image: url('~/assets/img/img_shequhuodong_335x180@2x.png');
+          background-image: url('~assets/img/img_shequhuodong_335x180@2x.png');
           .bg_cover;
           .theme {
             float: left;

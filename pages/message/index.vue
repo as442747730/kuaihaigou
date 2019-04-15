@@ -1,6 +1,5 @@
 <template>
   <div class="message">
-    <com-head titleConfig="消息中心"></com-head>
     <div class="tab">
       <span class="font_hight" :class="{'cur': type === 2}" @click='handleSelect(2)'>
         酒友消息
@@ -138,7 +137,7 @@
                   </div>
                   <div class="vessel-b">
                     <div class="form">
-                      打赏了您<em class="to-price"> {{ $v.signInformationResp.amount }} </em>嗨币
+                      打赏了您<em class="to-price"> {{ $v.signInformationResp.amount }} 嗨币</em>
                     </div>
                     <div v-if="$v.articleName" class="my">
                       <div>
@@ -270,7 +269,6 @@
   </div>
 </template>
 <script>
-import comHead from '~/components/com-head'
 import { messageApi } from '@/api/message'
 import { userApi } from '~/api/users'
 import tools from '~/utils/tools'
@@ -327,9 +325,6 @@ export default {
 
       noticeTxt: ['禁言通知', '认证消息', '认证消息', '', '认证消息', '认证消息', '', '', '优惠卷信息', '神评榜 消息', '精彩绝伦榜 消息', '酒坛诗社 消息', '热门评论'] // 别问我为什么有几个空出来的，因为后台状态码就是这样的 =。 =
     }
-  },
-  components: {
-    comHead
   },
 
   mounted () {
@@ -490,15 +485,15 @@ export default {
       }
 
       .top_bk1 {
-        background-image: url('~/assets/img/Icons/ic_xitongxiaoxi_40x40@2x.png');
+        background-image: url('~assets/img/Icons/ic_xitongxiaoxi_40x40@2x.png');
       }
 
       .top_bk2 {
-        background-image: url('~/assets/img/Icons/ic_dashangtongzhi_40x40@2x.png');
+        background-image: url('~assets/img/Icons/ic_dashangtongzhi_40x40@2x.png');
       }
 
       .top_bk3 {
-        background-image: url('~/assets/img/Icons/ic_wodequan_40x40@2x.png');
+        background-image: url('~assets/img/Icons/ic_wodequan_40x40@2x.png');
       }
     }
   }
@@ -723,13 +718,14 @@ export default {
       margin-bottom: 10px;
     }
     h3 {
-      margin-bottom: 10px;
-      font-size: 15px;
+      margin-bottom: 7px;
+      font-size: 14px;
+      line-height: 1;
     }
     p {
       font-size: 13px;
       color: #666;
-      line-height: 18px;
+      line-height: 23px;
       a {
         color: #4285F4;
       }
@@ -737,7 +733,7 @@ export default {
   }
   &-wrap {
     background: #fff;
-    padding: 20px 12px 20px;
+    padding: 20px;
   }
 }
 
@@ -754,6 +750,6 @@ export default {
   right:12px;
   width:14px;
   height:14px;
-  background: url('~/assets/img/ic_detele_g_14x14.png') no-repeat center/contain;
+  background: url('~assets/img/ic_detele_g_14x14.png') no-repeat center/contain;
 }
 </style>

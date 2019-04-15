@@ -227,7 +227,7 @@ export default {
               &.lab2 {
                 .lab_icon {
                   border: none;
-                  background-image: url('~/assets/img/Icons/ic_check_bule_20x20@2x.png');
+                  background-image: url('~assets/img/Icons/ic_check_bule_20x20@2x.png');
                   background-repeat: no-repeat;
                   background-position: center center;
                   background-size: 20px 20px;

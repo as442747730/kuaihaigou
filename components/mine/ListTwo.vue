@@ -25,7 +25,7 @@
       width: 7px;
       height: 10px;
       margin-left: 10px;
-      background: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
+      background: url('~assets/img/Icons/ic_more_right_gray_12x12@2x.png');
       .bg_cover;
     }
   }

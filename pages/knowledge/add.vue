@@ -421,7 +421,7 @@ export default {
       font-size: 14px;
       color: @cor_666;
       padding-right: 22px;
-      background-image: url(~/assets/img/order/icon-arrow.png);
+      background-image: url(~assets/img/order/icon-arrow.png);
       background-repeat: no-repeat;
       background-position: right center;
       background-size: contain;
@@ -470,7 +470,7 @@ export default {
       top: 20px;
       width: 16px;
       height: 16px;
-      background-image: url(~/assets/img/knowledge/icon-delete.png);
+      background-image: url(~assets/img/knowledge/icon-delete.png);
       background-position: center;
       background-size: contain;
       background-repeat: no-repeat;

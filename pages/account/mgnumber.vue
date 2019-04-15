@@ -1,6 +1,5 @@
 <template>
   <div class="manage">
-    <com-head :titleConfig="configtitle"></com-head>
     <div class="mange-in">
     	<section class="manage_sec">
 	      <list-one @click.native="updPhone" list_left="手机号" :list_right="userInfo.phone"></list-one>
@@ -21,13 +20,11 @@
   </div>
 </template>
 <script>
-import comHead from '~/components/com-head'
 import ListOne from '~/components/list/ListOne'
 import ListTwo from '~/components/list/ListTwo'
 import { userApi } from '~/api/users'
 export default {
   components: {
-    comHead,
     ListOne,
     ListTwo
   },
@@ -154,7 +151,7 @@ export default {
         if (code === 200) {
           this.$toast('登出成功')
           setTimeout(() => {
-            window.location.href = '/home'
+            window.location.href = '/'
             // window.location.reload()
           }, 1000)
         }

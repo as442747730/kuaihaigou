@@ -45,7 +45,7 @@
     <div class="depart-line"></div>
     <div class="other">
       <a :href="'/order/detail?id=' + orderId">查看订单</a>
-      <a class="cur" href="/home">回到首页</a>
+      <a class="cur" href="/">回到首页</a>
     </div>
 
     <!-- 广告位 -->

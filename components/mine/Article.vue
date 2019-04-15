@@ -93,7 +93,7 @@ article {
       width: 14px;
       height: 14px;
       margin-top: -7px;
-      background-image: url('~/assets/img/Icons/ic_time_g_14x14@2x.png');
+      background-image: url('~assets/img/Icons/ic_time_g_14x14@2x.png');
       .bg_cover;
     }
   }

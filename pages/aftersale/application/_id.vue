@@ -445,7 +445,7 @@ export default {
         font-size: 14px;
         color: @cor_666;
         padding-right: 20px;
-        background-image: url('~/assets/img/order/icon-arrow.png');
+        background-image: url('~assets/img/order/icon-arrow.png');
         background-size: 14px 12px;
         background-position: right top;
         background-repeat: no-repeat;
@@ -523,7 +523,7 @@ export default {
           box-sizing: border-box;
           padding-right: 20px;
           margin-bottom: 15px;
-          background-image: url('~/assets/img/order/icon-arrow.png');
+          background-image: url('~assets/img/order/icon-arrow.png');
           background-size: 14px 12px;
           background-position: right center;
           background-repeat: no-repeat;

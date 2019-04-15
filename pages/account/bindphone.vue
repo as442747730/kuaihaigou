@@ -1,6 +1,5 @@
 <template>
   <div class="bphone">
-    <com-head :titleConfig="configtitle"></com-head>
     <div class="bphone-in">
       <div class="inps">
         <span class="inps-l">+86</span>
@@ -17,12 +16,10 @@
   </div>
 </template>
 <script>
-import comHead from '~/components/com-head'
 import keyBoard from '~/components/Keyboard'
 import { userApi } from '~/api/users'
 export default {
   components: {
-    comHead,
     keyBoard
   },
   data () {

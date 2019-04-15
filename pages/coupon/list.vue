@@ -1,6 +1,5 @@
 <template>
   <div class="coupon" ref="scrollElem">
-    <com-head :titleConfig="configtitle"></com-head>
     <nav class="navs">
       <div class="navs-item" :class="{active: index === navIndex}" v-for="(nav, index) in navlist" @click="navFn(index)" :key="index">{{ nav }}</div>
     </nav>
@@ -50,7 +49,6 @@
   </div>
 </template>
 <script>
-import comHead from '~/components/com-head'
 import nullData from '~/components/nullData'
 import { couponApi } from '~/api/coupon'
 export default {
@@ -63,7 +61,6 @@ export default {
     }
   },
   components: {
-    comHead,
     nullData
   },
   async asyncData (req) {
@@ -308,7 +305,7 @@ export default {
           right: 8px;
           width: 60px;
           height: 37px;
-          background-image: url('~/assets/img/ic_yishiyong_60x40@2x.png');
+          background-image: url('~assets/img/ic_yishiyong_60x40@2x.png');
           .bg_cover;
         }
 

@@ -280,7 +280,7 @@ export default {
           height: 20px;
           box-sizing: border-box;
           padding-top: 33px;
-          background-image: url('~/assets/img/ic_chaoai_35x35@2x.png');
+          background-image: url('~assets/img/ic_chaoai_35x35@2x.png');
           background-position: center;
           background-repeat: no-repeat;
           background-size: contain;
@@ -354,12 +354,12 @@ export default {
           font-size: 13px;
           color: @cor_999;
           padding-left: 20px;
-          background-image: url('~/assets/img/knowledge/icon-like-black.png');
+          background-image: url('~assets/img/knowledge/icon-like-black.png');
           background-repeat: no-repeat;
           background-position: left center;
           background-size: contain;
           &.active {
-            background-image: url('~/assets/img/knowledge/icon-like-blue.png');
+            background-image: url('~assets/img/knowledge/icon-like-blue.png');
           }
         }
       }

@@ -173,11 +173,11 @@ export default {
       }
 
       .wgz_level {
-        background-image: url('~/assets/img/Icons/ic_plus_w_12x12@2x.png')
+        background-image: url('~assets/img/Icons/ic_plus_w_12x12@2x.png')
       }
 
       .ygz_level {
-        background-image: url('~/assets/img/Icons/ic_tick_w_12x12@2x.png')
+        background-image: url('~assets/img/Icons/ic_tick_w_12x12@2x.png')
       }
     }
     .item-wgz {
@@ -223,12 +223,12 @@ export default {
 
       .ic-member {
         margin-left: 8px;
-        background-image: url('~/assets/img/Icons/ic_membership_level2_22x22@2x.png');
+        background-image: url('~assets/img/Icons/ic_membership_level2_22x22@2x.png');
       }
 
       .ic-cms {
         margin-left: 6px;
-        background-image: url('~/assets/img/Icons/ic_cms_cs_22x22@2x.png');
+        background-image: url('~assets/img/Icons/ic_cms_cs_22x22@2x.png');
       }
     }
 

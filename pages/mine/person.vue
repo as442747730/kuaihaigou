@@ -1,6 +1,5 @@
 <template>
   <div class="person">
-    <com-head :titleConfig="configtitle"></com-head>
     <div class="person-main">
       <div class="person-head">
         <Upload @on-success="onSuccess" class="headupload">
@@ -57,7 +56,6 @@
 </template>
 <script>
 import { userApi } from '~/api/users'
-import comHead from '~/components/com-head'
 import listOne from '~/components/mine/ListOne'
 import listTwo from '~/components/mine/ListTwo'
 import editinfo from '~/components/mine/Editinfo'
@@ -67,7 +65,6 @@ import Upload from '~/components/Upload'
 
 export default {
   components: {
-    comHead,
     listOne,
     listTwo,
     editinfo,
@@ -305,7 +302,7 @@ export default {
         .ic_arrow {
           width: 7px;
           height: 10px;
-          background: url('~/assets/img/Icons/ic_more_right_gray_12x12@2x.png');
+          background: url('~assets/img/Icons/ic_more_right_gray_12x12@2x.png');
           .bg_cover;
         }
       }

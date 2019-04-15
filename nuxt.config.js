@@ -1,6 +1,5 @@
-const webpack = require('webpack')
 const config = require('./private.config')
-const resolve = require('path').resolve
+// const resolve = require('path').resolve
 
 module.exports = {
   server: {
@@ -19,17 +18,14 @@ module.exports = {
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
-      // { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
       { rel: 'icon', type: 'image/x-icon', href: '' }
     ],
     script: [
       {src: '/flexible.js'}
     ]
   },
-  modules: [
-    '@nuxtjs/axios',
-    '@nuxtjs/proxy'
-  ],
+  modules: ['@nuxtjs/axios', '@nuxtjs/style-resources'],
+  axios: { proxy: true },
   proxy: {
     '/api': config.target
   },
@@ -50,17 +46,18 @@ module.exports = {
     { src: './assets/css/main.less', lang: 'less' },
     { src: './assets/css/transition.css', lang: 'css' }
   ],
+  styleResources: { less: './assets/css/var.less' },
   router: {
     // base: config.baseUrl,
     scrollBehavior (to, from, savedPosition) {
       // return { x: 0, y: 0 }
-    },
-    extendRoutes (routes) {
-      routes.push({
-        path: '/',
-        component: resolve(__dirname, 'pages/home.vue')
-      })
     }
+    // extendRoutes (routes) {
+    //   routes.push({
+    //     path: '/',
+    //     component: resolve(__dirname, 'pages/home.vue')
+    //   })
+    // }
   },
   env: {
     pcDomain: config.pcDomain
@@ -69,64 +66,43 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    // cache: true,
-    // parallel: true,
     babel: {
-      presets: ['es2015', 'stage-0'],
-      plugins: [['transform-runtime', {
-        'helpers': false,
-        'polyfill': true,
-        'regenerator': true,
-        'moduleName': 'babel-runtime'
-      }]]
-    },
-    /*
-    ** 生产环节去除控制台信息
-    */
-    // plugins: [
-    //   new webpack.optimize.UglifyJsPlugin({
-    //     compress: {
-    //       warnings: false,
-    //       drop_debugger: true,
-    //       drop_console: true
-    //     }
-    //   })
-    // ],
-    /*
-    ** Run ESLint on save
-    */
-
-    // 引入全局 less 变量文件， 详细参见 https://github.com/nuxt/nuxt.js/tree/dev/examples/style-resources
-    styleResources: {
-      less: './assets/css/var.less'
+      presets: [
+        ['@babel/preset-env', {
+          targets: {
+            browsers: ['ios >= 8']
+          },
+          corejs: 2,
+          useBuiltIns: 'usage'
+        }]
+      ],
+      plugins: ['@babel/plugin-transform-runtime', '@babel/plugin-syntax-dynamic-import']
     },
 
     extend (config, ctx) {
       if (ctx.isClient) {
         config.resolve.alias['vue'] = 'vue/dist/vue.js'
       }
-      if (ctx.isDev && ctx.isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /(node_modules)/
-        })
-      }
-      if (!ctx.isDev && !ctx.isClient) {
-        config.plugins.push(
-          new webpack.optimize.UglifyJsPlugin({
-            compress: {
-              warnings: false,
-              drop_debugger: true,
-              drop_console: true
-            }
-          })
-        )
-      }
+      // if (ctx.isDev && ctx.isClient) {
+      //   config.module.rules.push({
+      //     enforce: 'pre',
+      //     test: /\.(js|vue)$/,
+      //     loader: 'eslint-loader',
+      //     exclude: /(node_modules)/
+      //   })
+      // }
+      // if (!ctx.isDev && !ctx.isClient) {
+      //   config.plugins.push(
+      //     new webpack.optimize.UglifyJsPlugin({
+      //       compress: {
+      //         warnings: false,
+      //         drop_debugger: true,
+      //         drop_console: true
+      //       }
+      //     })
+      //   )
+      // }
     },
-    vendor: ['axios', './utils/request.js', './static/flexible.js'],
-    // flexible结合使用，px2rem
     postcss: [
       require('postcss')(),
       require('postcss-pxtorem')({
@@ -134,57 +110,12 @@ module.exports = {
         propList: ['*']
       }),
       require('autoprefixer')({
-        browsers: ['last 3 versions']
+        browsers: [
+          'last 4 versions',
+          'ios >= 7',
+          'android >= 4.1'
+        ]
       })
-    ],
-    // 过渡动画
-    transition: {
-      name: 'page',
-      mode: 'out-in',
-      beforeEnter (el) {
-        console.log('Before enter...')
-      }
-    },
-    cache: true, // 设置缓存
-    // publicPath: 'https://cdn.nuxtjs.org', // 当运行 nuxt build 时，.nuxt/dist/ 目录内的内容会被上传至指定的 CDN 路径。
-    loaders: [
-      [
-        {
-          test: /\.(png|jpe?g|gif|svg)$/,
-          loader: 'url-loader',
-          query: {
-            limit: 1000, // 1KO
-            name: 'img/[name].[hash:7].[ext]'
-          }
-        },
-        {
-          test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-          loader: 'url-loader',
-          query: {
-            limit: 1000, // 1 KO
-            name: 'fonts/[name].[hash:7].[ext]'
-          }
-        },
-        // {
-        //   test: /\.scss$/,
-        //   use: [
-        //     { loader: "style-loader" }, // creates style nodes from JS strings
-        //     { loader: "css-loader" }, // translates CSS into CommonJS
-        //     { loader: 'sass-loader', options: { sourceMap: true } } // compiles Sass to CSS
-        //   ]
-        // },
-        {
-          test: /\.less$/,
-          use: [
-            { loader: 'style-loader' }, // creates style nodes from JS strings
-            { loader: 'css-loader' }, // translates CSS into CommonJS
-            { loader: 'less-loader' } // compiles Less to CSS
-          ]
-        }
-      ]
     ]
-  },
-  render: {
-    resourceHints: false // 解决 nuxt 加载 prefetch js
   }
 }

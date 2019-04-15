@@ -367,7 +367,7 @@ export default {
         .link {
           display: block;
           padding-right: 16px;
-          background-image: url('~/assets/img/order/icon-arrow.png');
+          background-image: url('~assets/img/order/icon-arrow.png');
           background-position: right center;
           background-size: contain;
           background-repeat: no-repeat;
@@ -605,7 +605,7 @@ export default {
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
-        background-image: url(~/assets/img/aftersale/icon-image.png);
+        background-image: url(~assets/img/aftersale/icon-image.png);
       }
     }
   }

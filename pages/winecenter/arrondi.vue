@@ -709,7 +709,7 @@ export default {
     .icon_switch {
       width: 22px;
       height: 22px;
-      background-image: url("~/assets/img/Icons/ic_qiehuan_blue_22x22.png");
+      background-image: url("~assets/img/Icons/ic_qiehuan_blue_22x22.png");
       .bg_cover;
     }
 
@@ -736,7 +736,7 @@ export default {
       .search_icon {
         width: 16px;
         height: 16px;
-        background-image: url('~/assets/img/Icons/ic_search_g_16x16@2x.png');
+        background-image: url('~assets/img/Icons/ic_search_g_16x16@2x.png');
         .bg_cover;
       }
       .delete_icon {
@@ -746,7 +746,7 @@ export default {
         background-repeat: no-repeat;
         background-size: 14px 14px;
         background-position: center center;
-        background-image: url('~/assets/img/Icons/ic_shanchu_g_14x14@2x.png');
+        background-image: url('~assets/img/Icons/ic_shanchu_g_14x14@2x.png');
       }
       .inpbox {
         width: 130px;
@@ -762,7 +762,7 @@ export default {
     .icon_buy {
       width: 30px;
       height: 30px;
-      background-image: url("~/assets/img/Icons/ic_shop_b_30x30.png");
+      background-image: url("~assets/img/Icons/ic_shop_b_30x30.png");
       .bg_cover;
     }
   }
@@ -792,11 +792,11 @@ export default {
       margin-top: -2.5px;
       width: 8px;
       height: 5px;
-      background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
+      background-image: url("~assets/img/Icons/ic_triangle_bt_12x12@2x.png");
       opacity: 0.5;
       transform: rotate(0);
       transition: 0.2s;
-      // background-image: url("~/assets/img/Icons/ic_triangle_gu_12x12@2x.png");
+      // background-image: url("~assets/img/Icons/ic_triangle_gu_12x12@2x.png");
       .bg_cover;
     }
   }
@@ -814,7 +814,7 @@ export default {
     &:after {
       opacity: 1;
       transform: rotate(180deg);
-      background-image: url("~/assets/img/Icons/ic_triangle_bt_12x12@2x.png");
+      background-image: url("~assets/img/Icons/ic_triangle_bt_12x12@2x.png");
     }
   }
 }
@@ -852,9 +852,9 @@ export default {
         opacity: 0.5;
         transform: rotate(0);
         transition: 0.2s;
-        background-image: url("~/assets/img/Icons/ic_xiala_b_line_12x12.png");
+        background-image: url("~assets/img/Icons/ic_xiala_b_line_12x12.png");
         .bg_cover;
-        // background-image: url("~/assets/img/Icons/ic_xiala_g_line_12x12.png");
+        // background-image: url("~assets/img/Icons/ic_xiala_g_line_12x12.png");
       }
     }
     &.hascor {
@@ -872,7 +872,7 @@ export default {
         &:after {
           opacity: 1;
           transform: rotate(180deg);
-          background-image: url("~/assets/img/Icons/ic_xiala_b_line_12x12.png");
+          background-image: url("~assets/img/Icons/ic_xiala_b_line_12x12.png");
         }
       }
     }
@@ -1023,7 +1023,7 @@ export default {
 
       &:before {
 
-        background-image: url("../../assets/img/Icons/ic_time_24x24.png");
+        background-image: url("~assets/img/Icons/ic_time_24x24.png");
 
       }
 
@@ -1033,7 +1033,7 @@ export default {
 
       &:before {
 
-        background-image: url("../../assets/img/Icons/ic_position_24x24.png");
+        background-image: url("~assets/img/Icons/ic_position_24x24.png");
 
       }
 
@@ -1043,7 +1043,7 @@ export default {
 
       &:before {
 
-        background-image: url("../../assets/img/Icons/ic_grape_24x24.png");
+        background-image: url("~assets/img/Icons/ic_grape_24x24.png");
 
       }
 

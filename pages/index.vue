@@ -82,7 +82,6 @@
             <div class="bg ani_show_opacty2" :style="{ backgroundImage: 'url(' + wineBk + ')' }" :key='+new Date().getMilliseconds()'>
               <div class="bg_world">{{ wineSence }}</div>
             </div>
-            <!-- <div class="bg" v-lazy:background-image="wineBk"></div> -->
           </div>
           <div v-swiper:mySwiper4="swiperCommend">
             <div class="swiper-wrapper">
@@ -105,7 +104,7 @@
                       {{ tagIndex === wine.tagList.length - 1 ? mytag : mytag + ' | ' }}
                     </span>
                   </p>
-                  <em class="font_impact">¥{{ wine.actualPrice }}</em>
+                  <em style="font-weight:bold;">¥{{ wine.actualPrice }}</em>
                 </div>
               </div>
             </div>
@@ -136,30 +135,6 @@
                 <div class="desc">
                   <h3>{{ pick.goodsMinimalResp.goodsName }}</h3>
                   <div class="author">作者：{{ pick.auth }}</div>
-                  <!-- <div class="tags">
-                    <i class="tagsub" v-for="(tags, tagIndex) in pick.goodsMinimalResp.tagList" :key="tagIndex">
-                      <template v-if='tagIndex === pick.goodsMinimalResp.tagList.length - 1'>
-                        {{ tags }}
-                      </template>
-                      <template v-else>
-                        {{ tags + ' | ' }}
-                      </template>
-                    </i>
-                  </div> -->
-                  <!-- <div class="itemr-info">
-                    <span class="info_item icon_time">{{pick.goodsMinimalResp.year}}</span>
-                    <span class="info_item icon_address" v-if="pick.goodsMinimalResp.area">{{pick.goodsMinimalResp.country}} / {{pick.goodsMinimalResp.area}}</span>
-                    <span class="info_item icon_address" v-else>{{pick.goodsMinimalResp.country}}</span>
-                    <span class="info_item icon_variety">{{pick.goodsMinimalResp.variety}}</span>
-                  </div> -->
-                  <!-- <div class="u-bars">
-                    <div class="bars">
-                      <div class="bars-left">复杂：{{pick.goodsMinimalResp.complexity}}分</div>
-                      <div class="bars-right">
-                        <span class="bars-right_top" ref="ubars" :data-bar="pick.goodsMinimalResp.complexity"></span>
-                      </div>
-                    </div>
-                  </div> -->
                 </div>
                 <div class="bottom">
                   <div class="summary">{{ pick.summary }}</div>
@@ -168,7 +143,7 @@
                       <div class="ib-middle goods-info-img" v-lazy:background-image="pick.goodsMinimalResp.cover"></div>
                       <div class="ib-middle goods-info-detail">
                         <p class="u-ellipsis">{{ pick.goodsMinimalResp.goodsName }}</p>
-                        <em class="ib-middle">¥{{ pick.goodsMinimalResp.actualPrice }}</em>
+                        <em class="ib-middle" style="font-weight: bold;">¥{{ pick.goodsMinimalResp.actualPrice }}</em>
                         <del class="ib-middle">市场价：¥{{ pick.goodsMinimalResp.marketPrice }}</del>
                       </div>
                     </div>
@@ -271,7 +246,7 @@
                 <span class="status carry" v-if="munity.status === 3">进行中</span>
                 <span class="status ends" v-if="munity.status === 4">已结束</span>
               </div>
-              <p class="period">第{{ munity.period }}期 | {{ munity.theme }} </p>
+              <p class="period">第{{ munity.period }}期 | {{ munity.theme }}</p>
             </div>
             <div class="desc">
               <h3>{{ munity.title }}</h3>
@@ -799,10 +774,8 @@ export default {
       }
     }
     .tags {
-      font-size: 12px;
-      font-family: PingFang-SC-Regular;
-      font-weight: 400;
-      color: rgba(153, 153, 153, 1);
+      font-size: 10px;
+      color: #999;
       margin-top: 10px;
 
       .tagsub {
@@ -896,9 +869,9 @@ export default {
 
 .hot_home {
   .hot-list {
-    margin-left: 15px;
+    margin-left: 20px;
     &:last-child {
-      width: 340px;
+      width: 335px;
     }
     &-box {
       border-radius: 8px;
@@ -944,70 +917,6 @@ export default {
         color: #333;
         padding: 10px 0 0px;
       }
-      // .tags {
-      //   font-size: 12px;
-      //   font-weight: 300;
-      //   color: rgba(153, 153, 153, 1);
-      //   margin: 10px 0 5px;
-
-      //   .tagsub {
-      //     margin-top: 10px;
-
-      //     &+.tagsub {
-      //       margin-left: 5px;
-      //       padding-left: 5px;
-      //       position: relative;
-
-      //       &:before {}
-      //     }
-      //   }
-      // }
-
-      // .u-bars {
-      //   margin-bottom: 0;
-      // }
-
-      // .info_item {
-      //   display: inline-block;
-      //   height:24px;
-      //   line-height: 24px;
-      //   background:#DEF3F9;
-      //   border-radius:12px;
-      //   padding-left: 25px;
-      //   padding-right: 5px;
-      //   vertical-align: middle;
-      //   margin-top: 10px;
-      //   position: relative;
-      //   font-size:12px;
-      //   font-weight: 600;
-      //   color: #03A1CD;
-      //   margin-right: 7px;
-      //   &:before {
-      //     content: '';
-      //     width: 24px;
-      //     height: 24px;
-      //     position: absolute;
-      //     top: 50%;
-      //     left: 0;
-      //     margin-top: -12px;
-      //     .bg_cover;
-      //   }
-      // }
-      // .icon_time {
-      //   &:before {
-      //     background-image: url('../assets/img/Icons/ic_time_24x24.png');
-      //   }
-      // }
-      // .icon_address {
-      //   &:before {
-      //     background-image: url('../assets/img/Icons/ic_position_24x24.png');
-      //   }
-      // }
-      // .icon_variety {
-      //   &:before {
-      //     background-image: url('../assets/img/Icons/ic_grape_24x24.png');
-      //   }
-      // }
     }
     .summary {
       color: #666;
@@ -1019,6 +928,7 @@ export default {
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
+      text-align: justify;
     }
     .goods-info {
       position: absolute;
@@ -1118,14 +1028,13 @@ export default {
       font-family: PingFangSC-Semibold;
       font-weight: bold;
       text-align: left;
-      
       margin: 15px 0 13px;
       p {
-        line-height: 22px;
+        line-height: 1;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
         text-align: justify;
       }
@@ -1133,7 +1042,7 @@ export default {
     .tips{
       color: #666;
       font-size: 11px;
-      margin: 0px 0 10px;
+      margin-bottom: 9px;
       span:first-child {
         padding-right: 20px;
       }
@@ -1157,13 +1066,13 @@ export default {
     }
     time {
       display: inline-block;
-      margin-bottom: 10px;
+      margin-bottom: 16px;
       color: #999;
       font-size: 11px;
       &:before {
         content: '';
         display: inline-block;
-        vertical-align: middle;
+        vertical-align: sub;
         margin-right: 4px;
         width: 14px;
         height: 14px;
@@ -1207,7 +1116,9 @@ export default {
 
         .status {
           display: inline-block;
-          width: 50px;
+          padding: 0 8px;
+          min-width: 50px;
+          max-width: 80px;
           height: 20px;
           box-sizing: border-box;
           position: absolute;
@@ -1241,19 +1152,23 @@ export default {
       }
     }
     .desc {
-      padding-left: 15px;
-      padding-bottom: 10px;
+      padding: 15px;
       h3 {
-        margin: 13px 0 10px;
+        width: 100%;
         display: inline-block;
         color: #333;
+        line-height: 1;
         font-size:16px;
         font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       p {
+        padding-top: 10px;
         font-size: 12px;
         color: #999;
-        line-height: 20px;
+        line-height: 1;
       }
     }
   }
@@ -1318,9 +1233,9 @@ export default {
       line-height: 14px;
       color: @cor_999;
       padding-left: 18px;
-      background-image: url(~/assets/img/me/icon-clock.png);
+      background-image: url('~assets/img/me/icon-clock.png');
       background-position: left center;
-      background-size: 14px 14px;
+      background-size: 12px 12px;
       background-repeat: no-repeat;
     }
     .pro {

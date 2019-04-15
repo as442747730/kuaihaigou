@@ -1,6 +1,5 @@
 <template>
   <div class="explain">
-    <!-- <com-head :titleConfig="configtitle"></com-head> -->
     <div class="explain-list">
       <div class="list-item">
         <div class="item-head">1.优惠券的获取</div>
@@ -33,11 +32,7 @@
   </div>
 </template>
 <script>
-// import comHead from '~/components/com-head'
 export default {
-  components: {
-    // comHead
-  },
   data () {
     return {
       configtitle: '优惠券说明'

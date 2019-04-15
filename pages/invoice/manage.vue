@@ -1,6 +1,5 @@
 <template>
   <div class="m-invoice">
-    <com-head class="comhead" :titleConfig="configtitle"></com-head>
     <div class="m-invoice-ul">
 
       <div class="m-invoice-li" v-for="(item, index) in invoiceList">
@@ -29,7 +28,6 @@
 </template>
 <script>
 import api from '~/utils/request'
-import comHead from '~/components/com-head'
 
 export default {
   name: 'invoice',
@@ -42,10 +40,6 @@ export default {
         { hid: 'title', name: 'title', content: '发票信息管理' }
       ]
     }
-  },
-
-  components: {
-    comHead
   },
 
   async asyncData (req) {
@@ -135,13 +129,6 @@ export default {
   box-sizing: border-box;
   padding-bottom: 50px;
   padding-top: 45px;
-  .comhead {
-    position: fixed !important;
-    width: 100%;
-    left: 0;
-    top: 0;
-    z-index: 100;
-  }
   &-ul {
     flex: 1;
     overflow: scroll;

@@ -1,6 +1,5 @@
 <template>
   <div class="comindex">
-    <com-head :titleConfig="configtitle"></com-head>
     <div class="navbox">
       <div class="navitem" :class="{active: item.id === navIndex}" v-for="(item, index) in navList" @click="hrefFn(item)" :key="index">{{item.status}}</div>
     </div>
@@ -41,10 +40,11 @@
             <span class="status sign" v-if="item.status === 2">报名已结束</span>
             <span class="status carry" v-if="item.status === 3">进行中</span>
             <span class="status ends" v-if="item.status === 4">已结束</span>
+
+            <p class="period">第{{ item.period }}期 | {{ item.theme }}</p>
           </div>
           <div class="actlist-head">
-            <span class="head">第{{item.period}}期 | {{item.theme}}</span>
-            <span class="subhead">{{item.title}}</span>
+            <p class="subhead">{{item.title}}</p>
           </div>
           <div class="actlist-same">活动时间：{{item._strTime}}</div>
           <div class="actlist-same text-limit">活动地点：{{item._dz}}</div>
@@ -63,7 +63,6 @@
 import nullData from '~/components/nullData'
 import tools from '~/utils/tools'
 import { munityApi } from '~/api/community'
-import comHead from '~/components/com-head'
 export default {
   head () {
     return {
@@ -74,8 +73,7 @@ export default {
     }
   },
   components: {
-    nullData,
-    comHead
+    nullData
   },
   async asyncData (req) {
     let _themes = null
@@ -330,7 +328,7 @@ export default {
         background-size: 12px 12px;
         background-repeat: no-repeat;
         background-position: right center;
-        background-image: url('~/assets/img/Icons/ic_xiala_g_line_12x12.png');
+        background-image: url('~assets/img/Icons/ic_xiala_g_line_12x12.png');
       }
       &.active {
         color: #333333;
@@ -383,99 +381,87 @@ export default {
     .actlist {
       margin-top: 20px;
       margin-bottom: 20px;
+      padding-bottom: 20px;
+      box-shadow:0px 2px 14px 0px rgba(231,231,231,1);
+      border-radius: 4px;
 
       &-bk {
         height: 180px;
-        border-radius: 10px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        position: relative;
         .bg_cover;
-
         .theme {
-          float: left;
-          margin-left: 10px;
-          font-size: 13px;
-          font-family: PingFangSC-Semibold;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 1);
+          position: absolute;
+          top: 10px;
+          left: 15px;
+          font-size: 12px;
+          font-weight: bold;
+          color: rgba(255,255,255,1);
           line-height: 16px;
-          padding: 3px 5px;
-          background: rgba(0, 0, 0, .4);
-          position: relative;
-
-          &:before {
-            position: absolute;
-            left: 0;
-            bottom: -6px;
-            content: '';
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 0 6px 20px;
-            border-color: transparent transparent transparent rgba(0, 0, 0, .4);
-          }
-
-          &:after {
-            position: absolute;
-            right: 0;
-            bottom: -6px;
-            content: '';
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 20px 6px 0;
-            border-color: transparent rgba(0, 0, 0, .4) transparent transparent;
-          }
+          padding: 3PX 5PX;
+          background: rgba(0,0,0,.5);
+          border-radius: 2px;
         }
-
         .status {
-          float: right;
-          margin-top: 10px;
-          margin-right: 10px;
-          font-size: 14px;
-          font-family: PingFangSC-Semibold;
-          font-weight: 600;
+          display: inline-block;
+          padding: 0 8px;
+          min-width: 50px;
+          max-width: 80px;
+          height: 20px;
+          box-sizing: border-box;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          font-size: 12px;
+          font-weight: bold;
           color: rgba(255, 255, 255, 1);
-          line-height: 14px;
-          padding: 7px 10px;
+          line-height: 20px;
+          text-align: center;
           border-radius: 4px;
         }
-
         .sign {
           background: #FF3333;
         }
-
         .carry {
           background: #F99C00;
         }
-
         .ends {
           background: #999999;
+        }
+        .period {
+          font-size: 19px;
+          line-height: 1;
+          font-weight: bold;
+          color: #fff;
+          position: absolute;
+          bottom: 15px;
+          left: 15px;
         }
       }
 
       &-head {
+        padding: 0 15px;
         margin-top: 13px;
         margin-bottom: 10px;
-        font-size: 16px;
-        color: rgba(51, 51, 51, 1);
-        line-height: 20px;
-        font-family: PingFangSC-Semibold;
-
-        .head {
-          margin-right: 5px;
-          font-weight: 600;
-        }
-
+        overflow: hidden;
         .subhead {
-          font-size: 14px;
+          color: #333;
+          font-weight: bold;
+          font-size: 16px;
+          line-height: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
 
       &-same {
-        margin-top: 5px;
+        padding: 0 15px;
+        margin-top: 9px;
         font-size: 12px;
-        font-family: PingFangSC-Regular;
-        font-weight: 400;
-        color: rgba(153, 153, 153, 1);
+        line-height: 1;
+        color: #999;
       }
     }
   }

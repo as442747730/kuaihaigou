@@ -240,15 +240,15 @@
       margin-right: 8px;
     }
     .zfb i{
-      background: url('~/assets/img/ic_alipay 30x30@2x.png') no-repeat center/contain
+      background: url('~assets/img/ic_alipay 30x30@2x.png') no-repeat center/contain
     }
     .wx i{
-      background: url('~/assets/img/ic_wachat_pay_30x30@2x.png') no-repeat center/contain
+      background: url('~assets/img/ic_wachat_pay_30x30@2x.png') no-repeat center/contain
     }
     .item {
       padding: 15px 0;
       &.checked .icon-check {
-        background: url('~/assets/img/icon-checkbox-active.png') no-repeat center/contain
+        background: url('~assets/img/icon-checkbox-active.png') no-repeat center/contain
       }
     }
     .icon-check {
@@ -297,7 +297,7 @@
     bottom: 0;
     width: 20px;
     height: 20px;
-    background: url('~/assets/img/reward/pic_check_blue_30x30@2x.png') no-repeat center/contain;
+    background: url('~assets/img/reward/pic_check_blue_30x30@2x.png') no-repeat center/contain;
   }
   &.cur {
     border-color: #03a1cd;
@@ -309,24 +309,24 @@
     margin-right: 0;
   }
   &.type_0{
-    background-image: url('~/assets/img/reward/img_dahsan_01_175x100@2x.png');
+    background-image: url('~assets/img/reward/img_dahsan_01_175x100@2x.png');
     margin-bottom: 20px;
   }
   &.type_1{
-    background-image: url('~/assets/img/reward/img_dahsan_02_175x100@2x.png') 
+    background-image: url('~assets/img/reward/img_dahsan_02_175x100@2x.png') 
   }
   &.type_2{
     margin-right: 0;
-    background-image: url('~/assets/img/reward/img_dahsan_03_175x100@2x.png') 
+    background-image: url('~assets/img/reward/img_dahsan_03_175x100@2x.png') 
   }
   &.type_3{
-    background-image: url('~/assets/img/reward/img_dahsan_04_175x100@2x.png') 
+    background-image: url('~assets/img/reward/img_dahsan_04_175x100@2x.png') 
   }
   &.type_4{
-    background-image: url('~/assets/img/reward/img_dahsan_05_175x100@2x.png') 
+    background-image: url('~assets/img/reward/img_dahsan_05_175x100@2x.png') 
   }
   &.type_5{
-    background-image: url('~/assets/img/reward/img_dahsan_06_175x100@2x.png') 
+    background-image: url('~assets/img/reward/img_dahsan_06_175x100@2x.png') 
   }
   span{
     font-size: 12px;
