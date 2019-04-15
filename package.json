@@ -7,8 +7,9 @@
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
-    "push": "nuxt start",
-    "start": "cross-env NODE_ENV=production pm2 start ./node_modules/nuxt/bin/nuxt-start -i max --attach",
+    "start": "nuxt start",
+    "end": "pm2 delete khgPC",
+    "prod": "npm run build && pm2 start npm --name \"khgPC\" -- run start",
     "precommit": "npm run lint",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
