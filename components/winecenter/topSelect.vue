@@ -239,7 +239,7 @@ export default {
       .icon_buy {
         width: 30px;
         height: 30px;
-        background-image: url("~assets/img/Icons/ic_shop_b_30x30.png");
+        background-image: url("~assets/img/Icons/ic_shop_b_30x30@2x.png");
         .bg_cover;
       }
     }

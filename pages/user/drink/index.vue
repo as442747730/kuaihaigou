@@ -145,10 +145,11 @@ export default {
 
 <style lang="less" scoped>
 .model-item {
-  // padding: 20px 100px;
-  a:last-child {
-    display: inline-block;
-    width: 40px;
+  padding: 15px 20px!important;
+  background: #F5F5F5;
+  display: block!important;
+  a:first-child {
+    margin-right: 35px;
   }
 }
 .jars {

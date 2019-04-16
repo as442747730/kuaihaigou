@@ -14,8 +14,7 @@
     <null-data v-else></null-data>
 
 
-    <div class="to-top" :class="{'show': showBtn}">
-      <van-icon name="upgrade" color="#03A00C8" @click="backToTop"></van-icon>
+    <div class="to-top-btn" :class="{'show': showBtn}" @click="backToTop">
     </div>
 
   </div>
@@ -235,6 +234,28 @@ export default {
       background: @cor_border;
       color: @cor_666;
       padding-bottom: 50px;
+    }
+  }
+
+  .to-top-btn {
+    width: 45px;
+    height: 45px;
+    position: fixed;
+    right: 20px;
+    bottom: calc(80px + constant(safe-area-inset-bottom));
+    bottom: calc(80px + env(safe-area-inset-bottom));
+    background-image: url('~assets/img/upgrade/icon-to-top.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: ease .6s;
+    &.show {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
     }
   }
 }

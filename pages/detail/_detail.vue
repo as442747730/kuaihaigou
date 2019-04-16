@@ -1044,10 +1044,10 @@ export default {
           display: inline-block;
           line-height: 1;
           vertical-align: top;
-          border: 1px solid #03A1CD;
+          border: 1px solid #ddd;
           border-radius: 2px;
           padding: 4px 3px;
-          color: #03A1CD;
+          color: #999;
           margin-bottom: 5px;
           &:not(:last-child) {
             margin-right: 5px;
@@ -1159,12 +1159,12 @@ export default {
     &-item {
       padding: 25px 0; 
       font-size: 15px;
-      &:nth-child(2n) {
-        padding: 0 0 25px 0; 
+      border-bottom: 1px solid #f1f1f1;
+      &:only-child {
+        border-bottom: none;
       }
       span {
         color: #333;
-        font-weight: bold;
       }
       .choose-txt {
         float: right;
@@ -1249,7 +1249,6 @@ export default {
         border: 1PX solid #f1f1f1;
         font-size: 13px;
         color: #333;
-        font-weight: bold;
         margin-bottom: 20px;
         border-radius: 4px;
         &:nth-child(2n) {
@@ -1257,6 +1256,7 @@ export default {
         }
         &.cur {
           background: #DEF3F9;
+          font-weight: bold;
           color: #03A1CD;
           border-color: transparent;
         }

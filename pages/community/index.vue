@@ -494,7 +494,8 @@ export default {
     position: fixed;
     z-index: 3;
     right: 36px;
-    bottom: 100px;
+    bottom: calc(20px + constant(safe-area-inset-bottom));
+    bottom: calc(20px + env(safe-area-inset-bottom));
     width: 64px;
     height: 64px;
     border-radius: 50%;

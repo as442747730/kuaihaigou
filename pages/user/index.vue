@@ -2,6 +2,7 @@
   <div class="m-page-user">
     <tab :uid='uid' :index='0'></tab>
     <div class="model-item">
+
       <a class="cur" :href="'/user?uid=' + uid">知识分享</a>
       <a :href="'/user/drink?uid=' + uid">酒坛诗社</a>
       <a href="javascript:void(0)" @click='selectShow = true'>{{ orderTxt }}</a>
@@ -326,18 +327,25 @@ export default {
     }
   }
 }
-.model-item a{
-  &:last-child {
-    &:after {
-      content: '\F007';
-      font: normal normal normal 14px/1 "vant-icon";
-      color: #999;
-      display: inline-block;
-      position: relative;
-      left: 5px;
-      top: 2px;
-      transform: rotate(-90deg);
-    }
+.model-item {
+  padding: 15px 20px!important;
+  background: #F5F5F5;
+  display: block!important;
+  a:first-child {
+    margin-right: 35px;
+  }
+}
+.model-item a:last-child {
+  float: right;
+  &:after {
+    content: '\F007';
+    font: normal normal normal 14px/1 "vant-icon";
+    color: #999;
+    display: inline-block;
+    position: relative;
+    left: 5px;
+    top: 2px;
+    transform: rotate(-90deg);
   }
 }
 </style>
