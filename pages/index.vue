@@ -628,7 +628,7 @@ export default {
         width: 100%;
         height: 100%;
         color: #CCD8E6;
-        background: #fafafa;
+        background: #f5f5f5;
         font-size: 14px;
         padding-left: 36px;
         box-sizing: border-box;
@@ -1219,7 +1219,7 @@ export default {
 .news_home {
   margin-bottom: 47px;
   .news-list {
-    width: 320px;
+    width: 315px;
     margin-left: 15px;
     &:last-child {
       width: 340px;
@@ -1228,8 +1228,8 @@ export default {
       border-radius: 8px;
       border: 1PX solid #eaeaea;
       box-sizing: border-box;
-      padding: 20px; 
-      width: 320px;
+      padding: 20px 14px;
+      width: 315px;
       font-size: 0;
       // height: 408px;
     }

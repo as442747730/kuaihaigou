@@ -157,7 +157,7 @@ export default {
 <style lang="less">
 .u-user-common {
   .bar {
-    height: 145px;
+    height: 130px;
     position: relative;
     background: -webkit-linear-gradient(-45deg, #4FEDEF, #00A1F0);
     background: -o-linear-gradient(-45deg, #4FEDEF, #00A1F0);

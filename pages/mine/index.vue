@@ -54,8 +54,8 @@
           </div>
         </div> -->
         <van-tabs v-model="headactive" :line-width="13" :line-height="3" color="#333333" title-inactive-color="#999999" title-active-color="#333333" @change="headFn">
-          <van-tab title="标签 1"></van-tab>
-          <van-tab title="标签 2"></van-tab>
+          <van-tab title="我的文章"></van-tab>
+          <van-tab title="酒坛诗社"></van-tab>
         </van-tabs>
 
         <section class="bottom-content" v-if="headactive === 0">
@@ -281,7 +281,8 @@ export default {
             let mm = date.getMonth() + 1
             let dd = date.getDate()
             let yymm = yy + '/' + mm
-            return { content, yymm, dd }
+            let checkSign = v.checkSign
+            return { content, yymm, dd, checkSign }
           })
         }
         this.poetrys.push(...poeArr)
@@ -300,10 +301,6 @@ export default {
 }
 </script>
 <style lang="less">
-@font-face {
-  font-family: DINEngschriftStd;
-  src: url('~assets/font/DINEngschriftStd.otf');
-}
 .van-tabs {
   box-sizing: border-box;
   .van-tabs__wrap {
@@ -325,6 +322,7 @@ export default {
 }
 .mine {
   padding-bottom: 50px;
+  background: #f1f1f1;
 
   header {
     width: 100%;
@@ -430,14 +428,25 @@ export default {
   }
 
   .main {
-    margin-top: -20px;
-    background: #fff;
     border-radius: 15px;
+    position: relative;
 
     &-top {
+      background-color: #fff;
+      padding-top: 35px;
+      margin-bottom: 10px;
       .info {
-        padding: 10px 0 20px;
-        border-bottom: 1PX solid @cor_border;
+        width: 335px;
+        height: 70px;
+        padding: 14px 0;
+        box-sizing: border-box;
+        border-radius: 8px;
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        box-shadow: 0 5px 8px 0 rgb(249,249,249);
         .flex_around;
 
         &-item {
@@ -450,6 +459,7 @@ export default {
             &>span {
               font-size: 19px;
               font-weight: bold;
+              font-family: 'PingFangSC-Semibold';
               color: rgba(51, 51, 51, 1);
             }
           }
@@ -507,6 +517,7 @@ export default {
     }
 
     &-bottom {
+      background-color: #fff;
       .bottom-head {
         height: 40px;
         background: #F5F5F5;

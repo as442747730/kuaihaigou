@@ -30,7 +30,7 @@
     </div>
     <div class="winecenter-content" ref="scrollElem">
       <section class="novice" ref="scrollChild">
-        <div class="com-item" v-for="(good, index) in goodsList" :key="index">
+        <div class="com-item" v-for="(good, index) in goodsList" :key="index" :style="index + 1 === goodsList.length ? 'border-bottom: none' : ''">
           <a href="javascript:void(0)">
             <div class="item_l">
               <div class="item_l_bk" v-lazy:background-image="good.imgUrl" @click="toGoodDetail(good.id)"></div>
@@ -948,6 +948,8 @@ export default {
 .com-item {
   .padlr20;
   .u-bars;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f5f5f5;
   padding-right: 15px;
   margin: 20px 0;
   & > a {
