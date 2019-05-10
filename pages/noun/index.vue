@@ -1,5 +1,7 @@
 <template>
   <div class="noun">
+    <van-nav-bar title="商品详情" left-arrow @click-left="historyBack">
+    </van-nav-bar>
     <div class="noun-head">
       <div class="topnav">
         <div
@@ -152,7 +154,7 @@ export default {
       imagesArr: [],
       imgsArray: [],
       lynavIndex: 0,
-      navList: [{name: '葡萄品种'}, {name: '产区'}, {name: '酒庄'}],
+      navList: [{name: '葡萄品种'}, {name: '产区'}, {name: '酒庄'},{name: '酒款百科'}],
       navIndex: null,
       showone: false,
       letter: {}, // 葡萄首字母信息
@@ -185,7 +187,9 @@ export default {
         return '产区'
       } else if (this.navIndex === 2) {
         return '酒庄'
-      } else {
+      } else if (this.navIndex === 3) {
+        return '酒款'
+      }else {
         return '品种'
       }
     },
@@ -211,6 +215,9 @@ export default {
   mounted () {
   },
   methods: {
+    historyBack () {
+      window.history.go(-1)
+    },
     elNavs (index) {
       window.location.href = 'noun?num=' + index
     },
@@ -707,6 +714,11 @@ export default {
             padding: 50% 0;
             border-radius: 4px;
             overflow: hidden;
+            position:relative;
+            .rt-icon {
+              position: absolute;
+              //名庄或商城有售标签
+            }
             .bg_cover;
           }
           .li-zh {

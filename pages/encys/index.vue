@@ -1,5 +1,7 @@
 <template>
   <div class="encys">
+    <van-nav-bar title="商品详情" left-arrow @click-left="historyBack">
+    </van-nav-bar>
     <div class="top">
       <div class="topbanner">
         <h2>查询工具</h2>
@@ -22,6 +24,12 @@
           <div class="item" @click="toNoun(2)">
             <div class="item_bk bk3"></div>
             <div class="item_word">酒庄</div>
+          </div>
+        </div>
+        <div class="topnav-item">
+          <div class="item" @click="toNoun(3)">
+            <div class="item_bk bk1"></div>
+            <div class="item_word">酒款百科</div>
           </div>
         </div>
       </div>
@@ -158,7 +166,10 @@ export default {
   methods: {
     toNoun (index) {
       window.location.href = '/noun?num=' + index
-    }
+    },
+    historyBack () {
+      window.history.go(-1)
+    },
   }
 }
 </script>
