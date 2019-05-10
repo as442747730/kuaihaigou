@@ -16,7 +16,7 @@
       </div>
     </div>
     <!-- 酒庄列表 start -->
-    <section class="wineryList" v-if="showWineryList">
+    <section class="wineryList" v-if="false">
       <div class="winery-head">
         <span
           v-for="(sorts, index) in winerySortkey"
@@ -32,18 +32,76 @@
             v-for="(winery, index) in wineryArr"
             @click="goWinery(winery)"
             :key="index">
-            <div class="li-bk" v-lazy:background-image="winery.cover"></div>
+            <div class="li-bk" v-lazy:background-image="winery.cover">
+              <div class="rt-icon"></div>
+            </div>
             <div class="li-zh u-ellipsis">{{winery.wineryName}}</div>
             <div class="li-en">
               <div class="en_inline">
                 <p>{{winery.englishName}}</p>
               </div>
             </div>
+            <div class="li-zh-sm">
+              <span class="lt">年产量:600吨</span>
+              <span class="rt">二级庄</span>
+            </div>
           </li>
         </ul>
       </div>
     </section>
     <!-- 酒庄列表 end -->
+    <!-- 酒款列表 start -->
+    <section class="wineryList" v-if="showWineryList">
+      <div class="winery-head">
+        <span
+          v-for="(sorts, index) in winerySortkey"
+          :data-val="wineryParams.sortedBy"
+          :class="{active: wineryParams.sortedBy === sorts.sortkey}"
+          @click="winerySortFn(sorts)"
+          :key="index">{{sorts.name}}</span>
+      </div>
+      <div class="winery-items">
+        <ul class="item-ul">
+          <li
+            class="wine_li"
+            v-for="(winery, index) in wineryArr"
+            @click="goWinery(winery)"
+            :key="index">
+            <div class="winebox">
+              <div class="li-winebk" v-lazy:background-image="winery.cover">
+                <div class="rt-icon"></div>
+              </div>
+              <div class="li-zh u-ellipsis">保加利亚·超级好喝的朗姆酒</div>
+              <div class="li-en">
+                <div class="en_inline">
+                  <p class="en_p">Bulgaria's Super Delicious Rum</p>
+                  <p class="zh_p">平均价格:666￥</p>
+                </div>
+              </div>
+            </div>
+            <div class="wineinfo">
+              <p>
+                <span class="wineicon"></span>
+                手指葡萄
+              </p>
+              <p>
+                <span class="wineicon"></span>
+                1982
+              </p>
+              <p>
+                <span class="wineicon"></span>
+                美国
+              </p>
+              <p>
+                <span class="wineicon"></span>
+                A级
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <!-- 酒款列表 end -->
     <!-- 详情 start -->
     <section v-else>
       <div class="top">
@@ -171,7 +229,7 @@ export default {
       selectWorldId: null, // 默认世界（全部）
       selectAreaId: null, // 产区id(全部)
       areaparams: {}, // 产区参数集
-      winerySortkey: [{name: '热门', sortkey: 1}, {name: '推荐', sortkey: 2}, {name: '知名度', sortkey: 3}, {name: '销量', sortkey: 4}],
+      winerySortkey: [{name: '热门', sortkey: 1}, {name: '推荐', sortkey: 2}, {name: '知名度', sortkey: 3}, {name: '平均年产量', sortkey: 4},{name: '酒庄列级',sortkey: 5}],
       elSort: null,
       wineryParams: {}, // 酒庄参数集
       isWineryList: false, // 是否显示酒庄列表
@@ -398,7 +456,6 @@ export default {
     }
   }
 }
-</script>
 </script>
 <style lang="less">
 @bgcor1: #fff;
@@ -710,46 +767,115 @@ export default {
           // width: 150px;
           width: 50%;
           box-sizing: border-box;
-          .li-bk {
-            padding: 50% 0;
-            border-radius: 4px;
-            overflow: hidden;
-            position:relative;
-            .rt-icon {
-              position: absolute;
-              //名庄或商城有售标签
+        }
+        .li-bk {
+          padding: 50% 0;
+          border-radius: 4px;
+          overflow: hidden;
+          position:relative;
+          .rt-icon {
+            width:25%;
+            height: 25%;
+            position: absolute;
+            top: 0;
+            right:0;
+            background: red;
+            //名庄或商城有售标签
+          }
+          .bg_cover;
+        }
+        .li-zh {
+          font-size:13px;
+          font-family:PingFangSC-Semibold;
+          font-weight:600;
+          color:rgba(51,51,51,1);
+          line-height:25px;
+        }
+        .li-zh-sm {
+          font-size:12px;
+          font-family:PingFangSC-Semibold;
+          color:rgba(153,153,153,1);
+          &:after{
+            content:"clear";
+            display:block; 
+            height:0; 
+            clear:both; 
+            overflow:hidden; 
+            visibility:hidden;
+          }
+          .lt{
+            float:left;
+          }
+          .rt{
+            float:right;
+          }
+        }
+        .li-en {
+          line-height: 30px;
+          font-size:12px;
+          overflow: hidden;
+          .en_inline {
+            display: inline-block;
+            vertical-align: middle;
+            .en_p {
+              line-height: 15px;
+              font-size:12px;
+              font-family:PingFang-SC-Regular;
+              font-weight:400;
+              color:rgba(153,153,153,1);
+              word-wrap: break-word;
+              text-overflow: ellipsis;
+              text-align: center;
+              -webkit-line-clamp: 2;
+              overflow : hidden;
+              display:-webkit-box;
+              -webkit-box-orient: vertical;
             }
-            .bg_cover;
+            .zh_p{
+              font-size:20px;
+              font-family:PingFangSC-Semibold;
+              font-weight:600;
+              text-align: center;
+              color:rgb(247, 122, 6);
+              line-height:28px;
+            }
           }
-          .li-zh {
-            font-size:13px;
-            font-family:PingFangSC-Semibold;
-            font-weight:600;
-            color:rgba(51,51,51,1);
-            line-height:25px;
+        }
+        
+        .wine_li {
+          margin-top: 20px;
+          margin-left: 20px;
+          border: 1px solid rgb(202, 202, 202);
+          width:100%;
+          display: flex;
+          padding-bottom:10px;
+          .winebox {
+            padding-top: 10px;
+            width:50%;
+            .li-winebk {
+              padding: 40% 0;
+              border-radius: 4px;
+              overflow: hidden;
+              position:relative;
+              background-size:100% 100%;
+            }
           }
-          .li-en {
-            line-height: 30px;
-            font-size:12px;
-            overflow: hidden;
-            .en_inline {
-              display: inline-block;
-              vertical-align: middle;
-              &>p {
-                line-height: 15px;
-                font-size:12px;
-                font-family:PingFang-SC-Regular;
-                font-weight:400;
-                color:rgba(153,153,153,1);
-                word-wrap: break-word;
-                text-overflow: ellipsis;
-                -webkit-line-clamp: 2;
-                overflow : hidden;
-                display:-webkit-box;
-                -webkit-box-orient: vertical;
+          .wineinfo {
+            flex-grow:1;
+            padding: 10px;
+            box-sizing: border-box;
+            p {
+              padding: 10px 0;
+              font-size:18px;
+              font-family:PingFangSC-Semibold;
+              line-height:30px;
+              text-align: right;
+              .wineicon {
+                padding:20px;
+                float: left;
+                background-image:url('~assets/img/home/ic_huanyipi_g_18x18@2x.png');
               }
             }
-
           }
         }
       }
