@@ -1,5 +1,7 @@
 <template>
   <div class="munitydeatil">
+    <van-nav-bar title="我的活动" left-arrow @click-left="historyBack">
+    </van-nav-bar>
     <div class="comDetail">
       <div class="specific">
         <div class="specific-bk" v-lazy:background-image="detailInfo.background"></div>
@@ -692,6 +694,9 @@
       })
     },
     methods: {
+      historyBack () {
+      window.history.go(-1)
+      },
       defmovefn () {
         console.log(123)
       },
@@ -1407,8 +1412,8 @@
         margin: 25px 0;
         height: 80px;
         border-radius: 8px;
-        margin-left: 40px;
-        padding-left: 50px;
+        margin-left: 90px;
+        padding-left: 10px;
         border: 1PX solid rgba(241, 241, 241, 1);
 
         .item_l {

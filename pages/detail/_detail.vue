@@ -256,7 +256,7 @@ export default {
       title: '商品详情',
       meta: [
         { hid: 'title', name: 'title', content: '商品详情' }
-      ]
+      ],  
     }
   },
   async asyncData (req) {

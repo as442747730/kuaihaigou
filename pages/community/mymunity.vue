@@ -1,5 +1,7 @@
 <template>
   <div class="comindex">
+    <van-nav-bar title="我的活动" left-arrow @click-left="historyBack">
+    </van-nav-bar>
     <div class="navbox">
       <div class="navitem" :class="{active: item.id === navIndex}" v-for="(item, index) in navList" @click="hrefFn(item)" :key="index">{{item.status}}</div>
     </div>
@@ -147,6 +149,9 @@ export default {
         }
         this.loadOk = true
       }
+    },
+    historyBack () {
+      window.history.go(-1)
     },
     hrefFn (item) {
       window.location.href = '/community/mymunity?status=' + item.id

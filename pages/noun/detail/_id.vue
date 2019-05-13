@@ -21,6 +21,9 @@
         <div class="lynav_item" :class="{active: lynavIndex === 1}" @click="lynavFn(1)">{{instype}}图片
           <span>（{{imagesArr.length}}）</span>
         </div>
+         <div class="lynav_item" :class="{active: lynavIndex === 2}" @click="lynavFn(2)">{{instype}}酒款
+          <span>（{{imagesArr.length}}）</span>
+        </div>
       </div>
       <section v-if="lynavIndex === 0">
         <div class="introduce" v-if="objDetail.baikeMessageList">
@@ -103,6 +106,14 @@ export default {
     } else if (queryNum === '2') {
       encyType = '6'
       _instype = '酒庄'
+      const { code, data } = await encyApi.serverWineryDetail(encyId, req)
+      if (code === 200) {
+        objDet = data
+        _imgArr = data.imgs
+      }
+    } else if (queryNum === '3') {
+      encyType = '7'
+      _instype = '酒款'
       const { code, data } = await encyApi.serverWineryDetail(encyId, req)
       if (code === 200) {
         objDet = data

@@ -184,7 +184,9 @@ export default {
         return '产区'
       } else if (this.navIndex === 2) {
         return '酒庄'
-      } else {
+      } else if (this.navIndex === 3) {
+         return '酒款'
+      }else {
         return '品种'
       }
     },

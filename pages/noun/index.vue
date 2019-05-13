@@ -60,46 +60,7 @@
           @click="winerySortFn(sorts)"
           :key="index">{{sorts.name}}</span>
       </div>
-      <div class="winery-items">
-        <ul class="item-ul">
-          <li
-            class="wine_li"
-            v-for="(winery, index) in wineryArr"
-            @click="goWinery(winery)"
-            :key="index">
-            <div class="winebox">
-              <div class="li-winebk" v-lazy:background-image="winery.cover">
-                <div class="rt-icon"></div>
-              </div>
-              <div class="li-zh u-ellipsis">保加利亚·超级好喝的朗姆酒</div>
-              <div class="li-en">
-                <div class="en_inline">
-                  <p class="en_p">Bulgaria's Super Delicious Rum</p>
-                  <p class="zh_p">平均价格:666￥</p>
-                </div>
-              </div>
-            </div>
-            <div class="wineinfo">
-              <p>
-                <span class="wineicon"></span>
-                手指葡萄
-              </p>
-              <p>
-                <span class="wineicon"></span>
-                1982
-              </p>
-              <p>
-                <span class="wineicon"></span>
-                美国
-              </p>
-              <p>
-                <span class="wineicon"></span>
-                A级
-              </p>
-            </div>
-          </li>
-        </ul>
-      </div>
+      <u-winelist :wineryArr='wineryArr'></u-winelist>
     </section>
     <!-- 酒款列表 end -->
     <!-- 详情 start -->
@@ -157,6 +118,7 @@
 <script>
 import CpmOne from '~/components/noun/Cpmone'
 import { encyApi } from '~/api/encys'
+import uWinelist from '~/components/winelist'
 export default {
   head () {
     return {
@@ -167,7 +129,8 @@ export default {
     }
   },
   components: {
-    CpmOne
+    CpmOne,
+    uWinelist
   },
   async asyncData (req) {
     let queryNum = req.query.num
@@ -466,7 +429,7 @@ export default {
   overflow: hidden;
   .noun-head {
     position: relative;
-    height: 85px;
+    height: 40px;
     background: @bgcor1;
     z-index: 100;
   }
@@ -838,43 +801,6 @@ export default {
               text-align: center;
               color:rgb(247, 122, 6);
               line-height:28px;
-            }
-          }
-        }
-        
-        .wine_li {
-          margin-top: 20px;
-          margin-left: 20px;
-          border: 1px solid rgb(202, 202, 202);
-          width:100%;
-          display: flex;
-          padding-bottom:10px;
-          .winebox {
-            padding-top: 10px;
-            width:50%;
-            .li-winebk {
-              padding: 40% 0;
-              border-radius: 4px;
-              overflow: hidden;
-              position:relative;
-              background-size:100% 100%;
-            }
-          }
-          .wineinfo {
-            flex-grow:1;
-            padding: 10px;
-            box-sizing: border-box;
-            p {
-              padding: 10px 0;
-              font-size:18px;
-              font-family:PingFangSC-Semibold;
-              line-height:30px;
-              text-align: right;
-              .wineicon {
-                padding:20px;
-                float: left;
-                background-image:url('~assets/img/home/ic_huanyipi_g_18x18@2x.png');
-              }
             }
           }
         }
