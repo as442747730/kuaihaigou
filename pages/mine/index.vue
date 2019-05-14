@@ -43,6 +43,7 @@
           <a class="navitem ic_gwc" href="/order/cart">购物车</a>
           <a class="navitem ic_wdgz" href="/order/list">我的订单</a>
           <a class="navitem ic_wdhd" href="/community/mymunity">我的活动</a>
+          <a class="navitem ic_wdhd" href="/mine/reseller">我的分销</a>
           <a class="navitem ic_wdsc" href="/mine/collect">我的收藏</a>
         </nav>
       </div>
@@ -56,6 +57,7 @@
         <van-tabs v-model="headactive" :line-width="13" :line-height="3" color="#333333" title-inactive-color="#999999" title-active-color="#333333" @change="headFn">
           <van-tab title="我的文章"></van-tab>
           <van-tab title="酒坛诗社"></van-tab>
+          <van-tab title="酒款点评"></van-tab>
         </van-tabs>
 
         <section class="bottom-content" v-if="headactive === 0">
@@ -64,8 +66,23 @@
             <ShareItem v-for="item in artList" :key="item.id" :item="item" />
           </div>
         </section>
-        <section class="bottom-content" v-else>
+        <section class="bottom-content" v-if="headactive === 1">
           <u-jarsclb :poetryList="poetrys"></u-jarsclb>
+        </section>
+        <section class="bottom-content" v-if="headactive === 2">
+          <!-- 组建内部循环 每次传入数组只一项 -->
+          <div class="content-wrap">
+            <u-winelist></u-winelist>
+            <div>
+              <p>酒款评分:<span class="grade">79分</span></p>
+              <p>品尝时间:<span>2019/10/11</span></p>
+              <div class="comment-wrap">
+                <p>酒款点评:</p>
+                旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评旧款点评
+              </div>
+            </div>
+          </div>
+          
         </section>
         
         <template v-if='headactive === 0'>
@@ -78,7 +95,7 @@
             <p>没有更多内容了！</p>
           </div>
         </template>
-        <template v-else>
+        <template v-if="headactive === 1">
           <div class='more-loading' v-show='poesLoad'>
             <van-loading type="spinner" />
             <p>正在加载更多</p>
@@ -104,6 +121,7 @@ import leftMenu from '~/components/Menu'
 import userLab from '~/components/Usericon.vue'
 import { userApi } from '~/api/users'
 import ShareItem from '@/components/ShareItem'
+import uWinelist from '~/components/winelist'
 
 export default {
   name: 'mineIndex',
@@ -154,7 +172,8 @@ export default {
     uArticle,
     uJarsclb,
     leftMenu,
-    userLab
+    userLab,
+    uWinelist
   },
   data () {
     return {
@@ -550,6 +569,29 @@ export default {
 
       .bottom-content {
         padding: 30px 0 10px;
+        .content-wrap {
+          padding: 0 10px;
+          p {
+            font-size: 12px;
+            color: #aaa;
+            padding-bottom: 10px;
+            .grade {
+              color: rgb(231, 123, 0);
+            }
+            span {
+              margin-left: 10px;
+              font-size: 12px;
+              color: #000;
+            }
+          }
+          .comment-wrap{
+            font-size: 12px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+          }
+        }
       }
     }
   }
