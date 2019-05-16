@@ -524,15 +524,20 @@ export default {
         }).catch(() => {})
       }
     },
-    async poetZan (poet) {
-      console.log(1)
-      // console.log('poet', poet)
-      const { code, data } = await poetApi.zanPoet(poet.id)
-      if (code === 200) {
-        this.$toast.success('点赞成功')
-      } else {
-        this.$toast(data)
-      }
+    poetZan (poet) {
+      this.$dialog.confirm({
+        message: poet.content,
+        confirmButtonText: '喜欢',
+        cancelButtonText: '取消',
+        confirmButtonColor: '#f60'
+      }).then(async () => {
+        const { code, data } = await poetApi.zanPoet(poet.id)
+        if (code === 200) {
+          this.$toast.success('点赞成功')
+        } else {
+          this.$toast(data)
+        } 
+      }).catch(() => {})
     },
     formatHtml (str) {
       str = str.replace(/&nbsp;/g, '')
