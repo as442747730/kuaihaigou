@@ -62,7 +62,7 @@ export default {
       ],
 
       publishShow: false, // 发布文章界面
-      ifSignin: false
+      ifSignin: false, //是否签到
     }
   },
   async mounted () {
@@ -100,6 +100,14 @@ export default {
       window.location.href = '/knowledge/add?type=2'
     },
     async jumpDrink () {
+      let Time = new Date()
+      let nowTime = Time.getHours() + Time.getMinutes()
+      let nowTimeS = Time.getSeconds()
+      if(!nowTime && nowTimeS < 10 ) {
+        this.ifSignin = false
+        this.$toast('正在更新，稍后点击~')
+        return
+      }
       if (this.ifSignin) {
         return
       }
@@ -107,6 +115,7 @@ export default {
       if (code === 200) {
         let { ifSign } = data
         if (ifSign) {
+          this.ifSign = data.ifSign
           this.$toast('今天已经签到了')
         } else {
           window.location.href = '/poetryedit'
