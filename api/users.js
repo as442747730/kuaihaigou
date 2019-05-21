@@ -101,6 +101,18 @@ export const userApi = {
   record (params) {
     return request.clientGet('/api/reward/paginateRewardExpenseRecord', params)
   },
+  // 分销信息
+  resellerInfo (req) {
+    return request.serverGet('/api/distribution/userDistributionMsg', {}, req)
+  },
+  // 消费信息
+  consumeInfo (params, req) {
+    return request.serverGet('/api/distribution/paginationConsumeRecord', params, req)
+  },
+  // 分销打款
+  resellerpay (params, req) {
+    return request.serverGet('api/distribution/paginationListWithdrawRecord', params, req)
+  },
   // 登出
   loginOut (params) {
     return request.clientPost('/api/logout')
